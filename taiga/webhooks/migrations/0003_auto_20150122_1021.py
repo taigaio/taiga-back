@@ -32,13 +32,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='webhooklog',
             name='request_headers',
-            field=taiga.base.db.models.fields.JSONField(default={}, verbose_name='Request headers'),
+            field=taiga.base.db.models.fields.JSONField(default=dict, verbose_name='Request headers'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='webhooklog',
             name='response_headers',
-            field=taiga.base.db.models.fields.JSONField(default={}, verbose_name='Response headers'),
+            field=taiga.base.db.models.fields.JSONField(default=dict, verbose_name='Response headers'),
             preserve_default=True,
         ),
     ]

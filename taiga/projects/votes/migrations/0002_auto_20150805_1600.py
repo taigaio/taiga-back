@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vote',
             name='user',
-            field=models.ForeignKey(related_name='votes', to=settings.AUTH_USER_MODEL, verbose_name='user'),
+            field=models.ForeignKey(related_name='votes', to=settings.AUTH_USER_MODEL, verbose_name='user', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterField(

@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='role',
             name='project',
-            field=models.ForeignKey(related_name='roles', verbose_name='project', null=True, to='projects.Project'),
+            field=models.ForeignKey(related_name='roles', verbose_name='project', null=True, to='projects.Project', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

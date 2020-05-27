@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('order', models.IntegerField(verbose_name='order', default=10)),
                 ('is_closed', models.BooleanField(verbose_name='is closed', default=False)),
                 ('color', models.CharField(max_length=20, verbose_name='color', default='#999999')),
-                ('project', models.ForeignKey(related_name='issue_statuses', to='projects.Project', verbose_name='project')),
+                ('project', models.ForeignKey(related_name='issue_statuses', to='projects.Project', verbose_name='project', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'issue statuses',
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255, verbose_name='name')),
                 ('order', models.IntegerField(verbose_name='order', default=10)),
                 ('color', models.CharField(max_length=20, verbose_name='color', default='#999999')),
-                ('project', models.ForeignKey(related_name='issue_types', to='projects.Project', verbose_name='project')),
+                ('project', models.ForeignKey(related_name='issue_types', to='projects.Project', verbose_name='project', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'issue types',
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255, verbose_name='name')),
                 ('order', models.IntegerField(verbose_name='order', default=10)),
                 ('value', models.FloatField(blank=True, null=True, verbose_name='value', default=None)),
-                ('project', models.ForeignKey(related_name='points', to='projects.Project', verbose_name='project')),
+                ('project', models.ForeignKey(related_name='points', to='projects.Project', verbose_name='project', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'points',
@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255, verbose_name='name')),
                 ('order', models.IntegerField(verbose_name='order', default=10)),
                 ('color', models.CharField(max_length=20, verbose_name='color', default='#999999')),
-                ('project', models.ForeignKey(related_name='priorities', to='projects.Project', verbose_name='project')),
+                ('project', models.ForeignKey(related_name='priorities', to='projects.Project', verbose_name='project', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'priorities',
@@ -124,7 +124,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255, verbose_name='name')),
                 ('order', models.IntegerField(verbose_name='order', default=10)),
                 ('color', models.CharField(max_length=20, verbose_name='color', default='#999999')),
-                ('project', models.ForeignKey(related_name='severities', to='projects.Project', verbose_name='project')),
+                ('project', models.ForeignKey(related_name='severities', to='projects.Project', verbose_name='project', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'severities',
@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
                 ('order', models.IntegerField(verbose_name='order', default=10)),
                 ('is_closed', models.BooleanField(verbose_name='is closed', default=False)),
                 ('color', models.CharField(max_length=20, verbose_name='color', default='#999999')),
-                ('project', models.ForeignKey(related_name='task_statuses', to='projects.Project', verbose_name='project')),
+                ('project', models.ForeignKey(related_name='task_statuses', to='projects.Project', verbose_name='project', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'task statuses',
@@ -161,7 +161,7 @@ class Migration(migrations.Migration):
                 ('is_closed', models.BooleanField(verbose_name='is closed', default=False)),
                 ('color', models.CharField(max_length=20, verbose_name='color', default='#999999')),
                 ('wip_limit', models.IntegerField(blank=True, null=True, verbose_name='work in progress limit', default=None)),
-                ('project', models.ForeignKey(related_name='us_statuses', to='projects.Project', verbose_name='project')),
+                ('project', models.ForeignKey(related_name='us_statuses', to='projects.Project', verbose_name='project', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'user story statuses',
@@ -202,7 +202,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='creation_template',
-            field=models.ForeignKey(null=True, related_name='projects', default=None, blank=True, to='projects.ProjectTemplate', verbose_name='creation template'),
+            field=models.ForeignKey(null=True, related_name='projects', default=None, blank=True, to='projects.ProjectTemplate', verbose_name='creation template', on_delete=models.SET_NULL),
             preserve_default=True,
         ),
         migrations.AddField(

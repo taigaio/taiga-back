@@ -27,8 +27,8 @@ class Migration(migrations.Migration):
                 ('closed', models.BooleanField(verbose_name='is closed', default=False)),
                 ('disponibility', models.FloatField(null=True, blank=True, verbose_name='disponibility', default=0.0)),
                 ('order', models.PositiveSmallIntegerField(verbose_name='order', default=1)),
-                ('owner', models.ForeignKey(null=True, blank=True, to=settings.AUTH_USER_MODEL, verbose_name='owner', related_name='owned_milestones')),
-                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='milestones')),
+                ('owner', models.ForeignKey(null=True, blank=True, to=settings.AUTH_USER_MODEL, verbose_name='owner', related_name='owned_milestones', on_delete=models.SET_NULL)),
+                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='milestones', on_delete=models.CASCADE)),
                 ('watchers', models.ManyToManyField(null=True, blank=True, related_name='milestones_milestone+', verbose_name='watchers', to=settings.AUTH_USER_MODEL)),
             ],
             options={

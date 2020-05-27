@@ -27,14 +27,14 @@ from taiga.projects.models import Project
 
 
 class Timeline(models.Model):
-    content_type = models.ForeignKey(ContentType, related_name="content_type_timelines")
+    content_type = models.ForeignKey(ContentType, related_name="content_type_timelines", on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     namespace = models.CharField(max_length=250, default="default", db_index=True)
     event_type = models.CharField(max_length=250, db_index=True)
-    project = models.ForeignKey(Project, null=True)
+    project = models.ForeignKey(Project, null=True, on_delete=models.CASCADE)
     data = JSONField()
-    data_content_type = models.ForeignKey(ContentType, related_name="data_timelines")
+    data_content_type = models.ForeignKey(ContentType, related_name="data_timelines", on_delete=models.CASCADE)
     created = models.DateTimeField(default=timezone.now, db_index=True)
 
     class Meta:

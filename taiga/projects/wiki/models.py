@@ -30,16 +30,34 @@ from taiga.projects.occ import OCCModelMixin
 
 
 class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="wiki_pages", verbose_name=_("project"))
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="wiki_pages",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE
+    )
     slug = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
                             verbose_name=_("slug"), allow_unicode=True)
     content = models.TextField(null=False, blank=True,
                                verbose_name=_("content"))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                              related_name="owned_wiki_pages", verbose_name=_("owner"))
-    last_modifier = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                              related_name="last_modified_wiki_pages", verbose_name=_("last modifier"))
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        related_name="owned_wiki_pages",
+        verbose_name=_("owner"),
+        on_delete=models.SET_NULL,
+    )
+    last_modifier = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        related_name="last_modified_wiki_pages",
+        verbose_name=_("last modifier"),
+        on_delete=models.SET_NULL,
+    )
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
                                         default=timezone.now)
@@ -68,8 +86,14 @@ class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
 
 
 class WikiLink(models.Model):
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="wiki_links", verbose_name=_("project"))
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="wiki_links",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE,
+    )
     title = models.CharField(max_length=500, null=False, blank=False)
     href = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
                             verbose_name=_("href"))

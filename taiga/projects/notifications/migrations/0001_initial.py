@@ -21,8 +21,8 @@ class Migration(migrations.Migration):
                 ('notify_level', models.SmallIntegerField(choices=[(1, 'Not watching'), (2, 'Watching'), (3, 'Ignoring')])),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('modified_at', models.DateTimeField()),
-                ('project', models.ForeignKey(to='projects.Project', related_name='notify_policies')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='notify_policies')),
+                ('project', models.ForeignKey(to='projects.Project', related_name='notify_policies', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='notify_policies', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['created_at'],

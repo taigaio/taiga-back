@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='attachment',
             name='owner',
-            field=models.ForeignKey(verbose_name='owner', blank=True, related_name='change_attachments', to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(verbose_name='owner', blank=True, related_name='change_attachments', to=settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL),
             preserve_default=True,
         ),
     ]

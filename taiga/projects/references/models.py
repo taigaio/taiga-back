@@ -31,13 +31,18 @@ from . import sequences as seq
 
 
 class Reference(models.Model):
-    content_type = models.ForeignKey(ContentType, related_name="+")
+    content_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     ref = models.BigIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
     created_at = models.DateTimeField(default=timezone.now)
-    project = models.ForeignKey("projects.Project", null=False,
-                                blank=False, related_name="references")
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="references",
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
         ordering = ["created_at"]

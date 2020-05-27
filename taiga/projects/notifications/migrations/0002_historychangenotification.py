@@ -25,8 +25,8 @@ class Migration(migrations.Migration):
                 ('history_type', models.SmallIntegerField(choices=[(1, 'Change'), (2, 'Create'), (3, 'Delete')])),
                 ('history_entries', models.ManyToManyField(blank=True, null=True, to='history.HistoryEntry', verbose_name='history entries', related_name='+')),
                 ('notify_users', models.ManyToManyField(blank=True, null=True, to=settings.AUTH_USER_MODEL, verbose_name='notify users', related_name='+')),
-                ('owner', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='owner')),
-                ('project', models.ForeignKey(related_name='+', to='projects.Project', verbose_name='project')),
+                ('owner', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='owner', on_delete=models.CASCADE)),
+                ('project', models.ForeignKey(related_name='+', to='projects.Project', verbose_name='project', on_delete=models.CASCADE)),
             ],
             options={
             },

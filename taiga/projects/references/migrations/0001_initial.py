@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('object_id', models.PositiveIntegerField()),
                 ('ref', models.BigIntegerField()),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('content_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType')),
-                ('project', models.ForeignKey(related_name='references', to='projects.Project')),
+                ('content_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType', on_delete=models.CASCADE)),
+                ('project', models.ForeignKey(related_name='references', to='projects.Project', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['created_at'],
