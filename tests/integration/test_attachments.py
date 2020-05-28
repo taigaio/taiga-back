@@ -35,7 +35,6 @@ def test_create_user_story_attachment_without_file(client):
     f.MembershipFactory(project=us.project, user=us.owner, is_admin=True)
     attachment_data = {
         "description": "test",
-        "attached_file": None,
         "project": us.project_id,
     }
 
