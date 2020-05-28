@@ -29,7 +29,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['user_story', 'role'],
                 'verbose_name': 'role points',
-                'permissions': (('view_rolepoints', 'Can view role points'),),
                 'verbose_name_plural': 'role points',
             },
             bases=(models.Model,),
@@ -65,7 +64,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['project', 'order', 'ref'],
                 'verbose_name': 'user story',
-                'permissions': (('view_userstory', 'Can view user story'),),
                 'verbose_name_plural': 'user stories',
             },
             bases=(models.Model,),

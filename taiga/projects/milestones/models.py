@@ -75,9 +75,6 @@ class Milestone(WatchedModelMixin, models.Model):
         verbose_name_plural = "milestones"
         ordering = ["project", "created_date"]
         unique_together = [("name", "project"), ("slug", "project")]
-        permissions = (
-            ("view_milestone", "Can view milestone"),
-        )
 
     def __str__(self):
         return self.name

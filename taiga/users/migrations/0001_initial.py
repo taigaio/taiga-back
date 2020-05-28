@@ -40,7 +40,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'users',
-                'permissions': (('view_user', 'Can view user'),),
                 'verbose_name': 'user',
                 'ordering': ['username'],
             },

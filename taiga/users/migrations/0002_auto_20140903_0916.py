@@ -24,7 +24,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'role',
-                'permissions': (('view_role', 'Can view role'),),
                 'verbose_name_plural': 'roles',
                 'ordering': ['order', 'slug'],
             },

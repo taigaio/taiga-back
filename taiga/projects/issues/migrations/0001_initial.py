@@ -42,7 +42,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'issues',
-                'permissions': (('view_issue', 'Can view issue'),),
                 'ordering': ['project', '-created_date'],
                 'verbose_name': 'issue',
             },

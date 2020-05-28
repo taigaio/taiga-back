@@ -48,7 +48,6 @@ class Migration(migrations.Migration):
                 'ordering': ['project', 'slug'],
                 'verbose_name_plural': 'wiki pages',
                 'verbose_name': 'wiki page',
-                'permissions': (('view_wikipage', 'Can view wiki page'),),
             },
             bases=(models.Model,),
         ),

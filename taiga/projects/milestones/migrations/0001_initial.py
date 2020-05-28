@@ -35,7 +35,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'milestone',
                 'verbose_name_plural': 'milestones',
                 'ordering': ['project', 'created_date'],
-                'permissions': (('view_milestone', 'Can view milestone'),),
             },
             bases=(models.Model,),
         ),

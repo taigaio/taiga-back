@@ -84,9 +84,6 @@ class Attachment(models.Model):
         verbose_name = "attachment"
         verbose_name_plural = "attachments"
         ordering = ["project", "created_date", "id"]
-        permissions = (
-            ("view_attachment", "Can view attachment"),
-        )
         index_together = [("content_type", "object_id")]
 
     def __init__(self, *args, **kwargs):

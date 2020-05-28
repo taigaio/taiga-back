@@ -120,9 +120,6 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, DueDate
         verbose_name = "issue"
         verbose_name_plural = "issues"
         ordering = ["project", "-id"]
-        permissions = (
-            ("view_issue", "Can view issue"),
-        )
 
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:

@@ -71,9 +71,6 @@ class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
         verbose_name_plural = "wiki pages"
         ordering = ["project", "slug"]
         unique_together = ("project", "slug",)
-        permissions = (
-            ("view_wikipage", "Can view wiki page"),
-        )
 
     def __str__(self):
         return "project {0} - {1}".format(self.project_id, self.slug)

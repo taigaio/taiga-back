@@ -33,7 +33,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['project', 'created_date'],
                 'verbose_name': 'attachment',
-                'permissions': (('view_attachment', 'Can view attachment'),),
                 'verbose_name_plural': 'attachments',
             },
             bases=(models.Model,),

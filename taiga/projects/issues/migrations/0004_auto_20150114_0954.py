@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='issue',
-            options={'ordering': ['project', '-id'], 'permissions': (('view_issue', 'Can view issue'),), 'verbose_name_plural': 'issues', 'verbose_name': 'issue'},
+            options={'ordering': ['project', '-id'], 'verbose_name_plural': 'issues', 'verbose_name': 'issue'},
         ),
     ]

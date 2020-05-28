@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='userstory',
-            options={'verbose_name_plural': 'user stories', 'ordering': ['project', 'backlog_order', 'ref'], 'verbose_name': 'user story', 'permissions': (('view_userstory', 'Can view user story'),)},
+            options={'verbose_name_plural': 'user stories', 'ordering': ['project', 'backlog_order', 'ref'], 'verbose_name': 'user story'},
         ),
         migrations.RenameField(
             model_name='userstory',

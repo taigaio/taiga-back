@@ -44,7 +44,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'tasks',
                 'ordering': ['project', 'created_date'],
                 'verbose_name': 'task',
-                'permissions': (('view_task', 'Can view task'),),
             },
             bases=(models.Model,),
         ),

@@ -30,7 +30,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['project', 'user__full_name', 'user__username', 'user__email', 'email'],
                 'verbose_name_plural': 'membershipss',
-                'permissions': (('view_membership', 'Can view membership'),),
                 'verbose_name': 'membership',
             },
             bases=(models.Model,),
@@ -61,7 +60,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
                 'verbose_name_plural': 'projects',
-                'permissions': (('view_project', 'Can view project'),),
                 'verbose_name': 'project',
             },
             bases=(models.Model,),

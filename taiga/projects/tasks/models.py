@@ -113,9 +113,6 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, DueDateM
         verbose_name_plural = "tasks"
         ordering = ["project", "created_date", "ref"]
         # unique_together = ("ref", "project")
-        permissions = (
-            ("view_task", "Can view task"),
-        )
 
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:
