@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-21 11:26+0100\n"
-"PO-Revision-Date: 2020-03-19 02:21+0000\n"
+"PO-Revision-Date: 2020-06-02 10:14+0000\n"
 "Last-Translator: Oskars G <oskars@alumni.lu.lv>\n"
 "Language-Team: Latvian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/lv/)\n"
@@ -54,7 +54,7 @@ msgstr "E-pasta adrese jau tiek izmantota."
 #: taiga/auth/services.py:95
 #| msgid "Token not matches any valid invitation."
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "Tokens neatbilst nevienam derīgam uzaicinājumam."
 
 #: taiga/auth/services.py:124
 msgid "User is already registered."
@@ -1165,6 +1165,9 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/feedback/templates/emails/feedback_notification-subject.jinja:1
 #, python-format
@@ -1374,6 +1377,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Asana projekts importēts</h1>\n"
+"    <p>Sveicināti %(user)s,</p>\n"
+"    <h3>Jūsu Asana projekts tika sekmīgi importēts.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Doties uz %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:1
 #, python-format

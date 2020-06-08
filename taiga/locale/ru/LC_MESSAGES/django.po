@@ -15,7 +15,7 @@
 # Egor Poderyagin <egor.poder@list.ru>, 2016
 # Igor Bezukladnikov <corrector@at.pstu.ru>, 2016
 # Ilya Rogov, 2016
-# ratijas <inactive+ratijas@transifex.com>, 2016
+# cea814b856b6795fed4e76155a00b372_ed44071 <2499c539bc4bd61b3076c2cb6bfa3653_399195>, 2016
 # Miguel Gonzalez <migonzalvar@gmail.com>, 2018
 # Sergey Kustov <ripesunflower@gmail.com>, 2016
 # soci0pat <trapeznikov.ap@gmail.com>, 2020

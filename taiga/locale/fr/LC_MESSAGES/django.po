@@ -20,7 +20,7 @@
 # Louis-Michel Couture <louim_1@hotmail.com>, 2015
 # madmarsu <madmarsu@gmail.com>, 2017
 # Matthieu Durocher <matthieu@technocyclope.com>, 2015
-# naekos <inactive+naekos@transifex.com>, 2015
+# 145d476c91450a2a8706fd7b160b27d7_b2328b5 <c7b4b2acae39f8349ced5e4f194f7733_317745>, 2015
 # Nicolas Minelle <nicolas.minelle@bluescale.com>, 2016
 # Nlko <nospam1@thomasson.fr>, 2015
 # Regis TEDONE <regis.tedone@gmail.com>, 2015
