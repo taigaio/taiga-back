@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## 5.0.13 (2020-06-08)
+
+### Features
+
+- Resolved Django deprecation warnings to prepare for an upgrade.
+
+- Added option to disallow anonymous access to user profiles. 
+
+### Misc
+
+- Updated requirements.
+
+- Use pip-tools to manage dependencies.
+
+### i18n
+
+- Updated translations (lv).
+
 ## 5.0.12 (2020-05-12)
 
 ### Security
