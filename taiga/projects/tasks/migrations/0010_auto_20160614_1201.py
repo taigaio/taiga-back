@@ -21,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='task',
             name='tags',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.TextField(), blank=True, default=[], null=True, size=None, verbose_name='tags'),
+            field=django.contrib.postgres.fields.ArrayField(base_field=models.TextField(), blank=True, default=list, null=True, size=None, verbose_name='tags'),
         ),
     ]

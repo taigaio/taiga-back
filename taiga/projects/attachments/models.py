@@ -34,13 +34,29 @@ def get_attachment_file_path(instance, filename):
 
 
 class Attachment(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                              related_name="change_attachments",
-                              verbose_name=_("owner"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="attachments", verbose_name=_("project"))
-    content_type = models.ForeignKey(ContentType, null=False, blank=False,
-                                     verbose_name=_("content type"))
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        related_name="change_attachments",
+        verbose_name=_("owner"),
+        on_delete=models.SET_NULL,
+    )
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="attachments",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE,
+    )
+    content_type = models.ForeignKey(
+        ContentType,
+        null=False,
+        blank=False,
+        verbose_name=_("content type"),
+        on_delete=models.CASCADE,
+    )
     object_id = models.PositiveIntegerField(null=False, blank=False,
                                             verbose_name=_("object id"))
     content_object = GenericForeignKey("content_type", "object_id")
@@ -68,9 +84,6 @@ class Attachment(models.Model):
         verbose_name = "attachment"
         verbose_name_plural = "attachments"
         ordering = ["project", "created_date", "id"]
-        permissions = (
-            ("view_attachment", "Can view attachment"),
-        )
         index_together = [("content_type", "object_id")]
 
     def __init__(self, *args, **kwargs):

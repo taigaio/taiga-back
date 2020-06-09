@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('modified_date', models.DateTimeField(verbose_name='modified date', auto_now=True)),
                 ('key', models.CharField(max_length=255, verbose_name='key')),
                 ('value', taiga.base.db.models.fields.JSONField(verbose_name='value', blank=True, default=None, null=True)),
-                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='owner', related_name='storage_entries')),
+                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='owner', related_name='storage_entries', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'storages entries',

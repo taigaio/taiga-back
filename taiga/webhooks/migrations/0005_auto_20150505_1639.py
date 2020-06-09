@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='webhooklog',
             name='request_headers',
-            field=taiga.base.db.models.fields.JSONField(verbose_name='request headers', default={}),
+            field=taiga.base.db.models.fields.JSONField(verbose_name='request headers', default=dict),
             preserve_default=True,
         ),
         migrations.AlterField(
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='webhooklog',
             name='response_headers',
-            field=taiga.base.db.models.fields.JSONField(verbose_name='response headers', default={}),
+            field=taiga.base.db.models.fields.JSONField(verbose_name='response headers', default=dict),
             preserve_default=True,
         ),
         migrations.AlterField(

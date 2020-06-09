@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historyentry',
             name='delete_comment_user',
-            field=models.ForeignKey(null=True, default=None, related_name='deleted_comments', to=settings.AUTH_USER_MODEL, blank=True),
+            field=models.ForeignKey(null=True, default=None, related_name='deleted_comments', to=settings.AUTH_USER_MODEL, blank=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

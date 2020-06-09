@@ -34,8 +34,8 @@ class NotifyPolicy(models.Model):
     This class represents a persistence for
     project user notifications preference.
     """
-    project = models.ForeignKey("projects.Project", related_name="notify_policies")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notify_policies")
+    project = models.ForeignKey("projects.Project", related_name="notify_policies", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notify_policies", on_delete=models.CASCADE)
     notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES)
     live_notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES, default=NotifyLevel.involved)
     web_notify_level = models.BooleanField(default=True, null=False, blank=True)
@@ -61,8 +61,14 @@ class HistoryChangeNotification(models.Model):
     or updated when an object requires notifications.
     """
     key = models.CharField(max_length=255, unique=False, editable=False)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
-                              verbose_name=_("owner"), related_name="+")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=False,
+        blank=False,
+        verbose_name=_("owner"),
+        related_name="+",
+        on_delete=models.CASCADE,
+    )
     created_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("created date time"))
     updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
@@ -73,8 +79,14 @@ class HistoryChangeNotification(models.Model):
     notify_users = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                              verbose_name=_("notify users"),
                                              related_name="+")
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                verbose_name=_("project"),related_name="+")
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        verbose_name=_("project"),
+        related_name="+",
+        on_delete=models.CASCADE,
+    )
 
     history_type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
 
@@ -83,15 +95,27 @@ class HistoryChangeNotification(models.Model):
 
 
 class Watched(models.Model):
-    content_type = models.ForeignKey("contenttypes.ContentType")
+    content_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=False,
-                              related_name="watched", verbose_name=_("user"))
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False,
+        null=False,
+        related_name="watched",
+        verbose_name=_("user"),
+        on_delete=models.CASCADE
+    )
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                verbose_name=_("project"),related_name="watched")
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        verbose_name=_("project"),
+        related_name="watched",
+        on_delete=models.CASCADE
+    )
     class Meta:
         verbose_name = _("Watched")
         verbose_name_plural = _("Watched")
@@ -101,6 +125,10 @@ class Watched(models.Model):
 class WebNotification(models.Model):
     created = models.DateTimeField(default=timezone.now, db_index=True)
     read = models.DateTimeField(default=None, null=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="web_notifications")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="web_notifications",
+        on_delete=models.CASCADE
+    )
     event_type = models.PositiveIntegerField()
     data = JSONField()

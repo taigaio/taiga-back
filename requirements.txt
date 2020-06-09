@@ -26,9 +26,9 @@ django-jinja==2.3.1       # via -r requirements.in
 django-pglocks==1.0.2     # via -r requirements.in
 django-picklefield==0.3.2  # via -r requirements.in
 django-sampledatahelper==0.4.1  # via -r requirements.in
-django-sites==0.9         # via -r requirements.in
+django-sites==0.10        # via -r requirements.in
 django-sr==0.0.4          # via -r requirements.in
-django==1.11.29           # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
+django==2.2.12            # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
 djmail==1.0.1             # via -r requirements.in
 docopt==0.6.2             # via psd-tools
 easy-thumbnails==2.7.0    # via -r requirements.in
@@ -64,6 +64,7 @@ requests==2.21.0          # via -r requirements.in, asana, premailer, requests-o
 sampledata==0.3.7         # via django-sampledatahelper
 serpy==0.1.1              # via -r requirements.in
 six==1.15.0               # via asana, bleach, cryptography, django-sampledatahelper, html5lib, packaging, python-dateutil, sampledata, serpy, webcolors
+sqlparse==0.3.1           # via django
 tinycss==0.4              # via cairosvg
 unidecode==0.4.20         # via -r requirements.in
 urllib3==1.24.3           # via requests

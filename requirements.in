@@ -8,7 +8,7 @@ django-jinja==2.3.1
 django-picklefield==0.3.2
 django-pglocks==1.0.2
 django-sampledatahelper==0.4.1
-django-sites==0.9
+django-sites==0.10
 django-sr==0.0.4
 djmail==1.0.1
 easy-thumbnails==2.7.0
@@ -28,7 +28,7 @@ requests_oauthlib
 serpy==0.1.1
 webcolors==1.9.1
 CairoSVG==2.0.3
-Django>=1.11.23,<2
+Django>=2.2,<3
 Markdown==3.1.1
 Pillow
 Unidecode==0.4.20

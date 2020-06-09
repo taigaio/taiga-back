@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='timeline',
             name='project',
-            field=models.ForeignKey(null=True, to='projects.Project'),
+            field=models.ForeignKey(null=True, to='projects.Project', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

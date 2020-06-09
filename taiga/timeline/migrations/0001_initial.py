@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('event_type', models.SlugField()),
                 ('data', taiga.base.db.models.fields.JSONField()),
                 ('created', models.DateTimeField(default=django.utils.timezone.now)),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
             ],
             options={
             },

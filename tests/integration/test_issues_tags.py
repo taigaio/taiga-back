@@ -20,7 +20,7 @@
 from unittest import mock
 from collections import OrderedDict
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from taiga.base.utils import json
 

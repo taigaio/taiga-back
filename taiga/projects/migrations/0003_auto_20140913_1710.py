@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='membership',
             name='invited_by',
-            field=models.ForeignKey(null=True, to=settings.AUTH_USER_MODEL, blank=True, related_name='ihaveinvited+'),
+            field=models.ForeignKey(null=True, to=settings.AUTH_USER_MODEL, blank=True, related_name='ihaveinvited+', on_delete=models.SET_NULL),
             preserve_default=True,
         ),
 

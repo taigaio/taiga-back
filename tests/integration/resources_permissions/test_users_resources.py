@@ -19,7 +19,7 @@
 
 from tempfile import NamedTemporaryFile
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from taiga.base.utils import json
 from taiga.users.serializers import UserAdminSerializer

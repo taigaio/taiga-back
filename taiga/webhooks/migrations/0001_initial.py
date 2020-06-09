@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
                 ('url', models.URLField(verbose_name='URL')),
                 ('key', models.TextField(verbose_name='secret key')),
-                ('project', models.ForeignKey(related_name='webhooks', to='projects.Project')),
+                ('project', models.ForeignKey(related_name='webhooks', to='projects.Project', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('status', models.IntegerField(verbose_name='Status code')),
                 ('request_data', taiga.base.db.models.fields.JSONField(verbose_name='Request data')),
                 ('response_data', models.TextField(verbose_name='Response data')),
-                ('webhook', models.ForeignKey(related_name='logs', to='webhooks.Webhook')),
+                ('webhook', models.ForeignKey(related_name='logs', to='webhooks.Webhook', on_delete=models.CASCADE)),
             ],
             options={
             },

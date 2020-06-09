@@ -22,7 +22,7 @@ from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.files import File
 from django.core.cache import cache as default_cache
 

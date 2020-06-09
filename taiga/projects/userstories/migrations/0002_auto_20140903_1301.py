@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='rolepoints',
             name='points',
-            field=models.ForeignKey(related_name='role_points', to='projects.Points', null=True, verbose_name='points'),
+            field=models.ForeignKey(related_name='role_points', to='projects.Points', null=True, verbose_name='points', on_delete=models.CASCADE),
         ),
     ]

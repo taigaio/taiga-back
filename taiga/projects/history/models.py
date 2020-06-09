@@ -51,7 +51,7 @@ class HistoryEntry(models.Model):
     """
     id = models.CharField(primary_key=True, max_length=255, unique=True,
                           editable=False, default=_generate_uuid)
-    project = models.ForeignKey("projects.Project")
+    project = models.ForeignKey("projects.Project", on_delete=models.CASCADE)
 
     user = JSONField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(default=timezone.now)

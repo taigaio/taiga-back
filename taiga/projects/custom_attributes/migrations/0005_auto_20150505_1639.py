@@ -15,19 +15,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='issuecustomattributesvalues',
             name='attributes_values',
-            field=taiga.base.db.models.fields.JSONField(verbose_name='values', default={}),
+            field=taiga.base.db.models.fields.JSONField(verbose_name='values', default=dict),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='taskcustomattributesvalues',
             name='attributes_values',
-            field=taiga.base.db.models.fields.JSONField(verbose_name='values', default={}),
+            field=taiga.base.db.models.fields.JSONField(verbose_name='values', default=dict),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='userstorycustomattributesvalues',
             name='attributes_values',
-            field=taiga.base.db.models.fields.JSONField(verbose_name='values', default={}),
+            field=taiga.base.db.models.fields.JSONField(verbose_name='values', default=dict),
             preserve_default=True,
         ),
     ]

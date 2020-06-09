@@ -313,14 +313,20 @@ class Role(models.Model):
     slug = models.SlugField(max_length=250, null=False, blank=True,
                             verbose_name=_("slug"))
     permissions = ArrayField(models.TextField(null=False, blank=False, choices=MEMBERS_PERMISSIONS),
-                             null=True, blank=True, default=[], verbose_name=_("permissions"))
+                             null=True, blank=True, default=list, verbose_name=_("permissions"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     # null=True is for make work django 1.7 migrations. project
     # field causes some circular dependencies, and due to this
     # it can not be serialized in one transactional migration.
-    project = models.ForeignKey("projects.Project", null=True, blank=False,
-                                related_name="roles", verbose_name=_("project"))
+    project = models.ForeignKey(
+        "projects.Project",
+        null=True,
+        blank=False,
+        related_name="roles",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE,
+    )
     computable = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
@@ -340,7 +346,7 @@ class Role(models.Model):
 
 
 class AuthData(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="auth_data")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="auth_data", on_delete=models.CASCADE)
     key = models.SlugField(max_length=50)
     value = models.CharField(max_length=300)
     extra = JSONField()

@@ -19,7 +19,7 @@
 
 import uuid
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from taiga.projects import choices as project_choices
 from taiga.projects.models import Project

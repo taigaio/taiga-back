@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, auto_created=True, verbose_name='ID', primary_key=True)),
                 ('config', taiga.base.db.models.fields.JSONField(null=True, verbose_name='modules config', blank=True)),
-                ('project', models.OneToOneField(to='projects.Project', verbose_name='project', related_name='modules_config')),
+                ('project', models.OneToOneField(to='projects.Project', verbose_name='project', related_name='modules_config', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'project modules configs',

@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
-                ('user', models.ForeignKey(verbose_name='votes', to=settings.AUTH_USER_MODEL, related_name='votes')),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(verbose_name='votes', to=settings.AUTH_USER_MODEL, related_name='votes', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Vote',
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('object_id', models.PositiveIntegerField()),
                 ('count', models.PositiveIntegerField(default=0)),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Votes',
