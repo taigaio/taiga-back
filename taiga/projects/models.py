@@ -502,7 +502,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
         set_notify_policy_level_to_ignore(notify_policy)
 
     def delete_related_content(self):
-        # NOTE: Remember to update code in taiga.projects.admin.ProjectAdmin.delete_selected
+        # NOTE: Remember to update code in taiga.projects.admin.ProjectAdmin.delete_queryset
         from taiga.events.apps import (connect_events_signals,
                                        disconnect_events_signals)
         from taiga.projects.epics.apps import (connect_all_epics_signals,
