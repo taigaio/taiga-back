@@ -30,8 +30,8 @@ from .routers import router
 ##############################################
 
 urlpatterns = [
-    url(r'^api/v1/', include(router.urls)),
-    path(r'^admin/', admin.site.urls),
+    path('api/v1/', include(router.urls)),
+    path('admin/', admin.site.urls),
 ]
 
 handler500 = "taiga.base.api.views.api_server_error"
