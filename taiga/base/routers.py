@@ -22,7 +22,7 @@ import itertools
 from collections import namedtuple
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
-from django.urls import URLResolver
+from django.urls import NoReverseMatch, URLResolver
 
 from taiga.base.api import views
 from taiga.base import response
