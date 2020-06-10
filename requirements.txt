@@ -49,7 +49,7 @@ packbits==0.6             # via psd-tools
 pillow==7.1.2             # via -r requirements.in, cairosvg, easy-thumbnails, psd-tools
 premailer==3.0.1          # via -r requirements.in
 psd-tools==1.8.27         # via -r requirements.in
-psycopg2-binary==2.7.5    # via -r requirements.in
+psycopg2-binary==2.8.5    # via -r requirements.in
 pycparser==2.20           # via cffi
 pygments==2.2.0           # via -r requirements.in
 pyjwt==1.7.1              # via oauthlib
