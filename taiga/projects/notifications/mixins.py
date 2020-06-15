@@ -413,11 +413,12 @@ class AssignedUsersSignalMixin:
         result = super().update(request, *args, **kwargs)
 
         new_assigned_users = [
-            user for user in result.data.get('assigned_users')
+            user for user in result.data.get('assigned_users', [])
             if user not in old_assigned_users
             and user != old_assigned_to
             and user != self.request.user
-        ]
+        ] if 200 <= result.status_code < 300 else []
+
         if len(new_assigned_users):
             signal_assigned_users.send(sender=self.__class__,
                                        user=self.request.user,
