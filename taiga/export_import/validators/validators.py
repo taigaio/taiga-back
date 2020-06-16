@@ -291,9 +291,21 @@ class TaskExportValidator(WatcheableObjectModelValidatorMixin):
 class EpicRelatedUserStoryExportValidator(validators.ModelValidator):
     user_story = ProjectRelatedField(slug_field="ref")
     order = serializers.IntegerField()
+    source_project_slug = serializers.CharField(required=False)
+
+    def validate_source_project_slug(self, attrs, source):
+        if attrs[source] is not None and attrs[source] != "":
+            msg = _("An Epic has a related story from an external project (%(project)s)  and cannot be imported") % {"project": attrs[source]}
+            raise ValidationError(msg)
+
+        attrs.pop(source)
+        return attrs
 
     class Meta:
         model = epics_models.RelatedUserStory
+        extra_kwargs = {
+            'source_project_slug': {'write_only': True},
+        }
         exclude = ('id', 'epic')
 
 
