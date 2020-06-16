@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Upgrade Django version to 2.2. This is a BREAKING CHANGE. Contributed modules
+  should be upgraded.
+
+### Misc
+
+- Several minor bugfixes.
+
 ## 5.0.13 (2020-06-08)
 
 ### Features
