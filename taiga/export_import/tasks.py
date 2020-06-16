@@ -124,6 +124,7 @@ def load_project_dump(user, dump):
             "user": user,
             "error_subject": error_message,
             "error_message": error_subject,
+            "details": json.dumps(e.errors, indent=4)
         }
         email = mail_builder.import_error(user, ctx)
         email.send()

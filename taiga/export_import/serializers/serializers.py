@@ -306,6 +306,13 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
 class EpicRelatedUserStoryExportSerializer(RelatedExportSerializer):
     user_story = SlugRelatedField(slug_field="ref")
     order = Field()
+    source_project_slug = MethodField()
+
+    def get_source_project_slug(self, obj):
+        if obj.epic.project.slug != obj.user_story.project.slug:
+            return obj.user_story.project.slug
+
+        return None
 
 
 class EpicExportSerializer(CustomAttributesValuesExportSerializerMixin,
