@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 5.0.14 (2020-06-16)
+
+### Misc
+
+- Fixed several minor bugs.
+
 ## 5.0.13 (2020-06-08)
 
 ### Features
