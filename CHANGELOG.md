@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 5.0.15 (2020-06-17)
+
+### Misc
+
+- Fixed bug old dump format project import.
+
 ## 5.0.14 (2020-06-16)
 
 ### Misc
