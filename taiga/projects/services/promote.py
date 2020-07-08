@@ -18,6 +18,7 @@ from django.core.files.base import ContentFile
 from django.db.models import signals
 
 from taiga.projects.attachments.models import Attachment
+from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.services import (get_history_queryset_by_model_instance,
                                              make_key_from_model_object)
@@ -71,7 +72,11 @@ def _import_comments(source_obj, target_obj):
     signals.pre_save.receivers = []
     signals.post_save.receivers = []
 
-    comments = get_history_queryset_by_model_instance(source_obj).exclude(comment__exact='')
+    comments = (
+        get_history_queryset_by_model_instance(source_obj)
+            .exclude(comment__exact='')
+            .exclude(delete_comment_date__isnull=False)
+    )
     us_key = make_key_from_model_object(target_obj)
 
     for entry in comments.all():
