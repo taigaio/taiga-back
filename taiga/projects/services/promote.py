@@ -115,6 +115,7 @@ def _import_attachments(source_obj, target_obj, content_type):
             size=attachment.size,
             created_date=attachment.created_date,
             is_deprecated=attachment.is_deprecated,
+            description=attachment.description,
         )
         attached_file = attachment.attached_file
         att.attached_file.save(attachment.name, ContentFile(attached_file.read()), save=True)
