@@ -18,7 +18,6 @@ from django.core.files.base import ContentFile
 from django.db.models import signals
 
 from taiga.projects.attachments.models import Attachment
-from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.services import (get_history_queryset_by_model_instance,
                                              make_key_from_model_object)
