@@ -1110,7 +1110,7 @@ def test_promote_task_to_us(client):
         comment="Test comment",
         key="tasks.task:{}".format(task.id),
         is_hidden=False,
-        diff=[]
+        diff=[],
     )
 
     f.HistoryEntryFactory.create(

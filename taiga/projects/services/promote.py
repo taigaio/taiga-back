@@ -74,7 +74,6 @@ def _import_comments(source_obj, target_obj):
     comments = (
         get_history_queryset_by_model_instance(source_obj)
             .exclude(comment__exact='')
-            .exclude(delete_comment_date__isnull=False)
     )
     us_key = make_key_from_model_object(target_obj)
 
@@ -89,6 +88,7 @@ def _import_comments(source_obj, target_obj):
             values=entry.values,
             comment=entry.comment,
             comment_html=entry.comment_html,
+            delete_comment_date=entry.delete_comment_date,
             is_hidden=False,
             is_snapshot=False,
             created_at=entry.created_at
