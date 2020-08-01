@@ -457,7 +457,7 @@ class ModelField(WritableField):
             return self.model_field.to_python(value)
 
     def field_to_native(self, obj, field_name):
-        value = self.model_field._get_val_from_obj(obj)
+        value = self.model_field.value_from_object(obj)
         if is_protected_type(value):
             return value
         return self.model_field.value_to_string(obj)
