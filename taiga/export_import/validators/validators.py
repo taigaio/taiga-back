@@ -342,7 +342,7 @@ class UserStoryExportValidator(WatcheableObjectModelValidatorMixin):
 
     class Meta:
         model = userstories_models.UserStory
-        exclude = ('id', 'project', 'points', 'tasks')
+        exclude = ('id', 'project', 'points', 'tasks', 'from_task_ref')
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_userstories_attributes_cache:

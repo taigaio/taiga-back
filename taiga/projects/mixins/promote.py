@@ -17,6 +17,7 @@ from taiga.base import response
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import detail_route
 from taiga.projects.models import Project
+from taiga.projects.tasks.models import Task
 from taiga.projects.services.promote import promote_to_us
 
 from . import validators
@@ -40,5 +41,9 @@ class PromoteToUserStoryMixin:
         obj = self.get_object()
         ret = promote_to_us(obj)
         self.persist_history_snapshot(obj=obj)
+
+        # delete source task if required
+        if isinstance(obj, Task):
+            obj.delete()
 
         return response.Ok(ret)

@@ -352,6 +352,7 @@ class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, serializ
     team_requirement = Field()
     generated_from_issue = Field(attr="generated_from_issue_id")
     generated_from_task = Field(attr="generated_from_task_id")
+    from_task_ref = Field()
     external_reference = Field()
     tribe_gig = Field()
     watchers = MethodField()

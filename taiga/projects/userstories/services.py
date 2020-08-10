@@ -209,7 +209,7 @@ def userstories_to_csv(project, queryset):
     fieldnames += ["backlog_order", "sprint_order", "kanban_order",
                    "created_date", "modified_date", "finish_date",
                    "client_requirement", "team_requirement", "attachments",
-                   "generated_from_issue", "generated_from_task",
+                   "generated_from_issue", "generated_from_task", "from_task_ref",
                    "external_reference", "tasks", "tags", "watchers", "voters",
                    "due_date", "due_date_reason"]
 
@@ -274,6 +274,7 @@ def userstories_to_csv(project, queryset):
             us.generated_from_issue else None,
             "generated_from_task": us.generated_from_task.ref if
             us.generated_from_task else None,
+            "from_task_ref": us.from_task_ref,
             "external_reference": us.external_reference,
             "tasks": ",".join([str(task.ref) for task in us.tasks.all()]),
             "tags": ",".join(us.tags or []),
