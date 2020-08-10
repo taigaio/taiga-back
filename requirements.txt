@@ -5,9 +5,9 @@
 #    pip-compile requirements.in
 #
 aggdraw==1.3.11           # via psd-tools
-amqp==2.6.0               # via kombu
+amqp==2.6.1               # via kombu
 asana==0.6.7              # via -r requirements.in
-asn1crypto==1.3.0         # via cryptography
+asn1crypto==1.4.0         # via cryptography
 attrs==19.3.0             # via psd-tools
 billiard==3.6.3.0         # via celery
 bleach==3.1.5             # via -r requirements.in
@@ -15,7 +15,7 @@ cairocffi==1.1.0          # via cairosvg
 cairosvg==2.0.3           # via -r requirements.in
 celery==4.3.0             # via -r requirements.in
 certifi==2020.6.20        # via requests
-cffi==1.14.0              # via cairocffi, cryptography
+cffi==1.14.1              # via cairocffi, cryptography
 chardet==3.0.4            # via requests
 cryptography==2.3.1       # via -r requirements.in, oauthlib
 cssselect==1.1.0          # via cairosvg, premailer
@@ -28,7 +28,7 @@ django-picklefield==0.3.2  # via -r requirements.in
 django-sampledatahelper==0.4.1  # via -r requirements.in
 django-sites==0.10        # via -r requirements.in
 django-sr==0.0.4          # via -r requirements.in
-django==2.2.14            # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
+django==2.2.15            # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
 djmail==1.0.1             # via -r requirements.in
 docopt==0.6.2             # via psd-tools
 easy-thumbnails==2.7.0    # via -r requirements.in
@@ -39,7 +39,7 @@ idna==2.8                 # via cryptography, requests
 importlib-metadata==1.7.0  # via kombu
 jinja2==2.11.2            # via django-jinja
 kombu==4.6.11             # via celery
-lxml==4.5.1               # via cairosvg, premailer
+lxml==4.5.2               # via cairosvg, premailer
 markdown==3.1.1           # via -r requirements.in
 markupsafe==1.1.1         # via jinja2
 netaddr==0.7.19           # via -r requirements.in
