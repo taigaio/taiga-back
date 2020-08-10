@@ -1,0 +1,11 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    {% trans signature=sr("signature"), full_name=user.get_full_name(), url=resolve_front_url("verify-email", user.email_token) %}
+    <h1>Verify your email</h1>
+    <p>Hello {{ full_name }},<br />please verify your email</p>
+    <a class="button" href="{{ url }}" title="Verify email">Verify email</a>
+    <p>You can ignore this message if you did not request.</p>
+    <p><small>{{ signature }}</small></p>
+    {% endtrans %}
+{% endblock %}

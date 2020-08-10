@@ -169,7 +169,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                          verbose_name=_("email token"))
 
     new_email = models.EmailField(_("new email address"), null=True, blank=True)
-
+    verified_email = models.BooleanField(null=False, blank=False, default=True)
     is_system = models.BooleanField(null=False, blank=False, default=False)
 
 

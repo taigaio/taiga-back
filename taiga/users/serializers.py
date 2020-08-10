@@ -86,6 +86,7 @@ class UserAdminSerializer(UserSerializer):
     max_public_projects = Field()
     max_memberships_private_projects = Field()
     max_memberships_public_projects = Field()
+    verified_email = Field()
 
     def get_total_private_projects(self, user):
         return user.owned_projects.filter(is_private=True).count()

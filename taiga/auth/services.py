@@ -24,6 +24,7 @@ NOTE: Python doesn't have java limitations for "everytghing
 should be contained in a class". Because of that, it
 not uses clasess and uses simple functions.
 """
+import uuid
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
@@ -115,6 +116,9 @@ def public_register(username:str, password:str, email:str, full_name:str):
     user_model = get_user_model()
     user = user_model(username=username,
                       email=email,
+                      email_token=str(uuid.uuid4()),
+                      new_email=email,
+                      verified_email=False,
                       full_name=full_name,
                       read_new_terms=True)
     user.set_password(password)

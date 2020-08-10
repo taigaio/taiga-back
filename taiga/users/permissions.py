@@ -60,6 +60,7 @@ class UserPermission(TaigaResourcePermission):
     liked_perms = AllowAny()
     voted_perms = AllowAny()
     watched_perms = AllowAny()
+    send_verification_email_perms = IsAuthenticated()
 
 
 class RolesPermission(TaigaResourcePermission):
