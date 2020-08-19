@@ -136,8 +136,7 @@ class UsersViewSet(ModelCrudViewSet):
             # We need to generate a token for the email
             request.user.email_token = str(uuid.uuid4())
             request.user.new_email = new_email
-            request.user.verified_email = False
-            request.user.save(update_fields=["email_token", "new_email", "verified_email"])
+            request.user.save(update_fields=["email_token", "new_email"])
             email = mail_builder.change_email(
                 request.user.new_email,
                 {
