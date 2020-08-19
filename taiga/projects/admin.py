@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import transaction
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -172,7 +172,6 @@ class ProjectAdmin(admin.ModelAdmin):
     actions = [
         "make_public",
         "make_private",
-        "delete_selected"
     ]
 
     @transaction.atomic
@@ -207,8 +206,12 @@ class ProjectAdmin(admin.ModelAdmin):
         self.message_user(request, _("{count} successfully made private.").format(count=total_updates))
     make_private.short_description = _("Make private")
 
-    def delete_selected(self, request, queryset):
-        # NOTE: This must be equal to taiga.projects.models.Project.delete_related_content
+    def delete_queryset(self, request, queryset):
+        # NOTE: Override delete_queryset so its use the same approach used in
+        # taiga.projects.models.Project.delete_related_content.
+        #
+        # More info https://docs.djangoproject.com/en/2.2/ref/contrib/admin/actions/#admin-actions
+
         from taiga.events.apps import (connect_events_signals,
                                        disconnect_events_signals)
         from taiga.projects.tasks.apps import (connect_all_tasks_signals,
@@ -226,17 +229,14 @@ class ProjectAdmin(admin.ModelAdmin):
         disconnect_all_userstories_signals()
         disconnect_memberships_signals()
 
-        r = admin.actions.delete_selected(self, request, queryset)
-
-        connect_events_signals()
-        connect_all_issues_signals()
-        connect_all_tasks_signals()
-        connect_all_userstories_signals()
-        connect_memberships_signals()
-
-        return r
-    delete_selected.short_description = _("Delete selected %(verbose_name_plural)s")
-
+        try:
+            super().delete_queryset(request, queryset)
+        finally:
+            connect_events_signals()
+            connect_all_issues_signals()
+            connect_all_tasks_signals()
+            connect_all_userstories_signals()
+            connect_memberships_signals()
 
 # User Stories common admins
 class PointsAdmin(admin.ModelAdmin):

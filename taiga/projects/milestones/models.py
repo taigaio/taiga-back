@@ -38,10 +38,22 @@ class Milestone(WatchedModelMixin, models.Model):
     # TODO: Change the unique restriction to a unique together with the project id
     slug = models.SlugField(max_length=250, db_index=True, null=False, blank=True,
                             verbose_name=_("slug"))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                              related_name="owned_milestones", verbose_name=_("owner"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="milestones", verbose_name=_("project"))
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        related_name="owned_milestones",
+        verbose_name=_("owner"),
+        on_delete=models.SET_NULL,
+    )
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="milestones",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE,
+    )
     estimated_start = models.DateField(verbose_name=_("estimated start date"))
     estimated_finish = models.DateField(verbose_name=_("estimated finish date"))
     created_date = models.DateTimeField(null=False, blank=False,
@@ -63,9 +75,6 @@ class Milestone(WatchedModelMixin, models.Model):
         verbose_name_plural = "milestones"
         ordering = ["project", "created_date"]
         unique_together = [("name", "project"), ("slug", "project")]
-        permissions = (
-            ("view_milestone", "Can view milestone"),
-        )
 
     def __str__(self):
         return self.name

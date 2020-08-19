@@ -34,11 +34,22 @@ from taiga.projects.mixins.blocked import BlockedMixin
 class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="epics", verbose_name=_("project"))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                              related_name="owned_epics", verbose_name=_("owner"),
-                              on_delete=models.SET_NULL)
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="epics",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE,
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        related_name="owned_epics",
+        verbose_name=_("owner"),
+        on_delete=models.SET_NULL
+    )
     status = models.ForeignKey("projects.EpicStatus", null=True, blank=True,
                                related_name="epics", verbose_name=_("status"),
                                on_delete=models.SET_NULL)
@@ -57,9 +68,15 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     color = models.CharField(max_length=32, null=False, blank=True,
                              default=generate_random_predefined_hex_color,
                              verbose_name=_("color"))
-    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
-                                    default=None, related_name="epics_assigned_to_me",
-                                    verbose_name=_("assigned to"))
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        default=None,
+        related_name="epics_assigned_to_me",
+        verbose_name=_("assigned to"),
+        on_delete=models.SET_NULL,
+    )
     client_requirement = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("is client requirement"))
     team_requirement = models.BooleanField(default=False, null=False, blank=True,

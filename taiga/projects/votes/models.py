@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Votes(models.Model):
-    content_type = models.ForeignKey("contenttypes.ContentType")
+    content_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
     count = models.PositiveIntegerField(null=False, blank=False, default=0, verbose_name=_("count"))
@@ -45,11 +45,17 @@ class Votes(models.Model):
 
 
 class Vote(models.Model):
-    content_type = models.ForeignKey("contenttypes.ContentType")
+    content_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
-                             related_name="votes", verbose_name=_("user"))
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=False,
+        blank=False,
+        related_name="votes",
+        verbose_name=_("user"),
+        on_delete=models.CASCADE,
+    )
     created_date = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                         verbose_name=_("created date"))
 

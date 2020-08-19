@@ -16,14 +16,18 @@
 from django.apps import apps
 from django.core.files.base import ContentFile
 from django.db.models import signals
+from django.utils.translation import ugettext_lazy as _
 
 from taiga.projects.attachments.models import Attachment
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.services import (get_history_queryset_by_model_instance,
                                              make_key_from_model_object)
+from taiga.projects.issues.models import Issue
 from taiga.projects.notifications.models import Watched
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
+from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
+from taiga.projects.votes.models import Vote, Votes
 
 
 def promote_to_us(source_obj):
@@ -38,8 +42,8 @@ def promote_to_us(source_obj):
     us_refs = []
     for obj in queryset:
         us = UserStory.objects.create(
-            generated_from_issue_id=obj.id if model_class.__name__ == "Issue" else None,
-            generated_from_task_id=obj.id if model_class.__name__ == "Task" else None,
+            generated_from_issue_id=obj.id if isinstance(source_obj, Issue) else None,
+            from_task_ref = _("Task #%(ref)s") % {"ref": obj.ref} if isinstance(source_obj, Task) else None,
             project=obj.project,
             owner=obj.owner,
             subject=obj.subject,
@@ -49,6 +53,16 @@ def promote_to_us(source_obj):
         )
 
         content_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(us)
+
+        # add data only for task conversion
+        if isinstance(source_obj, Task):
+            us.due_date = obj.due_date
+            us.due_date_reason = obj.due_date_reason
+            us.is_blocked = obj.is_blocked
+            us.blocked_note = obj.blocked_note
+            us.save()
+
+            _import_votes(obj, us)
 
         _import_assigned(obj, us)
         _import_comments(obj, us)
@@ -71,7 +85,10 @@ def _import_comments(source_obj, target_obj):
     signals.pre_save.receivers = []
     signals.post_save.receivers = []
 
-    comments = get_history_queryset_by_model_instance(source_obj).exclude(comment__exact='')
+    comments = (
+        get_history_queryset_by_model_instance(source_obj)
+            .exclude(comment__exact='')
+    )
     us_key = make_key_from_model_object(target_obj)
 
     for entry in comments.all():
@@ -85,6 +102,8 @@ def _import_comments(source_obj, target_obj):
             values=entry.values,
             comment=entry.comment,
             comment_html=entry.comment_html,
+            delete_comment_date=entry.delete_comment_date,
+            delete_comment_user=entry.delete_comment_user,
             is_hidden=False,
             is_snapshot=False,
             created_at=entry.created_at
@@ -115,6 +134,23 @@ def _import_attachments(source_obj, target_obj, content_type):
             size=attachment.size,
             created_date=attachment.created_date,
             is_deprecated=attachment.is_deprecated,
+            description=attachment.description,
         )
         attached_file = attachment.attached_file
         att.attached_file.save(attachment.name, ContentFile(attached_file.read()), save=True)
+
+
+def _import_votes(source_obj, target_obj):
+    source_content_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(source_obj)
+    target_content_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(target_obj)
+    (
+        Vote.objects
+            .filter(content_type=source_content_type, object_id=source_obj.id)
+            .update(content_type=target_content_type, object_id=target_obj.id)
+    )
+
+    (
+        Votes.objects
+            .filter(content_type=source_content_type, object_id=source_obj.id)
+            .update(content_type=target_content_type, object_id=target_obj.id)
+    )

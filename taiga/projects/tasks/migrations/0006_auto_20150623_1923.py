@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='task',
             name='status',
-            field=models.ForeignKey(blank=True, null=True, to='projects.TaskStatus', related_name='tasks', verbose_name='status'),
+            field=models.ForeignKey(blank=True, null=True, to='projects.TaskStatus', related_name='tasks', verbose_name='status', on_delete=models.SET_NULL),
             preserve_default=True,
         ),
     ]

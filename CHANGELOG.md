@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 5.5.0 (2020-08-19)
+
+### Features
+
+- Verify user email.
+
+- Task promotion creates user story and deletes original task.
+
+### Misc
+
+- Upgraded Django version to 2.2. This is a BREAKING CHANGE. Contributed
+  modules should be upgraded.
+
+- Several minor bugfixes.
+
 ## 5.0.15 (2020-06-17)
 
 ### Misc
@@ -20,7 +35,7 @@
 
 - Resolved Django deprecation warnings to prepare for an upgrade.
 
-- Added option to disallow anonymous access to user profiles. 
+- Added option to disallow anonymous access to user profiles.
 
 ### Misc
 
@@ -269,12 +284,12 @@
 
 - Minor icon changes
 - Lots of small bugfixes
- 
+
 ## 3.4.5 (2018-10-15)
 
 ### Features
 
-- Prevent local Webhooks 
+- Prevent local Webhooks
 
 ## 3.4.4 (2018-09-19)
 

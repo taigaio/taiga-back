@@ -19,7 +19,7 @@
 
 import pytest
 import json
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 

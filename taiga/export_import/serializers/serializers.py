@@ -269,6 +269,7 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
     finish_date = DateTimeField()
     generated_from_issue = SlugRelatedField(slug_field="ref")
     generated_from_task = SlugRelatedField(slug_field="ref")
+    from_task_ref = Field()
     ref = Field()
     is_closed = Field()
     backlog_order = Field()

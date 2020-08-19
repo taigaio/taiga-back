@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('order', models.IntegerField(verbose_name='order', default=10000)),
                 ('created_date', models.DateTimeField(verbose_name='created date', default=django.utils.timezone.now)),
                 ('modified_date', models.DateTimeField(verbose_name='modified date')),
-                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='issuecustomattributes')),
+                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='issuecustomattributes', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['project', 'order', 'name'],
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('order', models.IntegerField(verbose_name='order', default=10000)),
                 ('created_date', models.DateTimeField(verbose_name='created date', default=django.utils.timezone.now)),
                 ('modified_date', models.DateTimeField(verbose_name='modified date')),
-                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='taskcustomattributes')),
+                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='taskcustomattributes', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['project', 'order', 'name'],
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('order', models.IntegerField(verbose_name='order', default=10000)),
                 ('created_date', models.DateTimeField(verbose_name='created date', default=django.utils.timezone.now)),
                 ('modified_date', models.DateTimeField(verbose_name='modified date')),
-                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='userstorycustomattributes')),
+                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='userstorycustomattributes', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['project', 'order', 'name'],

@@ -1,11 +1,11 @@
-{% trans signature=sr("signature"), product_name=sr("product_name") %}
+{% trans signature=sr("signature"), product_name=sr("product_name"), url=resolve_front_url("verify-email", user.email_token), support_email=sr("support.email") %}
 Thank you for registering in {{ product_name }}
 
-We hope you enjoy it
+We're thrilled you've joined our growing community of professionals revolutionizing their way of working and hope you enjoy it.
 
-We built Taiga because we wanted the project management tool that sits open on our computers all day long, to serve as a continued reminder of why we love to collaborate, code and design.
+Please confirm your email: {{ url }}
 
-We built it to be beautiful, elegant, simple to use and fun - without forsaking flexibility and power.
+Have a question? Give us a nudge if you ever need a helping hand, we're at {{ support_email }}.
 
 --
 {{ signature }}

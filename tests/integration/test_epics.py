@@ -22,7 +22,7 @@ import csv
 
 from unittest import mock
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from taiga.base.utils import json
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS

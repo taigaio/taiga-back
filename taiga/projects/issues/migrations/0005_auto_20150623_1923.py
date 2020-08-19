@@ -14,25 +14,25 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='issue',
             name='priority',
-            field=models.ForeignKey(blank=True, null=True, to='projects.Priority', related_name='issues', verbose_name='priority'),
+            field=models.ForeignKey(blank=True, null=True, to='projects.Priority', related_name='issues', verbose_name='priority', on_delete=models.SET_NULL),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='issue',
             name='severity',
-            field=models.ForeignKey(blank=True, null=True, to='projects.Severity', related_name='issues', verbose_name='severity'),
+            field=models.ForeignKey(blank=True, null=True, to='projects.Severity', related_name='issues', verbose_name='severity', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='issue',
             name='status',
-            field=models.ForeignKey(blank=True, null=True, to='projects.IssueStatus', related_name='issues', verbose_name='status'),
+            field=models.ForeignKey(blank=True, null=True, to='projects.IssueStatus', related_name='issues', verbose_name='status', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='issue',
             name='type',
-            field=models.ForeignKey(blank=True, null=True, to='projects.IssueType', related_name='issues', verbose_name='type'),
+            field=models.ForeignKey(blank=True, null=True, to='projects.IssueType', related_name='issues', verbose_name='type', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

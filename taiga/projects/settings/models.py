@@ -29,8 +29,8 @@ class UserProjectSettings(models.Model):
     This class represents a persistence for
     project user notifications preference.
     """
-    project = models.ForeignKey("projects.Project", related_name="user_project_settings")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_project_settings")
+    project = models.ForeignKey("projects.Project", related_name="user_project_settings", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_project_settings", on_delete=models.CASCADE)
     homepage = models.SmallIntegerField(choices=HOMEPAGE_CHOICES,
                                         default=Section.timeline)
 

@@ -28,7 +28,7 @@ import pytz
 
 from unittest.mock import MagicMock, patch
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone
 
 from django.apps import apps

@@ -289,7 +289,8 @@ class UsersViewSet(ModelCrudViewSet):
         user.email = new_email
         user.new_email = None
         user.email_token = None
-        user.save(update_fields=["email", "new_email", "email_token"])
+        user.verified_email = True
+        user.save(update_fields=["email", "new_email", "email_token", "verified_email"])
 
         user_change_email_signal.send(sender=user.__class__,
                                       user=user,
@@ -330,7 +331,6 @@ class UsersViewSet(ModelCrudViewSet):
         user.cancel()
         return response.NoContent()
 
-
     @list_route(methods=["POST"])
     def export(self, request, pk=None):
         """
@@ -343,6 +343,17 @@ class UsersViewSet(ModelCrudViewSet):
         }
         return response.Ok(response_data)
 
+    @list_route(methods=["POST"])
+    def send_verification_email(self, request, pk=None):
+        """Send email to verify the user email address."""
+        self.check_permissions(request, "send_verification_email", None)
+        if request.user.verified_email is True:
+            raise exc.BadRequest(_("Email address already verified"))
+        if not request.user.email_token or request.user.email != request.user.new_email:
+            raise exc.BadRequest(_("Unable to verify this email address"))
+        email = mail_builder.send_verification(request.user, {"user": request.user})
+        email.send()
+        return response.Ok({"detail": _("Mail sended successful!")})
 
     @detail_route(methods=["GET"])
     def contacts(self, request, *args, **kwargs):

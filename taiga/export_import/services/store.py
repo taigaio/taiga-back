@@ -759,7 +759,8 @@ def _create_project_object(data):
 
 
 def _create_membership_for_project_owner(project):
-    if project.memberships.filter(user=project.owner).count() == 0:
+    owner_membership = project.memberships.filter(user=project.owner).first()
+    if owner_membership is None:
         if project.roles.all().count() > 0:
             Membership.objects.create(
                 project=project,
@@ -768,6 +769,9 @@ def _create_membership_for_project_owner(project):
                 role=project.roles.all().first(),
                 is_admin=True
             )
+    elif not owner_membership.is_admin:
+            owner_membership.is_admin = True
+            owner_membership.save()
 
 
 def _populate_project_object(project, data):

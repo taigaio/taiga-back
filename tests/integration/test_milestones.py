@@ -23,7 +23,7 @@ import pytz
 from datetime import datetime, timedelta
 from urllib.parse import quote
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from taiga.base.utils import json
 

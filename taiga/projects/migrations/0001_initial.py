@@ -30,7 +30,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['project', 'user__full_name', 'user__username', 'user__email', 'email'],
                 'verbose_name_plural': 'membershipss',
-                'permissions': (('view_membership', 'Can view membership'),),
                 'verbose_name': 'membership',
             },
             bases=(models.Model,),
@@ -39,7 +38,7 @@ class Migration(migrations.Migration):
             name='Project',
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
-                ('tags', django.contrib.postgres.fields.ArrayField(base_field=models.TextField(), blank=True, default=[], null=True, size=None, verbose_name='tags')),
+                ('tags', django.contrib.postgres.fields.ArrayField(base_field=models.TextField(), blank=True, default=list, null=True, size=None, verbose_name='tags')),
                 ('name', models.CharField(max_length=250, unique=True, verbose_name='name')),
                 ('slug', models.SlugField(max_length=250, unique=True, verbose_name='slug', blank=True)),
                 ('description', models.TextField(verbose_name='description')),
@@ -53,15 +52,14 @@ class Migration(migrations.Migration):
                 ('is_issues_activated', models.BooleanField(default=True, verbose_name='active issues panel')),
                 ('videoconferences', models.CharField(max_length=250, null=True, choices=[('appear-in', 'AppearIn'), ('talky', 'Talky')], verbose_name='videoconference system', blank=True)),
                 ('videoconferences_salt', models.CharField(max_length=250, null=True, verbose_name='videoconference room salt', blank=True)),
-                ('anon_permissions', django.contrib.postgres.fields.ArrayField(base_field=models.TextField(choices=[('view_project', 'View project'), ('view_milestones', 'View milestones'), ('view_us', 'View user stories'), ('view_tasks', 'View tasks'), ('view_issues', 'View issues'), ('view_wiki_pages', 'View wiki pages'), ('view_wiki_links', 'View wiki links')]), blank=True, default=[], null=True, size=None, verbose_name='anonymous permissions')),
-                ('public_permissions', django.contrib.postgres.fields.ArrayField(base_field=models.TextField(choices=[('view_project', 'View project'), ('view_milestones', 'View milestones'), ('view_us', 'View user stories'), ('view_issues', 'View issues'), ('vote_issues', 'Vote issues'), ('view_tasks', 'View tasks'), ('view_wiki_pages', 'View wiki pages'), ('view_wiki_links', 'View wiki links'), ('request_membership', 'Request membership'), ('add_us_to_project', 'Add user story to project'), ('add_comments_to_us', 'Add comments to user stories'), ('add_comments_to_task', 'Add comments to tasks'), ('add_issue', 'Add issues'), ('add_comments_issue', 'Add comments to issues'), ('add_wiki_page', 'Add wiki page'), ('modify_wiki_page', 'Modify wiki page'), ('add_wiki_link', 'Add wiki link'), ('modify_wiki_link', 'Modify wiki link')]), blank=True, default=[], null=True, size=None, verbose_name='user permissions')),
+                ('anon_permissions', django.contrib.postgres.fields.ArrayField(base_field=models.TextField(choices=[('view_project', 'View project'), ('view_milestones', 'View milestones'), ('view_us', 'View user stories'), ('view_tasks', 'View tasks'), ('view_issues', 'View issues'), ('view_wiki_pages', 'View wiki pages'), ('view_wiki_links', 'View wiki links')]), blank=True, default=list, null=True, size=None, verbose_name='anonymous permissions')),
+                ('public_permissions', django.contrib.postgres.fields.ArrayField(base_field=models.TextField(choices=[('view_project', 'View project'), ('view_milestones', 'View milestones'), ('view_us', 'View user stories'), ('view_issues', 'View issues'), ('vote_issues', 'Vote issues'), ('view_tasks', 'View tasks'), ('view_wiki_pages', 'View wiki pages'), ('view_wiki_links', 'View wiki links'), ('request_membership', 'Request membership'), ('add_us_to_project', 'Add user story to project'), ('add_comments_to_us', 'Add comments to user stories'), ('add_comments_to_task', 'Add comments to tasks'), ('add_issue', 'Add issues'), ('add_comments_issue', 'Add comments to issues'), ('add_wiki_page', 'Add wiki page'), ('modify_wiki_page', 'Modify wiki page'), ('add_wiki_link', 'Add wiki link'), ('modify_wiki_link', 'Modify wiki link')]), blank=True, default=list, null=True, size=None, verbose_name='user permissions')),
                 ('is_private', models.BooleanField(default=False, verbose_name='is private')),
-                ('tags_colors', django.contrib.postgres.fields.ArrayField(base_field=django.contrib.postgres.fields.ArrayField(base_field=models.TextField(blank=True, null=True), size=2), blank=True, default=[], null=True, size=None, verbose_name='tags colors')),
+                ('tags_colors', django.contrib.postgres.fields.ArrayField(base_field=django.contrib.postgres.fields.ArrayField(base_field=models.TextField(blank=True, null=True), size=2), blank=True, default=list, null=True, size=None, verbose_name='tags colors')),
             ],
             options={
                 'ordering': ['name'],
                 'verbose_name_plural': 'projects',
-                'permissions': (('view_project', 'Can view project'),),
                 'verbose_name': 'project',
             },
             bases=(models.Model,),
@@ -75,21 +73,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='owner',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='owned_projects', verbose_name='owner'),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='owned_projects', verbose_name='owner', on_delete=models.SET_NULL),
             preserve_default=True,
         ),
 
         migrations.AddField(
             model_name='membership',
             name='user',
-            field=models.ForeignKey(blank=True, default=None, to=settings.AUTH_USER_MODEL, null=True, related_name='memberships'),
+            field=models.ForeignKey(blank=True, default=None, to=settings.AUTH_USER_MODEL, null=True, related_name='memberships', on_delete=models.CASCADE),
             preserve_default=True,
         ),
 
         migrations.AddField(
             model_name='membership',
             name='project',
-            field=models.ForeignKey(default=1, to='projects.Project', related_name='memberships'),
+            field=models.ForeignKey(default=1, to='projects.Project', related_name='memberships', on_delete=models.CASCADE),
             preserve_default=False,
         ),
 
@@ -101,7 +99,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='membership',
             name='role',
-            field=models.ForeignKey(related_name='memberships', to='users.Role', default=1),
+            field=models.ForeignKey(related_name='memberships', to='users.Role', default=1, on_delete=models.CASCADE),
             preserve_default=False,
         ),
     ]

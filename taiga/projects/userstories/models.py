@@ -34,15 +34,30 @@ from taiga.projects.mixins.blocked import BlockedMixin
 
 
 class RolePoints(models.Model):
-    user_story = models.ForeignKey("UserStory", null=False, blank=False,
-                                   related_name="role_points",
-                                   verbose_name=_("user story"))
-    role = models.ForeignKey("users.Role", null=False, blank=False,
-                             related_name="role_points",
-                             verbose_name=_("role"))
-    points = models.ForeignKey("projects.Points", null=True, blank=False,
-                               related_name="role_points",
-                               verbose_name=_("points"))
+    user_story = models.ForeignKey(
+        "UserStory",
+        null=False,
+        blank=False,
+        related_name="role_points",
+        verbose_name=_("user story"),
+        on_delete=models.CASCADE,
+    )
+    role = models.ForeignKey(
+        "users.Role",
+        null=False,
+        blank=False,
+        related_name="role_points",
+        verbose_name=_("role"),
+        on_delete=models.CASCADE,
+    )
+    points = models.ForeignKey(
+        "projects.Points",
+        null=True,
+        blank=False,
+        related_name="role_points",
+        verbose_name=_("points"),
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
         verbose_name = "role points"
@@ -64,8 +79,14 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
                                   default=None, related_name="user_stories",
                                   on_delete=models.SET_NULL, verbose_name=_("milestone"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="user_stories", verbose_name=_("project"))
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="user_stories",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE,
+    )
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="owned_user_stories", verbose_name=_("owner"),
                               on_delete=models.SET_NULL)
@@ -94,9 +115,15 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
     subject = models.TextField(null=False, blank=False,
                                verbose_name=_("subject"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
-    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
-                                    default=None, related_name="userstories_assigned_to_me",
-                                    verbose_name=_("assigned to"))
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        default=None,
+        related_name="userstories_assigned_to_me",
+        verbose_name=_("assigned to"),
+        on_delete=models.SET_NULL,
+    )
     assigned_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True,
                                     default=None, related_name="assigned_userstories",
                                     verbose_name=_("assigned users"))
@@ -113,6 +140,7 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
                                              on_delete=models.SET_NULL,
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from task"))
+    from_task_ref = models.TextField(null=True, blank=True, verbose_name=_("reference from task"))
     external_reference = ArrayField(models.TextField(null=False, blank=False),
                                     null=True, blank=True, default=None, verbose_name=_("external reference"))
 

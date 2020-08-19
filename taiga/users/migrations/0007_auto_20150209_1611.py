@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('key', models.SlugField()),
                 ('value', models.CharField(max_length=300)),
                 ('extra', taiga.base.db.models.fields.JSONField()),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },

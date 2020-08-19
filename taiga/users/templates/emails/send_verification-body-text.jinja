@@ -1,0 +1,10 @@
+{% trans signature=sr("signature"), full_name=user.get_full_name(), url=resolve_front_url('verify-email', user.email_token) %}
+Hello {{ full_name }}, please verify your email
+
+{{ url }}
+
+You can ignore this message if you did not request.
+
+---
+{{ signature }}
+{% endtrans %}

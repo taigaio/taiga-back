@@ -38,8 +38,8 @@ class Migration(migrations.Migration):
                 ('auth_code', models.CharField(null=True, blank=True, max_length=255, default=None)),
                 ('token', models.CharField(null=True, blank=True, max_length=255, default=None)),
                 ('state', models.CharField(null=True, blank=True, max_length=255, default='')),
-                ('application', models.ForeignKey(verbose_name='application', related_name='application_tokens', to='external_apps.Application')),
-                ('user', models.ForeignKey(verbose_name='user', related_name='application_tokens', to=settings.AUTH_USER_MODEL)),
+                ('application', models.ForeignKey(verbose_name='application', related_name='application_tokens', to='external_apps.Application', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(verbose_name='user', related_name='application_tokens', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },

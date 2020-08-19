@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='project',
-            options={'permissions': (('view_project', 'Can view project'),), 'ordering': ['name', 'id'], 'verbose_name': 'project', 'verbose_name_plural': 'projects'},
+            options={'ordering': ['name', 'id'], 'verbose_name': 'project', 'verbose_name_plural': 'projects'},
         ),
         migrations.AlterIndexTogether(
             name='project',
