@@ -2,10 +2,18 @@
 
 ## Unreleased
 
-- Upgrade Django version to 2.2. This is a BREAKING CHANGE. Contributed modules
-  should be upgraded.
+## 5.5.0 (2020-08-19)
+
+### Features
+
+- Verify user email.
+
+- Task promotion creates user story and deletes original task.
 
 ### Misc
+
+- Upgraded Django version to 2.2. This is a BREAKING CHANGE. Contributed
+  modules should be upgraded.
 
 - Several minor bugfixes.
 
