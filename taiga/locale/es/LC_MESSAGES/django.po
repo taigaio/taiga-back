@@ -25,8 +25,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-08-19 10:03+0200\n"
-"PO-Revision-Date: 2020-08-19 08:16+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2020-08-19 10:45+0000\n"
+"Last-Translator: Libre Beats <carlos.letamendia@aitire.es>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -836,6 +836,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Hola, %(user)s,</p>\n"
+"    <p>Tu proyecto no se ha importado correctamente.</p>\n"
+"    <p>Se ha informado a los administradores de sistema de %(product_name)s."
+"<br/> Por favor, inténtalo de nuevo o contacta con el equipo de soporte en\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #699b05\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>Detalles del error:</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:1
@@ -954,6 +966,8 @@ msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
+"Una épica tiene una historia relacionada con un proyecto externo "
+"(%(project)s) y no se puede importar."
 
 #: taiga/external_apps/api.py:43 taiga/external_apps/api.py:70
 #: taiga/external_apps/api.py:82
@@ -3754,7 +3768,7 @@ msgstr ""
 #: taiga/projects/services/promote.py:46
 #, python-format
 msgid "Task #%(ref)s"
-msgstr ""
+msgstr "Tarea #%(ref)s"
 
 #: taiga/projects/services/stats.py:197
 msgid "Future sprint"
@@ -4672,7 +4686,7 @@ msgstr "generada desde una tarea"
 
 #: taiga/projects/userstories/models.py:143
 msgid "reference from task"
-msgstr ""
+msgstr "referencia de tarea"
 
 #: taiga/projects/userstories/validators.py:43
 msgid "There's no user story with that id"
@@ -4708,7 +4722,7 @@ msgstr "El usuario aún existe en el proyecto"
 
 #: taiga/projects/validators.py:169
 msgid "Invalid operation"
-msgstr ""
+msgstr "Operación inválida"
 
 #: taiga/projects/validators.py:181
 msgid "Invalid role for the project"
@@ -4877,11 +4891,11 @@ msgstr "Inválido, ¿estás seguro de que el token es correcto?"
 
 #: taiga/users/api.py:352
 msgid "Email address already verified"
-msgstr ""
+msgstr "Correo electrónico ya verificado"
 
 #: taiga/users/api.py:354
 msgid "Unable to verify this email address"
-msgstr ""
+msgstr "No se ha podido verificar este correo electrónico"
 
 #: taiga/users/models.py:99
 msgid "superuser status"
@@ -5002,11 +5016,11 @@ msgid ""
 msgstr ""
 "\n"
 "    <h1>Cambia tu correo electrónico</h1>\n"
-"    <p>Hola %(full_name)s,<br />por favor, confirma que esta correo "
+"    <p>Hola %(full_name)s,<br />por favor, confirma que este correo "
 "electrónico te pertenece</p>\n"
-"    <a class=\"button\" href=\"%(url)s\" title=\"Confirm email\">Confirmae "
+"    <a class=\"button\" href=\"%(url)s\" title=\"Confirm email\">Confirmar "
 "correo electrónico\n"
-"    <p>Puede ignorar este mensaje si no lo solicitó.</p>\n"
+"    <p>Puedes ignorar este mensaje si no lo has solicitado.</p>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 
@@ -5104,6 +5118,20 @@ msgid ""
 "        </td>\n"
 "        "
 msgstr ""
+"\n"
+"        <td>\n"
+"            <h2>Gracias por registrarte en %(product_name)s</h2>\n"
+"            <p>Nos encanta que te hayas unido a nuestra creciente comunidad "
+"de profesionales que están revolucionando su forma de trabajar, y esperamos "
+"que lo disfrutes.</p>\n"
+"            <p>Por favor, confirma tu correo electrónico</p>\n"
+"            <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
+"\">Confirmar correo electrónico</a>\n"
+"            <p>¿Tienes preguntas? Contacta con nosotros si necesitas ayuda, "
+"estamos en %(support_email)s.</p>\n"
+"            <p><small>%(signature)s</small></p>\n"
+"        </td>\n"
+"        "
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:24
 #, python-format
@@ -5135,6 +5163,20 @@ msgid ""
 "--\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Gracias por registrarte en %(product_name)s\n"
+"\n"
+"Nos encanta que te hayas unido a nuestra creciente comunidad de "
+"profesionales que están revolucionando su forma de trabajar, y esperamos que "
+"lo disfrutes.\n"
+"\n"
+"Por favor, confirma tu correo electrónico: %(url)s\n"
+"\n"
+"¿Tienes preguntas? Contacta con nosotros si necesitas ayuda, estamos en "
+"%(support_email)s.\n"
+"\n"
+"--\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:13
 #, python-format
@@ -5162,6 +5204,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Confirma tu correo electrónico</h1>\n"
+"    <p>Hola %(full_name)s,<br />por favor verifica tu correo electrónico</"
+"p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Verify email\">Verificar "
+"correo electrónico</a>\n"
+"    <p>Puedes ignorar este mensaje si no lo has solicitado.</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/send_verification-body-text.jinja:1
 #, python-format
@@ -5176,10 +5227,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hola %(full_name)s, por favor verifica tu correo electrónico \n"
+"\n"
+"%(url)s\n"
+"\n"
+"Puedes ignorar este correo si no lo has solicitado.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/send_verification-subject.jinja:1
 msgid "[Taiga] Verify email"
-msgstr ""
+msgstr "[Taiga] Verificación de correo electrónico"
 
 #: taiga/users/validators.py:48
 msgid "invalid"
