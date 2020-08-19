@@ -98,6 +98,7 @@ def update_catalogs(resources=None, languages=None):
         "no_obsolete": False,
         "keep_pot": False,
         "verbosity": 0,
+        "add_location": None,
     }
 
     if resources is not None:
