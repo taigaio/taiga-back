@@ -39,6 +39,39 @@ def test_get_members_from_bulk():
     assert members[1].email == "member2@email.com"
 
 
+def test_create_member_forbidden_for_unverified_user(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create(verified_email=False)
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=john, is_admin=True)
+    url = reverse("memberships-list")
+
+    data = {"project": project.id, "role": tester.pk, "username": joseph.email}
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+
+
+def test_create_member_forbidden_for_unverified_user_in_bulk(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create(verified_email=False)
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=john, is_admin=True)
+    url = reverse("memberships-bulk-create")
+
+    data = {
+        "project_id": project.id,
+        "bulk_memberships":[{"role_id": tester.pk, "username": joseph.email}]
+    }
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+
+
 def test_create_member_using_email(client):
     project = f.ProjectFactory()
     john = f.UserFactory.create()

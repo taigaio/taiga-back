@@ -223,6 +223,13 @@ class MembershipValidator(validators.ModelValidator):
 
         return attrs
 
+    def validate(self, attrs):
+        request = self.context.get("request", None)
+        if request is not None and request.user.is_authenticated and not request.user.verified_email:
+            raise ValidationError(_("To add members to a project, first you have to verify your email address"))
+
+        return super().validate(attrs)
+
     def is_valid(self):
         errors = super().is_valid()
         if hasattr(self, "email") and self.object is not None:

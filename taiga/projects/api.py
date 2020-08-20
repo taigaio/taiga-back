@@ -989,6 +989,11 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
+        if not request.user.verified_email:
+            return response.BadRequest({
+                "_error_message": _("To add members to a project, first you have to verify your email address")
+            })
+
         if "bulk_memberships" in data and isinstance(data["bulk_memberships"], list):
             total_new_memberships = len(data["bulk_memberships"])
             self._check_if_project_can_have_more_memberships(project, total_new_memberships)
