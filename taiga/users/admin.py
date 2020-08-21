@@ -127,7 +127,7 @@ class UserAdmin(DjangoUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     list_display = ("username", "email", "full_name")
-    list_filter = ("is_superuser", "is_active")
+    list_filter = ("is_superuser", "is_active", "verified_email")
     search_fields = ("username", "full_name", "email")
     ordering = ("username",)
     filter_horizontal = ()
