@@ -27,8 +27,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-19 10:03+0200\n"
-"PO-Revision-Date: 2020-08-19 08:16+0000\n"
+"POT-Creation-Date: 2020-08-22 10:07+0200\n"
+"PO-Revision-Date: 2020-08-22 08:08+0000\n"
 "Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Chinese Simplified (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hans/)\n"
@@ -1565,11 +1565,11 @@ msgstr "{count} 成功的私有。"
 msgid "Make private"
 msgstr "私有"
 
-#: taiga/projects/api.py:181 taiga/users/api.py:245
+#: taiga/projects/api.py:181 taiga/users/api.py:244
 msgid "Incomplete arguments"
 msgstr "不完整的参数"
 
-#: taiga/projects/api.py:185 taiga/users/api.py:250
+#: taiga/projects/api.py:185 taiga/users/api.py:249
 msgid "Invalid image format"
 msgstr "非法的图片格式"
 
@@ -1581,11 +1581,11 @@ msgstr ""
 msgid "Invalid template description"
 msgstr ""
 
-#: taiga/projects/api.py:412 taiga/projects/api.py:1029
+#: taiga/projects/api.py:412 taiga/projects/api.py:1034
 msgid "Invalid user id"
 msgstr "无效用户ID"
 
-#: taiga/projects/api.py:418 taiga/projects/api.py:1035
+#: taiga/projects/api.py:418 taiga/projects/api.py:1040
 msgid "The user doesn't exist"
 msgstr "用户不存在"
 
@@ -1617,19 +1617,24 @@ msgstr ""
 msgid "Project does already have issue due dates"
 msgstr ""
 
-#: taiga/projects/api.py:1047
+#: taiga/projects/api.py:994 taiga/projects/validators.py:229
+msgid ""
+"To add members to a project, first you have to verify your email address"
+msgstr ""
+
+#: taiga/projects/api.py:1052
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
 msgstr ""
 
-#: taiga/projects/api.py:1057
+#: taiga/projects/api.py:1062
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr "该项目必须有一个所有者，至少一个用户必须是一个积极的管理员"
 
-#: taiga/projects/api.py:1091
+#: taiga/projects/api.py:1096
 msgid "You don't have permisions to see that."
 msgstr "你无权访问"
 
@@ -3254,8 +3259,8 @@ msgstr "项目结束"
 
 #: taiga/projects/services/transfer.py:62
 #: taiga/projects/services/transfer.py:69
-#: taiga/projects/services/transfer.py:72 taiga/users/api.py:194
-#: taiga/users/api.py:199
+#: taiga/projects/services/transfer.py:72 taiga/users/api.py:193
+#: taiga/users/api.py:198
 msgid "Token is invalid"
 msgstr "令牌无效"
 
@@ -4117,7 +4122,7 @@ msgstr ""
 msgid "Invalid role for the project"
 msgstr "此角色在该项目无效"
 
-#: taiga/projects/validators.py:196 taiga/projects/validators.py:251
+#: taiga/projects/validators.py:196 taiga/projects/validators.py:258
 msgid "The user must be a valid contact"
 msgstr "该用户必须是有效的联系方式"
 
@@ -4129,43 +4134,43 @@ msgstr "项目所有者必须是管理者"
 msgid "At least one user must be an active admin for this project."
 msgstr "一个项目至少有一名活跃的管理者"
 
-#: taiga/projects/validators.py:266
+#: taiga/projects/validators.py:273
 msgid "Invalid role ids. All roles must belong to the same project."
 msgstr "角色ID无效，所有角色必须属于同一项目"
 
-#: taiga/projects/validators.py:290
+#: taiga/projects/validators.py:297
 msgid "Default options"
 msgstr "默认选项"
 
-#: taiga/projects/validators.py:291
+#: taiga/projects/validators.py:298
 msgid "User story's statuses"
 msgstr "用户故事状态"
 
-#: taiga/projects/validators.py:292
+#: taiga/projects/validators.py:299
 msgid "Points"
 msgstr "点数"
 
-#: taiga/projects/validators.py:293
+#: taiga/projects/validators.py:300
 msgid "Task's statuses"
 msgstr "任务状态"
 
-#: taiga/projects/validators.py:294
+#: taiga/projects/validators.py:301
 msgid "Issue's statuses"
 msgstr "问题状态"
 
-#: taiga/projects/validators.py:295
+#: taiga/projects/validators.py:302
 msgid "Issue's types"
 msgstr "问题类型"
 
-#: taiga/projects/validators.py:296
+#: taiga/projects/validators.py:303
 msgid "Priorities"
 msgstr "优先级"
 
-#: taiga/projects/validators.py:297
+#: taiga/projects/validators.py:304
 msgid "Severities"
 msgstr "严重程度"
 
-#: taiga/projects/validators.py:298
+#: taiga/projects/validators.py:305
 msgid "Roles"
 msgstr "角色"
 
@@ -4242,44 +4247,44 @@ msgstr "重复的邮件地址"
 msgid "Invalid email"
 msgstr ""
 
-#: taiga/users/api.py:173
+#: taiga/users/api.py:172
 msgid "Invalid username or email"
 msgstr "用户名称或邮件地址无效"
 
-#: taiga/users/api.py:182 taiga/users/api.py:357
+#: taiga/users/api.py:181 taiga/users/api.py:356
 msgid "Mail sended successful!"
 msgstr "邮件发送成功！"
 
-#: taiga/users/api.py:220
+#: taiga/users/api.py:219
 msgid "Current password parameter needed"
 msgstr "输入当前密码"
 
-#: taiga/users/api.py:223
+#: taiga/users/api.py:222
 msgid "New password parameter needed"
 msgstr "输入新密码"
 
-#: taiga/users/api.py:226
+#: taiga/users/api.py:225
 msgid "Invalid password length at least 6 charaters needed"
 msgstr "无效密码，长度至少6位"
 
-#: taiga/users/api.py:229
+#: taiga/users/api.py:228
 msgid "Invalid current password"
 msgstr "当前密码无效"
 
-#: taiga/users/api.py:276 taiga/users/api.py:282
+#: taiga/users/api.py:275 taiga/users/api.py:281
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr "无效，请确定令牌正确，之前使用过？"
 
-#: taiga/users/api.py:319 taiga/users/api.py:327 taiga/users/api.py:330
+#: taiga/users/api.py:318 taiga/users/api.py:326 taiga/users/api.py:329
 msgid "Invalid, are you sure the token is correct?"
 msgstr "无效，请确定令牌正确？"
 
-#: taiga/users/api.py:352
+#: taiga/users/api.py:351
 msgid "Email address already verified"
 msgstr ""
 
-#: taiga/users/api.py:354
+#: taiga/users/api.py:353
 msgid "Unable to verify this email address"
 msgstr ""
 

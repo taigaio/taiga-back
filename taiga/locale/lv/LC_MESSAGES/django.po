@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-19 10:03+0200\n"
-"PO-Revision-Date: 2020-08-19 08:16+0000\n"
+"POT-Creation-Date: 2020-08-22 10:07+0200\n"
+"PO-Revision-Date: 2020-08-22 08:08+0000\n"
 "Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Latvian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/lv/)\n"
@@ -1678,11 +1678,11 @@ msgstr "{count} sekmīgi padarīts privāts."
 msgid "Make private"
 msgstr "Padarīt privātu"
 
-#: taiga/projects/api.py:181 taiga/users/api.py:245
+#: taiga/projects/api.py:181 taiga/users/api.py:244
 msgid "Incomplete arguments"
 msgstr "Nepietiekoši argumenti."
 
-#: taiga/projects/api.py:185 taiga/users/api.py:250
+#: taiga/projects/api.py:185 taiga/users/api.py:249
 msgid "Invalid image format"
 msgstr "Nederīgs attēla formāts"
 
@@ -1694,11 +1694,11 @@ msgstr "Sagataves nosaukums nav derīgs"
 msgid "Invalid template description"
 msgstr ""
 
-#: taiga/projects/api.py:412 taiga/projects/api.py:1029
+#: taiga/projects/api.py:412 taiga/projects/api.py:1034
 msgid "Invalid user id"
 msgstr ""
 
-#: taiga/projects/api.py:418 taiga/projects/api.py:1035
+#: taiga/projects/api.py:418 taiga/projects/api.py:1040
 msgid "The user doesn't exist"
 msgstr "Tāds lietotājs nepastāv"
 
@@ -1730,19 +1730,24 @@ msgstr ""
 msgid "Project does already have issue due dates"
 msgstr ""
 
-#: taiga/projects/api.py:1047
+#: taiga/projects/api.py:994 taiga/projects/validators.py:229
+msgid ""
+"To add members to a project, first you have to verify your email address"
+msgstr ""
+
+#: taiga/projects/api.py:1052
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
 msgstr ""
 
-#: taiga/projects/api.py:1057
+#: taiga/projects/api.py:1062
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
 
-#: taiga/projects/api.py:1091
+#: taiga/projects/api.py:1096
 msgid "You don't have permisions to see that."
 msgstr ""
 
@@ -3340,8 +3345,8 @@ msgstr "Projekta beigas"
 
 #: taiga/projects/services/transfer.py:62
 #: taiga/projects/services/transfer.py:69
-#: taiga/projects/services/transfer.py:72 taiga/users/api.py:194
-#: taiga/users/api.py:199
+#: taiga/projects/services/transfer.py:72 taiga/users/api.py:193
+#: taiga/users/api.py:198
 msgid "Token is invalid"
 msgstr "Nederīgs tokens"
 
@@ -4160,7 +4165,7 @@ msgstr ""
 msgid "Invalid role for the project"
 msgstr "Projektam šī loma nav derīga"
 
-#: taiga/projects/validators.py:196 taiga/projects/validators.py:251
+#: taiga/projects/validators.py:196 taiga/projects/validators.py:258
 msgid "The user must be a valid contact"
 msgstr "Lietotājam jābūt derīgai kontaktpersonai"
 
@@ -4172,43 +4177,43 @@ msgstr "Projekta vadītājam jābūt arī administratoram."
 msgid "At least one user must be an active admin for this project."
 msgstr "Vismaz vienam lietotājam jābūt aktīvam šī projekta administratoram."
 
-#: taiga/projects/validators.py:266
+#: taiga/projects/validators.py:273
 msgid "Invalid role ids. All roles must belong to the same project."
 msgstr "Nederīgi lomu id. Visām lomām jāpieder vienam un tam pašam projektam."
 
-#: taiga/projects/validators.py:290
+#: taiga/projects/validators.py:297
 msgid "Default options"
 msgstr "Opcijas pēc noklusējuma"
 
-#: taiga/projects/validators.py:291
+#: taiga/projects/validators.py:298
 msgid "User story's statuses"
 msgstr "Vajadzību statusi"
 
-#: taiga/projects/validators.py:292
+#: taiga/projects/validators.py:299
 msgid "Points"
 msgstr "Punkti"
 
-#: taiga/projects/validators.py:293
+#: taiga/projects/validators.py:300
 msgid "Task's statuses"
 msgstr "Uzdevumu statusi"
 
-#: taiga/projects/validators.py:294
+#: taiga/projects/validators.py:301
 msgid "Issue's statuses"
 msgstr "Izmaiņu pieprasījumu statusi"
 
-#: taiga/projects/validators.py:295
+#: taiga/projects/validators.py:302
 msgid "Issue's types"
 msgstr "Izmaiņu pieprasījumu tipi"
 
-#: taiga/projects/validators.py:296
+#: taiga/projects/validators.py:303
 msgid "Priorities"
 msgstr "Prioritātes"
 
-#: taiga/projects/validators.py:297
+#: taiga/projects/validators.py:304
 msgid "Severities"
 msgstr "Nozīmīguma pakāpes"
 
-#: taiga/projects/validators.py:298
+#: taiga/projects/validators.py:305
 msgid "Roles"
 msgstr "Lomas"
 
@@ -4285,46 +4290,46 @@ msgstr "Dublēts e-pasts"
 msgid "Invalid email"
 msgstr "Nederīgs e-pasts"
 
-#: taiga/users/api.py:173
+#: taiga/users/api.py:172
 msgid "Invalid username or email"
 msgstr "Nederīgs lietotājvārds vai e-pasts"
 
-#: taiga/users/api.py:182 taiga/users/api.py:357
+#: taiga/users/api.py:181 taiga/users/api.py:356
 msgid "Mail sended successful!"
 msgstr "Pasts nosūtīts sekmīgi!"
 
-#: taiga/users/api.py:220
+#: taiga/users/api.py:219
 msgid "Current password parameter needed"
 msgstr "Nepieciešams pašreizējais paroles parametrs"
 
-#: taiga/users/api.py:223
+#: taiga/users/api.py:222
 msgid "New password parameter needed"
 msgstr "Nepieciešams jauns paroles parametrs"
 
-#: taiga/users/api.py:226
+#: taiga/users/api.py:225
 msgid "Invalid password length at least 6 charaters needed"
 msgstr "Nepieciešams vismaz 6 rakstzīmju paroles garums"
 
-#: taiga/users/api.py:229
+#: taiga/users/api.py:228
 msgid "Invalid current password"
 msgstr "Nederīga pašreizējā parole"
 
-#: taiga/users/api.py:276 taiga/users/api.py:282
+#: taiga/users/api.py:275 taiga/users/api.py:281
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr ""
 "Nederīgs. Vai esat pārliecināts, ka tokens ir pareizs, un iepriekš nav "
 "izmantots?"
 
-#: taiga/users/api.py:319 taiga/users/api.py:327 taiga/users/api.py:330
+#: taiga/users/api.py:318 taiga/users/api.py:326 taiga/users/api.py:329
 msgid "Invalid, are you sure the token is correct?"
 msgstr "Nederīgs. Vai esat pārliecināts, ka tokens ir pareizs?"
 
-#: taiga/users/api.py:352
+#: taiga/users/api.py:351
 msgid "Email address already verified"
 msgstr ""
 
-#: taiga/users/api.py:354
+#: taiga/users/api.py:353
 msgid "Unable to verify this email address"
 msgstr ""
 

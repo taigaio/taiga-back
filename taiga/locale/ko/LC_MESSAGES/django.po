@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-19 10:03+0200\n"
-"PO-Revision-Date: 2020-08-19 08:16+0000\n"
+"POT-Creation-Date: 2020-08-22 10:07+0200\n"
+"PO-Revision-Date: 2020-08-22 08:08+0000\n"
 "Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ko/)\n"
@@ -1560,11 +1560,11 @@ msgstr "{count} 개를 비공개로 만드는데 성공하였습니다."
 msgid "Make private"
 msgstr "비공개로 만들기"
 
-#: taiga/projects/api.py:181 taiga/users/api.py:245
+#: taiga/projects/api.py:181 taiga/users/api.py:244
 msgid "Incomplete arguments"
 msgstr "매개변수가 완전하지 않습니다."
 
-#: taiga/projects/api.py:185 taiga/users/api.py:250
+#: taiga/projects/api.py:185 taiga/users/api.py:249
 msgid "Invalid image format"
 msgstr "이미지 형식이 유효하지 않습니다."
 
@@ -1576,11 +1576,11 @@ msgstr ""
 msgid "Invalid template description"
 msgstr ""
 
-#: taiga/projects/api.py:412 taiga/projects/api.py:1029
+#: taiga/projects/api.py:412 taiga/projects/api.py:1034
 msgid "Invalid user id"
 msgstr "사용자 아이디가 유효하지 않습니다."
 
-#: taiga/projects/api.py:418 taiga/projects/api.py:1035
+#: taiga/projects/api.py:418 taiga/projects/api.py:1040
 msgid "The user doesn't exist"
 msgstr "사용자가 존재하지 않습니다."
 
@@ -1612,13 +1612,18 @@ msgstr ""
 msgid "Project does already have issue due dates"
 msgstr ""
 
-#: taiga/projects/api.py:1047
+#: taiga/projects/api.py:994 taiga/projects/validators.py:229
+msgid ""
+"To add members to a project, first you have to verify your email address"
+msgstr ""
+
+#: taiga/projects/api.py:1052
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
 msgstr ""
 
-#: taiga/projects/api.py:1057
+#: taiga/projects/api.py:1062
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
@@ -1626,7 +1631,7 @@ msgstr ""
 "프로젝트는 반드시 소유자가 있어야하며 사용자 중 적어도 한 명이 활성 관리자이"
 "어야 합니다."
 
-#: taiga/projects/api.py:1091
+#: taiga/projects/api.py:1096
 msgid "You don't have permisions to see that."
 msgstr "볼 수 있는 권한이 없습니다."
 
@@ -3257,8 +3262,8 @@ msgstr "프로젝트 종료"
 
 #: taiga/projects/services/transfer.py:62
 #: taiga/projects/services/transfer.py:69
-#: taiga/projects/services/transfer.py:72 taiga/users/api.py:194
-#: taiga/users/api.py:199
+#: taiga/projects/services/transfer.py:72 taiga/users/api.py:193
+#: taiga/users/api.py:198
 msgid "Token is invalid"
 msgstr "토큰이 유효하지 않습니다."
 
@@ -4138,7 +4143,7 @@ msgstr ""
 msgid "Invalid role for the project"
 msgstr "프로젝트에 유효하지 않은 역할입니다."
 
-#: taiga/projects/validators.py:196 taiga/projects/validators.py:251
+#: taiga/projects/validators.py:196 taiga/projects/validators.py:258
 msgid "The user must be a valid contact"
 msgstr "사용자는 반드시 유효한 연락처이어야 합니다."
 
@@ -4150,45 +4155,45 @@ msgstr "프로젝트 소유자는 반드시 관리자이어야 합니다."
 msgid "At least one user must be an active admin for this project."
 msgstr "이 프로젝트의 최소 한 명의 사용자는 활성된 관리자이어야 합니다."
 
-#: taiga/projects/validators.py:266
+#: taiga/projects/validators.py:273
 msgid "Invalid role ids. All roles must belong to the same project."
 msgstr ""
 "유효하지 않은 역할 아이디입니다. 모든 역할은 반드시 동일한 프로젝트에 속해야 "
 "합니다."
 
-#: taiga/projects/validators.py:290
+#: taiga/projects/validators.py:297
 msgid "Default options"
 msgstr "기본 옵션"
 
-#: taiga/projects/validators.py:291
+#: taiga/projects/validators.py:298
 msgid "User story's statuses"
 msgstr "유저 스토리 상태"
 
-#: taiga/projects/validators.py:292
+#: taiga/projects/validators.py:299
 msgid "Points"
 msgstr "포인트"
 
-#: taiga/projects/validators.py:293
+#: taiga/projects/validators.py:300
 msgid "Task's statuses"
 msgstr "태스크 상태"
 
-#: taiga/projects/validators.py:294
+#: taiga/projects/validators.py:301
 msgid "Issue's statuses"
 msgstr "이슈 상태"
 
-#: taiga/projects/validators.py:295
+#: taiga/projects/validators.py:302
 msgid "Issue's types"
 msgstr "이슈 형태"
 
-#: taiga/projects/validators.py:296
+#: taiga/projects/validators.py:303
 msgid "Priorities"
 msgstr "우선순위"
 
-#: taiga/projects/validators.py:297
+#: taiga/projects/validators.py:304
 msgid "Severities"
 msgstr "심각도"
 
-#: taiga/projects/validators.py:298
+#: taiga/projects/validators.py:305
 msgid "Roles"
 msgstr "역할"
 
@@ -4265,46 +4270,46 @@ msgstr "중복된 이메일"
 msgid "Invalid email"
 msgstr ""
 
-#: taiga/users/api.py:173
+#: taiga/users/api.py:172
 msgid "Invalid username or email"
 msgstr "아이디 또는 이메일이 유효하지 않습니다."
 
-#: taiga/users/api.py:182 taiga/users/api.py:357
+#: taiga/users/api.py:181 taiga/users/api.py:356
 msgid "Mail sended successful!"
 msgstr "성공적으로 메일을 전송했습니다!"
 
-#: taiga/users/api.py:220
+#: taiga/users/api.py:219
 msgid "Current password parameter needed"
 msgstr "현재 비밀번호 매개변수가 필요합니다."
 
-#: taiga/users/api.py:223
+#: taiga/users/api.py:222
 msgid "New password parameter needed"
 msgstr "새로운 비밀번호 매개변수가 필요합니다."
 
-#: taiga/users/api.py:226
+#: taiga/users/api.py:225
 msgid "Invalid password length at least 6 charaters needed"
 msgstr ""
 "비밀번호의 길이가 유효하지 않습니다. 최소한 6자가 필요합니다.\n"
 "Invalid password length at least 6 charaters needed"
 
-#: taiga/users/api.py:229
+#: taiga/users/api.py:228
 msgid "Invalid current password"
 msgstr "현재 비밀번호는 유효하지 않습니다.Invalid current password"
 
-#: taiga/users/api.py:276 taiga/users/api.py:282
+#: taiga/users/api.py:275 taiga/users/api.py:281
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr "유효하지 않음, 토큰이 정확하고 이전에 사용하지 않았습니까?"
 
-#: taiga/users/api.py:319 taiga/users/api.py:327 taiga/users/api.py:330
+#: taiga/users/api.py:318 taiga/users/api.py:326 taiga/users/api.py:329
 msgid "Invalid, are you sure the token is correct?"
 msgstr "유효하지 않음, 토큰이 정확합니까?are you sure the token is correct?"
 
-#: taiga/users/api.py:352
+#: taiga/users/api.py:351
 msgid "Email address already verified"
 msgstr ""
 
-#: taiga/users/api.py:354
+#: taiga/users/api.py:353
 msgid "Unable to verify this email address"
 msgstr ""
 

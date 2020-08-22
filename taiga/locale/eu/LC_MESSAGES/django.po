@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-19 10:03+0200\n"
-"PO-Revision-Date: 2020-08-19 08:16+0000\n"
+"POT-Creation-Date: 2020-08-22 10:07+0200\n"
+"PO-Revision-Date: 2020-08-22 08:08+0000\n"
 "Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Basque (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/eu/)\n"
@@ -1585,11 +1585,11 @@ msgstr "{count} ongi pribatu bihurtuta."
 msgid "Make private"
 msgstr "Pribatu bihurtu"
 
-#: taiga/projects/api.py:181 taiga/users/api.py:245
+#: taiga/projects/api.py:181 taiga/users/api.py:244
 msgid "Incomplete arguments"
 msgstr "Argudio osatu gabeak"
 
-#: taiga/projects/api.py:185 taiga/users/api.py:250
+#: taiga/projects/api.py:185 taiga/users/api.py:249
 msgid "Invalid image format"
 msgstr "Irudi formatu baliogabea"
 
@@ -1601,11 +1601,11 @@ msgstr ""
 msgid "Invalid template description"
 msgstr ""
 
-#: taiga/projects/api.py:412 taiga/projects/api.py:1029
+#: taiga/projects/api.py:412 taiga/projects/api.py:1034
 msgid "Invalid user id"
 msgstr "Erabiltzaile identifikatzailea ez da baliozkoa"
 
-#: taiga/projects/api.py:418 taiga/projects/api.py:1035
+#: taiga/projects/api.py:418 taiga/projects/api.py:1040
 msgid "The user doesn't exist"
 msgstr "Erabiltzaile hori ez dago"
 
@@ -1637,13 +1637,18 @@ msgstr ""
 msgid "Project does already have issue due dates"
 msgstr ""
 
-#: taiga/projects/api.py:1047
+#: taiga/projects/api.py:994 taiga/projects/validators.py:229
+msgid ""
+"To add members to a project, first you have to verify your email address"
+msgstr ""
+
+#: taiga/projects/api.py:1052
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
 msgstr ""
 
-#: taiga/projects/api.py:1057
+#: taiga/projects/api.py:1062
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
@@ -1651,7 +1656,7 @@ msgstr ""
 "Proiektu honek gutxienez jabe bat behar du eta erabiltzaile bat "
 "administratzaile aktibo gisa"
 
-#: taiga/projects/api.py:1091
+#: taiga/projects/api.py:1096
 msgid "You don't have permisions to see that."
 msgstr "Ez duzu baimenik hori ikusteko."
 
@@ -3291,8 +3296,8 @@ msgstr "Proiektuaren amaiera"
 
 #: taiga/projects/services/transfer.py:62
 #: taiga/projects/services/transfer.py:69
-#: taiga/projects/services/transfer.py:72 taiga/users/api.py:194
-#: taiga/users/api.py:199
+#: taiga/projects/services/transfer.py:72 taiga/users/api.py:193
+#: taiga/users/api.py:198
 msgid "Token is invalid"
 msgstr "Identifikatzailea ez da baliozkoa"
 
@@ -4175,7 +4180,7 @@ msgstr ""
 msgid "Invalid role for the project"
 msgstr "Balioagabea da rol hori proiektu honetan."
 
-#: taiga/projects/validators.py:196 taiga/projects/validators.py:251
+#: taiga/projects/validators.py:196 taiga/projects/validators.py:258
 msgid "The user must be a valid contact"
 msgstr "Erabiltzailea izan behar da baliozko kontaktu bat"
 
@@ -4189,45 +4194,45 @@ msgstr ""
 "Gutxienez erabiltzaile bat izan behar da administratzaile aktiboa proiektu "
 "honetan."
 
-#: taiga/projects/validators.py:266
+#: taiga/projects/validators.py:273
 msgid "Invalid role ids. All roles must belong to the same project."
 msgstr ""
 "Baliogabeak dira rol identifikatzailek. Rol guztiak proiektu berekoak izan "
 "behar dira."
 
-#: taiga/projects/validators.py:290
+#: taiga/projects/validators.py:297
 msgid "Default options"
 msgstr "Aukera lehenetsiak"
 
-#: taiga/projects/validators.py:291
+#: taiga/projects/validators.py:298
 msgid "User story's statuses"
 msgstr "Eginkizunen egoerak"
 
-#: taiga/projects/validators.py:292
+#: taiga/projects/validators.py:299
 msgid "Points"
 msgstr "Puntuak"
 
-#: taiga/projects/validators.py:293
+#: taiga/projects/validators.py:300
 msgid "Task's statuses"
 msgstr "Atazen egoerak"
 
-#: taiga/projects/validators.py:294
+#: taiga/projects/validators.py:301
 msgid "Issue's statuses"
 msgstr "Gertakarien egoerak"
 
-#: taiga/projects/validators.py:295
+#: taiga/projects/validators.py:302
 msgid "Issue's types"
 msgstr "Gertakari motak"
 
-#: taiga/projects/validators.py:296
+#: taiga/projects/validators.py:303
 msgid "Priorities"
 msgstr "Lehentasunak"
 
-#: taiga/projects/validators.py:297
+#: taiga/projects/validators.py:304
 msgid "Severities"
 msgstr "Larritasunak"
 
-#: taiga/projects/validators.py:298
+#: taiga/projects/validators.py:305
 msgid "Roles"
 msgstr "Rolak"
 
@@ -4304,46 +4309,46 @@ msgstr "e-posta bikoiztua"
 msgid "Invalid email"
 msgstr ""
 
-#: taiga/users/api.py:173
+#: taiga/users/api.py:172
 msgid "Invalid username or email"
 msgstr "Erabiltzaile izena edo e-posta ez da baliozkoa"
 
-#: taiga/users/api.py:182 taiga/users/api.py:357
+#: taiga/users/api.py:181 taiga/users/api.py:356
 msgid "Mail sended successful!"
 msgstr "Posta ongi bidali dugu"
 
-#: taiga/users/api.py:220
+#: taiga/users/api.py:219
 msgid "Current password parameter needed"
 msgstr "Ezinbestekoa da oraingo pasahitza"
 
-#: taiga/users/api.py:223
+#: taiga/users/api.py:222
 msgid "New password parameter needed"
 msgstr "Ezinbestekoa da pasahitz berria"
 
-#: taiga/users/api.py:226
+#: taiga/users/api.py:225
 msgid "Invalid password length at least 6 charaters needed"
 msgstr "Pasahitza ez da baliozkoa; gutxienez 6 karaktere behar dira"
 
-#: taiga/users/api.py:229
+#: taiga/users/api.py:228
 msgid "Invalid current password"
 msgstr "Oraingo pasahitza ez da baliozkoa"
 
-#: taiga/users/api.py:276 taiga/users/api.py:282
+#: taiga/users/api.py:275 taiga/users/api.py:281
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr ""
 "Ez da baliozkoa; ziur zaude identifikatzailea zuzena dela eta ez duzula "
 "lehenago erabili?"
 
-#: taiga/users/api.py:319 taiga/users/api.py:327 taiga/users/api.py:330
+#: taiga/users/api.py:318 taiga/users/api.py:326 taiga/users/api.py:329
 msgid "Invalid, are you sure the token is correct?"
 msgstr "Ez da baliozkoa; ziur zaude identifikatzailea zuzena dela?"
 
-#: taiga/users/api.py:352
+#: taiga/users/api.py:351
 msgid "Email address already verified"
 msgstr ""
 
-#: taiga/users/api.py:354
+#: taiga/users/api.py:353
 msgid "Unable to verify this email address"
 msgstr ""
 

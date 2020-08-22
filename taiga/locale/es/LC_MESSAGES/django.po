@@ -24,9 +24,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-19 10:03+0200\n"
-"PO-Revision-Date: 2020-08-19 10:45+0000\n"
-"Last-Translator: Libre Beats <carlos.letamendia@aitire.es>\n"
+"POT-Creation-Date: 2020-08-22 10:07+0200\n"
+"PO-Revision-Date: 2020-08-22 08:08+0000\n"
+"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1782,11 +1782,11 @@ msgstr "{count} se hizo privado satisfactoriamente"
 msgid "Make private"
 msgstr "Haz privado"
 
-#: taiga/projects/api.py:181 taiga/users/api.py:245
+#: taiga/projects/api.py:181 taiga/users/api.py:244
 msgid "Incomplete arguments"
 msgstr "Argumentos incompletos"
 
-#: taiga/projects/api.py:185 taiga/users/api.py:250
+#: taiga/projects/api.py:185 taiga/users/api.py:249
 msgid "Invalid image format"
 msgstr "Formato de imagen no válido"
 
@@ -1798,11 +1798,11 @@ msgstr "Nombre de plantilla inválido"
 msgid "Invalid template description"
 msgstr "Descripción de plantilla inválida"
 
-#: taiga/projects/api.py:412 taiga/projects/api.py:1029
+#: taiga/projects/api.py:412 taiga/projects/api.py:1034
 msgid "Invalid user id"
 msgstr "id de usuario inválido"
 
-#: taiga/projects/api.py:418 taiga/projects/api.py:1035
+#: taiga/projects/api.py:418 taiga/projects/api.py:1040
 msgid "The user doesn't exist"
 msgstr "El usuario no existe"
 
@@ -1836,7 +1836,12 @@ msgstr "No puedes borrar la fecha de vencimiento por defecto de una petición"
 msgid "Project does already have issue due dates"
 msgstr "El proyecto ya tiene fechas de vencimiento para peticiones"
 
-#: taiga/projects/api.py:1047
+#: taiga/projects/api.py:994 taiga/projects/validators.py:229
+msgid ""
+"To add members to a project, first you have to verify your email address"
+msgstr ""
+
+#: taiga/projects/api.py:1052
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
@@ -1844,7 +1849,7 @@ msgstr ""
 "Este usuario no puede ser eliminado de los siguientes proyectos porque los "
 "dejaría sin administradores activos: {}."
 
-#: taiga/projects/api.py:1057
+#: taiga/projects/api.py:1062
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
@@ -1852,7 +1857,7 @@ msgstr ""
 "El proyecto debe tener un dueño y al menos uno de los usuarios debe ser un "
 "administrador activo"
 
-#: taiga/projects/api.py:1091
+#: taiga/projects/api.py:1096
 msgid "You don't have permisions to see that."
 msgstr "No tienes suficientes permisos para ver esto."
 
@@ -3780,8 +3785,8 @@ msgstr "Final de proyecto"
 
 #: taiga/projects/services/transfer.py:62
 #: taiga/projects/services/transfer.py:69
-#: taiga/projects/services/transfer.py:72 taiga/users/api.py:194
-#: taiga/users/api.py:199
+#: taiga/projects/services/transfer.py:72 taiga/users/api.py:193
+#: taiga/users/api.py:198
 msgid "Token is invalid"
 msgstr "token inválido"
 
@@ -4728,7 +4733,7 @@ msgstr "Operación inválida"
 msgid "Invalid role for the project"
 msgstr "Rol inválido para el proyecto"
 
-#: taiga/projects/validators.py:196 taiga/projects/validators.py:251
+#: taiga/projects/validators.py:196 taiga/projects/validators.py:258
 msgid "The user must be a valid contact"
 msgstr "El usuario debe ser un contacto válido"
 
@@ -4741,44 +4746,44 @@ msgid "At least one user must be an active admin for this project."
 msgstr ""
 "Por lo menos un usuario debe ser administrador activo para este proyecto"
 
-#: taiga/projects/validators.py:266
+#: taiga/projects/validators.py:273
 msgid "Invalid role ids. All roles must belong to the same project."
 msgstr ""
 "'role ids' inválidos. Todos los roles deben pertenecer al mismo proyecto."
 
-#: taiga/projects/validators.py:290
+#: taiga/projects/validators.py:297
 msgid "Default options"
 msgstr "Opciones por defecto"
 
-#: taiga/projects/validators.py:291
+#: taiga/projects/validators.py:298
 msgid "User story's statuses"
 msgstr "Estados de historia de usuario"
 
-#: taiga/projects/validators.py:292
+#: taiga/projects/validators.py:299
 msgid "Points"
 msgstr "Puntos"
 
-#: taiga/projects/validators.py:293
+#: taiga/projects/validators.py:300
 msgid "Task's statuses"
 msgstr "Estado de tareas"
 
-#: taiga/projects/validators.py:294
+#: taiga/projects/validators.py:301
 msgid "Issue's statuses"
 msgstr "Estados de peticion"
 
-#: taiga/projects/validators.py:295
+#: taiga/projects/validators.py:302
 msgid "Issue's types"
 msgstr "Tipos de petición"
 
-#: taiga/projects/validators.py:296
+#: taiga/projects/validators.py:303
 msgid "Priorities"
 msgstr "Prioridades"
 
-#: taiga/projects/validators.py:297
+#: taiga/projects/validators.py:304
 msgid "Severities"
 msgstr "Gravedades"
 
-#: taiga/projects/validators.py:298
+#: taiga/projects/validators.py:305
 msgid "Roles"
 msgstr "Roles"
 
@@ -4855,45 +4860,45 @@ msgstr "Email duplicado"
 msgid "Invalid email"
 msgstr "Dirección de correo no válido"
 
-#: taiga/users/api.py:173
+#: taiga/users/api.py:172
 msgid "Invalid username or email"
 msgstr "Nombre de usuario o email no válidos"
 
-#: taiga/users/api.py:182 taiga/users/api.py:357
+#: taiga/users/api.py:181 taiga/users/api.py:356
 msgid "Mail sended successful!"
 msgstr "¡Correo enviado con éxito!"
 
-#: taiga/users/api.py:220
+#: taiga/users/api.py:219
 msgid "Current password parameter needed"
 msgstr "La contraseña actual es obligatoria."
 
-#: taiga/users/api.py:223
+#: taiga/users/api.py:222
 msgid "New password parameter needed"
 msgstr "La nueva contraseña es obligatoria"
 
-#: taiga/users/api.py:226
+#: taiga/users/api.py:225
 msgid "Invalid password length at least 6 charaters needed"
 msgstr "La longitud de la contraseña debe de ser de al menos 6 caracteres"
 
-#: taiga/users/api.py:229
+#: taiga/users/api.py:228
 msgid "Invalid current password"
 msgstr "Contraseña actual inválida"
 
-#: taiga/users/api.py:276 taiga/users/api.py:282
+#: taiga/users/api.py:275 taiga/users/api.py:281
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr ""
 "Invalido, ¿estás seguro de que el token es correcto y no se ha usado antes?"
 
-#: taiga/users/api.py:319 taiga/users/api.py:327 taiga/users/api.py:330
+#: taiga/users/api.py:318 taiga/users/api.py:326 taiga/users/api.py:329
 msgid "Invalid, are you sure the token is correct?"
 msgstr "Inválido, ¿estás seguro de que el token es correcto?"
 
-#: taiga/users/api.py:352
+#: taiga/users/api.py:351
 msgid "Email address already verified"
 msgstr "Correo electrónico ya verificado"
 
-#: taiga/users/api.py:354
+#: taiga/users/api.py:353
 msgid "Unable to verify this email address"
 msgstr "No se ha podido verificar este correo electrónico"
 
