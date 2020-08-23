@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 5.5.1 (2020-08-23)
+
+### Features
+
+- Prevent member creation to users with unverified email address.
+
 ## 5.5.0 (2020-08-19)
 
 ### Features
