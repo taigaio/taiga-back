@@ -103,7 +103,7 @@ def cache_by_sha(func):
             return cached
 
         returned_value = func(project, text)
-        cache.set(key, returned_value, timeout=None)
+        cache.set(key, returned_value, timeout=86400)
         return returned_value
 
     return _decorator

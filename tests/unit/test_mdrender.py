@@ -23,9 +23,7 @@ from taiga.mdrender.extensions import emojify
 from taiga.mdrender.extensions import refresh_attachment
 from taiga.mdrender.service import render, cache_by_sha, get_diff_of_htmls, render_and_extract
 
-from datetime import datetime
-import pytest
-import pytz
+import time
 
 dummy_project = MagicMock()
 dummy_project.id = 1
@@ -247,13 +245,19 @@ def test_render_triple_quote_and_lang_code():
 def test_cache_by_sha():
     @cache_by_sha
     def test_cache(project, text):
-        return datetime.now(pytz.utc)
+        # Dummy function: ensure every invocation returns a different value
+        return time.time()
 
-    result1 = test_cache(dummy_project, "test")
-    result2 = test_cache(dummy_project, "test2")
-    assert result1 != result2
-    result3 = test_cache(dummy_project, "test")
-    assert result1 == result3
+    padding = "X" * 40  # Needed as cache is disabled for text under 40 chars
+
+    result_a_1 = test_cache(dummy_project, "A" + padding)
+    result_b_1 = test_cache(dummy_project, "B")
+    result_a_2 = test_cache(dummy_project, "A" + padding)
+    result_b_2 = test_cache(dummy_project, "B")
+
+    assert result_a_1 != result_b_1  # Evidently
+    assert result_b_1 != result_b_2  # No cached!
+    assert result_a_1 == result_a_2  # Cached!
 
 
 def test_get_diff_of_htmls_insertions():
