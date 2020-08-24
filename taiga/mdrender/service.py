@@ -95,7 +95,7 @@ def cache_by_sha(func):
             return func(project, text)
 
         sha1_hash = hashlib.sha1(force_bytes(text)).hexdigest()
-        key = "{}-{}".format(sha1_hash, project.id)
+        key = "mdrender/{}-{}".format(sha1_hash, project.id)
 
         # Try to get it from the cache
         cached = cache.get(key)
