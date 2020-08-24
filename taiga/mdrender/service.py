@@ -90,8 +90,12 @@ import diff_match_patch
 def cache_by_sha(func):
     @functools.wraps(func)
     def _decorator(project, text):
+        # Avoid cache of too short texts
+        if len(text) <= 40:
+            return func(project, text)
+
         sha1_hash = hashlib.sha1(force_bytes(text)).hexdigest()
-        key = "{}-{}".format(sha1_hash, project.id)
+        key = "mdrender/{}-{}".format(sha1_hash, project.id)
 
         # Try to get it from the cache
         cached = cache.get(key)
@@ -99,7 +103,7 @@ def cache_by_sha(func):
             return cached
 
         returned_value = func(project, text)
-        cache.set(key, returned_value, timeout=None)
+        cache.set(key, returned_value, timeout=86400)
         return returned_value
 
     return _decorator
