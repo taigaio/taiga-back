@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 5.5.2 (2020-08-26)
+
+### Misc
+
+- Tweaks mdrender cache.
+
 ## 5.5.1 (2020-08-23)
 
 ### Features
