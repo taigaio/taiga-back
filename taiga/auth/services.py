@@ -193,6 +193,9 @@ def normal_login_func(request):
     username = request.DATA.get('username', None)
     password = request.DATA.get('password', None)
 
+    username = str(username) if username else None
+    password = str(password) if password else None
+
     user = get_and_validate_user(username=username, password=password)
     data = make_auth_response_data(user)
     return data
