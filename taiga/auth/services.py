@@ -20,7 +20,7 @@
 This module contains a domain logic for authentication
 process. It called services because in DDD says it.
 
-NOTE: Python doesn't have java limitations for "everytghing
+NOTE: Python doesn't have java limitations for "everything
 should be contained in a class". Because of that, it
 not uses clasess and uses simple functions.
 """
