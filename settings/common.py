@@ -605,3 +605,8 @@ if "test" in sys.argv:
 
 # Configuration for sending notifications
 NOTIFICATIONS_CUSTOM_FILTER = False
+
+# MDRENDER
+MDRENDER_CACHE_ENABLE = True
+MDRENDER_CACHE_MIN_SIZE = 40
+MDRENDER_CACHE_TIMEOUT = 86400
