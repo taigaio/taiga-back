@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 5.5.3 (2020-09-02)
+
+### Misc
+
+- Parametrize mdrender cache options.
+
+- Minor bug fix.
+
 ## 5.5.2 (2020-08-26)
 
 ### Misc
