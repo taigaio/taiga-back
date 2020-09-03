@@ -15,15 +15,3 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from __future__ import absolute_import, print_function
-import os, sys
-
-from .celery import *
-
-try:
-    print("Trying import local.py settings...", file=sys.stderr)
-    from .local import *
-except ImportError:
-    print("Trying import development.py settings...", file=sys.stderr)
-    from .development import *

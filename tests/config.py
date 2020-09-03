@@ -16,7 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .development import *
+from settings.common import *
+
+DEBUG = True
+
+TEMPLATES[0]["OPTIONS"]['context_processors'] += "django.template.context_processors.debug"
 
 CELERY_ENABLED = False
 

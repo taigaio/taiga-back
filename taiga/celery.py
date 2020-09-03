@@ -16,19 +16,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
 import os
-
 from celery import Celery
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
-
 from django.conf import settings
 
-try:
-    from settings import celery_local as celery_settings
-except ImportError:
-    from settings import celery as celery_settings
-
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.common')
 app = Celery('taiga')
-app.config_from_object(celery_settings)
+app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)

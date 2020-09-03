@@ -43,6 +43,27 @@ CACHES = {
     }
 }
 
+
+# CELERY
+CELERY_ENABLED = False
+from kombu import Queue
+
+BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['pickle',] # Values are 'pickle', 'json', 'msgpack' and 'yaml'
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER = "pickle"
+CELERY_TIMEZONE = 'Europe/Madrid'
+CELERY_TASK_DEFAULT_QUEUE = 'tasks'
+CELERY_QUEUES = (
+    Queue('tasks', routing_key='task.#'),
+    Queue('transient', routing_key='transient.#', delivery_mode=1)
+)
+CELERY_TASK_DEFAULT_EXCHANGE = 'tasks'
+CELERY_TASK_DEFAULT_EXCHANGE_TYPE = 'topic'
+CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
+
+
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
 ]
@@ -550,7 +571,6 @@ GITLAB_VALID_ORIGIN_IPS = []
 
 EXPORTS_TTL = 60 * 60 * 24  # 24 hours
 
-CELERY_ENABLED = False
 WEBHOOKS_ENABLED = False
 WEBHOOKS_BLOCK_PRIVATE_ADDRESS = False
 
@@ -568,7 +588,20 @@ MAX_MEMBERSHIPS_PUBLIC_PROJECTS = None # None == no limit
 
 MAX_PENDING_MEMBERSHIPS = 30 # Max number of unconfirmed memberships in a project
 
-from .sr import *
+# DJANGO SETTINGS RESOLVER
+SR = {
+    "taigaio_url": "https://taiga.io",
+    "social": {
+        "twitter_url": "https://twitter.com/taigaio",
+        "github_url": "https://github.com/taigaio",
+    },
+    "support": {
+        "url": "https://tree.taiga.io/support/",
+        "email": "support@taiga.io"
+    },
+    "signature": "The Taiga Team",
+    "product_name": "Taiga",
+}
 
 IMPORTERS = {
     "github": {
