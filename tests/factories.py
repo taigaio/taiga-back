@@ -31,7 +31,7 @@ from taiga.permissions.choices import MEMBERS_PERMISSIONS
 
 
 
-class Factory(factory.DjangoModelFactory):
+class Factory(factory.django.DjangoModelFactory):
     class Meta:
         strategy = factory.CREATE_STRATEGY
         model = None
