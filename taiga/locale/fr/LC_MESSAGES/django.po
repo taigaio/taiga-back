@@ -22,6 +22,7 @@
 # Matthieu Durocher <matthieu@technocyclope.com>, 2015
 # 145d476c91450a2a8706fd7b160b27d7_b2328b5 <c7b4b2acae39f8349ced5e4f194f7733_317745>, 2015
 # Nicolas Minelle <nicolas.minelle@bluescale.com>, 2016
+# Nico <nicolas@damiens.info>, 2020
 # Nlko <nospam1@thomasson.fr>, 2015
 # Regis TEDONE <regis.tedone@gmail.com>, 2015
 # Sébastien Talbot <sebastien@appventus.com>, 2016
@@ -34,8 +35,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-08-22 10:07+0200\n"
-"PO-Revision-Date: 2020-08-22 08:08+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2020-08-28 11:47+0000\n"
+"Last-Translator: Nico <nicolas@damiens.info>\n"
 "Language-Team: French (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +48,7 @@ msgstr ""
 
 #: taiga/auth/api.py:71
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "L'inscription publique est désactivée."
 
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
@@ -57,7 +58,7 @@ msgstr ""
 
 #: taiga/auth/api.py:102
 msgid "invalid registration type"
-msgstr ""
+msgstr "type d'inscription invalide"
 
 #: taiga/auth/api.py:118
 msgid "invalid login type"
@@ -73,7 +74,7 @@ msgstr "Cette adresse email est déjà utilisée."
 
 #: taiga/auth/services.py:96
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "Le jeton ne correspond à aucune invitation valide."
 
 #: taiga/auth/services.py:128
 msgid "User is already registered."
@@ -85,7 +86,7 @@ msgstr "L'utilisateur est déjà membre du projet."
 
 #: taiga/auth/services.py:169
 msgid "Error while creating new user."
-msgstr ""
+msgstr "Erreur à la création de l'utilisateur."
 
 #: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
 #: taiga/external_apps/services.py:34 taiga/projects/api.py:432
@@ -106,7 +107,7 @@ msgstr ""
 #: taiga/auth/validators.py:50 taiga/auth/validators.py:53
 #: taiga/users/validators.py:66 taiga/users/validators.py:69
 msgid "Invalid full name"
-msgstr ""
+msgstr "Nom complet invalide"
 
 #: taiga/base/api/fields.py:294
 msgid "This field is required."
@@ -427,6 +428,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>Bienvenue dans "
+"%(product_name)s, un outil de gestion de projet Agile Open Source</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:7
 #, python-format
@@ -440,6 +445,14 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">Configurer les notifications "
+"par mail ou se désinscrire</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">Support de Taiga</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >Nous contacter</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:18
 msgid "Follow us on Twitter"
@@ -492,15 +505,15 @@ msgstr "Erreur Adresse IP"
 
 #: taiga/events/events.py:116
 msgid "User story created"
-msgstr ""
+msgstr "Récit utilisateur créé"
 
 #: taiga/events/events.py:119
 msgid "User story changed"
-msgstr ""
+msgstr "Récit utilisateur modifié"
 
 #: taiga/events/events.py:122
 msgid "User story deleted"
-msgstr ""
+msgstr "Récit utilisateur supprimé"
 
 #: taiga/events/events.py:124
 msgid "US #{} - {}"
@@ -524,19 +537,19 @@ msgstr "Tâche #{} - {}"
 
 #: taiga/events/events.py:138
 msgid "Issue created"
-msgstr ""
+msgstr "Ticket créé"
 
 #: taiga/events/events.py:141
 msgid "Issue changed"
-msgstr ""
+msgstr "Ticket modifié"
 
 #: taiga/events/events.py:144
 msgid "Issue deleted"
-msgstr ""
+msgstr "Ticket supprimé"
 
 #: taiga/events/events.py:146
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "Ticket: #{} - {}"
 
 #: taiga/events/events.py:149
 msgid "Wiki Page created"
@@ -556,19 +569,19 @@ msgstr "Page Wiki: {}"
 
 #: taiga/events/events.py:160
 msgid "Sprint created"
-msgstr ""
+msgstr "Sprint créé"
 
 #: taiga/events/events.py:163
 msgid "Sprint changed"
-msgstr ""
+msgstr "Sprint modifié"
 
 #: taiga/events/events.py:166
 msgid "Sprint deleted"
-msgstr ""
+msgstr "Sprint supprimé"
 
 #: taiga/events/events.py:168
 msgid "Sprint: {}"
-msgstr ""
+msgstr "Sprint: {}"
 
 #: taiga/export_import/api.py:127
 msgid "We needed at least one role"
