@@ -4,18 +4,18 @@
 #
 #    pip-compile requirements-devel.in
 #
-attrs==19.3.0             # via -c requirements.txt, pytest
+attrs==20.2.0             # via -c requirements.txt, pytest
 certifi==2020.6.20        # via -c requirements.txt, requests
 chardet==3.0.4            # via -c requirements.txt, requests
 coverage==5.2.1           # via -r requirements-devel.in, coveralls
-coveralls==2.1.1          # via -r requirements-devel.in
+coveralls==2.1.2          # via -r requirements-devel.in
 docopt==0.6.2             # via -c requirements.txt, coveralls
-factory-boy==2.12.0       # via -r requirements-devel.in
-faker==4.1.1              # via factory-boy
+factory-boy==3.0.1        # via -r requirements-devel.in
+faker==4.1.2              # via factory-boy
 idna==2.8                 # via -c requirements.txt, requests
 importlib-metadata==1.7.0  # via -c requirements.txt, pluggy, pytest
 iniconfig==1.0.1          # via pytest
-more-itertools==8.4.0     # via pytest
+more-itertools==8.5.0     # via pytest
 packaging==20.4           # via -c requirements.txt, pytest
 pluggy==0.13.1            # via pytest
 py==1.9.0                 # via pytest

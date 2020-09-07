@@ -8,14 +8,14 @@ aggdraw==1.3.11           # via psd-tools
 amqp==2.6.1               # via kombu
 asana==0.6.7              # via -r requirements.in
 asn1crypto==1.4.0         # via cryptography
-attrs==19.3.0             # via psd-tools
+attrs==20.2.0             # via psd-tools
 billiard==3.6.3.0         # via celery
 bleach==3.1.5             # via -r requirements.in
 cairocffi==1.1.0          # via cairosvg
 cairosvg==2.0.3           # via -r requirements.in
 celery==4.3.0             # via -r requirements.in
 certifi==2020.6.20        # via requests
-cffi==1.14.1              # via cairocffi, cryptography
+cffi==1.14.2              # via cairocffi, cryptography
 chardet==3.0.4            # via requests
 cryptography==2.3.1       # via -r requirements.in, oauthlib
 cssselect==1.1.0          # via cairosvg, premailer
@@ -28,7 +28,7 @@ django-picklefield==0.3.2  # via -r requirements.in
 django-sampledatahelper==0.4.1  # via -r requirements.in
 django-sites==0.10        # via -r requirements.in
 django-sr==0.0.4          # via -r requirements.in
-django==2.2.15            # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
+django==2.2.16            # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
 djmail==1.0.1             # via -r requirements.in
 docopt==0.6.2             # via psd-tools
 easy-thumbnails==2.7.0    # via -r requirements.in
