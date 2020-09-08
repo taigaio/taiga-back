@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 5.5.4 (2020-09-08)
+
+### Misc
+
+- Upgrade requirements.
+
+### i18n
+
+- Update French translation.
+
 ## 5.5.3 (2020-09-02)
 
 ### Misc
