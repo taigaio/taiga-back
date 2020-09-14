@@ -3,12 +3,18 @@
 {% block body %}
 <table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
     <tr>
-        {% trans signature=sr("signature"), product_name=sr("product_name"), url=resolve_front_url("verify-email", user.email_token), support_email=sr("support.email") %}
+        {% if not user.verified_email %}
+        <td>
+              {% trans url=resolve_front_url("verify-email", user.email_token) %}
+              <p>Please confirm your email</p>
+              <a class="button" href="{{ url }}" title="Confirm email">Confirm email</a>
+              {% endtrans %}
+        </td>
+        {% endif %}
+        {% trans signature=sr("signature"), product_name=sr("product_name"), support_email=sr("support.email") %}
         <td>
             <h2>Thank you for registering in {{ product_name }}</h2>
             <p>We're thrilled you've joined our growing community of professionals revolutionizing their way of working and hope you enjoy it.</p>
-            <p>Please confirm your email</p>
-            <a class="button" href="{{ url }}" title="Confirm email">Confirm email</a>
             <p>Have a question? Give us a nudge if you ever need a helping hand, we're at {{ support_email }}.</p>
             <p><small>{{ signature }}</small></p>
         </td>

@@ -1,12 +1,17 @@
-{% trans signature=sr("signature"), product_name=sr("product_name"), url=resolve_front_url("verify-email", user.email_token), support_email=sr("support.email") %}
+{% trans product_name=sr("product_name") %}
 Thank you for registering in {{ product_name }}
 
 We're thrilled you've joined our growing community of professionals revolutionizing their way of working and hope you enjoy it.
+{% endtrans %}
 
+{% if not user.verified_email %}
+{% trans url=resolve_front_url("verify-email", user.email_token) %}
 Please confirm your email: {{ url }}
+{% endtrans %}
+{% endif %}
 
+{% trans signature=sr("signature"), support_email=sr("support.email") %}
 Have a question? Give us a nudge if you ever need a helping hand, we're at {{ support_email }}.
-
 --
 {{ signature }}
 {% endtrans %}
