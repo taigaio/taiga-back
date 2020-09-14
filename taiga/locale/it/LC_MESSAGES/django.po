@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-22 10:07+0200\n"
-"PO-Revision-Date: 2020-08-22 08:08+0000\n"
+"POT-Creation-Date: 2020-09-14 19:17+0200\n"
+"PO-Revision-Date: 2020-09-14 17:17+0000\n"
 "Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/it/)\n"
@@ -4529,7 +4529,17 @@ msgstr ""
 msgid "[Taiga] Password recovery"
 msgstr "[Taiga] recupero della password"
 
-#: taiga/users/templates/emails/registered_user-body-html.jinja:6
+#: taiga/users/templates/emails/registered_user-body-html.jinja:8
+#, python-format
+msgid ""
+"\n"
+"              <p>Please confirm your email</p>\n"
+"              <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
+"\">Confirm email</a>\n"
+"              "
+msgstr ""
+
+#: taiga/users/templates/emails/registered_user-body-html.jinja:14
 #, python-format
 msgid ""
 "\n"
@@ -4538,9 +4548,6 @@ msgid ""
 "            <p>We're thrilled you've joined our growing community of "
 "professionals revolutionizing their way of working and hope you enjoy it.</"
 "p>\n"
-"            <p>Please confirm your email</p>\n"
-"            <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
-"\">Confirm email</a>\n"
 "            <p>Have a question? Give us a nudge if you ever need a helping "
 "hand, we're at %(support_email)s.</p>\n"
 "            <p><small>%(signature)s</small></p>\n"
@@ -4548,7 +4555,7 @@ msgid ""
 "        "
 msgstr ""
 
-#: taiga/users/templates/emails/registered_user-body-html.jinja:24
+#: taiga/users/templates/emails/registered_user-body-html.jinja:30
 #, python-format
 msgid ""
 "\n"
@@ -4571,17 +4578,26 @@ msgid ""
 "\n"
 "We're thrilled you've joined our growing community of professionals "
 "revolutionizing their way of working and hope you enjoy it.\n"
+msgstr ""
+
+#: taiga/users/templates/emails/registered_user-body-text.jinja:8
+#, python-format
+msgid ""
 "\n"
 "Please confirm your email: %(url)s\n"
+msgstr ""
+
+#: taiga/users/templates/emails/registered_user-body-text.jinja:13
+#, python-format
+msgid ""
 "\n"
 "Have a question? Give us a nudge if you ever need a helping hand, we're at "
 "%(support_email)s.\n"
-"\n"
 "--\n"
 "%(signature)s\n"
 msgstr ""
 
-#: taiga/users/templates/emails/registered_user-body-text.jinja:13
+#: taiga/users/templates/emails/registered_user-body-text.jinja:18
 #, python-format
 msgid ""
 "\n"
