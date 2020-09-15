@@ -160,7 +160,11 @@ def private_register_for_new_user(token:str, username:str, email:str,
     user_model = get_user_model()
     user = user_model(username=username,
                       email=email,
-                      full_name=full_name)
+                      full_name=full_name,
+                      email_token=str(uuid.uuid4()),
+                      new_email=email,
+                      verified_email=False,
+                      read_new_terms=True)
 
     user.set_password(password)
     try:
