@@ -854,6 +854,28 @@ def test_api_filters_data(client):
     url = reverse("userstories-filters-data") + "?project={}".format(project.id)
     client.login(user1)
 
+    # Check filter fields
+    response = client.get(url)
+    assert response.status_code == 200
+
+    owners = next(filter(lambda i: i['id'] == user1.id, response.data["owners"]))
+    assert len(owners) == 6
+    assert 'id' in owners
+    assert 'count' in owners
+    assert 'full_name' in owners
+    assert 'photo' in owners
+    assert 'big_photo' in owners
+    assert 'gravatar_id' in owners
+
+    assigned_users = next(filter(lambda i: i['id'] == user1.id, response.data["assigned_users"]))
+    assert len(assigned_users) == 6
+    assert 'id' in assigned_users
+    assert 'count' in assigned_users
+    assert 'full_name' in assigned_users
+    assert 'photo' in assigned_users
+    assert 'big_photo' in assigned_users
+    assert 'gravatar_id' in assigned_users
+
     # No filter
     response = client.get(url)
     assert response.status_code == 200
@@ -970,6 +992,7 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == epic2.id, response.data["epics"]))["count"] == 2
 
 
+
 @pytest.mark.parametrize("filter_name,collection,expected,exclude_expected,is_text", [
     ('status', 'statuses', 3, 7, False),
     ('tags', 'tags', 1, 9, True),
@@ -1063,6 +1086,28 @@ def test_api_filters_data_with_assigned_users(client):
     url = reverse("userstories-filters-data") + "?project={}".format(project.id)
 
     client.login(user1)
+
+    # Check filter fields
+    response = client.get(url)
+    assert response.status_code == 200
+
+    owners = next(filter(lambda i: i['id'] == user1.id, response.data["owners"]))
+    assert len(owners) == 6
+    assert 'id' in owners
+    assert 'count' in owners
+    assert 'full_name' in owners
+    assert 'photo' in owners
+    assert 'big_photo' in owners
+    assert 'gravatar_id' in owners
+
+    assigned_users = next(filter(lambda i: i['id'] == user1.id, response.data["assigned_users"]))
+    assert len(assigned_users) == 6
+    assert 'id' in assigned_users
+    assert 'count' in assigned_users
+    assert 'full_name' in assigned_users
+    assert 'photo' in assigned_users
+    assert 'big_photo' in assigned_users
+    assert 'gravatar_id' in assigned_users
 
     # No filter
     response = client.get(url)

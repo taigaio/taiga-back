@@ -326,6 +326,8 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         tags_filter_backends = (f for f in filter_backends if f != base_filters.TagsFilter)
 
         queryset = self.get_queryset()
+        # assigned_to is kept for retro-compatibility reasons; but currently filters
+        # are using assigned_users
         querysets = {
             "statuses": self.filter_queryset(queryset, filter_backends=statuses_filter_backends),
             "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),

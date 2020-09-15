@@ -27,14 +27,16 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
+from taiga.events import events
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.notifications.utils import attach_watchers_to_queryset
 from taiga.projects.services import apply_order_updates
+from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.apps import connect_userstories_signals
 from taiga.projects.userstories.apps import disconnect_userstories_signals
-from taiga.events import events
-from taiga.projects.tasks.models import Task
 from taiga.projects.votes.utils import attach_total_voters_to_queryset
-from taiga.projects.notifications.utils import attach_watchers_to_queryset
+from taiga.users.gravatar import get_gravatar_id
+from taiga.users.services import get_big_photo_url, get_photo_url
 
 from . import models
 
@@ -482,7 +484,9 @@ def _get_userstories_assigned_users(project, queryset):
                  SELECT "projects_membership"."user_id" "user_id",
                         "users_user"."full_name" "full_name",
                         "users_user"."username" "username",
-                        COALESCE("counters".count, 0) "count"
+                        COALESCE("counters".count, 0) "count",
+                        "users_user"."photo" "photo",
+                        "users_user"."email" "email"
                    FROM "projects_membership"
         LEFT OUTER JOIN "counters"
                      ON ("projects_membership"."user_id" = "counters"."assigned_user_id")
@@ -496,7 +500,9 @@ def _get_userstories_assigned_users(project, queryset):
                  SELECT NULL "user_id",
                         NULL "full_name",
                         NULL "username",
-                        count(coalesce("assigned_to_id", -1)) "count"
+                        count(coalesce("assigned_to_id", -1)) "count",
+                        NULL "photo",
+                        NULL "email"
                    FROM "userstories_userstory"
              INNER JOIN "projects_project"
                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
@@ -517,11 +523,14 @@ def _get_userstories_assigned_users(project, queryset):
 
     result = []
     none_valued_added = False
-    for id, full_name, username, count in rows:
+    for id, full_name, username, count, photo, email in rows:
         result.append({
             "id": id,
             "full_name": full_name or username or "",
             "count": count,
+            "photo": get_photo_url(photo),
+            "big_photo": get_big_photo_url(photo),
+            "gravatar_id": get_gravatar_id(email) if email else None
         })
 
         if id is None:
@@ -533,6 +542,9 @@ def _get_userstories_assigned_users(project, queryset):
             "id": None,
             "full_name": "",
             "count": 0,
+            "photo": None,
+            "big_photo": None,
+            "gravatar_id": None
         })
 
     return sorted(result, key=itemgetter("full_name"))
@@ -570,7 +582,9 @@ def _get_userstories_owners(project, queryset):
                  SELECT "projects_membership"."user_id" "user_id",
                         "users_user"."full_name",
                         "users_user"."username",
-                        COALESCE("counters".count, 0) "count"
+                        COALESCE("counters".count, 0) "count",
+                        "users_user"."photo" "photo",
+                        "users_user"."email" "email"
                    FROM "projects_membership"
         LEFT OUTER JOIN "counters"
                      ON ("projects_membership"."user_id" = "counters"."owner_id")
@@ -584,7 +598,9 @@ def _get_userstories_owners(project, queryset):
                  SELECT "users_user"."id" "user_id",
                         "users_user"."full_name" "full_name",
                         "users_user"."username" "username",
-                        COALESCE("counters"."count", 0) "count"
+                        COALESCE("counters"."count", 0) "count",
+                        NULL "photo",
+                        NULL "email"
                    FROM "users_user"
         LEFT OUTER JOIN "counters"
                      ON ("users_user"."id" = "counters"."owner_id")
@@ -596,12 +612,15 @@ def _get_userstories_owners(project, queryset):
         rows = cursor.fetchall()
 
     result = []
-    for id, full_name, username, count in rows:
+    for id, full_name, username, count, photo, email in rows:
         if count > 0:
             result.append({
                 "id": id,
                 "full_name": full_name or username or "",
                 "count": count,
+                "photo": get_photo_url(photo),
+                "big_photo": get_big_photo_url(photo),
+                "gravatar_id": get_gravatar_id(email) if email else None
             })
     return sorted(result, key=itemgetter("full_name"))
 
