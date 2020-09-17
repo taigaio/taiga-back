@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 5.5.5 (2020-09-16)
+
+### Misc
+
+- Improve verify email feature for invited users.
+
+### i18n
+
+- Update catalog.
+
+- Update fa.
+
 ## 5.5.4 (2020-09-08)
 
 ### Misc
