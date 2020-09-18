@@ -16,36 +16,33 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY . /taiga-back
 WORKDIR /taiga-back
 
-ENV LOGS_DIR=/srv/logs
-ENV LOG_FILE=/srv/logs/gunicorn.log
-ENV ACCESS_LOGFILE=/srv/logs/access.log
-
 # Install dependencies, compile locales, delete unneeded files
 RUN apt-get update \
     && apt-get install -y \
        build-essential \
        gettext \
+       git \
        net-tools \
        procps \
     && python -m pip install --upgrade pip \
     && python -m pip install wheel \
     && python -m pip install -r requirements.txt \
+    && python -m pip install -r requirements-contribs.txt \
     && python manage.py compilemessages \
+    && python manage.py collectstatic --no-input \
     && chmod +x docker/entrypoint.sh \
     # remove
     && apt-get purge -y \
        build-essential \
        gettext \
+       git \
     && apt-get autoremove -y \
     && rm requirements.txt \
+    && rm requirements-contribs.txt \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /root/.cache \
     && find . -name '__pycache__' -exec rm -r '{}' + \
     && find . -name '*pyc' -exec rm -r '{}' + \
-    && find . -name '*po' -exec rm -r '{}' + \
-    # create useful files and directories
-    && mkdir ${LOGS_DIR} \
-    && touch ${LOG_FILE} \
-    && touch ${ACCESS_LOGFILE}
+    && find . -name '*po' -exec rm -r '{}' +
 
 ENTRYPOINT ["./docker/entrypoint.sh"]

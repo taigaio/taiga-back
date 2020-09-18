@@ -15,7 +15,8 @@ before_install:
   - sudo /etc/init.d/postgresql stop
   - sudo apt-get install -y postgresql-plpython-9.4
   - sudo /etc/init.d/postgresql start 9.4
-  - psql -c 'create database taiga;' -U postgres
+  - psql -c "create user taiga with superuser createdb password 'taiga';" -U postgres
+  - psql -c "create database taiga owner taiga;" -U postgres
 install:
   - travis_retry pip install -r requirements.txt -r requirements-devel.txt
 script:

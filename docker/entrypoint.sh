@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-tail -n 0 -f /srv/logs/*.log &
+# Execute pending migrations
+echo Executing pending migrations
+python manage.py migrate
 
 # Start Taiga processes
 echo Starting Taiga API...
@@ -11,6 +13,5 @@ exec gunicorn taiga.wsgi:application \
     --workers 3 \
     --worker-tmp-dir /dev/shm \
     --log-level=info \
-    --log-file=${LOG_FILE} \
-    --access-logfile=${ACCESS_LOGFILE} \
+    --access-logfile - \
     "$@"

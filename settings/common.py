@@ -33,6 +33,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "taiga",
+        "USER": "taiga",
+        "PASSWORD": "taiga",
+        "HOST": "127.0.0.1"
     }
 }
 
@@ -629,14 +632,6 @@ IMPORTERS = {
     }
 }
 
-# NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
-TEST_RUNNER="django.test.runner.DiscoverRunner"
-
-if "test" in sys.argv:
-    print ("\033[1;91mNo django tests.\033[0m")
-    print ("Try: \033[1;33mpy.test\033[0m")
-    sys.exit(0)
-
 # Configuration for sending notifications
 NOTIFICATIONS_CUSTOM_FILTER = False
 
@@ -644,3 +639,13 @@ NOTIFICATIONS_CUSTOM_FILTER = False
 MDRENDER_CACHE_ENABLE = True
 MDRENDER_CACHE_MIN_SIZE = 40
 MDRENDER_CACHE_TIMEOUT = 86400
+
+
+# NOTE: DON'T INSERT ANYTHING AFTER THIS BLOCK
+TEST_RUNNER="django.test.runner.DiscoverRunner"
+
+if "test" in sys.argv:
+    print ("\033[1;91mNo django tests.\033[0m")
+    print ("Try: \033[1;33mpy.test\033[0m")
+    sys.exit(0)
+# NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE

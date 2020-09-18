@@ -51,9 +51,19 @@ IMPORTERS['jira']['active'] = True
 IMPORTERS['asana']['active'] = True
 IMPORTERS['trello']['active'] = True
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'taiga',
+        'USER': 'taiga',
+        'PASSWORD': 'taiga',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
+# This is only for GitHubActions
 if os.getenv('GITHUB_WORKFLOW'):
-    # This is only for GitHubActions
     DATABASES = {
         'default': {
             "ENGINE": "django.db.backends.postgresql",
@@ -64,3 +74,4 @@ if os.getenv('GITHUB_WORKFLOW'):
             'PORT': '5432',
         }
     }
+
