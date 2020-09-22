@@ -5,9 +5,9 @@ name: Taiga Back - Test and Coverage
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, taiga-6 ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, taiga-6 ]
 
 jobs:
   test:
