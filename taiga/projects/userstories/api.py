@@ -33,6 +33,7 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils import json
+from taiga.base.utils.db import get_object_or_none
 
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.history.services import take_snapshot
@@ -139,6 +140,24 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                                    include_tasks=include_tasks,
                                    epic_id=epic_id)
         return qs
+
+    def list(self, request, *args, **kwargs):
+        res = super().list(request, *args, **kwargs)
+        self._add_taiga_info_headers()
+        return res
+
+    def _add_taiga_info_headers(self):
+        try:
+            project_id = int(self.request.QUERY_PARAMS.get("project", None))
+        except TypeError:
+            project_id = None
+
+        milestone = self.request.QUERY_PARAMS.get("milestone", "").lower()
+
+        if project_id and milestone == "null":
+            # Add this header only to draw the backlog (milestone=null)
+            total_backlog_userstories = self.queryset.filter(project_id=project_id, milestone__isnull=True).count()
+            self.headers["Taiga-Info-Backlog-Total-Userstories"] = total_backlog_userstories
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)

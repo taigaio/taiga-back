@@ -485,6 +485,7 @@ REST_FRAMEWORK = {
 APP_EXTRA_EXPOSE_HEADERS = [
     "taiga-info-total-opened-milestones",
     "taiga-info-total-closed-milestones",
+    "taiga-info-backlog-total-userstories",
     "taiga-info-project-memberships",
     "taiga-info-project-is-private",
     "taiga-info-order-updated"

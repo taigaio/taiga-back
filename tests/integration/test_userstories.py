@@ -53,20 +53,20 @@ def create_uss_fixtures():
     data["epics"] = [f.EpicFactory.create(project=project) for i in range(0, 3)]
     data["tags"] = ["test1test2test3", "test1", "test2", "test3"]
 
-    # ----------------------------------------------------------------------------------------------------
-    # | US    | Status  |  Owner | Assigned To | Assigned Users      | Tags                | Epic        |
-    # |-------#---------#--------#-------------#---------------------#---------------------#--------------
-    # | 0     | status3 |  user2 | None        | None                |      tag1           | epic0       |
-    # | 1     | status3 |  user1 | None        | user1               |           tag2      | None        |
-    # | 2     | status1 |  user3 | None        | None                |      tag1 tag2      | epic1       |
-    # | 3     | status0 |  user2 | None        | None                |                tag3 | None        |
-    # | 4     | status0 |  user1 | user1       | None                |      tag1 tag2 tag3 | epic0       |
-    # | 5     | status2 |  user3 | user1       | None                |                tag3 | None        |
-    # | 6     | status3 |  user2 | user1       | None                |      tag1 tag2      | epic0 epic2 |
-    # | 7     | status0 |  user1 | user2       | None                |                tag3 | None        |
-    # | 8     | status3 |  user3 | user2       | None                |      tag1           | epic2       |
-    # | 9     | status1 |  user2 | user3       | user1               | tag0                | None        |
-    # ----------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------------------
+    # | US | Status  |  Owner | Assigned To | Assigned Users | Tags                | Epic        | Milestone |
+    # |----#---------#--------#-------------#----------------#---------------------#--------------------------
+    # | 0  | status3 |  user2 | None        | None           |      tag1           | epic0       | None      |
+    # | 1  | status3 |  user1 | None        | user1          |           tag2      | None        |           |
+    # | 2  | status1 |  user3 | None        | None           |      tag1 tag2      | epic1       | None      |
+    # | 3  | status0 |  user2 | None        | None           |                tag3 | None        |           |
+    # | 4  | status0 |  user1 | user1       | None           |      tag1 tag2 tag3 | epic0       | None      |
+    # | 5  | status2 |  user3 | user1       | None           |                tag3 | None        |           |
+    # | 6  | status3 |  user2 | user1       | None           |      tag1 tag2      | epic0 epic2 | None      |
+    # | 7  | status0 |  user1 | user2       | None           |                tag3 | None        |           |
+    # | 8  | status3 |  user3 | user2       | None           |      tag1           | epic2       | None      |
+    # | 9  | status1 |  user2 | user3       | user1          | tag0                | None        |           |
+    # --------------------------------------------------------------------------------------------------------
 
     (user1, user2, user3, ) = data["users"]
     (status0, status1, status2, status3 ) = data["statuses"]
@@ -74,31 +74,33 @@ def create_uss_fixtures():
     (tag0, tag1, tag2, tag3, ) = data["tags"]
 
     us0 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
-                              status=status3, tags=[tag1])
+                              status=status3, tags=[tag1], milestone=None)
     f.RelatedUserStory.create(user_story=us0, epic=epic0)
     us1 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=None,
                               status=status3, tags=[tag2], assigned_users=[user1])
     us2 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=None,
-                              status=status1, tags=[tag1, tag2])
+                              status=status1, tags=[tag1, tag2], milestone=None)
     f.RelatedUserStory.create(user_story=us2, epic=epic1)
     us3 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
                               status=status0, tags=[tag3])
     us4 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user1,
-                              status=status0, tags=[tag1, tag2, tag3])
+                              status=status0, tags=[tag1, tag2, tag3], milestone=None)
     f.RelatedUserStory.create(user_story=us4, epic=epic0)
     us5 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user1,
                               status=status2, tags=[tag3])
     us6 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user1,
-                              status=status3, tags=[tag1, tag2])
+                              status=status3, tags=[tag1, tag2], milestone=None)
     f.RelatedUserStory.create(user_story=us6, epic=epic0)
     f.RelatedUserStory.create(user_story=us6, epic=epic2)
     us7 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user2,
                               status=status0, tags=[tag3])
     us8 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user2,
-                              status=status3, tags=[tag1])
+                              status=status3, tags=[tag1], milestone=None)
     f.RelatedUserStory.create(user_story=us8, epic=epic2)
     us9 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user3,
                               status=status1, tags=[tag0], assigned_users=[user1])
+
+    data["userstories"] = [us0, us1, us2, us3, us4, us5, us6, us7, us8, us9]
 
     return data
 
@@ -1012,17 +1014,59 @@ def test_api_filters(client, filter_name, collection, expected, exclude_expected
         param = options[0].id
 
     # include test
-    url = "{}?project={}&{}={}".format(reverse('userstories-list'), project.id, filter_name, param)
+    url = "{}?project={}&&{}={}".format(reverse('userstories-list'), project.id, filter_name, param)
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data) == expected
+    assert "taiga-info-backlog-total-userstories" in response["access-control-expose-headers"]
+    assert response.has_header("Taiga-Info-Backlog-Total-Userstories") == False
 
     # exclude test
-    url = "{}?project={}&exclude_{}={}".format(reverse('userstories-list'), project.id,
+    url = "{}?project={}&&exclude_{}={}".format(reverse('userstories-list'), project.id,
                                                filter_name, param)
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data) == exclude_expected
+    assert "taiga-info-backlog-total-userstories" in response["access-control-expose-headers"]
+    assert response.has_header("Taiga-Info-Backlog-Total-Userstories") == False
+
+
+@pytest.mark.parametrize("filter_name,collection,expected,exclude_expected,backlog_total_uss,is_text", [
+    ('status', 'statuses', 1, 4, 5, False),
+    ('tags', 'tags', 0, 5, 5, True),
+    ('owner', 'users', 1, 4, 5, False),
+    ('role', 'roles', 2, 3, 5, False),
+    ('assigned_users', 'users', 2, 3, 5, False),
+])
+def test_api_filters_for_backlog(client, filter_name, collection, expected, exclude_expected, backlog_total_uss, is_text):
+    data = create_uss_fixtures()
+    project = data["project"]
+    options = data[collection]
+
+    client.login(data["users"][0])
+    if is_text:
+        param = options[0]
+    else:
+        param = options[0].id
+
+    # include test
+    url = "{}?project={}&milestone=null&{}={}".format(reverse('userstories-list'), project.id, filter_name, param)
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == expected
+    assert "taiga-info-backlog-total-userstories" in response["access-control-expose-headers"]
+    assert response.has_header("Taiga-Info-Backlog-Total-Userstories") == True
+    assert response["taiga-info-backlog-total-userstories"] == f"{backlog_total_uss}"
+
+    # exclude test
+    url = "{}?project={}&milestone=null&exclude_{}={}".format(reverse('userstories-list'), project.id,
+                                               filter_name, param)
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == exclude_expected
+    assert "taiga-info-backlog-total-userstories" in response["access-control-expose-headers"]
+    assert response.has_header("Taiga-Info-Backlog-Total-Userstories") == True
+    assert response["taiga-info-backlog-total-userstories"] ==  f"{backlog_total_uss}"
 
 
 def test_api_filters_tags_or_operator(client):
