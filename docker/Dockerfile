@@ -45,4 +45,5 @@ RUN apt-get update \
     && find . -name '*pyc' -exec rm -r '{}' + \
     && find . -name '*po' -exec rm -r '{}' +
 
+EXPOSE 8000
 ENTRYPOINT ["./docker/entrypoint.sh"]
