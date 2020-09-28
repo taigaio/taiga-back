@@ -1,1 +1,1 @@
-git+https://github.com/taigaio/taiga-contrib-slack.git#subdirectory=back
+taiga-contrib-slack==5.5.1

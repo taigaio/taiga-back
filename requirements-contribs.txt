@@ -4,4 +4,4 @@
 #
 #    pip-compile requirements-contribs.in
 #
-git+https://github.com/taigaio/taiga-contrib-slack.git#subdirectory=back  # via -r requirements-contribs.in
+taiga-contrib-slack==5.5.1  # via -r requirements-contribs.in
