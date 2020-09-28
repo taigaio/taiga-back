@@ -34,6 +34,7 @@ regenerate.sh
 requirements-devel.in
 requirements-devel.txt
 requirements.in
+requirements-contribs.in
 scripts
 setup.cfg
 static
