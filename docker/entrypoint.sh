@@ -5,9 +5,8 @@ set -euo pipefail
 echo Executing pending migrations
 python manage.py migrate
 
-# Load initial user and templates (if they don't exist)
-echo "Load initial user and templates (if they dont exist)"
-python manage.py loaddata initial_user
+# Load default templates
+echo Load default templates
 python manage.py loaddata initial_project_templates
 
 # Start Taiga processes

@@ -1,11 +1,11 @@
-FROM python:3.8-slim
+FROM python:3.7-slim
 LABEL maintainer="support@taiga.io"
 
 # Avoid prompting for configuration
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONFAULTHANDLER=1
 
 # Use a virtualenv
@@ -31,6 +31,7 @@ RUN apt-get update \
     && python manage.py compilemessages \
     && python manage.py collectstatic --no-input \
     && chmod +x docker/entrypoint.sh \
+    && cp docker/config.py settings/config.py \
     # remove
     && apt-get purge -y \
        build-essential \
@@ -44,6 +45,8 @@ RUN apt-get update \
     && find . -name '__pycache__' -exec rm -r '{}' + \
     && find . -name '*pyc' -exec rm -r '{}' + \
     && find . -name '*po' -exec rm -r '{}' +
+
+ENV DJANGO_SETTINGS_MODULE=settings.config
 
 EXPOSE 8000
 ENTRYPOINT ["./docker/entrypoint.sh"]
