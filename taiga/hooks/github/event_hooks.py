@@ -18,7 +18,8 @@
 
 import re
 
-from taiga.hooks.event_hooks import BaseNewIssueEventHook, BaseIssueCommentEventHook, BasePushEventHook
+from taiga.hooks.event_hooks import (BaseIssueEventHook, BaseIssueCommentEventHook, BasePushEventHook,
+                                     ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE, ISSUE_ACTION_DELETE)
 
 
 class BaseGitHubEventHook():
@@ -33,7 +34,12 @@ class BaseGitHubEventHook():
         return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
 
-class IssuesEventHook(BaseGitHubEventHook, BaseNewIssueEventHook):
+class IssuesEventHook(BaseGitHubEventHook, BaseIssueEventHook):
+    @property
+    def action_type(self):
+        # NOTE: Only CREATE for now
+        return ISSUE_ACTION_CREATE
+
     def ignore(self):
         return self.payload.get('action', None) != "opened"
 

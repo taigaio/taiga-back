@@ -164,6 +164,80 @@ new_issue_base_payload = {
   }
 }
 
+edit_issue_base_payload = {
+  "object_kind": "issue",
+  "event_type": "issue",
+  "user": {
+    "name": "Administrator",
+    "username": "root",
+    "avatar_url": "http://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=40\u0026d=identicon"
+  },
+  "project": {
+    "name": "Gitlab Test",
+    "description": "Aut reprehenderit ut est.",
+    "web_url": "http://example.com/gitlabhq/gitlab-test",
+    "avatar_url": None,
+    "git_ssh_url": "git@example.com:gitlabhq/gitlab-test.git",
+    "git_http_url": "http://example.com/gitlabhq/gitlab-test.git",
+    "namespace": "GitlabHQ",
+    "visibility_level": 20,
+    "path_with_namespace": "gitlabhq/gitlab-test",
+    "default_branch": "master",
+    "homepage": "http://example.com/gitlabhq/gitlab-test",
+    "url": "http://example.com/gitlabhq/gitlab-test.git",
+    "ssh_url": "git@example.com:gitlabhq/gitlab-test.git",
+    "http_url": "http://example.com/gitlabhq/gitlab-test.git"
+  },
+  "repository": {
+    "name": "Gitlab Test",
+    "url": "http://example.com/gitlabhq/gitlab-test.git",
+    "description": "Aut reprehenderit ut est.",
+    "homepage": "http://example.com/gitlabhq/gitlab-test"
+  },
+  "object_attributes": {
+    "id": 301,
+    "title": "New API: create/update/delete file",
+    "assignee_id": 51,
+    "author_id": 51,
+    "project_id": 14,
+    "created_at": "2013-12-03T17:15:43Z",
+    "updated_at": "2020-10-01 14:17:48 UTC",
+    "last_edited_at": "2020-10-01 14:17:48 UTC",
+    "position": 0,
+    "branch_name": None,
+    "description": "Create new API for manipulations with repository",
+    "milestone_id": None,
+    "state": "opened",
+    "iid": 23,
+    "url": "http://example.com/diaspora/issues/23",
+    "action": "update",
+  },
+  "labels": [],
+  "assignee": {
+    "name": "User1",
+    "username": "user1",
+    "avatar_url": "http://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=40\u0026d=identicon"
+  },
+  "changes": {
+    "last_edited_at": {
+        "previous": "2013-12-03T17:16:43Z",
+        "current": "2020-10-01 14:17:48 UTC"
+    },
+    "title": {
+        "previous": "New API: create file",
+        "current": "New API: create/update/delete file",
+    },
+    "description": {
+        "previous": "Create new API for repository",
+        "current": "Create new API for manipulations with repository",
+    },
+    "updated_at": {
+        "previous": "2013-12-03T17:16:43Z",
+        "current": "2020-10-01 14:17:48 UTC"
+    }
+  },
+}
+
 issue_comment_base_payload = {
   "object_kind": "note",
   "user": {
@@ -765,15 +839,56 @@ def test_issues_event_opened_issue(client):
     assert len(mail.outbox) == 1
 
 
-def test_issues_event_other_than_opened_issue(client):
+def test_issues_event_updated_issue_conected_with_external_one(client):
+    issue = f.IssueFactory.create(external_reference=["gitlab", "http://gitlab.com/test/project/issues/112"])
+    issue.project.default_issue_status = issue.status
+    issue.project.default_issue_type = issue.type
+    issue.project.default_severity = issue.severity
+    issue.project.default_priority = issue.priority
+    issue.project.save()
+    Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_admin=True)
+    notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
+    notify_policy.notify_level = NotifyLevel.all
+    notify_policy.save()
+
+
+    payload = deepcopy(edit_issue_base_payload)
+    payload["object_attributes"]["title"] = "test-title"
+    payload["object_attributes"]["description"] = "test-body"
+    payload["object_attributes"]["url"] = "http://gitlab.com/test/project/issues/112"
+    payload["object_attributes"]["action"] = "update"
+    payload["repository"]["homepage"] = "test"
+
+    mail.outbox = []
+
+    ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
+    ev_hook.process_event()
+
+    assert Issue.objects.count() == 1
+    assert len(mail.outbox) == 1
+
+    assert issue.subject != payload["object_attributes"]["title"]
+    assert issue.description != payload["object_attributes"]["description"]
+
+    issue.refresh_from_db()
+
+    assert issue.subject == payload["object_attributes"]["title"]
+    assert issue.description == payload["object_attributes"]["description"]
+
+
+def test_issues_event_updated_issue_not_conected_with_external_one(client):
     issue = f.IssueFactory.create()
     issue.project.default_issue_status = issue.status
     issue.project.default_issue_type = issue.type
     issue.project.default_severity = issue.severity
     issue.project.default_priority = issue.priority
     issue.project.save()
+    Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_admin=True)
+    notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
+    notify_policy.notify_level = NotifyLevel.all
+    notify_policy.save()
 
-    payload = deepcopy(new_issue_base_payload)
+    payload = deepcopy(edit_issue_base_payload)
     payload["object_attributes"]["title"] = "test-title"
     payload["object_attributes"]["description"] = "test-body"
     payload["object_attributes"]["url"] = "http://gitlab.com/test/project/issues/11"
@@ -785,8 +900,8 @@ def test_issues_event_other_than_opened_issue(client):
     ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
     ev_hook.process_event()
 
-    assert Issue.objects.count() == 1
-    assert len(mail.outbox) == 0
+    assert Issue.objects.count() == 2
+    assert len(mail.outbox) == 1
 
 
 def test_issues_event_bad_issue(client):

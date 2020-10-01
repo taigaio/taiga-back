@@ -31,6 +31,11 @@ from taiga.hooks.exceptions import ActionSyntaxException
 from taiga.users.models import AuthData
 
 
+ISSUE_ACTION_CREATE = "ISSUE_CREATE"
+ISSUE_ACTION_UPDATE = "ISSUE_UPDATE"
+ISSUE_ACTION_DELETE = "ISSUE_DELETE"
+
+
 class BaseEventHook:
     platform = "Unknown"
     platform_slug = "unknown"
@@ -94,11 +99,22 @@ class BaseIssueCommentEventHook(BaseEventHook):
             send_notifications(item, history=snapshot)
 
 
-class BaseNewIssueEventHook(BaseEventHook):
+class BaseIssueEventHook(BaseEventHook):
+    @property
+    def action_type(self):
+        raise NotImplementedError
+
     def get_data(self):
         raise NotImplementedError
 
-    def generate_new_issue_comment(self, **kwargs):
+    def get_issue(self, data):
+        try:
+            return Issue.objects.get(project=self.project,
+                                     external_reference=[self.platform_slug, data['url']])
+        except Issue.DoesNotExist:
+            return None
+
+    def generate_create_issue_comment(self, **kwargs):
         _new_issue_message = _(
             "Issue created by [@{user_name}]({user_url} "
             "\"See @{user_name}'s {platform} profile\") "
@@ -110,15 +126,19 @@ class BaseNewIssueEventHook(BaseEventHook):
         except Exception:
             return _simple_new_issue_message.format(platform=self.platform)
 
-    def process_event(self):
-        if self.ignore():
-            return
+    def generate_update_issue_comment(self, **kwargs):
+        _edit_issue_message = _(
+            "Issue modified by [@{user_name}]({user_url} "
+            "\"See @{user_name}'s {platform} profile\") "
+            "from [{platform}#{number}]({url} \"Go to issue\")."
+        )
+        _simple_edit_issue_message = _("Issue modified from {platform}.")
+        try:
+            return _edit_issue_message.format(platform=self.platform, **kwargs)
+        except Exception:
+            return _simple_edit_issue_message.format(platform=self.platform)
 
-        data = self.get_data()
-
-        if not all([data['subject'], data['url']]):
-            raise ActionSyntaxException(_("Invalid issue information"))
-
+    def _create_issue(self, data):
         user = self.get_user(data['user_id'], self.platform_slug)
 
         issue = Issue.objects.create(
@@ -134,10 +154,52 @@ class BaseNewIssueEventHook(BaseEventHook):
         )
         take_snapshot(issue, user=user)
 
-        comment = self.generate_new_issue_comment(**data)
+        comment = self.generate_create_issue_comment(**data)
 
         snapshot = take_snapshot(issue, comment=comment, user=user)
         send_notifications(issue, history=snapshot)
+
+    def _update_issue(self, data):
+        issue = self.get_issue(data)
+
+        if not issue:
+            # The issue is not created yet, add it
+            return self._create_issue(data)
+
+        user = self.get_user(data['user_id'], self.platform_slug)
+
+        issue.subject = data['subject']
+        issue.description = data['description']
+        issue.save()
+
+        take_snapshot(issue, user=user)
+
+        comment = self.generate_update_issue_comment(**data)
+
+        snapshot = take_snapshot(issue, comment=comment, user=user)
+        send_notifications(issue, history=snapshot)
+
+
+    def _default_issue(self, data):
+        raise NotImplementedError
+
+    def process_event(self):
+        if self.ignore():
+            return
+
+        data = self.get_data()
+
+        if not all([data['subject'], data['url']]):
+            raise ActionSyntaxException(_("Invalid issue information"))
+
+        if self.action_type == ISSUE_ACTION_CREATE:
+            self._create_issue(data)
+        elif self.action_type == ISSUE_ACTION_UPDATE:
+            self._update_issue(data)
+        elif self.action_type == ISSUE_ACTION_DELETE:
+            self._delete_issue(data)
+        else:
+            raise NotImplementedError
 
 
 class BasePushEventHook(BaseEventHook):

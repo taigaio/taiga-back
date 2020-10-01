@@ -19,7 +19,8 @@
 import re
 import os
 
-from taiga.hooks.event_hooks import BaseNewIssueEventHook, BaseIssueCommentEventHook, BasePushEventHook
+from taiga.hooks.event_hooks import (BaseIssueEventHook, BaseIssueCommentEventHook, BasePushEventHook,
+                                     ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE, ISSUE_ACTION_DELETE)
 
 
 class BaseGitLabEventHook():
@@ -34,9 +35,19 @@ class BaseGitLabEventHook():
         return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
 
-class IssuesEventHook(BaseGitLabEventHook, BaseNewIssueEventHook):
+class IssuesEventHook(BaseGitLabEventHook, BaseIssueEventHook):
+    _ISSUE_ACTIONS = {
+      "open": ISSUE_ACTION_CREATE,
+      "update": ISSUE_ACTION_UPDATE,
+    }
+
+    @property
+    def action_type(self):
+        _action = self.payload.get('object_attributes', {}).get("action", "")
+        return self._ISSUE_ACTIONS.get(_action, None)
+
     def ignore(self):
-        return self.payload.get('object_attributes', {}).get("action", "") != "open"
+        return self.action_type not in [ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE]
 
     def get_data(self):
         description = self.payload.get('object_attributes', {}).get('description', None)
