@@ -36,10 +36,19 @@ DATABASES = {
     }
 }
 
+SECRET_KEY = os.getenv('TAIGA_SECRET_KEY')
 MEDIA_URL = f"http://localhost:{ os.getenv('TAIGA_PORT') }/media/"
 STATIC_URL = f"http://localhost:{ os.getenv('TAIGA_PORT') }/static/"
 SITES["api"] = {
     "domain": f"localhost:{ os.getenv('TAIGA_PORT') }", "scheme": "http", "name": "api"
+}
+
+#########################################
+## EVENTS
+#########################################
+EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
+EVENTS_PUSH_BACKEND_OPTIONS = {
+    "url": f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@taiga-rabbitmq:5672/taiga"
 }
 
 #########################################
