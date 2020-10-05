@@ -1,1 +1,2 @@
 taiga-contrib-slack==5.5.1
+git+https://github.com/taigaio/taiga-contrib-github-auth.git@stable#egg=taiga-contrib-github-auth&subdirectory=back

@@ -4,4 +4,5 @@
 #
 #    pip-compile requirements-contribs.in
 #
+git+https://github.com/taigaio/taiga-contrib-github-auth.git@stable#egg=taiga-contrib-github-auth&subdirectory=back  # via -r requirements-contribs.in
 taiga-contrib-slack==5.5.1  # via -r requirements-contribs.in

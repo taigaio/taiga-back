@@ -55,5 +55,10 @@ EVENTS_PUSH_BACKEND_OPTIONS = {
 ## CONTRIBS
 #########################################
 INSTALLED_APPS += [
-    "taiga_contrib_slack"
+    "taiga_contrib_slack",
+    "taiga_contrib_github_auth"
 ]
+
+GITHUB_API_CLIENT_ID = os.getenv('GITHUB_API_CLIENT_ID')
+GITHUB_API_CLIENT_SECRET = os.getenv('GITHUB_API_CLIENT_SECRET')
+
