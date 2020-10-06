@@ -37,10 +37,12 @@ DATABASES = {
 }
 
 SECRET_KEY = os.getenv('TAIGA_SECRET_KEY')
-MEDIA_URL = f"http://localhost:{ os.getenv('TAIGA_PORT') }/media/"
-STATIC_URL = f"http://localhost:{ os.getenv('TAIGA_PORT') }/static/"
+MEDIA_URL = f"{ os.getenv('TAIGA_SITES_SCHEME') }://{ os.getenv('TAIGA_SITES_DOMAIN') }/media/"
+STATIC_URL = f"{ os.getenv('TAIGA_SITES_SCHEME') }://{ os.getenv('TAIGA_SITES_DOMAIN') }/static/"
 SITES["api"] = {
-    "domain": f"localhost:{ os.getenv('TAIGA_PORT') }", "scheme": "http", "name": "api"
+    "domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }",
+    "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }",
+    "name": "api"
 }
 
 #########################################
@@ -56,9 +58,13 @@ EVENTS_PUSH_BACKEND_OPTIONS = {
 #########################################
 INSTALLED_APPS += [
     "taiga_contrib_slack",
-    "taiga_contrib_github_auth"
+    "taiga_contrib_github_auth",
+    "taiga_contrib_gitlab_auth"
 ]
 
 GITHUB_API_CLIENT_ID = os.getenv('GITHUB_API_CLIENT_ID')
 GITHUB_API_CLIENT_SECRET = os.getenv('GITHUB_API_CLIENT_SECRET')
 
+GITLAB_API_CLIENT_ID = os.getenv('GITLAB_API_CLIENT_ID')
+GITLAB_API_CLIENT_SECRET = os.getenv('GITLAB_API_CLIENT_SECRET')
+GITLAB_URL = os.getenv('GITLAB_URL')
