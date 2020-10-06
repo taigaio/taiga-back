@@ -18,7 +18,8 @@
 
 import re
 
-from taiga.hooks.event_hooks import BaseNewIssueEventHook, BaseIssueCommentEventHook, BasePushEventHook
+from taiga.hooks.event_hooks import (BaseIssueEventHook, BaseIssueCommentEventHook, BasePushEventHook,
+                                     ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE, ISSUE_ACTION_DELETE)
 
 
 class BaseBitBucketEventHook():
@@ -33,7 +34,12 @@ class BaseBitBucketEventHook():
         return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
 
-class IssuesEventHook(BaseBitBucketEventHook, BaseNewIssueEventHook):
+class IssuesEventHook(BaseBitBucketEventHook, BaseIssueEventHook):
+    @property
+    def action_type(self):
+        # NOTE: Only CREATE for now
+        return ISSUE_ACTION_CREATE
+
     def get_data(self):
         description = self.payload.get('issue', {}).get('content', {}).get('raw', '')
         project_url = self.payload.get('repository', {}).get('links', {}).get('html', {}).get('href', None)
