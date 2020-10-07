@@ -911,6 +911,29 @@ class IssueDueDate(models.Model):
         return self.name
 
 
+class Swimlane(models.Model):
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="swimlanes",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE,
+    )
+    name = models.TextField(null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
+                                             verbose_name=_("order"))
+
+    class Meta:
+        verbose_name = "swimlane"
+        verbose_name_plural = "swimlanes"
+        ordering = ["project", "order", "name"]
+
+    def __str__(self):
+        return self.name
+
+
 class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
     name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))

@@ -285,6 +285,13 @@ class IssueStatusAdmin(admin.ModelAdmin):
     raw_id_fields = ["project"]
 
 
+class SwimlaneAdmin(admin.ModelAdmin):
+    list_display = ["project", "name", "order"]
+    list_display_links = ["project", "name"]
+    raw_id_fields = ["project"]
+    search_fields = ["project", "name"]
+
+
 class ProjectTemplateAdmin(admin.ModelAdmin):
     pass
 
@@ -298,4 +305,5 @@ admin.site.register(models.Membership, MembershipAdmin)
 admin.site.register(models.Severity, SeverityAdmin)
 admin.site.register(models.Priority, PriorityAdmin)
 admin.site.register(models.IssueType, IssueTypeAdmin)
+admin.site.register(models.Swimlane, SwimlaneAdmin)
 admin.site.register(models.ProjectTemplate, ProjectTemplateAdmin)

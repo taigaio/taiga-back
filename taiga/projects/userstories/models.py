@@ -99,11 +99,11 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
                                     verbose_name=_("points"))
 
     backlog_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
-                                        verbose_name=_("backlog order"))
+                                           verbose_name=_("backlog order"))
     sprint_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
-                                       verbose_name=_("sprint order"))
+                                          verbose_name=_("sprint order"))
     kanban_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
-                                       verbose_name=_("kanban order"))
+                                          verbose_name=_("kanban order"))
 
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
@@ -125,8 +125,8 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
         on_delete=models.SET_NULL,
     )
     assigned_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True,
-                                    default=None, related_name="assigned_userstories",
-                                    verbose_name=_("assigned users"))
+                                            default=None, related_name="assigned_userstories",
+                                            verbose_name=_("assigned users"))
     client_requirement = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("is client requirement"))
     team_requirement = models.BooleanField(default=False, null=False, blank=True,
@@ -137,15 +137,19 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from issue"))
     generated_from_task = models.ForeignKey("tasks.Task", null=True, blank=True,
-                                             on_delete=models.SET_NULL,
-                                             related_name="generated_user_stories",
-                                             verbose_name=_("generated from task"))
+                                            on_delete=models.SET_NULL,
+                                            related_name="generated_user_stories",
+                                            verbose_name=_("generated from task"))
     from_task_ref = models.TextField(null=True, blank=True, verbose_name=_("reference from task"))
     external_reference = ArrayField(models.TextField(null=False, blank=False),
                                     null=True, blank=True, default=None, verbose_name=_("external reference"))
 
     tribe_gig = PickledObjectField(null=True, blank=True, default=None,
                                    verbose_name="taiga tribe gig")
+
+    swimlane = models.ForeignKey("projects.Swimlane", null=True, blank=True,
+                                 related_name="user_stories", verbose_name=_("swimlane"),
+                                 on_delete=models.SET_NULL)
 
     _importing = None
 
@@ -183,9 +187,9 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
             rp.points.value
             for rp in self.role_points.all()
             if rp.points.value is not None
-       ]
+        ]
 
-        #If we only have None values the sum should be None
+        # If we only have None values the sum should be None
         if not not_null_role_points:
             return None
 
