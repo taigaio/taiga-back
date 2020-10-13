@@ -225,6 +225,11 @@ class Command(BaseCommand):
                                                         type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
                                                         order=i)
+                names = set([self.sd.words(1, 2) for i in range(1, 6)])
+                for j, name in enumerate(names):
+                    Swimlane.objects.create(name=name,
+                                             project=project,
+                                             order=j+1)
 
                 start_date = now() - datetime.timedelta(55)
 

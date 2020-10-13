@@ -27,7 +27,7 @@ from taiga.base.utils import json
 from taiga.projects.services import stats as stats_services
 from taiga.projects.history.services import take_snapshot
 from taiga.permissions.choices import ANON_PERMISSIONS
-from taiga.projects.models import Project
+from taiga.projects.models import Project, Swimlane
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
@@ -2504,3 +2504,59 @@ def test_prevent_delete_issue_default_due_dates(client):
 
     assert response.status_code == 400
     assert project.issue_duedates.count() == 1
+
+
+def test_create_first_swimlane_and_assign_to_uss(client):
+    project = f.create_project()
+    membership = f.create_membership(project=project, is_admin=True)
+    us = f.create_userstory(owner=membership.user,
+                            project=project)
+    assert us.swimlane is None
+
+    url = reverse('swimlanes-list')
+    data = {
+        "project": project.id,
+        "name": "Swimlane 1"
+    }
+    client.login(membership.user)
+    response = client.json.post(url, json.dumps(data))
+    us.refresh_from_db()
+
+    assert response.status_code == 201
+    assert project.swimlanes.count() == 1
+    assert us.swimlane is not None
+
+
+def test_create_second_swimlane(client):
+    # given a first swimlane related to a project
+    project = f.create_project()
+    membership = f.create_membership(project=project, is_admin=True)
+    us = f.create_userstory(owner=membership.user,
+                            project=project)
+
+    url = reverse('swimlanes-list')
+    data = {
+        "project": project.id,
+        "name": "Swimlane 1"
+    }
+    client.login(membership.user)
+    response = client.json.post(url, json.dumps(data))
+    swimlane_1_id = json.loads(response.content)['id']
+
+    # when: create second swimlane
+    data = {
+        "project": project.id,
+        "name": "Swimlane 2"
+    }
+    client.login(membership.user)
+    response = client.json.post(url, json.dumps(data))
+    swimlane_2_id = json.loads(response.content)['id']
+    swimlane_2 = Swimlane.objects.get(pk=swimlane_2_id)
+
+    us.refresh_from_db()
+
+    # then
+    assert response.status_code == 201
+    assert project.swimlanes.count() == 2
+    assert swimlane_2.user_stories.count() == 0
+    assert us.swimlane.id == swimlane_1_id

@@ -118,6 +118,16 @@ class PointsFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
+class SwimlaneFactory(Factory):
+    class Meta:
+        model = "projects.Swimlane"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "Points {}".format(n))
+    order = factory.Sequence(lambda n: n)
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
 class RolePointsFactory(Factory):
     class Meta:
         model = "userstories.RolePoints"

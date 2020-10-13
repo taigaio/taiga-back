@@ -642,6 +642,34 @@ class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
+class SwimlaneViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+
+    model = models.Swimlane
+    serializer_class = serializers.SwimlaneSerializer
+    validator_class = validators.SwimlaneValidator
+    permission_classes = (permissions.SwimlanePermission,)
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ('project',)
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("swimlane-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
+    def post_save(self, object, created=False):
+        super().post_save(object, created=created)
+
+        if not created:
+            return
+
+        # If it's a creation and it's the first and only swimlane,
+        # then assign all Userstories to this new swimlane
+        total_swimlanes = object.project.swimlanes.count()
+        if total_swimlanes == 1:
+            uss = object.project.user_stories.all()
+            uss.update(swimlane=object)
+
+
 class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     model = models.UserStoryDueDate

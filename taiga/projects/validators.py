@@ -84,6 +84,11 @@ class PointsValidator(DuplicatedNameInProjectValidator, validators.ModelValidato
         model = models.Points
 
 
+class SwimlaneValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
+    class Meta:
+        model = models.Swimlane
+
+
 class UserStoryDueDateValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
         model = models.UserStoryDueDate
@@ -253,7 +258,8 @@ class _MemberBulkValidator(validators.Validator):
             # If the validation comes from a request let's check the user is a valid contact
             request = self.context.get("request", None)
             if request is not None and request.user.is_authenticated:
-                valid_usernames = set(request.user.contacts_visible_by_user(request.user).values_list("username", flat=True))
+                all_usernames = request.user.contacts_visible_by_user(request.user).values_list("username", flat=True)
+                valid_usernames = set(all_usernames)
                 if username not in valid_usernames:
                     raise ValidationError(_("The user must be a valid contact"))
 

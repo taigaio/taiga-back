@@ -77,6 +77,13 @@ class PointsSerializer(serializers.LightSerializer):
     project = Field(attr="project_id")
 
 
+class SwimlaneSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    order = Field()
+    project = Field(attr="project_id")
+
+
 class UserStoryDueDateSerializer(BaseDueDateSerializer):
     pass
 

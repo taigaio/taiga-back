@@ -139,6 +139,16 @@ class PointsPermission(TaigaResourcePermission):
     bulk_update_order_perms = IsProjectAdmin()
 
 
+class SwimlanePermission(TaigaResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectAdmin()
+
+
 class UserStoryStatusPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectAdmin()
@@ -181,6 +191,7 @@ class TaskDueDatePermission(TaigaResourcePermission):
     bulk_update_order_perms = IsProjectAdmin()
 
 # Issues
+
 
 class SeverityPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
