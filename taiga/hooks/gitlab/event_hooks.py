@@ -20,7 +20,8 @@ import re
 import os
 
 from taiga.hooks.event_hooks import (BaseIssueEventHook, BaseIssueCommentEventHook, BasePushEventHook,
-                                     ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE, ISSUE_ACTION_DELETE)
+                                     ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE, ISSUE_ACTION_CLOSE,
+                                     ISSUE_ACTION_REOPEN)
 
 
 class BaseGitLabEventHook():
@@ -39,6 +40,8 @@ class IssuesEventHook(BaseGitLabEventHook, BaseIssueEventHook):
     _ISSUE_ACTIONS = {
       "open": ISSUE_ACTION_CREATE,
       "update": ISSUE_ACTION_UPDATE,
+      "close": ISSUE_ACTION_CLOSE,
+      "reopen": ISSUE_ACTION_REOPEN,
     }
 
     @property
@@ -47,20 +50,28 @@ class IssuesEventHook(BaseGitLabEventHook, BaseIssueEventHook):
         return self._ISSUE_ACTIONS.get(_action, None)
 
     def ignore(self):
-        return self.action_type not in [ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE]
+        return self.action_type not in [
+            ISSUE_ACTION_CREATE,
+            ISSUE_ACTION_UPDATE,
+            ISSUE_ACTION_CLOSE,
+            ISSUE_ACTION_REOPEN,
+        ]
 
     def get_data(self):
         description = self.payload.get('object_attributes', {}).get('description', None)
         project_url = self.payload.get('repository', {}).get('homepage', "")
         user_name = self.payload.get('user', {}).get('username', None)
+        state = self.payload.get('object_attributes', {}).get('state', 'opened')
+
         return {
             "number": self.payload.get('object_attributes', {}).get('iid', None),
             "subject": self.payload.get('object_attributes', {}).get('title', None),
             "url": self.payload.get('object_attributes', {}).get('url', None),
             "user_id": None,
             "user_name": user_name,
-            "user_url": os.path.join(os.path.dirname(os.path.dirname(project_url)), "u", user_name),
+            "user_url": os.path.join(os.path.dirname(os.path.dirname(project_url)), user_name),
             "description": self.replace_gitlab_references(project_url, description),
+            "status": self.close_status if state == "closed" else self.open_status,
         }
 
 
@@ -78,7 +89,7 @@ class IssueCommentEventHook(BaseGitLabEventHook, BaseIssueCommentEventHook):
             "url": os.path.join(project_url, "issues", str(number)),
             "user_id": None,
             "user_name": user_name,
-            "user_url": os.path.join(os.path.dirname(os.path.dirname(project_url)), "u", user_name),
+            "user_url": os.path.join(os.path.dirname(os.path.dirname(project_url)), user_name),
             "comment_url": self.payload.get('object_attributes', {}).get('url', None),
             "comment_message": self.replace_gitlab_references(project_url, comment_message),
         }

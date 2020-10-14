@@ -49,11 +49,12 @@ class GitLabViewSet(BaseWebhookApiViewSet):
         if project.modules_config.config is None:
             return False
 
-        project_secret = project.modules_config.config.get("gitlab", {}).get("secret", "")
+        gitlab_config = project.modules_config.config.get("gitlab", {})
+
+        project_secret = gitlab_config.get("secret", "")
         if not project_secret:
             return False
 
-        gitlab_config = project.modules_config.config.get("gitlab", {})
         valid_origin_ips = gitlab_config.get("valid_origin_ips", settings.GITLAB_VALID_ORIGIN_IPS)
         origin_ip = get_ip(request)
         mathching_origin_ip = True
