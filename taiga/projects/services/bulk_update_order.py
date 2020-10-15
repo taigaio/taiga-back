@@ -16,12 +16,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import suppress
+
 from django.db import transaction, connection
 from django.core.exceptions import ObjectDoesNotExist
+from psycopg2.extras import execute_values
 
 from taiga.projects import models
-
-from contextlib import suppress
 
 
 def apply_order_updates(base_orders: dict, new_orders: dict, *, remove_equal_original=False):
@@ -36,7 +37,7 @@ def apply_order_updates(base_orders: dict, new_orders: dict, *, remove_equal_ori
     The elements where no order update is needed will be removed.
     """
     updated_order_ids = set()
-    original_orders = {k:v for k,v in base_orders.items()}
+    original_orders = {k: v for k, v in base_orders.items()}
 
     # Remove the elements from new_orders non existint in base_orders
     invalid_keys = new_orders.keys() - base_orders.keys()
@@ -237,3 +238,45 @@ def bulk_update_severity_order(project, user, data):
                        (order, id, project.id))
     cursor.execute("DEALLOCATE bulk_update_order")
     cursor.close()
+
+
+@transaction.atomic
+def bulk_update_swimlane_order(project, user, data):
+    with connection.cursor() as curs:
+        execute_values(curs,
+                       """
+                       UPDATE projects_swimlane
+                       SET "order" = tmp.new_order
+                       FROM (VALUES %s) AS tmp (id, new_order)
+                       WHERE tmp.id = projects_swimlane.id""",
+                       data)
+
+        ordered_uss = _get_ordered_uss(project)
+        execute_values(curs,
+                       """
+                       UPDATE userstories_userstory
+                       SET kanban_order = tmp.new_order
+                       FROM (VALUES %s) AS tmp (id, new_order)
+                       WHERE tmp.id = userstories_userstory.id""",
+                       ordered_uss)
+
+
+def _get_ordered_uss(project):
+    """
+    This function merges uss without swimlane and uss with swimlanes ordered by swimlane;
+    then, recalculates indexes with the new order
+    """
+    from taiga.projects.models import Swimlane
+    ordered_uss_ids = list(
+        project.user_stories.filter(swimlane=None).order_by('kanban_order').values_list('id', flat=True)
+    )
+    swimlanes = []
+    for s in Swimlane.objects.filter(project=project).order_by('order'):
+        swimlanes.extend(
+            list(project.user_stories.filter(swimlane=s).order_by('kanban_order').values_list('id', flat=True))
+        )
+
+    ordered_uss_ids.extend(swimlanes)
+    indexes = range(0, len(ordered_uss_ids))
+    data = list(zip(ordered_uss_ids, indexes))
+    return data

@@ -2560,3 +2560,76 @@ def test_create_second_swimlane(client):
     assert project.swimlanes.count() == 2
     assert swimlane_2.user_stories.count() == 0
     assert us.swimlane.id == swimlane_1_id
+
+
+def test_swimlane_bulk_update_order(client):
+    project = f.create_project()
+    membership = f.create_membership(project=project, is_admin=True)
+    us1 = f.create_userstory(subject='us1',
+                             owner=membership.user,
+                             project=project)
+    us2 = f.create_userstory(subject='us2',
+                             owner=membership.user,
+                             project=project)
+
+    url = reverse('swimlanes-list')
+    data = {
+        "project": project.id,
+        "name": "S1"
+    }
+    client.login(membership.user)
+    response = client.json.post(url, json.dumps(data))
+
+    project.refresh_from_db()
+    swimlane1 = project.swimlanes.filter(name='S1').first()
+
+    # both uss now belong to the first new swimlane
+    assert swimlane1.user_stories.count() == 2
+
+    # us without swimlane
+    us3 = f.create_userstory(subject='us3',
+                             owner=membership.user,
+                             project=project)
+    data = {
+        "project": project.id,
+        "name": "S2"
+    }
+    client.login(membership.user)
+    response = client.json.post(url, json.dumps(data))
+
+    project.refresh_from_db()
+    swimlane2 = project.swimlanes.filter(name='S2').first()
+    us4 = f.create_userstory(subject='us4',
+                             owner=membership.user,
+                             project=project,
+                             swimlane=swimlane2)
+    us5 = f.create_userstory(subject='us5',
+                             owner=membership.user,
+                             project=project,
+                             swimlane=swimlane2)
+
+    # both new user stories belong to the second swimlane
+    assert swimlane2.user_stories.count() == 2
+
+    # In this moment, they are arranged like:
+    # us1, us2, us3, us4, us5
+    # After arranging the swimlanes, they should be like:
+    # us3, us4, us5, us1, us2
+    url = reverse('swimlanes-bulk-update-order')
+    data = {
+        "project": project.id,
+        "bulk_swimlanes": [
+            [swimlane2.id, 0],
+            [swimlane1.id, 1],
+        ]
+    }
+    response = client.json.post(url, json.dumps(data))
+
+    project.refresh_from_db()
+    ordered_uss = project.user_stories.all().order_by('kanban_order')
+
+    assert ordered_uss[0].subject == 'us3'
+    assert ordered_uss[1].subject == 'us4'
+    assert ordered_uss[2].subject == 'us5'
+    assert ordered_uss[3].subject == 'us1'
+    assert ordered_uss[4].subject == 'us2'

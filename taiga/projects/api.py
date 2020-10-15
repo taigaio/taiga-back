@@ -642,7 +642,8 @@ class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class SwimlaneViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+class SwimlaneViewSet(BlockedByProjectMixin, ModelCrudViewSet,
+                      BulkUpdateOrderMixin):
 
     model = models.Swimlane
     serializer_class = serializers.SwimlaneSerializer
@@ -650,6 +651,9 @@ class SwimlaneViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     permission_classes = (permissions.SwimlanePermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ('project',)
+    bulk_update_param = "bulk_swimlanes"
+    bulk_update_perm = "change_swimlanes"
+    bulk_update_order_action = services.bulk_update_swimlane_order
 
     def create(self, request, *args, **kwargs):
         project_id = request.DATA.get("project", 0)

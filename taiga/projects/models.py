@@ -421,7 +421,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
         user_model = get_user_model()
         members = self.memberships.all()
         if with_admin_privileges is not None:
-            members = members.filter(Q(is_admin=True)|Q(user__id=self.owner.id))
+            members = members.filter(Q(is_admin=True) | Q(user__id=self.owner.id))
         members = members.values_list("user", flat=True)
         return user_model.objects.filter(id__in=list(members))
 
@@ -506,7 +506,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
         from taiga.events.apps import (connect_events_signals,
                                        disconnect_events_signals)
         from taiga.projects.epics.apps import (connect_all_epics_signals,
-                                             disconnect_all_epics_signals)
+                                               disconnect_all_epics_signals)
         from taiga.projects.tasks.apps import (connect_all_tasks_signals,
                                                disconnect_all_tasks_signals)
         from taiga.projects.userstories.apps import (connect_all_userstories_signals,
@@ -670,11 +670,11 @@ class UserStoryDueDate(models.Model):
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     by_default = models.BooleanField(default=False, null=False, blank=True,
-                                    verbose_name=_("by default"))
+                                     verbose_name=_("by default"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     days_to_due = models.IntegerField(null=True, blank=True, default=None,
-                                    verbose_name=_("days to due"))
+                                      verbose_name=_("days to due"))
     project = models.ForeignKey(
         "Project",
         null=False,
@@ -739,11 +739,11 @@ class TaskDueDate(models.Model):
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     by_default = models.BooleanField(default=False, null=False, blank=True,
-                                    verbose_name=_("by default"))
+                                     verbose_name=_("by default"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     days_to_due = models.IntegerField(null=True, blank=True, default=None,
-                                    verbose_name=_("days to due"))
+                                      verbose_name=_("days to due"))
     project = models.ForeignKey(
         "Project",
         null=False,
@@ -887,18 +887,18 @@ class IssueDueDate(models.Model):
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     by_default = models.BooleanField(default=False, null=False, blank=True,
-                                    verbose_name=_("by default"))
+                                     verbose_name=_("by default"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     days_to_due = models.IntegerField(null=True, blank=True, default=None,
-                                    verbose_name=_("days to due"))
+                                      verbose_name=_("days to due"))
     project = models.ForeignKey(
         "Project",
         null=False,
         blank=False,
         related_name="issue_duedates",
         verbose_name=_("project"),
-         on_delete=models.CASCADE,
+        on_delete=models.CASCADE,
     )
 
     class Meta:
@@ -923,7 +923,7 @@ class Swimlane(models.Model):
     name = models.TextField(null=False, blank=False,
                             verbose_name=_("name"))
     order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
-                                             verbose_name=_("order"))
+                                   verbose_name=_("order"))
 
     class Meta:
         verbose_name = "swimlane"

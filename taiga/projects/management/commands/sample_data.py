@@ -156,7 +156,7 @@ class Command(BaseCommand):
 
         for x in projects_range:
             project = self.create_project(
-                x,
+                x + 1,  # this way the Project will have the same name as the id: Project 1 with id: 1
                 is_private=x in [2, 4],
                 blocked_code = BLOCKED_BY_STAFF if x in(blocked_projects_range) else None
             )
@@ -450,7 +450,8 @@ class Command(BaseCommand):
                                       milestone=milestone,
                                       status=self.sd.db_object_from_queryset(project.us_statuses.filter(
                                                                              is_closed=False)),
-                                      tags=self.sd.words(1, 3).split(" "))
+                                      tags=self.sd.words(1, 3).split(" "),
+                                      swimlane=self.sd.choice(list(project.swimlanes.all())))
 
         for role_points in us.role_points.filter(role__in=computable_project_roles):
             if milestone:

@@ -120,6 +120,11 @@ def data():
     m.private_epic_status2 = f.EpicStatusFactory(project=m.private_project2)
     m.blocked_epic_status = f.EpicStatusFactory(project=m.blocked_project)
 
+    m.public_swimlane = f.SwimlaneFactory(project=m.public_project)
+    m.private_swimlane1 = f.SwimlaneFactory(project=m.private_project1)
+    m.private_swimlane2 = f.SwimlaneFactory(project=m.private_project2)
+    m.blocked_swimlane = f.SwimlaneFactory(project=m.blocked_project)
+
     m.public_points = f.PointsFactory(project=m.public_project)
     m.private_points1 = f.PointsFactory(project=m.private_project1)
     m.private_points2 = f.PointsFactory(project=m.private_project2)
@@ -490,6 +495,174 @@ def test_epic_status_action_bulk_update_order(client, data):
 
     post_data = json.dumps({
         "bulk_epic_statuses": [(1, 2)],
+        "project": data.blocked_project.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
+
+#####################################################
+# Swimlanes
+#####################################################
+def test_swimlane_retrieve(client, data):
+    public_url = reverse('swimlanes-detail', kwargs={"pk": data.public_swimlane.pk})
+    private1_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane1.pk})
+    private2_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane2.pk})
+    blocked_url = reverse('swimlanes-detail', kwargs={"pk": data.blocked_swimlane.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private1_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private2_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_swimlane_update(client, data):
+    public_url = reverse('swimlanes-detail', kwargs={"pk": data.public_swimlane.pk})
+    private1_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane1.pk})
+    private2_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane2.pk})
+    blocked_url = reverse('swimlanes-detail', kwargs={"pk": data.blocked_swimlane.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    swimlane_data = serializers.SwimlaneSerializer(data.public_swimlane).data
+    swimlane_data["name"] = "test"
+    swimlane_data = json.dumps(swimlane_data)
+    results = helper_test_http_method(client, 'put', public_url, swimlane_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    swimlane_data = serializers.SwimlaneSerializer(data.private_swimlane1).data
+    swimlane_data["name"] = "test"
+    swimlane_data = json.dumps(swimlane_data)
+    results = helper_test_http_method(client, 'put', private1_url, swimlane_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    swimlane_data = serializers.SwimlaneSerializer(data.private_swimlane2).data
+    swimlane_data["name"] = "test"
+    swimlane_data = json.dumps(swimlane_data)
+    results = helper_test_http_method(client, 'put', private2_url, swimlane_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    swimlane_data = serializers.SwimlaneSerializer(data.blocked_swimlane).data
+    swimlane_data["name"] = "test"
+    swimlane_data = json.dumps(swimlane_data)
+    results = helper_test_http_method(client, 'put', blocked_url, swimlane_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
+
+def test_swimlane_delete(client, data):
+    # TODO!!
+    pass
+
+
+def test_swimlane_list(client, data):
+    url = reverse('swimlanes-list')
+
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.registered_user)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.project_member_without_perms)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.project_member_with_perms)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 4
+    assert response.status_code == 200
+
+    client.login(data.project_owner)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 4
+    assert response.status_code == 200
+
+
+def test_swimlane_patch(client, data):
+    public_url = reverse('swimlanes-detail', kwargs={"pk": data.public_swimlane.pk})
+    private1_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane1.pk})
+    private2_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane2.pk})
+    blocked_url = reverse('swimlanes-detail', kwargs={"pk": data.blocked_swimlane.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'patch', public_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', private1_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', private2_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 451]
+
+
+def test_swimlane_action_bulk_update_order(client, data):
+    url = reverse('swimlanes-bulk-update-order')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    post_data = json.dumps({
+        "bulk_swimlanes": [(1, 2)],
+        "project": data.public_project.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 204]
+
+    post_data = json.dumps({
+        "bulk_swimlanes": [(1, 2)],
+        "project": data.private_project1.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 204]
+
+    post_data = json.dumps({
+        "bulk_swimlanes": [(1, 2)],
+        "project": data.private_project2.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 204]
+
+    post_data = json.dumps({
+        "bulk_swimlanes": [(1, 2)],
         "project": data.blocked_project.pk
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)

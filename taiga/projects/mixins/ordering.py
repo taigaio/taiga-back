@@ -35,9 +35,9 @@ class BulkUpdateOrderMixin:
     """
     This mixin need three fields in the child class:
 
-    - bulk_update_param: that the name of the field of the data received from
-      the cliente that contains the pairs (id, order) to sort the objects.
-    - bulk_update_perm: that containts the codename of the permission needed to sort.
+    - bulk_update_param: the name of the field of the data received from
+      the client that contains the pairs (id, order) to sort the objects.
+    - bulk_update_perm: the codename of the permission needed to sort.
     - bulk_update_order: method with bulk update order logic
     """
 
@@ -57,6 +57,6 @@ class BulkUpdateOrderMixin:
         self.check_permissions(request, 'bulk_update_order', project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
-            
+
         self.__class__.bulk_update_order_action(project, request.user, bulk_data)
         return response.NoContent(data=None)
