@@ -144,6 +144,29 @@ def attach_epic_statuses(queryset, as_field="epic_statuses_attr"):
     return queryset
 
 
+def attach_swimlanes(queryset, as_field="swimlanes_attr"):
+    """Attach a json swimlanes representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the swimalne as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_swimlane)
+                        ORDER BY projects_swimlane.order
+                    )
+               FROM projects_swimlane
+              WHERE projects_swimlane.project_id = {tbl}.id
+          """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
 def attach_userstory_statuses(queryset, as_field="userstory_statuses_attr"):
     """Attach a json userstory statuses representation to each object of the queryset.
 
@@ -622,6 +645,7 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_closed_milestones(queryset)
     queryset = attach_notify_policies(queryset)
     queryset = attach_epic_statuses(queryset)
+    queryset = attach_swimlanes(queryset)
     queryset = attach_userstory_statuses(queryset)
     queryset = attach_userstory_duedates(queryset)
     queryset = attach_points(queryset)

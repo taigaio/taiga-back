@@ -535,6 +535,11 @@ class SeveritiesFilter(BaseRelatedFieldsFilter):
     exclude_param_name = 'exclude_severity'
 
 
+class SwimlanesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'swimlane'
+    exclude_param_name = 'exclude_swimlane'
+
+
 class TagsFilter(FilterBackend):
     filter_name = 'tags'
     exclude_param_name = 'exclude_tags'

@@ -2688,8 +2688,9 @@ def test_delete_swimlane(client):
     assert response.data['_error_message'] == "Cannot set swimlane to None if there are available swimlanes"
 
     # force an error with swimlane=non_existing
-    data = {"moveTo": 300}
-    response = client.json.delete(url, json.dumps(data))
+    url = reverse('swimlanes-detail',
+            kwargs={"pk": swimlane1.id}) + "?moveTo=300"
+    response = client.json.delete(url)
     assert response.status_code == 404
     assert response.data['_error_message'] == "No Swimlane matches the given query."
 
@@ -2697,8 +2698,9 @@ def test_delete_swimlane(client):
     # us1, us2, us3, us4, us5
     # After deleting swimlane1, they should be like:
     # us3, us4, us5, us1, us2
-    data = {"moveTo": swimlane2.id}
-    response = client.json.delete(url, json.dumps(data))
+    url = reverse('swimlanes-detail',
+            kwargs={"pk": swimlane1.id}) + "?moveTo={}".format(swimlane2.id)
+    response = client.json.delete(url)
 
     project.refresh_from_db()
     ordered_uss = project.user_stories.all().order_by('kanban_order')

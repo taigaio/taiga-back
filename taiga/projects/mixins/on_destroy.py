@@ -57,7 +57,7 @@ class MoveOnDestroySwimlaneMixin:
         obj = self.get_object_or_none()
         self.check_permissions(request, 'destroy', obj)
 
-        move_to = self.request.DATA.get('moveTo', None)
+        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
         if move_to is None:
             total_elements = obj.project.swimlanes.count()
             # you cannot set swimlane=None if there are more swimlanes available

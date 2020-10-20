@@ -86,6 +86,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     epic_order = MethodField()
     tasks = MethodField()
     total_attachments = Field()
+    swimlane = Field(attr="swimlane_id")
 
     assigned_users = MethodField()
 

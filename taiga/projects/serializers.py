@@ -393,6 +393,7 @@ class ProjectSerializer(serializers.LightSerializer):
 
 class ProjectDetailSerializer(ProjectSerializer):
     epic_statuses = Field(attr="epic_statuses_attr")
+    swimlanes = Field(attr="swimlanes_attr")
     us_statuses = Field(attr="userstory_statuses_attr")
     us_duedates = Field(attr="userstory_duedates_attr")
     points = Field(attr="points_attr")
@@ -439,7 +440,8 @@ class ProjectDetailSerializer(ProjectSerializer):
                      "severities_attr", "epic_custom_attributes_attr",
                      "userstory_custom_attributes_attr",
                      "task_custom_attributes_attr",
-                     "issue_custom_attributes_attr", "roles_attr"]:
+                     "issue_custom_attributes_attr", "roles_attr",
+                     "swimlanes_attr"]:
 
             assert hasattr(instance, attr), "instance must have a {} attribute".format(attr)
             val = getattr(instance, attr)
