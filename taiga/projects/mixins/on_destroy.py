@@ -22,6 +22,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_404
+from taiga.base import response
 from taiga.projects.services.bulk_update_order import update_order_and_swimlane
 
 
@@ -32,23 +33,42 @@ from taiga.projects.services.bulk_update_order import update_order_and_swimlane
 class MoveOnDestroyMixin:
     @tx.atomic
     def destroy(self, request, *args, **kwargs):
+        # moveTo is needed
         move_to = self.request.QUERY_PARAMS.get('moveTo', None)
         if move_to is None:
-            return super().destroy(request, *args, **kwargs)
+            raise exc.BadRequest(_("Query param 'moveTo' is required"))
+
+        # check permisions over moveTo object
+        move_item = get_object_or_404(self.model, id=move_to)
+        self.check_permissions(request, 'update', move_item)
 
         obj = self.get_object_or_none()
-        move_item = get_object_or_404(self.model, id=move_to)
 
-        self.check_permissions(request, 'destroy', obj)
-
+        # move related objects to the new one.
+        # (we need to do this befero to prevent some deletes-on-cascade behaivors)
         qs = self.move_on_destroy_related_class.objects.filter(**{self.move_on_destroy_related_field: obj})
         qs.update(**{self.move_on_destroy_related_field: move_item})
 
+        # change default project value if is needed
         if getattr(obj.project, self.move_on_destroy_project_default_field) == obj:
             setattr(obj.project, self.move_on_destroy_project_default_field, move_item)
             obj.project.save()
+            changed_default_value = True
 
-        return super().destroy(request, *args, **kwargs)
+        # destroy object
+        res = super().destroy(request, *args, **kwargs)
+
+        # if the object is not deleted
+        if not isinstance(res, response.NoContent):
+            # Restart estatus if we can't delete the object
+            qs.update(**{self.move_on_destroy_related_field: obj})
+
+            # Restart default value
+            if changed_default_value:
+                setattr(obj.project, self.move_on_destroy_project_default_field, obj)
+                obj.project.save()
+
+        return res
 
 
 class MoveOnDestroySwimlaneMixin:
@@ -69,6 +89,10 @@ class MoveOnDestroySwimlaneMixin:
             obj.user_stories.update(swimlane_id=None)
         else:
             move_item = get_object_or_404(self.model, id=move_to)
+
+            # check permisions over moveTo object
+            self.check_permissions(request, 'destroy', move_item)
+
             update_order_and_swimlane(obj, move_item)
 
         return super().destroy(request, *args, **kwargs)

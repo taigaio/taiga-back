@@ -575,7 +575,7 @@ def test_destroy_point_and_reassign(client):
     response = client.delete(url)
 
     assert user_story.role_points.all()[0].points.id == p2.id
-    project = Project.objects.get(id=project.id)
+    project.refresh_from_db()
     assert project.default_points.id == p2.id
 
 

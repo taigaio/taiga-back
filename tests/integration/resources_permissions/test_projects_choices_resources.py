@@ -116,9 +116,13 @@ def data():
                     is_admin=True)
 
     m.public_epic_status = f.EpicStatusFactory(project=m.public_project)
+    m.public_epic_status_aux = f.EpicStatusFactory(project=m.public_project)
     m.private_epic_status1 = f.EpicStatusFactory(project=m.private_project1)
+    m.private_epic_status1_aux = f.EpicStatusFactory(project=m.private_project1)
     m.private_epic_status2 = f.EpicStatusFactory(project=m.private_project2)
+    m.private_epic_status2_aux = f.EpicStatusFactory(project=m.private_project2)
     m.blocked_epic_status = f.EpicStatusFactory(project=m.blocked_project)
+    m.blocked_epic_status_aux = f.EpicStatusFactory(project=m.blocked_project)
 
     m.public_swimlane = f.SwimlaneFactory(project=m.public_project)
     m.private_swimlane1 = f.SwimlaneFactory(project=m.private_project1)
@@ -126,39 +130,67 @@ def data():
     m.blocked_swimlane = f.SwimlaneFactory(project=m.blocked_project)
 
     m.public_points = f.PointsFactory(project=m.public_project)
+    m.public_points_aux = f.PointsFactory(project=m.public_project)
     m.private_points1 = f.PointsFactory(project=m.private_project1)
+    m.private_points1_aux = f.PointsFactory(project=m.private_project1)
     m.private_points2 = f.PointsFactory(project=m.private_project2)
+    m.private_points2_aux = f.PointsFactory(project=m.private_project2)
     m.blocked_points = f.PointsFactory(project=m.blocked_project)
+    m.blocked_points_aux = f.PointsFactory(project=m.blocked_project)
 
     m.public_user_story_status = f.UserStoryStatusFactory(project=m.public_project)
+    m.public_user_story_status_aux = f.UserStoryStatusFactory(project=m.public_project)
     m.private_user_story_status1 = f.UserStoryStatusFactory(project=m.private_project1)
+    m.private_user_story_status1_aux = f.UserStoryStatusFactory(project=m.private_project1)
     m.private_user_story_status2 = f.UserStoryStatusFactory(project=m.private_project2)
+    m.private_user_story_status2_aux = f.UserStoryStatusFactory(project=m.private_project2)
     m.blocked_user_story_status = f.UserStoryStatusFactory(project=m.blocked_project)
+    m.blocked_user_story_status_aux = f.UserStoryStatusFactory(project=m.blocked_project)
 
     m.public_task_status = f.TaskStatusFactory(project=m.public_project)
+    m.public_task_status_aux = f.TaskStatusFactory(project=m.public_project)
     m.private_task_status1 = f.TaskStatusFactory(project=m.private_project1)
+    m.private_task_status1_aux = f.TaskStatusFactory(project=m.private_project1)
     m.private_task_status2 = f.TaskStatusFactory(project=m.private_project2)
+    m.private_task_status2_aux = f.TaskStatusFactory(project=m.private_project2)
     m.blocked_task_status = f.TaskStatusFactory(project=m.blocked_project)
+    m.blocked_task_status_aux = f.TaskStatusFactory(project=m.blocked_project)
 
     m.public_issue_status = f.IssueStatusFactory(project=m.public_project)
+    m.public_issue_status_aux = f.IssueStatusFactory(project=m.public_project)
     m.private_issue_status1 = f.IssueStatusFactory(project=m.private_project1)
+    m.private_issue_status1_aux = f.IssueStatusFactory(project=m.private_project1)
     m.private_issue_status2 = f.IssueStatusFactory(project=m.private_project2)
+    m.private_issue_status2_aux = f.IssueStatusFactory(project=m.private_project2)
     m.blocked_issue_status = f.IssueStatusFactory(project=m.blocked_project)
+    m.blocked_issue_status_aux = f.IssueStatusFactory(project=m.blocked_project)
 
     m.public_issue_type = f.IssueTypeFactory(project=m.public_project)
+    m.public_issue_type_aux = f.IssueTypeFactory(project=m.public_project)
     m.private_issue_type1 = f.IssueTypeFactory(project=m.private_project1)
+    m.private_issue_type1_aux = f.IssueTypeFactory(project=m.private_project1)
     m.private_issue_type2 = f.IssueTypeFactory(project=m.private_project2)
+    m.private_issue_type2_aux = f.IssueTypeFactory(project=m.private_project2)
     m.blocked_issue_type = f.IssueTypeFactory(project=m.blocked_project)
+    m.blocked_issue_type_aux = f.IssueTypeFactory(project=m.blocked_project)
 
     m.public_priority = f.PriorityFactory(project=m.public_project)
+    m.public_priority_aux = f.PriorityFactory(project=m.public_project)
     m.private_priority1 = f.PriorityFactory(project=m.private_project1)
+    m.private_priority1_aux = f.PriorityFactory(project=m.private_project1)
     m.private_priority2 = f.PriorityFactory(project=m.private_project2)
+    m.private_priority2_aux = f.PriorityFactory(project=m.private_project2)
     m.blocked_priority = f.PriorityFactory(project=m.blocked_project)
+    m.blocked_priority_aux = f.PriorityFactory(project=m.blocked_project)
 
     m.public_severity = f.SeverityFactory(project=m.public_project)
+    m.public_severity_aux = f.SeverityFactory(project=m.public_project)
     m.private_severity1 = f.SeverityFactory(project=m.private_project1)
+    m.private_severity1_aux = f.SeverityFactory(project=m.private_project1)
     m.private_severity2 = f.SeverityFactory(project=m.private_project2)
+    m.private_severity2_aux = f.SeverityFactory(project=m.private_project2)
     m.blocked_severity = f.SeverityFactory(project=m.blocked_project)
+    m.blocked_severity_aux = f.SeverityFactory(project=m.blocked_project)
 
     m.project_template = m.public_project.creation_template
 
@@ -382,9 +414,13 @@ def test_epic_status_update(client, data):
 
 def test_epic_status_delete(client, data):
     public_url = reverse('epic-statuses-detail', kwargs={"pk": data.public_epic_status.pk})
+    public_url += f'?moveTo={data.public_epic_status_aux.pk}'
     private1_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status1.pk})
+    private1_url += f'?moveTo={data.private_epic_status1_aux.pk}'
     private2_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status2.pk})
+    private2_url += f'?moveTo={data.private_epic_status2_aux.pk}'
     blocked_url = reverse('epic-statuses-detail', kwargs={"pk": data.blocked_epic_status.pk})
+    blocked_url += f'?moveTo={data.blocked_epic_status_aux.pk}'
 
     users = [
         None,
@@ -409,31 +445,31 @@ def test_epic_status_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 
@@ -759,9 +795,13 @@ def test_points_update(client, data):
 
 def test_points_delete(client, data):
     public_url = reverse('points-detail', kwargs={"pk": data.public_points.pk})
+    public_url += f'?moveTo={data.public_points_aux.pk}'
     private1_url = reverse('points-detail', kwargs={"pk": data.private_points1.pk})
+    private1_url += f'?moveTo={data.private_points1_aux.pk}'
     private2_url = reverse('points-detail', kwargs={"pk": data.private_points2.pk})
+    private2_url += f'?moveTo={data.private_points2_aux.pk}'
     blocked_url = reverse('points-detail', kwargs={"pk": data.blocked_points.pk})
+    blocked_url += f'?moveTo={data.blocked_points_aux.pk}'
 
     users = [
         None,
@@ -786,31 +826,31 @@ def test_points_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 
@@ -947,9 +987,13 @@ def test_user_story_status_update(client, data):
 
 def test_user_story_status_delete(client, data):
     public_url = reverse('userstory-statuses-detail', kwargs={"pk": data.public_user_story_status.pk})
+    public_url += f'?moveTo={data.public_user_story_status_aux.pk}'
     private1_url = reverse('userstory-statuses-detail', kwargs={"pk": data.private_user_story_status1.pk})
+    private1_url += f'?moveTo={data.private_user_story_status1_aux.pk}'
     private2_url = reverse('userstory-statuses-detail', kwargs={"pk": data.private_user_story_status2.pk})
+    private2_url += f'?moveTo={data.private_user_story_status2_aux.pk}'
     blocked_url = reverse('userstory-statuses-detail', kwargs={"pk": data.blocked_user_story_status.pk})
+    blocked_url += f'?moveTo={data.blocked_user_story_status_aux.pk}'
 
     users = [
         None,
@@ -974,31 +1018,31 @@ def test_user_story_status_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 
@@ -1135,9 +1179,13 @@ def test_task_status_update(client, data):
 
 def test_task_status_delete(client, data):
     public_url = reverse('task-statuses-detail', kwargs={"pk": data.public_task_status.pk})
+    public_url += f'?moveTo={data.public_task_status_aux.pk}'
     private1_url = reverse('task-statuses-detail', kwargs={"pk": data.private_task_status1.pk})
+    private1_url += f'?moveTo={data.private_task_status1_aux.pk}'
     private2_url = reverse('task-statuses-detail', kwargs={"pk": data.private_task_status2.pk})
+    private2_url += f'?moveTo={data.private_task_status2_aux.pk}'
     blocked_url = reverse('task-statuses-detail', kwargs={"pk": data.blocked_task_status.pk})
+    blocked_url += f'?moveTo={data.blocked_task_status_aux.pk}'
 
     users = [
         None,
@@ -1162,31 +1210,31 @@ def test_task_status_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 
@@ -1323,9 +1371,13 @@ def test_issue_status_update(client, data):
 
 def test_issue_status_delete(client, data):
     public_url = reverse('issue-statuses-detail', kwargs={"pk": data.public_issue_status.pk})
+    public_url += f'?moveTo={data.public_issue_status_aux.pk}'
     private1_url = reverse('issue-statuses-detail', kwargs={"pk": data.private_issue_status1.pk})
+    private1_url += f'?moveTo={data.private_issue_status1_aux.pk}'
     private2_url = reverse('issue-statuses-detail', kwargs={"pk": data.private_issue_status2.pk})
+    private2_url += f'?moveTo={data.private_issue_status2_aux.pk}'
     blocked_url = reverse('issue-statuses-detail', kwargs={"pk": data.blocked_issue_status.pk})
+    blocked_url += f'?moveTo={data.blocked_issue_status_aux.pk}'
 
     users = [
         None,
@@ -1350,31 +1402,31 @@ def test_issue_status_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 
@@ -1511,9 +1563,13 @@ def test_issue_type_update(client, data):
 
 def test_issue_type_delete(client, data):
     public_url = reverse('issue-types-detail', kwargs={"pk": data.public_issue_type.pk})
+    public_url += f'?moveTo={data.public_issue_type_aux.pk}'
     private1_url = reverse('issue-types-detail', kwargs={"pk": data.private_issue_type1.pk})
+    private1_url += f'?moveTo={data.private_issue_type1_aux.pk}'
     private2_url = reverse('issue-types-detail', kwargs={"pk": data.private_issue_type2.pk})
+    private2_url += f'?moveTo={data.private_issue_type2_aux.pk}'
     blocked_url = reverse('issue-types-detail', kwargs={"pk": data.blocked_issue_type.pk})
+    blocked_url += f'?moveTo={data.blocked_issue_type_aux.pk}'
 
     users = [
         None,
@@ -1538,31 +1594,31 @@ def test_issue_type_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 
@@ -1699,9 +1755,13 @@ def test_priority_update(client, data):
 
 def test_priority_delete(client, data):
     public_url = reverse('priorities-detail', kwargs={"pk": data.public_priority.pk})
+    public_url += f'?moveTo={data.public_priority_aux.pk}'
     private1_url = reverse('priorities-detail', kwargs={"pk": data.private_priority1.pk})
+    private1_url += f'?moveTo={data.private_priority1_aux.pk}'
     private2_url = reverse('priorities-detail', kwargs={"pk": data.private_priority2.pk})
+    private2_url += f'?moveTo={data.private_priority2_aux.pk}'
     blocked_url = reverse('priorities-detail', kwargs={"pk": data.blocked_priority.pk})
+    blocked_url += f'?moveTo={data.blocked_priority_aux.pk}'
 
     users = [
         None,
@@ -1726,31 +1786,31 @@ def test_priority_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 
@@ -1887,9 +1947,13 @@ def test_severity_update(client, data):
 
 def test_severity_delete(client, data):
     public_url = reverse('severities-detail', kwargs={"pk": data.public_severity.pk})
+    public_url += f'?moveTo={data.public_severity_aux.pk}'
     private1_url = reverse('severities-detail', kwargs={"pk": data.private_severity1.pk})
+    private1_url += f'?moveTo={data.private_severity1_aux.pk}'
     private2_url = reverse('severities-detail', kwargs={"pk": data.private_severity2.pk})
+    private2_url += f'?moveTo={data.private_severity2_aux.pk}'
     blocked_url = reverse('severities-detail', kwargs={"pk": data.blocked_severity.pk})
+    blocked_url += f'?moveTo={data.blocked_severity_aux.pk}'
 
     users = [
         None,
@@ -1914,31 +1978,31 @@ def test_severity_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 4
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 
