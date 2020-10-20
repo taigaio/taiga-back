@@ -23,6 +23,7 @@ from django.core.files import File
 from django.core import mail
 from django.core import signing
 
+from taiga.base import exceptions as exc
 from taiga.base.utils import json
 from taiga.projects.services import stats as stats_services
 from taiga.projects.history.services import take_snapshot
@@ -2633,3 +2634,84 @@ def test_swimlane_bulk_update_order(client):
     assert ordered_uss[2].subject == 'us5'
     assert ordered_uss[3].subject == 'us1'
     assert ordered_uss[4].subject == 'us2'
+
+
+def test_delete_swimlane(client):
+    project = f.create_project()
+    membership = f.create_membership(project=project, is_admin=True)
+    us1 = f.create_userstory(subject='us1',
+                             owner=membership.user,
+                             project=project)
+    us2 = f.create_userstory(subject='us2',
+                             owner=membership.user,
+                             project=project)
+
+    url = reverse('swimlanes-list')
+    data = {
+        "project": project.id,
+        "name": "S1"
+    }
+    client.login(membership.user)
+    response = client.json.post(url, json.dumps(data))
+
+    project.refresh_from_db()
+    swimlane1 = project.swimlanes.filter(name='S1').first()
+
+    # us without swimlane
+    us3 = f.create_userstory(subject='us3',
+                             owner=membership.user,
+                             project=project)
+
+    data = {
+        "project": project.id,
+        "name": "S2"
+    }
+    client.login(membership.user)
+    response = client.json.post(url, json.dumps(data))
+
+    project.refresh_from_db()
+    swimlane2 = project.swimlanes.filter(name='S2').first()
+    us4 = f.create_userstory(subject='us4',
+                             owner=membership.user,
+                             project=project,
+                             swimlane=swimlane2)
+    us5 = f.create_userstory(subject='us5',
+                             owner=membership.user,
+                             project=project,
+                             swimlane=swimlane2)
+
+    url = reverse('swimlanes-detail', kwargs={"pk": swimlane1.id})
+
+    # force an error with swimlane=None
+    response = client.json.delete(url)
+    assert response.status_code == 400
+    assert response.data['_error_message'] == "Cannot set swimlane to None if there are available swimlanes"
+
+    # force an error with swimlane=non_existing
+    data = {"moveTo": 300}
+    response = client.json.delete(url, json.dumps(data))
+    assert response.status_code == 404
+    assert response.data['_error_message'] == "No Swimlane matches the given query."
+
+    # In this moment, they are arranged like:
+    # us1, us2, us3, us4, us5
+    # After deleting swimlane1, they should be like:
+    # us3, us4, us5, us1, us2
+    data = {"moveTo": swimlane2.id}
+    response = client.json.delete(url, json.dumps(data))
+
+    project.refresh_from_db()
+    ordered_uss = project.user_stories.all().order_by('kanban_order')
+
+    assert ordered_uss[0].subject == 'us3'
+    assert ordered_uss[0].swimlane is None
+    assert ordered_uss[1].subject == 'us4'
+    assert ordered_uss[1].swimlane == swimlane2
+    assert ordered_uss[2].subject == 'us5'
+    assert ordered_uss[2].swimlane == swimlane2
+    assert ordered_uss[3].subject == 'us1'
+    assert ordered_uss[3].swimlane == swimlane2
+    assert ordered_uss[4].subject == 'us2'
+    assert ordered_uss[4].swimlane == swimlane2
+
+

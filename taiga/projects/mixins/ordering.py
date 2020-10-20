@@ -23,7 +23,6 @@ from taiga.base import response
 from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import list_route
-
 from taiga.projects.models import Project
 
 

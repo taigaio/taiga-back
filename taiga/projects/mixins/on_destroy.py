@@ -18,8 +18,11 @@
 
 
 from django.db import transaction as tx
+from django.utils.translation import ugettext as _
 
+from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_404
+from taiga.projects.services.bulk_update_order import update_order_and_swimlane
 
 
 #############################################
@@ -44,5 +47,28 @@ class MoveOnDestroyMixin:
         if getattr(obj.project, self.move_on_destroy_project_default_field) == obj:
             setattr(obj.project, self.move_on_destroy_project_default_field, move_item)
             obj.project.save()
+
+        return super().destroy(request, *args, **kwargs)
+
+
+class MoveOnDestroySwimlaneMixin:
+    @tx.atomic
+    def destroy(self, request, *args, **kwargs):
+        obj = self.get_object_or_none()
+        self.check_permissions(request, 'destroy', obj)
+
+        move_to = self.request.DATA.get('moveTo', None)
+        if move_to is None:
+            total_elements = obj.project.swimlanes.count()
+            # you cannot set swimlane=None if there are more swimlanes available
+            if total_elements > 1:
+                raise exc.BadRequest(_("Cannot set swimlane to None if there are available swimlanes"))
+
+            # but if it was the last swimlane,
+            # it can be deleted and all uss have now swimlane=None
+            obj.user_stories.update(swimlane_id=None)
+        else:
+            move_item = get_object_or_404(self.model, id=move_to)
+            update_order_and_swimlane(obj, move_item)
 
         return super().destroy(request, *args, **kwargs)

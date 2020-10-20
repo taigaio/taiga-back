@@ -568,7 +568,28 @@ def test_swimlane_update(client, data):
 
 
 def test_swimlane_delete(client, data):
-    # TODO!!
+    public_url = reverse('swimlanes-detail', kwargs={"pk": data.public_swimlane.pk})
+    private1_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane1.pk})
+    private2_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane2.pk})
+    blocked_url = reverse('swimlanes-detail', kwargs={"pk": data.blocked_swimlane.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'delete', public_url, None, users)
+    assert results == [401, 403, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', private1_url, None, users)
+    assert results == [401, 403, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', private2_url, None, users)
+    assert results == [401, 403, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 403, 451]
+
     pass
 
 

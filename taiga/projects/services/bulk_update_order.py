@@ -251,7 +251,7 @@ def bulk_update_swimlane_order(project, user, data):
                        WHERE tmp.id = projects_swimlane.id""",
                        data)
 
-        ordered_uss = _get_ordered_uss(project)
+        ordered_uss = _get_ordered_uss_by_swimlane(project)
         execute_values(curs,
                        """
                        UPDATE userstories_userstory
@@ -261,22 +261,69 @@ def bulk_update_swimlane_order(project, user, data):
                        ordered_uss)
 
 
-def _get_ordered_uss(project):
+def _get_ordered_uss_by_swimlane(project):
     """
     This function merges uss without swimlane and uss with swimlanes ordered by swimlane;
     then, recalculates indexes with the new order
     """
-    from taiga.projects.models import Swimlane
     ordered_uss_ids = list(
-        project.user_stories.filter(swimlane=None).order_by('kanban_order').values_list('id', flat=True)
+        project.user_stories.filter(swimlane=None).order_by('kanban_order', 'id').values_list('id', flat=True)
     )
     swimlanes = []
-    for s in Swimlane.objects.filter(project=project).order_by('order'):
+    for s in project.swimlanes.order_by('order'):
         swimlanes.extend(
-            list(project.user_stories.filter(swimlane=s).order_by('kanban_order').values_list('id', flat=True))
+            list(project.user_stories.filter(swimlane=s).order_by('kanban_order', 'id').values_list('id', flat=True))
         )
 
     ordered_uss_ids.extend(swimlanes)
     indexes = range(0, len(ordered_uss_ids))
     data = list(zip(ordered_uss_ids, indexes))
     return data
+
+
+def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
+
+    # first of all, there will be the user stories without swimlane
+    uss_without_swimlane = swimlane_to_be_deleted.project.user_stories.filter(swimlane=None).order_by('kanban_order', 'id')
+    ordered_uss_ids = list(uss_without_swimlane.values_list('id', flat=True))
+    ordered_swimlane_ids = [None] * len(ordered_uss_ids)
+
+    # get the uss paired with its swimlane
+    # except the uss in the swimlane to be deleted, which will go to the destination swimlane
+    ordered_swimlanes = {}
+    for s in swimlane_to_be_deleted.project.swimlanes.order_by('order'):
+        s_id = s.id
+        if s_id == swimlane_to_be_deleted.id:
+            s_id = move_to_swimlane.id
+
+        ordered_swimlanes[s.id] = {
+            'ordered_uss': list(s.user_stories.order_by('kanban_order', 'id').values_list('id', flat=True)),
+            'swimlane_id': [s_id] * s.user_stories.count()
+        }
+
+    # put the uss in the swimlane to be deleted after the uss in the destination swimlane
+    ordered_swimlanes[move_to_swimlane.id]['ordered_uss'].extend(
+            ordered_swimlanes[swimlane_to_be_deleted.id]['ordered_uss'])
+    ordered_swimlanes[move_to_swimlane.id]['swimlane_id'].extend(
+            ordered_swimlanes[swimlane_to_be_deleted.id]['swimlane_id'])
+    ordered_swimlanes.pop(swimlane_to_be_deleted.id)
+
+    # compose a flat list with the uss ordered
+    # and its equivalent with the corresponding swimlanes
+    for k, v in ordered_swimlanes.items():
+        ordered_uss_ids.extend(v['ordered_uss'])
+        ordered_swimlane_ids.extend(v['swimlane_id'])
+
+    # compose a list of tuples with the new order to make a bulk update
+    new_indexes = range(0, len(ordered_uss_ids))
+    data = list(zip(ordered_swimlane_ids, ordered_uss_ids, new_indexes))
+
+    with connection.cursor() as curs:
+        execute_values(curs,
+                       """
+                       UPDATE userstories_userstory
+                       SET kanban_order = tmp.new_order,
+                           swimlane_id = tmp.sid
+                       FROM (VALUES %s) AS tmp (sid, ussid, new_order)
+                       WHERE tmp.ussid = userstories_userstory.id""",
+                       data)

@@ -49,7 +49,7 @@ from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSet
 from taiga.projects.notifications.apps import signal_members_added
 from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.notifications.choices import NotifyLevel
-from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
+from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin, MoveOnDestroySwimlaneMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.tasks.models import Task
 from taiga.projects.tagging.api import TagsColorsResourceMixin
@@ -642,8 +642,8 @@ class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class SwimlaneViewSet(BlockedByProjectMixin, ModelCrudViewSet,
-                      BulkUpdateOrderMixin):
+class SwimlaneViewSet(MoveOnDestroySwimlaneMixin, BlockedByProjectMixin,
+                      ModelCrudViewSet, BulkUpdateOrderMixin):
 
     model = models.Swimlane
     serializer_class = serializers.SwimlaneSerializer
