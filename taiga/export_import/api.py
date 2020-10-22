@@ -183,6 +183,10 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "severities",
                                                            validators.SeverityExportValidator)
+        if "swimlanes" in data:
+            services.store.store_project_attributes_values(project_serialized.object, data,
+                                                           "swimlanes",
+                                                           validators.SwimlaneExportValidator)
 
         if ("points" in data or "issues_types" in data or
                 "issues_statuses" in data or "us_statuses" in data or

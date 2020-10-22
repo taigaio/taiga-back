@@ -339,6 +339,7 @@ class UserStoryExportValidator(WatcheableObjectModelValidatorMixin):
     assigned_to = UserRelatedField(required=False)
     assigned_users = UserRelatedField(many=True, required=False)
     status = ProjectRelatedField(slug_field="name")
+    swimlane = ProjectRelatedField(slug_field="name", required=False)
     milestone = ProjectRelatedField(slug_field="name", required=False)
     modified_date = serializers.DateTimeField(required=False)
     generated_from_issue = ProjectRelatedField(slug_field="ref", required=False)
