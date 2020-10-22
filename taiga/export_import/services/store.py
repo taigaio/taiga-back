@@ -84,7 +84,7 @@ def store_project(data):
             "default_issue_type", "default_epic_status",
             "memberships", "points",
             "epic_statuses", "us_statuses", "task_statuses", "issue_statuses",
-            "priorities", "severities",
+            "priorities", "severities", "swimlanes",
             "issue_types",
             "epiccustomattributes", "userstorycustomattributes",
             "taskcustomattributes", "issuecustomattributes",
@@ -798,6 +798,7 @@ def _populate_project_object(project, data):
     store_project_attributes_values(project, data, "issue_statuses", validators.IssueStatusExportValidator)
     store_project_attributes_values(project, data, "priorities", validators.PriorityExportValidator)
     store_project_attributes_values(project, data, "severities", validators.SeverityExportValidator)
+    store_project_attributes_values(project, data, "swimlanes", validators.SwimlaneExportValidator)
     store_project_attributes_values(project, data, "us_duedates", validators.UserStoryDueDateExportValidator)
     store_project_attributes_values(project, data, "task_duedates", validators.TaskDueDateExportValidator)
     store_project_attributes_values(project, data, "issue_duedates", validators.IssueDueDateExportValidator)

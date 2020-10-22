@@ -104,6 +104,11 @@ class SeverityExportValidator(validators.ModelValidator):
         exclude = ('id', 'project')
 
 
+class SwimlaneExportValidator(validators.ModelValidator):
+    class Meta:
+        model = projects_models.Swimlane
+        exclude = ('id', 'project')
+
 class IssueTypeExportValidator(validators.ModelValidator):
     class Meta:
         model = projects_models.IssueType
@@ -413,6 +418,7 @@ class ProjectExportValidator(WatcheableObjectModelValidatorMixin):
     issue_statuses = IssueStatusExportValidator(many=True, required=False)
     priorities = PriorityExportValidator(many=True, required=False)
     severities = SeverityExportValidator(many=True, required=False)
+    swimlanes = SwimlaneExportValidator(many=True, required=False)
     tags_colors = JSONField(required=False)
     creation_template = serializers.SlugRelatedField(slug_field="slug", required=False)
     default_points = serializers.SlugRelatedField(slug_field="name", required=False)

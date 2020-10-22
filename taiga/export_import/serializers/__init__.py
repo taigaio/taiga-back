@@ -22,6 +22,7 @@ from .serializers import TaskStatusExportSerializer
 from .serializers import IssueStatusExportSerializer
 from .serializers import PriorityExportSerializer
 from .serializers import SeverityExportSerializer
+from .serializers import SwimlaneExportSerializer
 from .serializers import IssueTypeExportSerializer
 from .serializers import RoleExportSerializer
 from .serializers import UserStoryCustomAttributeExportSerializer

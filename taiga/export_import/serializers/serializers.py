@@ -120,6 +120,11 @@ class SeverityExportSerializer(RelatedExportSerializer):
     color = Field()
 
 
+class SwimlaneExportSerializer(RelatedExportSerializer):
+    name = Field()
+    order = Field()
+
+
 class IssueTypeExportSerializer(RelatedExportSerializer):
     name = Field()
     order = Field()
@@ -263,6 +268,7 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
     assigned_to = UserRelatedField()
     assigned_users = MethodField()
     status = SlugRelatedField(slug_field="name")
+    swimlane = SlugRelatedField(slug_field="name")
     milestone = SlugRelatedField(slug_field="name")
     modified_date = DateTimeField()
     created_date = DateTimeField()
@@ -477,6 +483,7 @@ class ProjectExportSerializer(WatcheableObjectLightSerializerMixin):
     issue_duedates = IssueDueDateExportSerializer(many=True)
     priorities = PriorityExportSerializer(many=True)
     severities = SeverityExportSerializer(many=True)
+    swimlanes = SwimlaneExportSerializer(many=True)
     tags_colors = Field()
     default_points = SlugRelatedField(slug_field="name")
     default_epic_status = SlugRelatedField(slug_field="name")
