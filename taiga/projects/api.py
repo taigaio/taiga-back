@@ -51,6 +51,7 @@ from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin, MoveOnDestroySwimlaneMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
+from taiga.projects.signals import issue_status_post_move_on_destroy as issue_status_post_move_on_destroy_signal
 from taiga.projects.tasks.models import Task
 from taiga.projects.tagging.api import TagsColorsResourceMixin
 from taiga.projects.userstories.models import UserStory, RolePoints
@@ -883,6 +884,7 @@ class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_class = Issue
     move_on_destroy_related_field = "status"
     move_on_destroy_project_default_field = "default_issue_status"
+    move_on_destroy_post_destroy_signal = issue_status_post_move_on_destroy_signal
 
     def create(self, request, *args, **kwargs):
         project_id = request.DATA.get("project", 0)

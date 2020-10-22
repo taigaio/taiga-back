@@ -31,6 +31,8 @@ from taiga.projects.services.bulk_update_order import update_order_and_swimlane
 #############################################
 
 class MoveOnDestroyMixin:
+    move_on_destroy_post_destroy_signal = None
+
     @tx.atomic
     def destroy(self, request, *args, **kwargs):
         # moveTo is needed
@@ -67,6 +69,9 @@ class MoveOnDestroyMixin:
             if changed_default_value:
                 setattr(obj.project, self.move_on_destroy_project_default_field, obj)
                 obj.project.save()
+        elif self.move_on_destroy_post_destroy_signal:
+            # throw  post delete signal
+            self.move_on_destroy_post_destroy_signal.send(obj.__class__, deleted=obj, moved=move_item)
 
         return res
 

@@ -19,6 +19,7 @@
 from django.apps import apps
 from django.conf import settings
 from django.db.models import F
+from django.dispatch import Signal
 
 from taiga.projects.notifications.services import create_notify_policy_if_not_exists
 
@@ -109,3 +110,8 @@ def try_to_close_or_open_user_stories_when_edit_task_status(sender, instance, cr
             services.close_userstory(user_story)
         else:
             services.open_userstory(user_story)
+
+
+## Custom signals
+
+issue_status_post_move_on_destroy = Signal(providing_args=["deleted", "moved"])

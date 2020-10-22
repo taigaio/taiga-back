@@ -1397,3 +1397,84 @@ def test_replace_gitlab_references():
     assert ev_hook.replace_gitlab_references(None, "project-url", " #2") == " [GitLab#2](project-url/issues/2)"
     assert ev_hook.replace_gitlab_references(None, "project-url", "#test") == "#test"
     assert ev_hook.replace_gitlab_references(None, "project-url", None) == ""
+
+
+def test_signal_handlers_move_on_destroy_with_not_assigned_status(client):
+    project = f.create_project()
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
+
+    close_status_1 = f.IssueStatusFactory(project=project, is_closed=True)
+    close_status_2 = f.IssueStatusFactory(project=project, is_closed=True)
+
+    f.ProjectModulesConfigFactory(project=project, config={
+        "gitlab": {}
+    })
+
+    url = reverse("issue-statuses-detail", kwargs={"pk": close_status_1.pk}) + "?moveTo={}".format(close_status_2.pk)
+
+    client.login(project.owner)
+
+    assert project.issue_statuses.count() == 3
+
+    response = client.delete(url)
+
+    assert response.status_code == 204
+    assert project.issue_statuses.count() == 2
+    assert project.modules_config.config.get("gitlab", {}).get("close_status", None) == None
+
+
+def test_signal_handlers_move_on_destroy_with_assigned_status(client):
+    project = f.create_project()
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
+
+    close_status_1 = f.IssueStatusFactory(project=project, is_closed=True)
+    close_status_2 = f.IssueStatusFactory(project=project, is_closed=True)
+
+    modules_config = f.ProjectModulesConfigFactory(project=project, config={
+        "gitlab": {
+            "close_status": close_status_1.id,
+        }
+    })
+
+    url = reverse("issue-statuses-detail", kwargs={"pk": close_status_1.pk}) + "?moveTo={}".format(close_status_2.pk)
+
+    client.login(project.owner)
+
+    assert project.issue_statuses.count() == 3
+    assert modules_config.config.get("gitlab", {}).get("close_status", None) == close_status_1.id
+
+    response = client.delete(url)
+    modules_config.refresh_from_db()
+
+    assert response.status_code == 204
+    assert project.issue_statuses.count() == 2
+    assert modules_config.config.get("gitlab", {}).get("close_status", None) == close_status_2.id
+
+
+def test_signal_handlers_move_on_destroy_with_different_assigned_status(client):
+    project = f.create_project()
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
+
+    close_status_1 = f.IssueStatusFactory(project=project, is_closed=True)
+    close_status_2 = f.IssueStatusFactory(project=project, is_closed=True)
+    close_status_3 = f.IssueStatusFactory(project=project, is_closed=True)
+
+    modules_config = f.ProjectModulesConfigFactory(project=project, config={
+        "gitlab": {
+            "close_status": close_status_3.id,
+        }
+    })
+
+    url = reverse("issue-statuses-detail", kwargs={"pk": close_status_1.pk}) + "?moveTo={}".format(close_status_2.pk)
+
+    client.login(project.owner)
+
+    assert project.issue_statuses.count() == 4
+    assert modules_config.config.get("gitlab", {}).get("close_status", None) == close_status_3.id
+
+    response = client.delete(url)
+    modules_config.refresh_from_db()
+
+    assert response.status_code == 204
+    assert project.issue_statuses.count() == 3
+    assert modules_config.config.get("gitlab", {}).get("close_status", None) == close_status_3.id
