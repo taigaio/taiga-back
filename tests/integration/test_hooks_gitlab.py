@@ -421,7 +421,8 @@ issue_comment_base_payload = {
     "description": "test",
     "milestone_id": None,
     "state": "closed",
-    "iid": 17
+    "iid": 17,
+    "url": "http://example.com/gitlab-org/gitlab-test/issues/17"
   }
 }
 
@@ -1267,6 +1268,7 @@ def test_issue_comment_event_on_existing_issue_task_and_us(client):
     payload["user"]["username"] = "test"
     payload["issue"]["iid"] = "11"
     payload["issue"]["title"] = "test-title"
+    payload["issue"]["url"] = "http://gitlab.com/test/project/issues/11"
     payload["object_attributes"]["noteable_type"] = "Issue"
     payload["object_attributes"]["note"] = "Test body"
     payload["repository"]["homepage"] = "http://gitlab.com/test/project"
@@ -1296,17 +1298,18 @@ def test_issue_comment_event_on_existing_issue_task_and_us(client):
 
 
 def test_issue_comment_event_on_not_existing_issue_task_and_us(client):
-    issue = f.IssueFactory.create(external_reference=["gitlab", "10"])
+    issue = f.IssueFactory.create(external_reference=["github", "10"])
     take_snapshot(issue, user=issue.owner)
-    task = f.TaskFactory.create(project=issue.project, external_reference=["gitlab", "10"])
+    task = f.TaskFactory.create(project=issue.project, external_reference=["gitlab", "http://gitlab.com/test/project/issues/1110"])
     take_snapshot(task, user=task.owner)
-    us = f.UserStoryFactory.create(project=issue.project, external_reference=["gitlab", "10"])
+    us = f.UserStoryFactory.create(project=issue.project)
     take_snapshot(us, user=us.owner)
 
     payload = deepcopy(issue_comment_base_payload)
     payload["user"]["username"] = "test"
     payload["issue"]["iid"] = "99999"
     payload["issue"]["title"] = "test-title"
+    payload["issue"]["url"] = "http://gitlab.com/test/project/issues/11"
     payload["object_attributes"]["noteable_type"] = "Issue"
     payload["object_attributes"]["note"] = "test comment"
     payload["repository"]["homepage"] = "test"

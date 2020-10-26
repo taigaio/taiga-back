@@ -82,11 +82,12 @@ class IssueCommentEventHook(BaseGitLabEventHook, BaseIssueCommentEventHook):
     def get_data(self):
         comment_message = self.payload.get('object_attributes', {}).get('note', None)
         project_url = self.payload.get('repository', {}).get('homepage', "")
+        issue_url = self.payload.get('issue', {}).get('url', None)
         number = self.payload.get('issue', {}).get('iid', None)
         user_name = self.payload.get('user', {}).get('username', None)
         return {
             "number": number,
-            "url": os.path.join(project_url, "issues", str(number)),
+            "url": issue_url,
             "user_id": None,
             "user_name": user_name,
             "user_url": os.path.join(os.path.dirname(os.path.dirname(project_url)), user_name),
