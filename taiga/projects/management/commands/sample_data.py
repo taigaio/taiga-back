@@ -225,11 +225,12 @@ class Command(BaseCommand):
                                                         type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
                                                         order=i)
-                names = set([self.sd.words(1, 2) for i in range(1, 6)])
-                for j, name in enumerate(names):
-                    Swimlane.objects.create(name=name,
-                                             project=project,
-                                             order=j+1)
+                if self.sd.boolean():
+                    names = set([self.sd.words(1, 2) for i in range(1, 6)])
+                    for j, name in enumerate(names):
+                        Swimlane.objects.create(name=name,
+                                                project=project,
+                                                order=j+1)
 
                 start_date = now() - datetime.timedelta(55)
 
@@ -451,7 +452,7 @@ class Command(BaseCommand):
                                       status=self.sd.db_object_from_queryset(project.us_statuses.filter(
                                                                              is_closed=False)),
                                       tags=self.sd.words(1, 3).split(" "),
-                                      swimlane=self.sd.choice(list(project.swimlanes.all())))
+                                      swimlane=self.sd.choice(list(project.swimlanes.all())) if project.swimlanes.count() > 0 else None)
 
         for role_points in us.role_points.filter(role__in=computable_project_roles):
             if milestone:

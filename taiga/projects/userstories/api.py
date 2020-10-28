@@ -39,7 +39,7 @@ from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.by_ref import ByRefMixin
-from taiga.projects.models import Project, UserStoryStatus
+from taiga.projects.models import Project, UserStoryStatus, Swimlane
 from taiga.projects.notifications.mixins import AssignedUsersSignalMixin
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.notifications.mixins import WatchersViewSetMixin
@@ -163,19 +163,22 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)
 
-        if obj.milestone and obj.milestone.project != obj.project:
+        if obj.milestone_id and obj.milestone.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions to set this sprint "
                                          "to this user story."))
 
-        if obj.status and obj.status.project != obj.project:
+        if obj.status_id and obj.status.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions to set this status "
+                                         "to this user story."))
+
+        if obj.swimlane_id and obj.swimlane.project != obj.project:
+            raise exc.PermissionDenied(_("You don't have permissions to set this swimlane "
                                          "to this user story."))
 
     """
     Updating some attributes of the userstory can affect the ordering in the backlog, kanban or taskboard
     These three methods generate a key for the user story and can be used to be compared before and after
-    saving
-    If there is any difference it means an extra ordering update must be done
+    saving. If there is any difference it means an extra ordering update must be done
     """
     def _backlog_order_key(self, obj):
         return "{}-{}".format(obj.project_id, obj.backlog_order)
@@ -452,7 +455,41 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
 
     @list_route(methods=["POST"])
     def bulk_update_kanban_order(self, request, **kwargs):
-        return self._bulk_update_order("kanban_order", request, **kwargs)
+        # Validate data
+        validator = validators.UpdateUserStoriesKanbanOrderBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+        data = validator.data
+
+        # Get and validate project permissions
+        project_id = data["project_id"]
+        project = get_object_or_404(Project, pk=project_id)
+        self.check_permissions(request, "bulk_update_order", project)
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
+
+        # Get status
+        status_id = data["status_id"]
+        status = get_object_or_404(UserStoryStatus, pk=status_id, project=project)
+
+        # Get swimlane
+        swimlane = None
+        swimlane_id = data.get("swimlane_id", None)
+        if swimlane_id is not None:
+            swimlane = get_object_or_404(Swimlane, pk=swimlane_id, project=project)
+
+        # Get after_userstory
+        after_userstory = None
+        after_userstory_id = data.get("after_userstory_id", None)
+        if after_userstory_id is not None:
+            after_userstory = get_object_or_404(models.UserStory, pk=after_userstory_id, project=project)
+
+        ret = services.update_userstories_kanban_order_in_bulk(project=project,
+                                                               status=status,
+                                                               swimlane=swimlane,
+                                                               after_userstory=after_userstory,
+                                                               bulk_userstories=data["bulk_userstories"])
+        return response.Ok(ret)
 
 
 class UserStoryVotersViewSet(VotersViewSetMixin, ModelListViewSet):

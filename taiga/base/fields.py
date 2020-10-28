@@ -77,6 +77,75 @@ class WatchersField(serializers.WritableField):
         return data
 
 
+class ListField(serializers.WritableField):
+    """
+    A field whose values are lists of items described by the given child. The child can
+    be another field type (e.g., CharField) or a serializer. However, for serializers, you should
+    instead just use it with the `many=True` option.
+    """
+
+    default_error_messages = {
+        'invalid_type': _('%(value)s is not a list'),
+    }
+    empty = []
+
+    def __init__(self, child=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.child = child
+
+    def initialize(self, parent, field_name):
+        super().initialize(parent, field_name)
+        if self.child:
+            self.child.initialize(parent, field_name)
+
+    def to_native(self, obj):
+        if self.child and obj:
+            return [self.child.to_native(item) for item in obj]
+        return obj
+
+    def from_native(self, data):
+        self.validate_is_list(data)
+        if self.child and data:
+            return [self.child.from_native(item_data) for item_data in data]
+        return data
+
+    def validate(self, value):
+        super().validate(value)
+
+        self.validate_is_list(value)
+
+        if self.child:
+            errors = {}
+            for index, item in enumerate(value):
+                try:
+                    self.child.validate(item)
+                except ValidationError as e:
+                    errors[index] = e.messages
+
+            if errors:
+                raise NestedValidationError(errors)
+
+    def run_validators(self, value):
+        super().run_validators(value)
+
+        if self.child:
+            errors = {}
+            for index, item in enumerate(value):
+                try:
+                    self.child.run_validators(item)
+                except ValidationError as e:
+                    errors[index] = e.messages
+
+            if errors:
+                raise NestedValidationError(errors)
+
+    def validate_is_list(self, value):
+        if value is not None and not isinstance(value, list):
+            raise ValidationError(self.error_messages['invalid_type'],
+                                  code='invalid_type',
+                                  params={'value': value})
+
+
 ####################################################################
 # Serpy fields (NEW)
 ####################################################################

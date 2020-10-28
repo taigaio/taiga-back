@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import List, Optional
+
 import csv
 import io
 from collections import OrderedDict
@@ -26,9 +28,12 @@ from django.db import connection
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
+from psycopg2.extras import execute_values
+
 from taiga.base.utils import db, text
 from taiga.events import events
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.models import Project, UserStoryStatus, Swimlane
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
 from taiga.projects.services import apply_order_updates
 from taiga.projects.tasks.models import Task
@@ -110,6 +115,79 @@ def update_userstories_order_in_bulk(bulk_data: list, field: str,
                               projectid=project.pk)
     db.update_attr_in_bulk_for_ids(us_orders, field, models.UserStory)
     return us_orders
+
+
+def update_userstories_kanban_order_in_bulk(project: Project,
+                                            status: UserStoryStatus,
+                                            bulk_userstories: List[int],
+                                            after_userstory: Optional[models.UserStory] = None,
+                                            swimlane: Optional[Swimlane] = None):
+    """
+    Updates the order of the userstories specified adding the extra updates
+    needed to keep consistency.
+
+     - `bulk_userstories` should be a list of user stories IDs
+    """
+    # filter user stories from status and swimlane
+    user_stories = project.user_stories.filter(status=status)
+    if swimlane is not None:
+         user_stories = user_stories.filter(swimlane=swimlane)
+    else:
+         user_stories = user_stories.filter(swimlane__isnull=True)
+
+    # exclude moved user stories and
+    user_stories = user_stories.exclude(id__in=bulk_userstories)
+
+    # if after_userstory, exclude it and get only elements after it:
+    if after_userstory:
+        user_stories = (user_stories.exclude(id=after_userstory.id)
+                                    .filter(kanban_order__gte=after_userstory.kanban_order))
+
+    # sort and get only ids
+    user_story_ids = (user_stories.order_by("kanban_order", "id")
+                                  .values_list('id', flat=True))
+    # append moved user stories
+
+    user_story_ids = bulk_userstories + list(user_story_ids)
+
+    # prepare rest of data
+    start_order = after_userstory.kanban_order + 1 if after_userstory else 1
+    total_user_stories = len(user_story_ids)
+
+    user_story_swimlane_ids = (swimlane.id if swimlane else None,) * total_user_stories
+    user_story_status_ids = (status.id,) * total_user_stories
+    user_story_kanban_orders = range(start_order, start_order + total_user_stories)
+
+    data = tuple(zip(user_story_ids,
+                     user_story_swimlane_ids,
+                     user_story_status_ids,
+                     user_story_kanban_orders))
+
+    # execute query for update status, swimlane and kanban_order
+    sql = """
+    UPDATE userstories_userstory
+       SET swimlane_id = tmp.new_swimlane_id::BIGINT,
+           status_id = tmp.new_status_id::BIGINT,
+           kanban_order = tmp.new_kanban_order::BIGINT
+      FROM (VALUES %s) AS tmp (id, new_swimlane_id, new_status_id, new_kanban_order)
+     WHERE tmp.id = userstories_userstory.id
+    """
+    with connection.cursor() as cursor:
+        execute_values(cursor, sql, data)
+
+    # Sent events of updated stories
+    events.emit_event_for_ids(ids=user_story_ids,
+                              content_type="userstories.userstory",
+                              projectid=project.pk)
+
+    # Generate response with modified info
+    res = ({
+        "id": id,
+        "swimlane": swimlane,
+        "status": status,
+        "kanban_order": kanban_order
+    } for (id, swimlane, status, kanban_order) in data)
+    return res
 
 
 def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
