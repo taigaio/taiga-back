@@ -36,6 +36,7 @@ import os
 # Values
 ####################
 
+
 @as_dict
 def _get_generic_values(ids: tuple, *, typename=None, attr: str="name") -> tuple:
     app_label, model_name = typename.split(".", 1)
@@ -69,6 +70,7 @@ def _get_user_story_values(ids: set) -> dict:
 
 
 _get_us_status_values = partial(_get_generic_values, typename="projects.userstorystatus")
+_get_swimlane_values = partial(_get_generic_values, typename="projects.swimlane")
 _get_task_status_values = partial(_get_generic_values, typename="projects.taskstatus")
 _get_epic_status_values = partial(_get_generic_values, typename="projects.epicstatus")
 _get_issue_status_values = partial(_get_generic_values, typename="projects.issuestatus")
@@ -131,6 +133,8 @@ def userstory_values(diff):
 
     if "status" in diff:
         values["status"] = _get_us_status_values(diff["status"])
+    if "swimlane" in diff:
+        values["swimlane"] = _get_swimlane_values(diff["swimlane"])
     if "milestone" in diff:
         values["milestone"] = _get_milestone_values(diff["milestone"])
     if "points" in diff:
@@ -189,7 +193,7 @@ def wikipage_values(diff):
 # Freezes
 ####################
 
-def _generic_extract(obj:object, fields:list, default=None) -> dict:
+def _generic_extract(obj: object, fields: list, default=None) -> dict:
     result = {}
     for fieldname in fields:
         result[fieldname] = getattr(obj, fieldname, default)
@@ -228,7 +232,7 @@ def extract_epic_custom_attributes(obj) -> list:
 @as_tuple
 def extract_user_story_custom_attributes(obj) -> list:
     with suppress(ObjectDoesNotExist):
-        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        custom_attributes_values = obj.custom_attributes_values.attributes_values
         for attr in obj.project.userstorycustomattributes.all():
             with suppress(KeyError):
                 value = custom_attributes_values[str(attr.id)]
@@ -241,7 +245,7 @@ def extract_user_story_custom_attributes(obj) -> list:
 @as_tuple
 def extract_task_custom_attributes(obj) -> list:
     with suppress(ObjectDoesNotExist):
-        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        custom_attributes_values = obj.custom_attributes_values.attributes_values
         for attr in obj.project.taskcustomattributes.all():
             with suppress(KeyError):
                 value = custom_attributes_values[str(attr.id)]
@@ -254,7 +258,7 @@ def extract_task_custom_attributes(obj) -> list:
 @as_tuple
 def extract_issue_custom_attributes(obj) -> list:
     with suppress(ObjectDoesNotExist):
-        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        custom_attributes_values = obj.custom_attributes_values.attributes_values
         for attr in obj.project.issuecustomattributes.all():
             with suppress(KeyError):
                 value = custom_attributes_values[str(attr.id)]
@@ -349,6 +353,7 @@ def userstory_freezer(us) -> dict:
         "ref": us.ref,
         "owner": us.owner_id,
         "status": us.status.id if us.status else None,
+        "swimlane": us.swimlane.id if us.swimlane else None,
         "is_closed": us.is_closed,
         "finish_date": str(us.finish_date),
         "backlog_order": us.backlog_order,

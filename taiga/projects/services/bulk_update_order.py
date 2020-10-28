@@ -281,10 +281,12 @@ def _get_ordered_uss_by_swimlane(project):
     return data
 
 
+@transaction.atomic
 def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
 
     # first of all, there will be the user stories without swimlane
-    uss_without_swimlane = swimlane_to_be_deleted.project.user_stories.filter(swimlane=None).order_by('kanban_order', 'id')
+    uss_without_swimlane = swimlane_to_be_deleted.project.user_stories \
+        .filter(swimlane=None).order_by('kanban_order', 'id')
     ordered_uss_ids = list(uss_without_swimlane.values_list('id', flat=True))
     ordered_swimlane_ids = [None] * len(ordered_uss_ids)
 
@@ -303,9 +305,9 @@ def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
 
     # put the uss in the swimlane to be deleted after the uss in the destination swimlane
     ordered_swimlanes[move_to_swimlane.id]['ordered_uss'].extend(
-            ordered_swimlanes[swimlane_to_be_deleted.id]['ordered_uss'])
+        ordered_swimlanes[swimlane_to_be_deleted.id]['ordered_uss'])
     ordered_swimlanes[move_to_swimlane.id]['swimlane_id'].extend(
-            ordered_swimlanes[swimlane_to_be_deleted.id]['swimlane_id'])
+        ordered_swimlanes[swimlane_to_be_deleted.id]['swimlane_id'])
     ordered_swimlanes.pop(swimlane_to_be_deleted.id)
 
     # compose a flat list with the uss ordered
