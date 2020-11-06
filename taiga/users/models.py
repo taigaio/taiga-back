@@ -137,7 +137,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_("Required. 30 characters or fewer. Letters, numbers and "
                     "/./-/_ characters"),
         validators=[
-            validators.RegexValidator(re.compile("^[\w.-]+$"), _("Enter a valid username."), "invalid")
+            validators.RegexValidator(re.compile(r"^[\w.-]+$"), _("Enter a valid username."), "invalid")
         ])
     email = models.EmailField(_("email address"), max_length=255, blank=True, unique=True)
     is_active = models.BooleanField(_("active"), default=True,

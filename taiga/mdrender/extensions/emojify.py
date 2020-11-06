@@ -162,7 +162,7 @@ class EmojifyExtension(Extension):
 class EmojifyPreprocessor(Preprocessor):
 
     def run(self, lines):
-        pattern = re.compile(':([a-z0-9\+\-_]+):')
+        pattern = re.compile(r':([a-z0-9\+\-_]+):')
 
         new_lines = []
 

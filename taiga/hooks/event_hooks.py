@@ -237,7 +237,7 @@ class BasePushEventHook(BaseEventHook):
             consumed_refs = []
 
             # Status changes
-            p = re.compile("tg-(\d+) +#([-\w]+)")
+            p = re.compile(r"tg-(\d+) +#([-\w]+)")
             for m in p.finditer(commit['commit_message'].lower()):
                 ref = m.group(1)
                 status_slug = m.group(2)
@@ -251,7 +251,7 @@ class BasePushEventHook(BaseEventHook):
                 consumed_refs.append(ref)
 
             # Reference on commit
-            p = re.compile("tg-(\d+)")
+            p = re.compile(r"tg-(\d+)")
             for m in p.finditer(commit['commit_message'].lower()):
                 ref = m.group(1)
                 if ref in consumed_refs:
