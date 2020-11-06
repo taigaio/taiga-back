@@ -9,7 +9,7 @@ amqp==2.6.1               # via kombu
 asana==0.6.7              # via -r requirements.in
 attrs==20.3.0             # via psd-tools
 billiard==3.6.3.0         # via celery
-bleach==3.1.5             # via -r requirements.in
+bleach==3.2.1             # via -r requirements.in
 cairocffi==1.2.0          # via cairosvg
 cairosvg==2.0.3           # via -r requirements.in
 celery==4.3.0             # via -r requirements.in
