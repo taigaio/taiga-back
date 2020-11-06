@@ -44,10 +44,9 @@ markupsafe==1.1.1         # via jinja2
 netaddr==0.7.19           # via -r requirements.in
 oauthlib[signedtoken]==3.1.0  # via -r requirements.in, requests-oauthlib
 packaging==20.4           # via bleach
-packbits==0.6             # via psd-tools
 pillow==8.0.1             # via -r requirements.in, cairosvg, easy-thumbnails, psd-tools
 premailer==3.0.1          # via -r requirements.in
-psd-tools==1.8.27         # via -r requirements.in
+psd-tools==1.8.38         # via -r requirements.in
 psycopg2-binary==2.8.5    # via -r requirements.in
 pycparser==2.20           # via cffi
 pygments==2.2.0           # via -r requirements.in

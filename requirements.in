@@ -15,7 +15,7 @@ fn==0.4.3
 gunicorn==19.9.0
 netaddr==0.7.19
 premailer==3.0.1
-psd-tools==1.8.27
+psd-tools>=1.8.27,<1.9
 psycopg2-binary==2.8.5
 python-dateutil==2.7.5
 python-magic==0.4.15
