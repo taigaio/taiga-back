@@ -44,7 +44,7 @@ class UserValidator(validators.ModelValidator):
 
     def validate_username(self, attrs, source):
         value = attrs[source]
-        validator = core_validators.RegexValidator(re.compile('^[\w.-]+$'), _("invalid username"),
+        validator = core_validators.RegexValidator(re.compile(r'^[\w.-]+$'), _("invalid username"),
                                                    _("invalid"))
 
         try:
