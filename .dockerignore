@@ -28,7 +28,6 @@ env
 local.py
 locale
 media
-media
 pytest.ini
 regenerate.sh
 requirements-devel.in

@@ -37,21 +37,46 @@ DATABASES = {
 }
 
 SECRET_KEY = os.getenv('TAIGA_SECRET_KEY')
-MEDIA_URL = f"{ os.getenv('TAIGA_SITES_SCHEME') }://{ os.getenv('TAIGA_SITES_DOMAIN') }/media/"
-STATIC_URL = f"{ os.getenv('TAIGA_SITES_SCHEME') }://{ os.getenv('TAIGA_SITES_DOMAIN') }/static/"
+TAIGA_URL = f"{ os.getenv('TAIGA_SITES_SCHEME') }://{ os.getenv('TAIGA_SITES_DOMAIN') }"
+MEDIA_URL = f"{ TAIGA_URL }/media/"
+STATIC_URL = f"{ TAIGA_URL }/static/"
 SITES["api"] = {
     "domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }",
     "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }",
     "name": "api"
 }
 
+
 #########################################
 ## EVENTS
 #########################################
 EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
 EVENTS_PUSH_BACKEND_OPTIONS = {
-    "url": f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@taiga-rabbitmq:5672/taiga"
+    "url": f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@taiga-events-rabbitmq:5672/taiga"
 }
+
+
+#########################################
+## TAIGA ASYNC
+#########################################
+CELERY_ENABLED = True
+from kombu import Queue  # noqa
+
+CELERY_BROKER_URL = f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@taiga-async-rabbitmq:5672/taiga"
+CELERY_RESULT_BACKEND = None # for a general installation, we don't need to store the results
+CELERY_ACCEPT_CONTENT = ['pickle', ]  # Values are 'pickle', 'json', 'msgpack' and 'yaml'
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER = "pickle"
+CELERY_TIMEZONE = 'Europe/Madrid'
+CELERY_TASK_DEFAULT_QUEUE = 'tasks'
+CELERY_QUEUES = (
+    Queue('tasks', routing_key='task.#'),
+    Queue('transient', routing_key='transient.#', delivery_mode=1)
+)
+CELERY_TASK_DEFAULT_EXCHANGE = 'tasks'
+CELERY_TASK_DEFAULT_EXCHANGE_TYPE = 'topic'
+CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
+
 
 #########################################
 ## CONTRIBS
