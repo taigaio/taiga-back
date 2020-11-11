@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 5.5.7 (2020-11-11)
+
+### Misc
+
+- Upgrade requirements.
+
+- Fix deprecation warnings.
+
 ## 5.5.5 (2020-09-16)
 
 ### Misc
