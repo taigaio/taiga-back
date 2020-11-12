@@ -40,11 +40,26 @@ SECRET_KEY = os.getenv('TAIGA_SECRET_KEY')
 TAIGA_URL = f"{ os.getenv('TAIGA_SITES_SCHEME') }://{ os.getenv('TAIGA_SITES_DOMAIN') }"
 MEDIA_URL = f"{ TAIGA_URL }/media/"
 STATIC_URL = f"{ TAIGA_URL }/static/"
-SITES["api"] = {
-    "domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }",
-    "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }",
-    "name": "api"
+SITES = {
+    "api": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "api"},
+    "front": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "front"}
 }
+
+#########################################
+## EMAIL
+#########################################
+# https://docs.djangoproject.com/en/3.1/topics/email/
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'system@taiga.io')
+ENABLE_EMAIL = os.getenv('ENABLE_EMAIL', False) in (True, 'True')
+if ENABLE_EMAIL:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False) in (True, 'True')
+    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', False) in (True, 'True')
+    EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
+    EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'user')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')
 
 
 #########################################
