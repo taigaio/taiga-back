@@ -103,6 +103,12 @@ URL_CHOICES = [
     "https://tree.taiga.io",
     "https://tribe.taiga.io"]
 
+WIP_LIMITS_CHOICES = (
+    [0] * 14 +
+    [2] * 1 +
+    [3] * 2 +
+    [4] * 3)
+
 BASE_USERS = getattr(settings, "SAMPLE_DATA_BASE_USERS", {})
 NUM_USERS = getattr(settings, "SAMPLE_DATA_NUM_USERS", 10)
 NUM_INVITATIONS =getattr(settings, "SAMPLE_DATA_NUM_INVITATIONS",  2)
@@ -225,12 +231,18 @@ class Command(BaseCommand):
                                                         type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
                                                         order=i)
+
+                # Create swimlanes
                 if self.sd.boolean():
                     names = set([self.sd.words(1, 2) for i in range(1, 6)])
                     for j, name in enumerate(names):
-                        Swimlane.objects.create(name=name,
-                                                project=project,
-                                                order=j+1)
+                        swimlane = Swimlane.objects.create(name=name,
+                                                           project=project,
+                                                           order=j+1)
+                        # Set wip limits
+                        for status in swimlane.statuses.all():
+                            status.wip_limit = self.sd.choice(WIP_LIMITS_CHOICES)
+                            status.save()
 
                 start_date = now() - datetime.timedelta(55)
 

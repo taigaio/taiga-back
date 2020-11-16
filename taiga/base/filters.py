@@ -158,6 +158,7 @@ class FilterModelAssignedUsers:
 
 class PermissionBasedFilterBackend(FilterBackend):
     permission = None
+    project_query_param = "project"
 
     def filter_queryset(self, request, queryset, view):
         project_id = None
@@ -186,12 +187,28 @@ class PermissionBasedFilterBackend(FilterBackend):
 
             projects_list = [membership.project_id for membership in memberships_qs]
 
-            qs = qs.filter(Q(project_id__in=projects_list) |
-                           Q(project__public_permissions__contains=[self.permission]))
+            qs = qs.filter(Q(**{f"{self.project_query_param}_id__in": projects_list}) |
+                           Q(**{f"{self.project_query_param}__public_permissions__contains": [self.permission]}))
         else:
-            qs = qs.filter(project__anon_permissions__contains=[self.permission])
+            qs = qs.filter(**{f"{self.project_query_param}__anon_permissions__contains": [self.permission]})
 
         return super().filter_queryset(request, qs, view)
+
+
+def custom_filter_class(base_class, **kwargs):
+    """
+    This function is useful to create custom filter classes based on other classes.
+
+    For exmaple:
+
+        class CanViewProjectFilterBackend(PermissionBasedFilterBackend):
+            permission = "view_project"
+
+    is the same as:
+
+        custom_filter_class(PermissionBasedFilterBackend, {permission: "view_project"})
+    """
+    return type(f"{base_class.__name__}_customized", (base_class,), kwargs)
 
 
 class CanViewProjectFilterBackend(PermissionBasedFilterBackend):

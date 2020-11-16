@@ -48,7 +48,7 @@ def membership_post_save(sender, instance, using, **kwargs):
         .update(user_order=0)
 
 
-## Project attributes
+## project attributes
 def project_post_save(sender, instance, created, **kwargs):
     """
     Populate new project dependen default data
@@ -84,6 +84,30 @@ def project_post_save(sender, instance, created, **kwargs):
         Membership = apps.get_model("projects", "Membership")
         Membership.objects.create(user=instance.owner, project=instance, role=owner_role,
                                   is_admin=True, email=instance.owner.email)
+
+
+## swimlanes
+def create_swimlane_user_story_statuses_on_swimalne_post_save(sender, instance, created, **kwargs):
+    """
+    Populate new swimlanes with SwimlaneUserStoryStatus objects.
+    """
+    if not created:
+        return
+
+    if instance._importing:
+        return
+
+    SwimlaneUserStoryStatus = apps.get_model("projects", "SwimlaneUserStoryStatus")
+    copy_from_main_status = instance.project.swimlanes.all().count() == 1
+    objects = (
+        SwimlaneUserStoryStatus(
+            swimlane=instance,
+            status=status,
+            wip_limit=status.wip_limit if copy_from_main_status else None
+        )
+    for status in instance.project.us_statuses.all())
+
+    SwimlaneUserStoryStatus.objects.bulk_create(objects)
 
 
 ## US statuses

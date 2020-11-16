@@ -90,6 +90,12 @@ class SwimlaneValidator(DuplicatedNameInProjectValidator, validators.ModelValida
         read_only_fields = ("order",)
 
 
+class SwimlaneUserStoryStatusValidator(validators.ModelValidator):
+    class Meta:
+        model = models.SwimlaneUserStoryStatus
+        read_only_fields = ("swimlane", "status")
+
+
 class UserStoryDueDateValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
         model = models.UserStoryDueDate

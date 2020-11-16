@@ -79,6 +79,20 @@ def disconnect_us_status_signals():
     signals.post_save.disconnect(sender=apps.get_model("projects", "UserStoryStatus"),
                                  dispatch_uid="try_to_close_or_open_user_stories_when_edit_us_status")
 
+## Swimlane Signals
+
+def connect_swimlane_signals():
+    from . import signals as handlers
+    signals.post_save.connect(handlers.create_swimlane_user_story_statuses_on_swimalne_post_save,
+                              sender=apps.get_model("projects", "Swimlane"),
+                              dispatch_uid="create_swimlane_user_story_statuses_on_swimalne_post_save")
+
+
+def disconnect_swimlane_signals():
+    signals.post_save.disconnect(sender=apps.get_model("projects", "Swimlane"),
+                                 dispatch_uid="create_swimlane_user_story_statuses_on_swimalne_post_save")
+
+
 
 ## Tasks Statuses Signals
 
@@ -102,4 +116,5 @@ class ProjectsAppConfig(AppConfig):
         connect_projects_signals()
         connect_memberships_signals()
         connect_us_status_signals()
+        connect_swimlane_signals()
         connect_task_status_signals()

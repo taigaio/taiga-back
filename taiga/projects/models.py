@@ -925,6 +925,8 @@ class Swimlane(models.Model):
     order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                    verbose_name=_("order"))
 
+    _importing = None
+
     class Meta:
         verbose_name = "swimlane"
         verbose_name_plural = "swimlanes"
@@ -932,6 +934,43 @@ class Swimlane(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class SwimlaneUserStoryStatus(models.Model):
+    wip_limit = models.IntegerField(null=True, blank=True, default=None,
+                                    verbose_name=_("work in progress limit"))
+    status = models.ForeignKey(
+        "projects.UserStoryStatus",
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+        related_name="swimlane_statuses",
+        verbose_name=_("user story status"),
+    )
+    swimlane = models.ForeignKey(
+        "projects.Swimlane",
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+        related_name="statuses",
+        verbose_name=_("status"),
+    )
+
+    class Meta:
+        verbose_name = "swimlane user story status"
+        verbose_name_plural = "swimlane user story statuses"
+        ordering = ["swimlane", "status", "id"]
+        unique_together = (("swimlane", "status"))
+
+    def __str__(self):
+        return f"{self.swimlane.name} - {self.status.name}"
+
+    def __repr__(self):
+        return "<Swimlane User Story Status {{swimlane: {self.swimlane.name}, status: {self.status.name}}}>"
+
+    @property
+    def project(self):
+        return self.status.project
 
 
 class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):

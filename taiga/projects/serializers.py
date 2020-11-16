@@ -77,11 +77,37 @@ class PointsSerializer(serializers.LightSerializer):
     project = Field(attr="project_id")
 
 
+class _SwimlaneStatusSerializer(serializers.LightSerializer):
+    id = Field()
+    name = MethodField()
+    slug = MethodField()
+    order = MethodField()
+    is_closed = MethodField()
+    is_archived = MethodField()
+    color = MethodField()
+    wip_limit = Field()
+
+    def get_name(self, obj): return _(obj.status.name)
+    def get_slug(self, obj): return obj.status.slug
+    def get_order(self, obj): return obj.status.order
+    def get_is_closed(self, obj): return obj.status.is_closed
+    def get_is_archived(self, obj): return obj.status.is_archived
+    def get_color(self, obj): return obj.status.color
+
+
 class SwimlaneSerializer(serializers.LightSerializer):
     id = Field()
     name = I18NField()
     order = Field()
     project = Field(attr="project_id")
+    statuses = _SwimlaneStatusSerializer(many=True, attr="statuses.all", call=True)
+
+
+class SwimlaneUserStoryStatusSerializer(serializers.LightSerializer):
+    id = Field()
+    status = Field(attr="status_id")
+    swimlane = Field(attr="swimlane_id")
+    wip_limit = Field()
 
 
 class UserStoryDueDateSerializer(BaseDueDateSerializer):

@@ -69,6 +69,7 @@ from taiga.projects.api import EpicStatusViewSet
 from taiga.projects.api import UserStoryStatusViewSet
 from taiga.projects.api import PointsViewSet
 from taiga.projects.api import SwimlaneViewSet
+from taiga.projects.api import SwimlaneUserStoryStatusViewSet
 from taiga.projects.api import UserStoryDueDateViewSet
 from taiga.projects.api import TaskStatusViewSet
 from taiga.projects.api import TaskDueDateViewSet
@@ -89,6 +90,7 @@ router.register(r"epic-statuses", EpicStatusViewSet, base_name="epic-statuses")
 router.register(r"userstory-statuses", UserStoryStatusViewSet, base_name="userstory-statuses")
 router.register(r"points", PointsViewSet, base_name="points")
 router.register(r"swimlanes", SwimlaneViewSet, base_name="swimlanes")
+router.register(r"swimlane-userstory-statuses", SwimlaneUserStoryStatusViewSet, base_name="swimlane-userstory-statuses")
 router.register(r"userstory-due-dates", UserStoryDueDateViewSet, base_name="userstory-due-dates")
 router.register(r"task-statuses", TaskStatusViewSet, base_name="task-statuses")
 router.register(r"task-due-dates", TaskDueDateViewSet, base_name="task-due-dates")

@@ -124,11 +124,6 @@ def data():
     m.blocked_epic_status = f.EpicStatusFactory(project=m.blocked_project)
     m.blocked_epic_status_aux = f.EpicStatusFactory(project=m.blocked_project)
 
-    m.public_swimlane = f.SwimlaneFactory(project=m.public_project)
-    m.private_swimlane1 = f.SwimlaneFactory(project=m.private_project1)
-    m.private_swimlane2 = f.SwimlaneFactory(project=m.private_project2)
-    m.blocked_swimlane = f.SwimlaneFactory(project=m.blocked_project)
-
     m.public_points = f.PointsFactory(project=m.public_project)
     m.public_points_aux = f.PointsFactory(project=m.public_project)
     m.private_points1 = f.PointsFactory(project=m.private_project1)
@@ -146,6 +141,16 @@ def data():
     m.private_user_story_status2_aux = f.UserStoryStatusFactory(project=m.private_project2)
     m.blocked_user_story_status = f.UserStoryStatusFactory(project=m.blocked_project)
     m.blocked_user_story_status_aux = f.UserStoryStatusFactory(project=m.blocked_project)
+
+    m.public_swimlane = f.SwimlaneFactory(project=m.public_project)
+    m.private_swimlane1 = f.SwimlaneFactory(project=m.private_project1)
+    m.private_swimlane2 = f.SwimlaneFactory(project=m.private_project2)
+    m.blocked_swimlane = f.SwimlaneFactory(project=m.blocked_project)
+
+    m.public_swimlane_user_story_status = m.public_swimlane.statuses.all().first()
+    m.private_swimlane_user_story_status1 = m.private_swimlane1.statuses.all().first()
+    m.private_swimlane_user_story_status2 = m.private_swimlane2.statuses.all().first()
+    m.blocked_swimlane_user_story_status = m.blocked_swimlane.statuses.all().first()
 
     m.public_task_status = f.TaskStatusFactory(project=m.public_project)
     m.public_task_status_aux = f.TaskStatusFactory(project=m.public_project)
@@ -540,6 +545,7 @@ def test_epic_status_action_bulk_update_order(client, data):
 #####################################################
 # Swimlanes
 #####################################################
+
 def test_swimlane_retrieve(client, data):
     public_url = reverse('swimlanes-detail', kwargs={"pk": data.public_swimlane.pk})
     private1_url = reverse('swimlanes-detail', kwargs={"pk": data.private_swimlane1.pk})
@@ -625,8 +631,6 @@ def test_swimlane_delete(client, data):
     assert results == [401, 403, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', blocked_url, None, users)
     assert results == [401, 403, 403, 403, 451]
-
-    pass
 
 
 def test_swimlane_list(client, data):
@@ -723,6 +727,153 @@ def test_swimlane_action_bulk_update_order(client, data):
         "project": data.blocked_project.pk
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
+#####################################################
+# Swimlane User Story Status
+#####################################################
+
+def test_swimlane_user_story_status_retrieve(client, data):
+    public_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.public_swimlane_user_story_status.pk})
+    private1_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.private_swimlane_user_story_status1.pk})
+    private2_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.private_swimlane_user_story_status2.pk})
+    blocked_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.blocked_swimlane_user_story_status.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private1_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private2_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_swimlane_user_story_status_update(client, data):
+    public_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.public_swimlane_user_story_status.pk})
+    private1_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.private_swimlane_user_story_status1.pk})
+    private2_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.private_swimlane_user_story_status2.pk})
+    blocked_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.blocked_swimlane_user_story_status.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    swimlane_user_story_status_data = serializers.SwimlaneUserStoryStatusSerializer(data.public_swimlane_user_story_status).data
+    swimlane_user_story_status_data["wip_limit"] = 2
+    swimlane_user_story_status_data = json.dumps(swimlane_user_story_status_data)
+    results = helper_test_http_method(client, 'put', public_url, swimlane_user_story_status_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    swimlane_user_story_status_data = serializers.SwimlaneUserStoryStatusSerializer(data.private_swimlane_user_story_status1).data
+    swimlane_user_story_status_data["wip_limit"] = 2
+    swimlane_user_story_status_data = json.dumps(swimlane_user_story_status_data)
+    results = helper_test_http_method(client, 'put', private1_url, swimlane_user_story_status_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    swimlane_user_story_status_data = serializers.SwimlaneUserStoryStatusSerializer(data.private_swimlane_user_story_status2).data
+    swimlane_user_story_status_data["wip_limit"] = 2
+    swimlane_user_story_status_data = json.dumps(swimlane_user_story_status_data)
+    results = helper_test_http_method(client, 'put', private2_url, swimlane_user_story_status_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    swimlane_user_story_status_data = serializers.SwimlaneUserStoryStatusSerializer(data.blocked_swimlane_user_story_status).data
+    swimlane_user_story_status_data["wip_limit"] = 2
+    swimlane_user_story_status_data = json.dumps(swimlane_user_story_status_data)
+    results = helper_test_http_method(client, 'put', blocked_url, swimlane_user_story_status_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
+
+def test_swimlane_user_story_status_delete(client, data):
+    public_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.public_swimlane_user_story_status.pk})
+    private1_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.private_swimlane_user_story_status1.pk})
+    private2_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.private_swimlane_user_story_status2.pk})
+    blocked_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.blocked_swimlane_user_story_status.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'delete', public_url, None, users)
+    assert results == [405, 405, 405, 405, 405]
+    results = helper_test_http_method(client, 'delete', private1_url, None, users)
+    assert results == [405, 405, 405, 405, 405]
+    results = helper_test_http_method(client, 'delete', private2_url, None, users)
+    assert results == [405, 405, 405, 405, 405]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [405, 405, 405, 405, 405]
+
+
+def test_swimlane_user_story_status_list(client, data):
+    url = reverse('swimlane-userstory-statuses-list')
+
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 4
+    assert response.status_code == 200
+
+    client.login(data.registered_user)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 4
+    assert response.status_code == 200
+
+    client.login(data.project_member_without_perms)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 4
+    assert response.status_code == 200
+
+    client.login(data.project_member_with_perms)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 8
+    assert response.status_code == 200
+
+    client.login(data.project_owner)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 8
+    assert response.status_code == 200
+
+
+def test_swimlane_user_story_status_patch(client, data):
+    public_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.public_swimlane_user_story_status.pk})
+    private1_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.private_swimlane_user_story_status1.pk})
+    private2_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.private_swimlane_user_story_status2.pk})
+    blocked_url = reverse('swimlane-userstory-statuses-detail', kwargs={"pk": data.blocked_swimlane_user_story_status.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'patch', public_url, '{"wip_limit": 42}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', private1_url, '{"wip_limit": 42}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', private2_url, '{"wip_limit": 42}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, '{"wip_limit": 42}', users)
     assert results == [401, 403, 403, 403, 451]
 
 

@@ -31,7 +31,7 @@ from django_pglocks import advisory_lock
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base import response
-from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet, ModelUpdateRetrieveViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin, BlockeableSaveMixin, BlockeableDeleteMixin
 from taiga.base.api.permissions import AllowAnyPermission
 from taiga.base.api.utils import get_object_or_404
@@ -673,6 +673,16 @@ class SwimlaneViewSet(MoveOnDestroySwimlaneMixin, BlockedByProjectMixin,
         if total_swimlanes == 1:
             uss = object.project.user_stories.all()
             uss.update(swimlane=object)
+
+
+class SwimlaneUserStoryStatusViewSet(BlockedByProjectMixin, ModelListViewSet, ModelUpdateRetrieveViewSet):
+    model = models.SwimlaneUserStoryStatus
+    serializer_class = serializers.SwimlaneUserStoryStatusSerializer
+    validator_class = validators.SwimlaneUserStoryStatusValidator
+    permission_classes = (permissions.SwimlaneUserStoryStatusPermission,)
+    filter_backends = (filters.custom_filter_class(filters.CanViewProjectFilterBackend,
+                                                   project_query_param="status__project"),)
+    filter_fields = ('project',)
 
 
 class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):

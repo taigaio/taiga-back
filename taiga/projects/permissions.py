@@ -18,14 +18,15 @@
 
 from django.utils.translation import ugettext as _
 
+from taiga.base import exceptions as exc
+
 from taiga.base.api.permissions import TaigaResourcePermission
 from taiga.base.api.permissions import IsAuthenticated
 from taiga.base.api.permissions import AllowAny
+from taiga.base.api.permissions import DenyAll
 from taiga.base.api.permissions import IsSuperUser
 from taiga.base.api.permissions import IsObjectOwner
 from taiga.base.api.permissions import PermissionComponent
-
-from taiga.base import exceptions as exc
 
 from taiga.permissions.permissions import HasProjectPerm
 from taiga.permissions.permissions import IsProjectAdmin
@@ -139,6 +140,16 @@ class PointsPermission(TaigaResourcePermission):
     bulk_update_order_perms = IsProjectAdmin()
 
 
+class UserStoryStatusPermission(TaigaResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectAdmin()
+
+
 class SwimlanePermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectAdmin()
@@ -149,14 +160,13 @@ class SwimlanePermission(TaigaResourcePermission):
     bulk_update_order_perms = IsProjectAdmin()
 
 
-class UserStoryStatusPermission(TaigaResourcePermission):
+class SwimlaneUserStoryStatusPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
-    create_perms = IsProjectAdmin()
+    create_perms = DenyAll()
     update_perms = IsProjectAdmin()
     partial_update_perms = IsProjectAdmin()
-    destroy_perms = IsProjectAdmin()
+    destroy_perms =  DenyAll()
     list_perms = AllowAny()
-    bulk_update_order_perms = IsProjectAdmin()
 
 
 class UserStoryDueDatePermission(TaigaResourcePermission):
