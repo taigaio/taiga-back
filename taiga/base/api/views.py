@@ -144,7 +144,7 @@ class APIView(View):
     # Allow dependancy injection of other settings to make testing easier.
     settings = api_settings
 
-    _trottle_instances = None
+    _throttle_instances = None
 
     @classmethod
     def as_view(cls, **initkwargs):
@@ -288,9 +288,9 @@ class APIView(View):
         """
         Instantiates and returns the list of throttles that this view uses.
         """
-        if self._trottle_instances is None:
-            self._trottle_instances = [throttle() for throttle in self.throttle_classes]
-        return self._trottle_instances
+        if self._throttle_instances is None:
+            self._throttle_instances = [throttle() for throttle in self.throttle_classes]
+        return self._throttle_instances
 
     def get_content_negotiator(self):
         """
