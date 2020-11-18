@@ -120,11 +120,16 @@ def update_userstories_order_in_bulk(bulk_data: list, field: str,
 def update_userstories_kanban_order_in_bulk(project: Project,
                                             status: UserStoryStatus,
                                             bulk_userstories: List[int],
+                                            before_userstory: Optional[models.UserStory] = None,
                                             after_userstory: Optional[models.UserStory] = None,
                                             swimlane: Optional[Swimlane] = None):
     """
     Updates the order of the userstories specified adding the extra updates
     needed to keep consistency.
+
+    Note: `after_userstory_id` and `before_userstory_id` are mutually exclusive;
+          you can use only one at a given request. They can be both None which
+          means "at the beginning of is cell"
 
      - `bulk_userstories` should be a list of user stories IDs
     """
@@ -135,23 +140,36 @@ def update_userstories_kanban_order_in_bulk(project: Project,
     else:
          user_stories = user_stories.filter(swimlane__isnull=True)
 
-    # exclude moved user stories and
+    # exclude moved user stories
     user_stories = user_stories.exclude(id__in=bulk_userstories)
 
+    # if before_userstory, get it and all elements before too:
+    if before_userstory:
+        user_stories = (user_stories.filter(kanban_order__gte=before_userstory.kanban_order))
     # if after_userstory, exclude it and get only elements after it:
-    if after_userstory:
+    elif after_userstory:
         user_stories = (user_stories.exclude(id=after_userstory.id)
                                     .filter(kanban_order__gte=after_userstory.kanban_order))
 
     # sort and get only ids
     user_story_ids = (user_stories.order_by("kanban_order", "id")
                                   .values_list('id', flat=True))
-    # append moved user stories
 
+    # append moved user stories
     user_story_ids = bulk_userstories + list(user_story_ids)
 
+    # calculate the start order
+    if before_userstory:
+        # order start with the before_userstory order
+        start_order = before_userstory.kanban_order
+    elif after_userstory:
+        # order start after the after_userstory order
+        start_order = after_userstory.kanban_order + 1
+    else:
+        # move at the beggining of the column if there is no after and before
+        start_order = 1
+
     # prepare rest of data
-    start_order = after_userstory.kanban_order + 1 if after_userstory else 1
     total_user_stories = len(user_story_ids)
 
     user_story_swimlane_ids = (swimlane.id if swimlane else None,) * total_user_stories

@@ -226,6 +226,61 @@ def test_api_update_orders_in_bulk_succeeds_moved_to_no_swimlane_and_to_the_end(
     assert us3.swimlane_id == None
     assert us3.status_id == status1.id
 
+def test_api_update_orders_in_bulk_succeeds_moved_to_no_swimlane_and_before_a_us(client):
+    #
+    #      |  ST1  |  ST2    |                    |       |  ST1  |  ST2
+    # -----|-------|-------  |                    |  -----|-------|-------
+    #      |  us1  |         |   MOVE: us3        |       |  us1  |
+    #      |  us2  |         |   TO: no-swimlane  |       |  us3  |
+    # -----|-------|-------  |   UNDER: st1       |       |  us2  |
+    #      |       |  us3    |   BEFORE: us2      |  -----|-------|-------
+    #  SW1 |       |         |                    |       |       |
+    #      |       |         |                    |   SW1 |       |
+
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status1 = f.UserStoryStatusFactory.create(project=project)
+    status2 = f.UserStoryStatusFactory.create(project=project)
+    swimlane1 = f.SwimlaneFactory.create(project=project)
+    us1 = f.create_userstory(project=project, status=status1, kanban_order=1, swimlane=None)
+    us2 = f.create_userstory(project=project, status=status1, kanban_order=2, swimlane=None)
+    us3 = f.create_userstory(project=project, status=status2, kanban_order=1, swimlane=swimlane1)
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": status1.id,
+        "before_userstory_id": us2.id,
+        "bulk_userstories": [us3.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    updated_ids = [
+        us2.id,
+        us3.id,
+    ]
+    res = (project.user_stories.filter(id__in=updated_ids)
+                               .values("id", "swimlane", "kanban_order", "status")
+                               .order_by("kanban_order", "id"))
+    assert response.json() == list(res)
+
+    us1.refresh_from_db()
+    us2.refresh_from_db()
+    us3.refresh_from_db()
+    assert us1.kanban_order == 1
+    assert us1.swimlane_id == None
+    assert us1.status_id == status1.id
+    assert us3.kanban_order == 2
+    assert us3.swimlane_id == None
+    assert us3.status_id == status1.id
+    assert us2.kanban_order == 3
+    assert us2.swimlane_id == None
+    assert us2.status_id == status1.id
 
 ##############################
 ## Move to swimlane
@@ -419,6 +474,64 @@ def test_api_update_orders_in_bulk_succeeds_moved_to_a_swimlane_and_to_the_end(c
     assert us3.kanban_order == 3
     assert us3.swimlane_id == swimlane1.id
     assert us3.status_id == status1.id
+
+def test_api_update_orders_in_bulk_succeeds_moved_to_a_swimlane_and_before_a_us(client):
+    #
+    #      |  ST1  |  ST2    |                    |       |  ST1  |  ST2
+    # -----|-------|-------  |                    |  -----|-------|-------
+    #  SW1 |  us1  |         |   MOVE: us3        |       |  us1  |
+    #      |  us2  |         |   TO: sw1          |   SW1 |  us3  |
+    # -----|-------|-------  |   UNDER: st1       |       |  us2  |
+    #      |       |  us3    |   BEFORE: us2      |  -----|-------|-------
+    #  SW2 |       |         |                    |       |       |
+    #      |       |         |                    |   SW2 |       |
+
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status1 = f.UserStoryStatusFactory.create(project=project)
+    status2 = f.UserStoryStatusFactory.create(project=project)
+    swimlane1 = f.SwimlaneFactory.create(project=project)
+    swimlane2 = f.SwimlaneFactory.create(project=project)
+    us1 = f.create_userstory(project=project, status=status1, kanban_order=1, swimlane=swimlane1)
+    us2 = f.create_userstory(project=project, status=status1, kanban_order=2, swimlane=swimlane1)
+    us3 = f.create_userstory(project=project, status=status2, kanban_order=1, swimlane=swimlane2)
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "swimlane_id": swimlane1.id,
+        "status_id": status1.id,
+        "before_userstory_id": us2.id,
+        "bulk_userstories": [us3.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    updated_ids = [
+        us3.id,
+        us2.id,
+    ]
+    res = (project.user_stories.filter(id__in=updated_ids)
+                               .values("id", "swimlane", "kanban_order", "status")
+                               .order_by("kanban_order", "id"))
+    assert response.json() == list(res)
+
+    us1.refresh_from_db()
+    us2.refresh_from_db()
+    us3.refresh_from_db()
+    assert us1.kanban_order == 1
+    assert us1.swimlane_id == swimlane1.id
+    assert us1.status_id == status1.id
+    assert us3.kanban_order == 2
+    assert us3.swimlane_id == swimlane1.id
+    assert us3.status_id == status1.id
+    assert us2.kanban_order == 3
+    assert us2.swimlane_id == swimlane1.id
+    assert us2.status_id == status1.id
 
 
 ##############################
@@ -625,3 +738,156 @@ def test_api_update_orders_in_bulk_invalid_affter_us_because_no_swimlane(client)
     assert response.status_code == 400, response.data
     assert len(response.data) == 1
     assert "after_userstory_id" in response.data
+
+
+def test_api_update_orders_in_bulk_invalid_affter_us_because_project(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status = f.UserStoryStatusFactory.create(project=project)
+    swl1 = f.SwimlaneFactory.create(project=project)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    us3 = f.create_userstory(project=project)
+    us4 = f.create_userstory()
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": status.id,
+        "swimlane_id": swl1.id,
+        "before_userstory_id": us4.id,
+        "bulk_userstories": [us1.id,
+                             us2.id,
+                             us3.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert len(response.data) == 1
+    assert "before_userstory_id" in response.data
+
+
+def test_api_update_orders_in_bulk_invalid_affter_us_because_status(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status = f.UserStoryStatusFactory.create(project=project)
+    status2 = f.UserStoryStatusFactory.create(project=project)
+    swl1 = f.SwimlaneFactory.create(project=project)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    us3 = f.create_userstory(project=project)
+    us4 = f.create_userstory(project=project, swimlane=swl1, status=status2)
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": status.id,
+        "swimlane_id": swl1.id,
+        "before_userstory_id": us4.id,
+        "bulk_userstories": [us1.id,
+                             us2.id,
+                             us3.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert len(response.data) == 1
+    assert "before_userstory_id" in response.data
+
+
+def test_api_update_orders_in_bulk_invalid_affter_us_because_swimlane(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status = f.UserStoryStatusFactory.create(project=project)
+    swl1 = f.SwimlaneFactory.create(project=project)
+    swl2 = f.SwimlaneFactory.create(project=project)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    us3 = f.create_userstory(project=project)
+    us4 = f.create_userstory(project=project, status=status, swimlane=swl2)
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": status.id,
+        "swimlane_id": swl1.id,
+        "before_userstory_id": us4.id,
+        "bulk_userstories": [us1.id,
+                             us2.id,
+                             us3.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert len(response.data) == 1
+    assert "before_userstory_id" in response.data
+
+
+def test_api_update_orders_in_bulk_invalid_affter_us_because_no_swimlane(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status = f.UserStoryStatusFactory.create(project=project)
+    swl1 = f.SwimlaneFactory.create(project=project)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    us3 = f.create_userstory(project=project)
+    us4 = f.create_userstory(project=project, status=status, swimlane=None)
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": status.id,
+        "swimlane_id": swl1.id,
+        "before_userstory_id": us4.id,
+        "bulk_userstories": [us1.id,
+                             us2.id,
+                             us3.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert len(response.data) == 1
+    assert "before_userstory_id" in response.data
+
+
+def test_api_update_orders_in_bulk_invalid_before_us_because_after_us_exist(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status = f.UserStoryStatusFactory.create(project=project)
+    swl1 = f.SwimlaneFactory.create(project=project)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    us3 = f.create_userstory(project=project)
+    us4 = f.create_userstory(project=project, swimlane=swl1, status=status)
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": status.id,
+        "swimlane_id": swl1.id,
+        "before_userstory_id": us4.id,
+        "after_userstory_id": us4.id,
+        "bulk_userstories": [us1.id,
+                             us2.id,
+                             us3.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert len(response.data) == 1
+    assert "before_userstory_id" in response.data

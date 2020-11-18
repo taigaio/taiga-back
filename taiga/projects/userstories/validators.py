@@ -143,6 +143,7 @@ class UpdateUserStoriesKanbanOrderBulkValidator(ProjectExistsValidator, validato
     status_id = serializers.IntegerField()
     swimlane_id = serializers.IntegerField(required=False)
     after_userstory_id = serializers.IntegerField(required=False)
+    before_userstory_id = serializers.IntegerField(required=False)
     bulk_userstories = ListField(child=serializers.IntegerField(min_value=1))
 
     def validate_status_id(self, attrs, source):
@@ -184,6 +185,30 @@ class UpdateUserStoriesKanbanOrderBulkValidator(ProjectExistsValidator, validato
 
             if not UserStory.objects.filter(**filters).exists():
                 raise ValidationError(_("Invalid user story id to move after. The user story must belong "
+                                        "to the same project, status and swimlane."))
+
+        return attrs
+
+    def validate_before_userstory_id(self, attrs, source):
+        before_userstory_id = attrs.get(source, None)
+        after_userstory_id = attrs.get("after_userstory_id", None)
+
+        if after_userstory_id and before_userstory_id:
+            raise ValidationError(_("You can't use after and before at the same time."))
+        elif before_userstory_id is not None:
+            filters = {
+                "project__id": attrs["project_id"],
+                "status__id": attrs["status_id"],
+                "id": attrs[source]
+            }
+            swimlane_id = attrs.get("swimlane_id", None)
+            if swimlane_id:
+                filters["swimlane__id"] = swimlane_id
+            else:
+                filters["swimlane__isnull"] = True
+
+            if not UserStory.objects.filter(**filters).exists():
+                raise ValidationError(_("Invalid user story id to move before. The user story must belong "
                                         "to the same project, status and swimlane."))
 
         return attrs
