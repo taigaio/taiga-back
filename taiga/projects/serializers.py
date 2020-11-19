@@ -78,7 +78,7 @@ class PointsSerializer(serializers.LightSerializer):
 
 
 class _SwimlaneStatusSerializer(serializers.LightSerializer):
-    id = Field()
+    id = MethodField()
     name = MethodField()
     slug = MethodField()
     order = MethodField()
@@ -86,7 +86,9 @@ class _SwimlaneStatusSerializer(serializers.LightSerializer):
     is_archived = MethodField()
     color = MethodField()
     wip_limit = Field()
+    swimlane_userstory_status_id = Field(attr="id")
 
+    def get_id(self, obj): return obj.status.id
     def get_name(self, obj): return _(obj.status.name)
     def get_slug(self, obj): return obj.status.slug
     def get_order(self, obj): return obj.status.order
