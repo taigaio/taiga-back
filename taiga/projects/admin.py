@@ -251,6 +251,12 @@ class UserStoryStatusAdmin(admin.ModelAdmin):
     raw_id_fields = ["project"]
 
 
+class EpicStatusAdmin(admin.ModelAdmin):
+    list_display = ["project", "order", "name", "is_closed"]
+    list_display_links = ["name"]
+    raw_id_fields = ["project"]
+
+
 class SwimlaneAdmin(admin.ModelAdmin):
     list_display = ["project", "name", "order"]
     list_display_links = ["project", "name"]
@@ -304,6 +310,7 @@ class ProjectTemplateAdmin(admin.ModelAdmin):
 admin.site.register(models.IssueStatus, IssueStatusAdmin)
 admin.site.register(models.TaskStatus, TaskStatusAdmin)
 admin.site.register(models.UserStoryStatus, UserStoryStatusAdmin)
+admin.site.register(models.EpicStatus, EpicStatusAdmin)
 admin.site.register(models.Points, PointsAdmin)
 admin.site.register(models.Swimlane, SwimlaneAdmin)
 admin.site.register(models.SwimlaneUserStoryStatus, SwimlaneUserStoryStatusAdmin)
