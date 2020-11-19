@@ -86,11 +86,16 @@ def connect_swimlane_signals():
     signals.post_save.connect(handlers.create_swimlane_user_story_statuses_on_swimalne_post_save,
                               sender=apps.get_model("projects", "Swimlane"),
                               dispatch_uid="create_swimlane_user_story_statuses_on_swimalne_post_save")
+    signals.post_save.connect(handlers.set_default_project_swimlane_on_swimalne_post_save,
+                              sender=apps.get_model("projects", "Swimlane"),
+                              dispatch_uid="set_default_project_swimlane_on_swimalne_post_save")
 
 
 def disconnect_swimlane_signals():
     signals.post_save.disconnect(sender=apps.get_model("projects", "Swimlane"),
                                  dispatch_uid="create_swimlane_user_story_statuses_on_swimalne_post_save")
+    signals.post_save.disconnect(sender=apps.get_model("projects", "Swimlane"),
+                                 dispatch_uid="set_default_project_swimlane_on_swimalne_post_save")
 
 
 

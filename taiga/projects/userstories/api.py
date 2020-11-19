@@ -315,6 +315,10 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                 if sprint_id is not None and new_project.milestones.filter(pk=sprint_id).count() == 0:
                     request.DATA['milestone'] = None
 
+                swimlane_id = request.DATA.get('swimlane', None)
+                if swimlane_id is not None and new_project.swimlanes.filter(pk=swimlane_id).count() == 0:
+                    request.DATA['swimlane'] = new_project.default_swimlane_id if new_project.is_kanban_activated else None
+
                 status_id = request.DATA.get('status', None)
                 if status_id is not None:
                     try:
@@ -322,7 +326,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                         new_status = new_project.us_statuses.get(slug=old_status.slug)
                         request.DATA['status'] = new_status.id
                     except UserStoryStatus.DoesNotExist:
-                        request.DATA['status'] = new_project.default_us_status.id
+                        request.DATA['status'] = new_project.default_us_status_id
             except Project.DoesNotExist:
                 return response.BadRequest(_("The project doesn't exist"))
 

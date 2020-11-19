@@ -674,6 +674,10 @@ class SwimlaneViewSet(MoveOnDestroySwimlaneMixin, BlockedByProjectMixin,
             uss = object.project.user_stories.all()
             uss.update(swimlane=object)
 
+    def pre_delete(self, obj):
+        if obj.project.default_swimlane_id == obj.id and obj.project.swimlanes.count() > 1:
+            raise exc.BadRequest(_("The default swimlane cannot be deleted."))
+
 
 class SwimlaneUserStoryStatusViewSet(BlockedByProjectMixin, ModelListViewSet, ModelUpdateRetrieveViewSet):
     model = models.SwimlaneUserStoryStatus

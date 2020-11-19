@@ -2513,6 +2513,7 @@ def test_create_first_swimlane_and_assign_to_uss(client):
     us = f.create_userstory(owner=membership.user,
                             project=project)
     assert us.swimlane is None
+    assert project.default_swimlane is None
 
     url = reverse('swimlanes-list')
     data = {
@@ -2522,9 +2523,11 @@ def test_create_first_swimlane_and_assign_to_uss(client):
     client.login(membership.user)
     response = client.json.post(url, json.dumps(data))
     us.refresh_from_db()
+    project.refresh_from_db()
 
     assert response.status_code == 201
     assert project.swimlanes.count() == 1
+    assert project.default_swimlane_id == us.swimlane_id
     assert us.swimlane is not None
 
 
@@ -2544,6 +2547,9 @@ def test_create_second_swimlane(client):
     response = client.json.post(url, json.dumps(data))
     swimlane_1_id = json.loads(response.content)['id']
 
+    project.refresh_from_db()
+    assert project.default_swimlane_id == swimlane_1_id
+
     # when: create second swimlane
     data = {
         "project": project.id,
@@ -2555,10 +2561,12 @@ def test_create_second_swimlane(client):
     swimlane_2 = Swimlane.objects.get(pk=swimlane_2_id)
 
     us.refresh_from_db()
+    project.refresh_from_db()
 
     # then
     assert response.status_code == 201
     assert project.swimlanes.count() == 2
+    assert project.default_swimlane_id == swimlane_1_id
     assert swimlane_2.user_stories.count() == 0
     assert us.swimlane.id == swimlane_1_id
 
@@ -2671,6 +2679,11 @@ def test_delete_swimlane(client):
 
     project.refresh_from_db()
     swimlane2 = project.swimlanes.filter(name='S2').first()
+
+    # set S2 as default swimlane
+    project.default_swimlane = swimlane2
+    project.save()
+
     us4 = f.create_userstory(subject='us4',
                              owner=membership.user,
                              project=project,
@@ -2702,6 +2715,8 @@ def test_delete_swimlane(client):
             kwargs={"pk": swimlane1.id}) + "?moveTo={}".format(swimlane2.id)
     response = client.json.delete(url)
 
+    assert response.status_code == 204
+
     project.refresh_from_db()
     ordered_uss = project.user_stories.all().order_by('kanban_order')
 
@@ -2717,3 +2732,34 @@ def test_delete_swimlane(client):
     assert ordered_uss[4].swimlane == swimlane2
 
 
+def test_prevent_delete_swimlane_if_is_the_default_and_there_are_more_than_one(client):
+    project = f.create_project()
+    membership = f.create_membership(project=project, is_admin=True)
+    sw1 = f.create_swimlane(project=project)
+    sw2 = f.create_swimlane(project=project)
+
+    project.refresh_from_db()
+    assert project.default_swimlane_id == sw1.id
+
+    client.login(membership.user)
+
+    # force an error trying to delete sw1 (the default swimlane)
+    url = reverse('swimlanes-detail',
+            kwargs={"pk": sw1.id}) + "?moveTo={}".format(sw2.id)
+    response = client.json.delete(url)
+    assert response.status_code == 400
+    assert '_error_message' in response.data
+
+    # there is no problem removing not default swimlanes
+    url = reverse('swimlanes-detail',
+            kwargs={"pk": sw2.id}) + "?moveTo={}".format(sw1.id)
+    response = client.json.delete(url)
+    assert response.status_code == 204
+
+    # Now sw1 is the only one, so you can delete it
+    url = reverse('swimlanes-detail', kwargs={"pk": sw1.id})
+    response = client.json.delete(url)
+    assert response.status_code == 204
+
+    project.refresh_from_db()
+    assert project.default_swimlane_id is None

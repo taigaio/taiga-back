@@ -123,7 +123,7 @@ class SwimlaneFactory(Factory):
         model = "projects.Swimlane"
         strategy = factory.CREATE_STRATEGY
 
-    name = factory.Sequence(lambda n: "Points {}".format(n))
+    name = factory.Sequence(lambda n: "Swimlane {}".format(n))
     order = factory.Sequence(lambda n: n)
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
@@ -766,6 +766,21 @@ def create_project(**kwargs):
     project.save()
 
     return project
+
+
+def create_swimlane(**kwargs):
+    "Create a swimlane along with its dependencies."
+
+    project = kwargs.pop("project", None)
+    if project is None:
+        project = ProjectFactory.create()
+
+    defaults = {
+        "project": project,
+    }
+    defaults.update(kwargs)
+
+    return SwimlaneFactory.create(**defaults)
 
 
 def create_user(**kwargs):

@@ -110,6 +110,21 @@ def create_swimlane_user_story_statuses_on_swimalne_post_save(sender, instance, 
     SwimlaneUserStoryStatus.objects.bulk_create(objects)
 
 
+def set_default_project_swimlane_on_swimalne_post_save(sender, instance, created, **kwargs):
+    """
+    Set as project.default_swimlane if is the only one created.
+    """
+    if not created:
+        return
+
+    if instance._importing:
+        return
+
+    if instance.project.swimlanes.all().count() == 1:
+        instance.project.default_swimlane = instance
+        instance.project.save()
+
+
 ## US statuses
 
 def try_to_close_or_open_user_stories_when_edit_us_status(sender, instance, created, **kwargs):

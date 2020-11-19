@@ -161,6 +161,10 @@ class ProjectDefaults(models.Model):
                                               on_delete=models.SET_NULL, related_name="+",
                                               null=True, blank=True,
                                               verbose_name=_("default issue type"))
+    default_swimlane = models.OneToOneField("projects.Swimlane",
+                                            on_delete=models.SET_NULL, related_name="+",
+                                            null=True, blank=True,
+                                            verbose_name=_("default swimlane"))
 
     class Meta:
         abstract = True

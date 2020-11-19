@@ -118,7 +118,7 @@ class ProjectAdmin(admin.ModelAdmin):
         }),
         (_("Default values"), {
             "classes": ("collapse",),
-            "fields": (("default_us_status", "default_points"),
+            "fields": (("default_us_status", "default_points", "default_swimlane"),
                        "default_task_status",
                        "default_issue_status",
                        ("default_priority", "default_severity", "default_issue_type")),
@@ -149,7 +149,7 @@ class ProjectAdmin(admin.ModelAdmin):
         return self.obj
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if (db_field.name in ["default_points", "default_us_status", "default_task_status",
+        if (db_field.name in ["default_points", "default_us_status", "default_swimlane", "default_task_status",
                               "default_priority", "default_severity",
                               "default_issue_status", "default_issue_type"]):
             if getattr(self, 'obj', None):
