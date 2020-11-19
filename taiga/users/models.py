@@ -25,7 +25,7 @@ import re
 from django.apps import apps
 from django.apps.config import MODELS_MODULE_NAME
 from django.conf import settings
-from django.contrib.auth.models import UserManager, AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import ArrayField
 from django.core import validators
@@ -91,6 +91,39 @@ def get_user_file_path(instance, filename):
     return get_file_path(instance, filename, "user")
 
 
+class MyUserManager(BaseUserManager):
+    def create_user(self, username, email, password=None, **kwargs):
+        """
+        Creates and saves a User with the given username, email and password.
+        """
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            username=username,
+            email=self.normalize_email(email),
+            **kwargs,
+        )
+        user.save(using=self._db)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, username, email, password):
+        """
+        Creates and saves a superuser with the given username, email, password.
+        """
+        user = self.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+        user.is_superuser = True
+        user.is_admin = True
+        user.save()
+        return user
+
+
 class PermissionsMixin(models.Model):
     """
     A mixin class that adds the fields and methods necessary to support
@@ -139,7 +172,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         validators=[
             validators.RegexValidator(re.compile(r"^[\w.-]+$"), _("Enter a valid username."), "invalid")
         ])
-    email = models.EmailField(_("email address"), max_length=255, blank=True, unique=True)
+    email = models.EmailField(_("email address"), max_length=255, null=False, blank=False, unique=True)
     is_active = models.BooleanField(_("active"), default=True,
         help_text=_("Designates whether this user should be treated as "
                     "active. Unselect this instead of deleting accounts."))
@@ -196,7 +229,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email"]
 
-    objects = UserManager()
+    objects = MyUserManager()
 
     class Meta:
         verbose_name = "user"
