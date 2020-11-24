@@ -72,6 +72,7 @@ class UserStoryValidator(AssignedToValidator, WatchersValidator,
 class UserStoriesBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
+    swimlane_id = serializers.IntegerField(required=False)
     bulk_stories = serializers.CharField()
 
     def validate_status_id(self, attrs, source):
@@ -82,6 +83,18 @@ class UserStoriesBulkValidator(ProjectExistsValidator, validators.Validator):
 
         if not UserStoryStatus.objects.filter(**filters).exists():
             raise ValidationError(_("Invalid user story status id. The status must belong to "
+                                    "the same project."))
+
+        return attrs
+
+    def validate_swimlane_id(self, attrs, source):
+        filters = {
+            "project__id": attrs["project_id"],
+            "id": attrs[source]
+        }
+
+        if not Swimlane.objects.filter(**filters).exists():
+            raise ValidationError(_("Invalid swimlane id. The swimlane must belong to "
                                     "the same project."))
 
         return attrs
