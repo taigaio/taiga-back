@@ -2674,7 +2674,6 @@ def test_delete_swimlane(client):
         "project": project.id,
         "name": "S2"
     }
-    client.login(membership.user)
     response = client.json.post(url, json.dumps(data))
 
     project.refresh_from_db()
@@ -2763,3 +2762,40 @@ def test_prevent_delete_swimlane_if_is_the_default_and_there_are_more_than_one(c
 
     project.refresh_from_db()
     assert project.default_swimlane_id is None
+
+
+def test_swimlane_userstory_statuses_creation_and_set_default_wip_limits_for_first_swimlane_creation_only(client):
+    project = f.create_project()
+    project.default_us_status.wip_limit = 42
+    project.default_us_status.save()
+
+    swimlane1 = f.create_swimlane(project=project)
+
+    assert swimlane1.statuses.count() == 1
+    assert swimlane1.statuses.first().wip_limit == 42
+
+    swimlane2 = f.create_swimlane(project=project)
+
+    assert swimlane2.statuses.count() == 1
+    assert swimlane2.statuses.first().wip_limit is None
+
+
+def test_swimlane_userstory_statuses_creation_when_a_new_user_story_status_is_created(client):
+    project = f.create_project()
+
+    project.default_us_status.wip_limits = 42
+    project.default_us_status.save()
+
+    swimlane1 = f.create_swimlane(project=project)
+
+    f.UserStoryStatusFactory(project=project, wip_limit=24)
+
+    assert swimlane1.statuses.count() == 2
+    assert swimlane1.statuses.all()[1].wip_limit == 24
+
+    swimlane2 = f.create_swimlane(project=project)
+
+    f.UserStoryStatusFactory(project=project, wip_limit=32)
+
+    assert swimlane2.statuses.count() == 3
+    assert swimlane2.statuses.all()[2].wip_limit is None

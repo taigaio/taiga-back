@@ -73,11 +73,17 @@ def connect_us_status_signals():
     signals.post_save.connect(handlers.try_to_close_or_open_user_stories_when_edit_us_status,
                               sender=apps.get_model("projects", "UserStoryStatus"),
                               dispatch_uid="try_to_close_or_open_user_stories_when_edit_us_status")
+    signals.post_save.connect(handlers.create_swimlane_user_story_statuses_on_userstory_status_post_save,
+                              sender=apps.get_model("projects", "UserStoryStatus"),
+                              dispatch_uid="create_swimlane_user_story_statuses_on_userstory_status_post_save")
 
 
 def disconnect_us_status_signals():
     signals.post_save.disconnect(sender=apps.get_model("projects", "UserStoryStatus"),
                                  dispatch_uid="try_to_close_or_open_user_stories_when_edit_us_status")
+    signals.post_save.disconnect(sender=apps.get_model("projects", "UserStoryStatus"),
+                                 dispatch_uid="create_swimlane_user_story_statuses_on_userstory_status_post_save")
+
 
 ## Swimlane Signals
 

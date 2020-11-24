@@ -98,7 +98,7 @@ def create_swimlane_user_story_statuses_on_swimalne_post_save(sender, instance, 
         return
 
     SwimlaneUserStoryStatus = apps.get_model("projects", "SwimlaneUserStoryStatus")
-    copy_from_main_status = instance.project.swimlanes.all().count() == 1
+    copy_from_main_status = instance.project.swimlanes.count() == 1
     objects = (
         SwimlaneUserStoryStatus(
             swimlane=instance,
@@ -123,6 +123,26 @@ def set_default_project_swimlane_on_swimalne_post_save(sender, instance, created
     if instance.project.swimlanes.all().count() == 1:
         instance.project.default_swimlane = instance
         instance.project.save()
+
+
+def create_swimlane_user_story_statuses_on_userstory_status_post_save(sender, instance, created, **kwargs):
+    """
+    Populate swimlanes with SwimlaneUserStoryStatus objects when a new UserStoryStatus is created.
+    """
+    if not created:
+        return
+
+    SwimlaneUserStoryStatus = apps.get_model("projects", "SwimlaneUserStoryStatus")
+    copy_from_main_status = instance.project.swimlanes.count() == 1
+    objects = (
+        SwimlaneUserStoryStatus(
+            swimlane=swimlane,
+            status=instance,
+            wip_limit=instance.wip_limit if copy_from_main_status else None
+        )
+    for swimlane in instance.project.swimlanes.all())
+
+    SwimlaneUserStoryStatus.objects.bulk_create(objects)
 
 
 ## US statuses
