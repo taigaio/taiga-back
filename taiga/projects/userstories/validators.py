@@ -66,7 +66,7 @@ class UserStoryValidator(AssignedToValidator, WatchersValidator,
     class Meta:
         model = models.UserStory
         depth = 0
-        read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner')
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner', 'kanban_order')
 
 
 class UserStoriesBulkValidator(ProjectExistsValidator, validators.Validator):

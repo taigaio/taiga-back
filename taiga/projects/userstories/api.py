@@ -142,10 +142,17 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                                    epic_id=epic_id)
         return qs
 
-    def list(self, request, *args, **kwargs):
-        res = super().list(request, *args, **kwargs)
-        self._add_taiga_info_headers()
-        return res
+    # Updating some attributes of the userstory can affect the ordering in the backlog, kanban or taskboard
+    # These three methods generate a key for the user story and can be used to be compared before and after
+    # saving. If there is any difference it means an extra ordering update must be done
+    def _backlog_order_key(self, obj):
+        return f"{obj.project_id}-{obj.backlog_order}"
+
+    def _kanban_order_key(self, obj):
+        return f"{obj.project_id}-{obj.swimlane_id}-{obj.status_id}-{obj.kanban_order}"
+
+    def _sprint_order_key(self, obj):
+        return f"{obj.project_id}-{obj.milestone_id}-{obj.sprint_order}"
 
     def _add_taiga_info_headers(self):
         try:
@@ -159,6 +166,19 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             # Add this header only to draw the backlog (milestone=null)
             total_backlog_userstories = self.queryset.filter(project_id=project_id, milestone__isnull=True).count()
             self.headers["Taiga-Info-Backlog-Total-Userstories"] = total_backlog_userstories
+
+    def list(self, request, *args, **kwargs):
+        res = super().list(request, *args, **kwargs)
+        self._add_taiga_info_headers()
+        return res
+
+    def pre_validate(self):
+        # ## start-hack-reorder ##
+        # Usefull to check if order fields should be updated.
+        self._old_backlog_order_key = self._backlog_order_key(self.object)
+        self._old_sprint_order_key = self._sprint_order_key(self.object)
+        self._old_kanban_order_key = self._kanban_order_key(self.object)
+        # ## end-hack-reorder ##
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)
@@ -175,21 +195,16 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             raise exc.PermissionDenied(_("You don't have permissions to set this swimlane "
                                          "to this user story."))
 
-    """
-    Updating some attributes of the userstory can affect the ordering in the backlog, kanban or taskboard
-    These three methods generate a key for the user story and can be used to be compared before and after
-    saving. If there is any difference it means an extra ordering update must be done
-    """
-    def _backlog_order_key(self, obj):
-        return "{}-{}".format(obj.project_id, obj.backlog_order)
-
-    def _kanban_order_key(self, obj):
-        return "{}-{}-{}".format(obj.project_id, obj.status_id, obj.kanban_order)
-
-    def _sprint_order_key(self, obj):
-        return "{}-{}-{}".format(obj.project_id, obj.milestone_id, obj.sprint_order)
-
     def pre_save(self, obj):
+        # ## start-hack-reorder ##
+        if obj.id:
+            if self._old_kanban_order_key != self._kanban_order_key(self.object):
+                # The user story is moved to other status, swimlane or project.
+                # It should be at the end of the cell (swimlanes / status).
+                obj.kanban_order = models.UserStory.NEW_KANBAN_ORDER()
+        # ## end-hack-reorder ##
+
+        # ## start-hack-rolepoints ##
         # This is very ugly hack, but having
         # restframework is the only way to do it.
         #
@@ -197,30 +212,20 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         #       to api because is not serializer logic.
         related_data = getattr(obj, "_related_data", {})
         self._role_points = related_data.pop("role_points", None)
-
-        if obj.kanban_order == -1:
-            if self._max_order:
-                obj.kanban_order = self._max_order + 1
+        # ## end-hack-rolepoints ##
 
         if not obj.id:
             obj.owner = self.request.user
 
         super().pre_save(obj)
 
-    def pre_validate(self):
-        self._old_backlog_order_key = self._backlog_order_key(self.object)
-        self._old_kanban_order_key = self._kanban_order_key(self.object)
-        self._old_sprint_order_key = self._sprint_order_key(self.object)
-
     def _reorder_if_needed(self, obj, old_order_key, order_key, order_attr,
                            project, status=None, milestone=None):
+        # TODO: The goal should be erase this function.
+        #
         # Executes the extra ordering if there is a difference in the  ordering keys
         if old_order_key != order_key:
-            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
             data = [{"us_id": obj.id, "order": getattr(obj, order_attr)}]
-            for id, order in extra_orders.items():
-                data.append({"us_id": int(id), "order": order})
-
             return services.update_userstories_order_in_bulk(data,
                                                              order_attr,
                                                              project,
@@ -229,6 +234,8 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         return {}
 
     def post_save(self, obj, created=False):
+        # ## start-hack-reorder ##
+        # TODO: The goal should be erase this hack.
         if not created:
             # Let's reorder the related stuff after edit the element
             orders_updated = {}
@@ -239,13 +246,6 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                                               obj.project)
             orders_updated.update(updated)
             updated = self._reorder_if_needed(obj,
-                                              self._old_kanban_order_key,
-                                              self._kanban_order_key(obj),
-                                              "kanban_order",
-                                              obj.project,
-                                              status=obj.status)
-            orders_updated.update(updated)
-            updated = self._reorder_if_needed(obj,
                                               self._old_sprint_order_key,
                                               self._sprint_order_key(obj),
                                               "sprint_order",
@@ -253,7 +253,9 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                                               milestone=obj.milestone)
             orders_updated.update(updated)
             self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
+        # ## end-hack-reorder ##
 
+        # ## starts-hack-rolepoints ##
         # Code related to the hack of pre_save method.
         # Rather, this is the continuation of it.
         if self._role_points:
@@ -277,6 +279,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                     })
 
                 role_points.save()
+        # ## end-hack-rolepoints ##
 
         super().post_save(obj, created)
 
@@ -284,7 +287,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
     def create(self, *args, **kwargs):
         response = super().create(*args, **kwargs)
 
-        # Added comment to the origin (issue)
+        # if US has been promoted from issue, add a comment to the origin (issue)
         if response.status_code == status.HTTP_201_CREATED:
             for generated_from in ['generated_from_issue', 'generated_from_task']:
                 generator = getattr(self.object, generated_from)
@@ -303,8 +306,9 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
 
     def update(self, request, *args, **kwargs):
         self.object = self.get_object_or_none()
-        project_id = request.DATA.get('project', None)
 
+        # If you move the US to another project...
+        project_id = request.DATA.get('project', None)
         if project_id and self.object and self.object.project.id != project_id:
             try:
                 new_project = Project.objects.get(pk=project_id)
@@ -329,12 +333,6 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                         request.DATA['status'] = new_project.default_us_status_id
             except Project.DoesNotExist:
                 return response.BadRequest(_("The project doesn't exist"))
-
-        if self.object and self.object.project_id:
-            self._max_order = models.UserStory.objects.filter(
-                project_id=self.object.project_id,
-                status_id=request.DATA.get('status', None)
-            ).aggregate(Max('kanban_order'))['kanban_order__max']
 
         return super().update(request, *args, **kwargs)
 

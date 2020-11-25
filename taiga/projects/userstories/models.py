@@ -25,7 +25,7 @@ from django.utils import timezone
 
 from picklefield.fields import PickledObjectField
 
-from taiga.base.utils.time import timestamp_ms
+from taiga.base.utils.time import timestamp_mics
 from taiga.projects.due_dates.models import DueDateMixin
 from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.occ import OCCModelMixin
@@ -74,6 +74,10 @@ class RolePoints(models.Model):
 
 
 class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, DueDateMixin, models.Model):
+    NEW_BACKLOG_ORDER = timestamp_mics
+    NEW_SPRINT_ORDER = timestamp_mics
+    NEW_KANBAN_ORDER = timestamp_mics
+
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
@@ -98,11 +102,11 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
                                     related_name="userstories", through="RolePoints",
                                     verbose_name=_("points"))
 
-    backlog_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
+    backlog_order = models.BigIntegerField(null=False, blank=False, default=NEW_BACKLOG_ORDER,
                                            verbose_name=_("backlog order"))
-    sprint_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
+    sprint_order = models.BigIntegerField(null=False, blank=False, default=NEW_SPRINT_ORDER,
                                           verbose_name=_("sprint order"))
-    kanban_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
+    kanban_order = models.BigIntegerField(null=False, blank=False, default=NEW_KANBAN_ORDER,
                                           verbose_name=_("kanban order"))
 
     created_date = models.DateTimeField(null=False, blank=False,

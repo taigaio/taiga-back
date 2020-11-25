@@ -1561,7 +1561,7 @@ def test_update_userstory_backlog_order(client):
     url = reverse("userstories-detail", args=[us4.pk])
 
     data = {
-        "version": us4.version,
+        "version": us1.version,
         "backlog_order": 1
     }
 
@@ -1587,3 +1587,74 @@ def test_update_userstory_backlog_order(client):
     assert 2 == user_stories[2]["backlog_order"]
     assert us3.id == user_stories[3]["id"]
     assert 3 == user_stories[3]["backlog_order"]
+
+
+
+def test_api_update_change_kanban_order_if_project_change(client):
+    user1 = f.UserFactory.create()
+    project1 = f.create_project(owner=user1)
+    f.MembershipFactory.create(project=project1, user=project1.owner, is_admin=True)
+    project2 = f.create_project(owner=user1)
+    f.MembershipFactory.create(project=project2, user=project2.owner, is_admin=True)
+    us = f.create_userstory(project=project1, owner=user1, status=project1.default_us_status)
+
+    url = reverse("userstories-detail", args=[us.pk])
+    data = {
+        "version": us.version,
+        "project": project2.id,
+        "status": project2.default_us_status.id,
+        "milestone": None,
+    }
+
+    client.login(project1.owner)
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    assert us.kanban_order < response.data["kanban_order"]
+    assert project2.id == response.data["project"]
+
+
+def test_api_update_change_kanban_order_if_status_change(client):
+    user1 = f.UserFactory.create()
+    project = f.create_project(owner=user1)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status1 = f.UserStoryStatusFactory(project=project)
+    status2 = f.UserStoryStatusFactory(project=project)
+    us = f.create_userstory(project=project, owner=user1,
+            status=status1, swimlane=project.default_swimlane)
+
+    url = reverse("userstories-detail", args=[us.pk])
+    data = {
+        "version": us.version,
+        "status": status2.id
+    }
+
+    client.login(project.owner)
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    assert us.kanban_order < response.data["kanban_order"]
+    assert status2.id == response.data["status"]
+
+
+def test_api_update_change_kanban_order_if_swimlane_change(client):
+    user1 = f.UserFactory.create()
+    project = f.create_project(owner=user1)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    swimlane1 = f.SwimlaneFactory(project=project)
+    swimlane2 = f.SwimlaneFactory(project=project)
+    us = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=swimlane1)
+
+    url = reverse("userstories-detail", args=[us.pk])
+    data = {
+        "version": us.version,
+        "swimlane": swimlane2.id
+    }
+
+    client.login(project.owner)
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    assert us.kanban_order < response.data["kanban_order"]
+    assert swimlane2.id == response.data["swimlane"]

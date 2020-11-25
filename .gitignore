@@ -17,4 +17,5 @@ static
 .\#*
 .project
 .env
+.envrc
 settings/config.py
