@@ -30,15 +30,19 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
+from taiga.base.utils.iterators import iter_queryset
 from taiga.base.mails import InlineCSSTemplateMail
 from taiga.front.templatetags.functions import resolve as resolve_front_url
 from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.notifications.models import HistoryChangeNotification
 from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.services import (make_key_from_model_object,
                                              get_last_snapshot_for_key,
                                              get_model_from_key)
 from taiga.permissions.services import user_has_perm
 from taiga.events import events
+
+from django_pglocks import advisory_lock
 
 from .models import HistoryChangeNotification, Watched
 from .squashing import squash_history_entries
@@ -563,3 +567,14 @@ def make_ms_thread_index(msg_id, dt):
 
     # base64 encode
     return base64.b64encode(thread_bin).decode("utf-8")
+
+
+def send_bulk_email():
+    with advisory_lock("send-notifications-command", wait=False) as acquired:
+            if acquired:
+                qs = HistoryChangeNotification.objects.all().order_by("-id")
+                for change_notification in iter_queryset(qs, itersize=100):
+                    try:
+                        send_sync_notifications(change_notification.pk)
+                    except HistoryChangeNotification.DoesNotExist:
+                        pass

@@ -7,7 +7,7 @@ chown -R taiga:taiga /taiga-back
 
 # Start Celery processes
 echo Starting Celery...
-exec gosu taiga celery -A taiga.celery worker \
+exec gosu taiga celery -A taiga.celery worker -B \
     --concurrency 4 \
     -l DEBUG \
     "$@"

@@ -45,6 +45,7 @@ SITES = {
     "front": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "front"}
 }
 
+
 #########################################
 ## EMAIL
 #########################################
@@ -52,6 +53,9 @@ SITES = {
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'system@taiga.io')
 ENABLE_EMAIL = os.getenv('ENABLE_EMAIL', False) in (True, 'True')
+CHANGE_NOTIFICATIONS_MIN_INTERVAL = 60  # seconds
+SEND_BULK_EMAIL = True
+
 if ENABLE_EMAIL:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False) in (True, 'True')
