@@ -21,3 +21,5 @@ big, to improve Taiga's overall security rating.
 - Faizan Ahmed
 
 - Anton Perekopni
+
+- Ather Iqbal ( Alpha Inferno Smc Pvt Ltd )
