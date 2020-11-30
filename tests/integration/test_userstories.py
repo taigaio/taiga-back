@@ -319,7 +319,7 @@ def test_api_create_in_bulk_with_invalid_swimlane(client):
     assert "swimlane_id" in response.data
 
 
-def test_api_create_in_bulk_with_default_swimlane_autoassigned(client):
+def test_api_create_in_bulk_with_swimlane_unassigned(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     url = reverse("userstories-bulk-create")
@@ -329,34 +329,11 @@ def test_api_create_in_bulk_with_default_swimlane_autoassigned(client):
     data = {
         "bulk_stories": "Story #1\nStory #2",
         "project_id": project.id,
+        "swimlane_id": None,
     }
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 200, response.data
     assert response.data[1]["swimlane"] == None
-
-    # Create and set default swimlane but kanban is disabled
-    swimlane = f.create_swimlane(project=project)
-
-    data = {
-        "bulk_stories": "Story #3\nStory #4",
-        "project_id": project.id,
-    }
-    response = client.json.post(url, json.dumps(data))
-    assert response.status_code == 200, response.data
-    assert response.data[1]["swimlane"] == None
-
-    # Enable kanban
-    project.is_kanban_activated = True
-    project.save()
-
-    data = {
-        "bulk_stories": "Story #5\nStory #6",
-        "project_id": project.id,
-    }
-    response = client.json.post(url, json.dumps(data))
-
-    assert response.status_code == 200, response.data
-    assert response.data[1]["swimlane"] == project.default_swimlane_id
 
 
 def test_api_update_orders_in_bulk(client):

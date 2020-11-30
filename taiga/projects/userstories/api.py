@@ -317,7 +317,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
 
                 swimlane_id = request.DATA.get('swimlane', None)
                 if swimlane_id is not None and new_project.swimlanes.filter(pk=swimlane_id).count() == 0:
-                    request.DATA['swimlane'] = new_project.default_swimlane_id if new_project.is_kanban_activated else None
+                    request.DATA['swimlane'] = None
 
                 status_id = request.DATA.get('status', None)
                 if status_id is not None:
@@ -393,7 +393,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             user_stories = services.create_userstories_in_bulk(
                 data["bulk_stories"], project=project, owner=request.user,
                 status_id=data.get("status_id") or project.default_us_status_id,
-                swimlane_id=data.get("swimlane_id") or (project.default_swimlane_id if project.is_kanban_activated else None),
+                swimlane_id=data.get("swimlane_id", None),
                 callback=self.post_save, precall=self.pre_save)
 
             user_stories = self.get_queryset().filter(id__in=[i.id for i in user_stories])

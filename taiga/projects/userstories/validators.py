@@ -88,14 +88,15 @@ class UserStoriesBulkValidator(ProjectExistsValidator, validators.Validator):
         return attrs
 
     def validate_swimlane_id(self, attrs, source):
-        filters = {
-            "project__id": attrs["project_id"],
-            "id": attrs[source]
-        }
+        if attrs.get(source, None) is not None:
+            filters = {
+                "project__id": attrs["project_id"],
+                "id": attrs[source]
+            }
 
-        if not Swimlane.objects.filter(**filters).exists():
-            raise ValidationError(_("Invalid swimlane id. The swimlane must belong to "
-                                    "the same project."))
+            if not Swimlane.objects.filter(**filters).exists():
+                raise ValidationError(_("Invalid swimlane id. The swimlane must belong to "
+                                        "the same project."))
 
         return attrs
 
