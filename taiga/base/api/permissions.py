@@ -16,12 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import abc
+import abc, inspect
 
 from functools import reduce
 
 from taiga.permissions.services import user_has_perm, is_project_admin
-from django.apps import apps
 
 from django.utils.translation import ugettext as _
 
