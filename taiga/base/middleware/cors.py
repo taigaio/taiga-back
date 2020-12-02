@@ -21,7 +21,7 @@ from django.conf import settings
 
 
 CORS_ALLOWED_ORIGINS = "*"
-CORS_ALLOWED_METHODS = ["POST", "GET", "OPTIONS","HEAD"]
+CORS_ALLOWED_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"]
 CORS_ALLOWED_HEADERS = ["content-type", "x-requested-with",
                         "authorization", "accept-encoding",
                         "x-disable-pagination", "x-lazy-pagination",
