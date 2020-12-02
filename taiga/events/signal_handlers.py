@@ -32,10 +32,7 @@ def on_save_any_model(sender, instance, created, **kwargs):
         return
 
     sesionid = mw.get_current_session_id()
-
-    type = "change"
-    if created:
-        type = "create"
+    type = "create" if created else "change"
 
     events.emit_event_for_model(instance, sessionid=sesionid, type=type)
 

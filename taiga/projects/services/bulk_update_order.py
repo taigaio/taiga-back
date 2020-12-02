@@ -17,11 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from contextlib import suppress
+from operator import itemgetter
 
 from django.db import transaction, connection
 from django.core.exceptions import ObjectDoesNotExist
 from psycopg2.extras import execute_values
 
+from taiga.events import events
 from taiga.projects import models
 
 
@@ -251,35 +253,11 @@ def bulk_update_swimlane_order(project, user, data):
                        WHERE tmp.id = projects_swimlane.id""",
                        data)
 
-        ordered_uss = _get_ordered_uss_by_swimlane(project)
-        execute_values(curs,
-                       """
-                       UPDATE userstories_userstory
-                       SET kanban_order = tmp.new_order
-                       FROM (VALUES %s) AS tmp (id, new_order)
-                       WHERE tmp.id = userstories_userstory.id""",
-                       ordered_uss)
-
-
-def _get_ordered_uss_by_swimlane(project):
-    """
-    This function merges uss without swimlane and uss with swimlanes ordered by swimlane;
-    then, recalculates indexes with the new order
-    """
-    ordered_uss_ids = list(
-        project.user_stories.filter(swimlane=None).order_by('kanban_order', 'id').values_list('id', flat=True)
-    )
-    swimlanes = []
-    for s in project.swimlanes.order_by('order'):
-        swimlanes.extend(
-            list(project.user_stories.filter(swimlane=s).order_by('kanban_order', 'id').values_list('id', flat=True))
-        )
-
-    ordered_uss_ids.extend(swimlanes)
-    indexes = range(0, len(ordered_uss_ids))
-    data = list(zip(ordered_uss_ids, indexes))
-    return data
-
+        # Send event related to swimlane changes
+        swimlane_ids = tuple(map(itemgetter(0), data))
+        events.emit_event_for_ids(ids=swimlane_ids,
+                                  content_type="projects.swimlane",
+                                  projectid=project.pk)
 
 @transaction.atomic
 def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):

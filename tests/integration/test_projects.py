@@ -2621,9 +2621,18 @@ def test_swimlane_bulk_update_order(client):
     assert swimlane2.user_stories.count() == 2
 
     # In this moment, they are arranged like:
-    # us1, us2, us3, us4, us5
+    # us1, us2, us4, us5, us3
+    project.refresh_from_db()
+    ordered_uss = project.user_stories.all().order_by('swimlane__order', 'kanban_order')
+
+    assert ordered_uss[0].subject == 'us1'
+    assert ordered_uss[1].subject == 'us2'
+    assert ordered_uss[2].subject == 'us4'
+    assert ordered_uss[3].subject == 'us5'
+    assert ordered_uss[4].subject == 'us3'
+
     # After arranging the swimlanes, they should be like:
-    # us3, us4, us5, us1, us2
+    # us4, us5, us1, us2, us3
     url = reverse('swimlanes-bulk-update-order')
     data = {
         "project": project.id,
@@ -2635,13 +2644,13 @@ def test_swimlane_bulk_update_order(client):
     response = client.json.post(url, json.dumps(data))
 
     project.refresh_from_db()
-    ordered_uss = project.user_stories.all().order_by('kanban_order')
+    ordered_uss = project.user_stories.all().order_by('swimlane__order', 'kanban_order')
 
-    assert ordered_uss[0].subject == 'us3'
-    assert ordered_uss[1].subject == 'us4'
-    assert ordered_uss[2].subject == 'us5'
-    assert ordered_uss[3].subject == 'us1'
-    assert ordered_uss[4].subject == 'us2'
+    assert ordered_uss[0].subject == 'us4'
+    assert ordered_uss[1].subject == 'us5'
+    assert ordered_uss[2].subject == 'us1'
+    assert ordered_uss[3].subject == 'us2'
+    assert ordered_uss[4].subject == 'us3'
 
 
 def test_delete_swimlane(client):

@@ -56,9 +56,14 @@ def emit_event_for_model(obj, *, type:str="change", channel:str="events",
                          content_type:str=None, sessionid:str=None):
     """
     Sends a model change event.
+
+        type: create | change | delete
     """
 
-    if obj._importing:
+    if hasattr(obj, "_importing") and obj._importing:
+        return None
+
+    if hasattr(obj, "_excluded_events") and type in obj.excluded_events:
         return None
 
     assert type in set(["create", "change", "delete"])

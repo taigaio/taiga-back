@@ -122,6 +122,11 @@ def disconnect_task_status_signals():
 class ProjectsAppConfig(AppConfig):
     name = "taiga.projects"
     verbose_name = "Projects"
+    watched_types = [
+      "projects.userstorystatus",
+      "projects.swimlane",
+      "projects.swimlaneuserstorystatus"
+    ]
 
     def ready(self):
         connect_projects_signals()

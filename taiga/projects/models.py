@@ -624,6 +624,8 @@ class UserStoryStatus(models.Model):
         on_delete=models.CASCADE,
     )
 
+    _importing = None
+
     class Meta:
         verbose_name = "user story status"
         verbose_name_plural = "user story statuses"
@@ -960,6 +962,10 @@ class SwimlaneUserStoryStatus(models.Model):
         verbose_name=_("status"),
     )
 
+    exluded_events = ["create", "delete"]
+
+    _importing = None
+
     class Meta:
         verbose_name = "swimlane user story status"
         verbose_name_plural = "swimlane user story statuses"
@@ -975,6 +981,10 @@ class SwimlaneUserStoryStatus(models.Model):
     @property
     def project(self):
         return self.status.project
+
+    @property
+    def project_id(self):
+        return self.status.project_id
 
 
 class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
