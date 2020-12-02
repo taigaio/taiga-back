@@ -196,9 +196,13 @@ SITES = {
 
 SITE_ID = "api"
 
-# Session configuration (only used for admin)
+# Session and CSRF configuration
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_AGE = 1209600  # (2 weeks)
+# SESSION_COOKIE_AGE = 1209600  # (2 weeks) and set SESSION_EXPIRE_AT_BROWSER_CLOSE to false
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_AGE = None
+CSRF_COOKIE_SECURE = True
 
 # MAIL OPTIONS
 DEFAULT_FROM_EMAIL = "john@doe.com"
@@ -292,6 +296,7 @@ MIDDLEWARE = [
     # Common middlewares
     "django.middleware.common.CommonMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
     # Only needed by django admin
     "django.contrib.sessions.middleware.SessionMiddleware",
