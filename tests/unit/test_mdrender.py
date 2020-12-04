@@ -22,6 +22,7 @@ from unittest.mock import patch, MagicMock
 from taiga.mdrender.extensions import emojify
 from taiga.mdrender.extensions import refresh_attachment
 from taiga.mdrender.service import render, cache_by_sha, get_diff_of_htmls, render_and_extract
+from taiga.projects.attachments.services import REFRESH_PARAM
 
 import time
 
@@ -286,11 +287,11 @@ def test_render_and_extract_references():
 
 def test_render_attachment_image(settings):
     settings.MEDIA_URL = "http://media.example.com/"
-    attachment_url = "{}path/to/test.png#{}=us:42".format(settings.MEDIA_URL, refresh_attachment.REFRESH_PARAM)
+    attachment_url = "{}path/to/test.png#{}=us:42".format(settings.MEDIA_URL, REFRESH_PARAM)
     sentinel_url = "http://__sentinel__/"
 
     md = "![Test]({})".format(attachment_url)
-    expected_result = "<p><img alt=\"Test\" src=\"{}#{}={}\"></p>".format(sentinel_url, refresh_attachment.REFRESH_PARAM, "us:42")
+    expected_result = "<p><img alt=\"Test\" src=\"{}#{}={}\"></p>".format(sentinel_url, REFRESH_PARAM, "us:42")
 
     with patch("taiga.mdrender.extensions.refresh_attachment.get_attachment_by_id") as mock:
         attachment = mock.return_value
@@ -306,11 +307,11 @@ def test_render_attachment_image(settings):
 
 def test_render_attachment_file(settings):
     settings.MEDIA_URL = "http://media.example.com/"
-    attachment_url = "{}path/to/file.pdf#{}=us:42".format(settings.MEDIA_URL, refresh_attachment.REFRESH_PARAM)
+    attachment_url = "{}path/to/file.pdf#{}=us:42".format(settings.MEDIA_URL, REFRESH_PARAM)
     sentinel_url = "http://__sentinel__/"
 
     md = "[Test]({})".format(attachment_url)
-    expected_result = "<p><a href=\"{}#{}={}\" target=\"_blank\">Test</a></p>".format(sentinel_url, refresh_attachment.REFRESH_PARAM, "us:42")
+    expected_result = "<p><a href=\"{}#{}={}\" target=\"_blank\">Test</a></p>".format(sentinel_url, REFRESH_PARAM, "us:42")
 
     with patch("taiga.mdrender.extensions.refresh_attachment.get_attachment_by_id") as mock:
         attachment = mock.return_value
