@@ -167,6 +167,12 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             total_backlog_userstories = self.queryset.filter(project_id=project_id, milestone__isnull=True).count()
             self.headers["Taiga-Info-Backlog-Total-Userstories"] = total_backlog_userstories
 
+        if project_id:
+            # Add this header to show if there are user stories not assigned to any swimlane.
+            # Useful to show _Unclassified user stories_ option in swimlane selector at create/edit forms.
+            without_swimlane = self.queryset.filter(project_id=project_id, swimlane__isnull=True).exists()
+            self.headers["Taiga-Info-Userstories-Without-Swimlane"] = json.dumps(without_swimlane)
+
     def list(self, request, *args, **kwargs):
         res = super().list(request, *args, **kwargs)
         self._add_taiga_info_headers()

@@ -496,6 +496,7 @@ APP_EXTRA_EXPOSE_HEADERS = [
     "taiga-info-total-opened-milestones",
     "taiga-info-total-closed-milestones",
     "taiga-info-backlog-total-userstories",
+    "taiga-info-userstories-without-swimlane",
     "taiga-info-project-memberships",
     "taiga-info-project-is-private",
     "taiga-info-order-updated"
@@ -545,13 +546,6 @@ THUMBNAIL_ALIASES = {
         THN_ATTACHMENT_PREVIEW: {"size": (THN_PREVIEW_IMAGE_WIDTH, 0), "crop": False},
     },
 }
-
-TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
-                          "#73d216", "#4e9a06", "#d3d7cf", "#fcaf3e",
-                          "#f57900", "#ce5c00", "#729fcf", "#3465a4",
-                          "#204a87", "#888a85", "#ad7fa8", "#75507b",
-                          "#5c3566", "#ef2929", "#cc0000", "#a40000",
-                          "#2e3436", ]
 
 # Feedback module settings
 FEEDBACK_ENABLED = True

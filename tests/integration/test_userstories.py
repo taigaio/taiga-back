@@ -648,7 +648,6 @@ def test_filter_by_multiple_status(client):
 
     client.login(user)
 
-    url = reverse("userstories-list")
     url = "{}?status={},{}".format(reverse("userstories-list"), us1.status.id, us2.status.id)
 
     data = {}
@@ -1658,3 +1657,68 @@ def test_api_update_change_kanban_order_if_swimlane_change(client):
 
     assert us.kanban_order < response.data["kanban_order"]
     assert swimlane2.id == response.data["swimlane"]
+
+
+def test_api_headers_userstories_without_swimlane_false(client):
+    user1 = f.UserFactory.create()
+    project = f.create_project(owner=user1)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    swimlane1 = f.SwimlaneFactory(project=project)
+    us1 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=swimlane1)
+    us2 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=swimlane1)
+    us3 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=swimlane1)
+
+    url = f"{reverse('userstories-list')}?project={project.id}"
+
+    client.login(project.owner)
+    response = client.json.get(url)
+    assert response.status_code == 200, response.data
+    assert "taiga-info-userstories-without-swimlane" in response["access-control-expose-headers"]
+    assert response.has_header("Taiga-Info-Userstories-Without-Swimlane") == True
+    assert response["taiga-info-userstories-without-swimlane"] == "false"
+
+
+def test_api_headers_userstories_without_swimlane_true(client):
+    user1 = f.UserFactory.create()
+    project = f.create_project(owner=user1)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    swimlane1 = f.SwimlaneFactory(project=project)
+    us1 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=swimlane1)
+    us2 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=None)
+    us3 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=swimlane1)
+
+    url = f"{reverse('userstories-list')}?project={project.id}"
+
+    client.login(project.owner)
+    response = client.json.get(url)
+    assert response.status_code == 200, response.data
+    assert "taiga-info-userstories-without-swimlane" in response["access-control-expose-headers"]
+    assert response.has_header("Taiga-Info-Userstories-Without-Swimlane") == True
+    assert response["taiga-info-userstories-without-swimlane"] == "true"
+
+
+def test_api_headers_userstories_without_swimlane_not_send(client):
+    user1 = f.UserFactory.create()
+    project = f.create_project(owner=user1)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    swimlane1 = f.SwimlaneFactory(project=project)
+    us1 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=swimlane1)
+    us2 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=None)
+    us3 = f.create_userstory(project=project, owner=user1,
+            status=project.default_us_status, swimlane=swimlane1)
+
+    url = reverse('userstories-list')
+
+    client.login(project.owner)
+    response = client.json.get(url)
+    assert response.status_code == 200, response.data
+    assert "taiga-info-userstories-without-swimlane" in response["access-control-expose-headers"]
+    assert response.has_header("Taiga-Info-Userstories-Without-Swimlane") == False
