@@ -13,10 +13,10 @@ bleach==3.2.1             # via -r requirements.in
 cairocffi==1.2.0          # via cairosvg
 cairosvg==2.0.3           # via -r requirements.in
 celery==4.3.0             # via -r requirements.in
-certifi==2020.6.20        # via requests
-cffi==1.14.3              # via cairocffi, cryptography
+certifi==2020.12.5        # via requests
+cffi==1.14.4              # via cairocffi, cryptography
 chardet==3.0.4            # via requests
-cryptography==3.2.1       # via oauthlib
+cryptography==3.3         # via oauthlib
 cssselect==1.1.0          # via cairosvg, premailer
 cssutils==1.0.2           # via premailer
 diff-match-patch==20121119  # via -r requirements.in
@@ -35,15 +35,15 @@ fn==0.4.3                 # via -r requirements.in
 gunicorn==19.9.0          # via -r requirements.in
 html5lib==1.1             # via -r requirements.in
 idna==2.8                 # via requests
-importlib-metadata==2.0.0  # via kombu
+importlib-metadata==3.1.1  # via kombu
 jinja2==2.11.2            # via django-jinja
 kombu==4.6.11             # via celery
-lxml==4.6.1               # via cairosvg, premailer
+lxml==4.6.2               # via cairosvg, premailer
 markdown==3.1.1           # via -r requirements.in
 markupsafe==1.1.1         # via jinja2
 netaddr==0.7.19           # via -r requirements.in
 oauthlib[signedtoken]==3.1.0  # via -r requirements.in, requests-oauthlib
-packaging==20.4           # via bleach
+packaging==20.7           # via bleach
 pillow==8.0.1             # via -r requirements.in, cairosvg, easy-thumbnails, psd-tools
 premailer==3.0.1          # via -r requirements.in
 psd-tools==1.8.38         # via -r requirements.in
@@ -61,7 +61,7 @@ requests-oauthlib==0.8.0  # via -r requirements.in, asana
 requests==2.21.0          # via -r requirements.in, asana, premailer, requests-oauthlib
 sampledata==0.3.7         # via django-sampledatahelper
 serpy==0.1.1              # via -r requirements.in
-six==1.15.0               # via asana, bleach, cryptography, django-sampledatahelper, html5lib, packaging, python-dateutil, sampledata, serpy, webcolors
+six==1.15.0               # via asana, bleach, cryptography, django-sampledatahelper, html5lib, python-dateutil, sampledata, serpy, webcolors
 sqlparse==0.4.1           # via django
 tinycss==0.4              # via cairosvg
 unidecode==0.4.20         # via -r requirements.in
