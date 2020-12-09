@@ -20,62 +20,62 @@ WORKDIR /taiga-back
 # https://github.com/tianon/gosu/blob/master/INSTALL.md
 ENV GOSU_VERSION 1.12
 
-RUN set -eux \
-    && savedAptMark="$(apt-mark showmanual)" \
-    && apt-get update \
+RUN set -eux; \
+    savedAptMark="$(apt-mark showmanual)"; \
+    apt-get update; \
     # install system dependencies
-    && apt-get install -y \
+    apt-get install -y \
        build-essential \
        gettext \
        git \
        net-tools \
        procps \
-       wget \
+       wget; \
     # install gosu
-    && apt-get install -y --no-install-recommends ca-certificates wget \
-    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
-    && chmod +x /usr/local/bin/gosu \
+    apt-get install -y --no-install-recommends ca-certificates wget; \
+    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
+    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+    chmod +x /usr/local/bin/gosu; \
     # verify gosu signature
-    && export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-	&& command -v gpgconf && gpgconf --kill all || : \
-	&& rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    export GNUPGHOME="$(mktemp -d)"; \
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
+	command -v gpgconf && gpgconf --kill all || :; \
+	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
     # install Taiga dependencies
-    && python -m pip install --upgrade pip \
-    && python -m pip install wheel \
-    && python -m pip install -r requirements.txt \
-    && python -m pip install -r requirements-contribs.txt \
-    && python manage.py compilemessages \
-    && python manage.py collectstatic --no-input \
-    && chmod +x docker/entrypoint.sh \
-    && chmod +x docker/async_entrypoint.sh \
-    && cp docker/config.py settings/config.py \
+    python -m pip install --upgrade pip; \
+    python -m pip install wheel; \
+    python -m pip install -r requirements.txt; \
+    python -m pip install -r requirements-contribs.txt; \
+    python manage.py compilemessages; \
+    python manage.py collectstatic --no-input; \
+    chmod +x docker/entrypoint.sh; \
+    chmod +x docker/async_entrypoint.sh; \
+    cp docker/config.py settings/config.py; \
     #  create taiga group and user to use it and give permissions over the code (in entrypoint)
-    && groupadd --system taiga --gid=999 \
-    && useradd --system --no-create-home --gid taiga --uid=999 --shell=/bin/bash taiga \
-    && mkdir -p /taiga-back/media/exports \
-    && chown -R taiga:taiga /taiga-back \
+    groupadd --system taiga --gid=999; \
+    useradd --system --no-create-home --gid taiga --uid=999 --shell=/bin/bash taiga; \
+    mkdir -p /taiga-back/media/exports; \
+    chown -R taiga:taiga /taiga-back; \
     # remove unneeded files and packages
-    && apt-get purge -y \
+    apt-get purge -y \
        build-essential \
        gettext \
-       git \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /root/.cache \
+       git; \
+    apt-get autoremove -y; \
+    rm -rf /var/lib/apt/lists/*; \
+    rm -rf /root/.cache; \
     # clean gosu
-    && apt-mark auto '.*' > /dev/null \
-    && [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark \
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    apt-mark auto '.*' > /dev/null; \
+    [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     # clean taiga
-    && rm requirements.txt \
-    && rm requirements-contribs.txt \
-    && find . -name '__pycache__' -exec rm -r '{}' + \
-    && find . -name '*pyc' -exec rm -r '{}' + \
-    && find . -name '*po' -exec rm -r '{}' +
+    rm requirements.txt; \
+    rm requirements-contribs.txt; \
+    find . -name '__pycache__' -exec rm -r '{}' +; \
+    find . -name '*pyc' -exec rm -r '{}' +; \
+    find . -name '*po' -exec rm -r '{}' +
 
 ENV DJANGO_SETTINGS_MODULE=settings.config
 

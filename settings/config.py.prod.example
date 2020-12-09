@@ -164,6 +164,11 @@ DATABASES = {
 # settings in settings/celery.py and settings/celery-local.py
 #CELERY_ENABLED = True
 
+#########################################
+## TELEMETRY
+#########################################
+# Set to False to disable Telemetry anonymous data
+#ENABLE_TELEMETRY = True
 
 #########################################
 ## IMPORTERS
@@ -203,3 +208,4 @@ DATABASES = {
 #    "app_id": "XXXXXX_get_a_valid_app_id_from_asana_XXXXXX",
 #    "app_secret": "XXXXXX_get_a_valid_app_secret_from_asana_XXXXXX"
 #}
+#

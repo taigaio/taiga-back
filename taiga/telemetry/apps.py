@@ -16,29 +16,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
-import os
+from django.apps import AppConfig
 
-from celery import Celery
-from celery.schedules import crontab
-from django.conf import settings
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.common")
-app = Celery('taiga')
-app.config_from_object('django.conf:settings', namespace='CELERY')
-
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
-
-if settings.ENABLE_TELEMETRY:
-    app.conf.beat_schedule['send-telemetry-once-a-weekday'] = {
-        'task': 'taiga.telemetry.tasks.send_telemetry',
-        'schedule': crontab(day_of_week='mon-fri', minute=0, hour=0),
-        'args': (),
-    }
-
-if settings.SEND_BULK_EMAIL:
-    app.conf.beat_schedule['send-bulk-emails'] = {
-        'task': 'taiga.projects.notifications.tasks.send_bulk_email',
-        'schedule': settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL,
-        'args': (),
-    }
+class TelemetryAppConfig(AppConfig):
+    name = "taiga.telemetry"
+    verbose_name = "Telemetry"

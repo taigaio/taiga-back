@@ -16,29 +16,31 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
-import os
-
-from celery import Celery
-from celery.schedules import crontab
 from django.conf import settings
+import rudder_analytics
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.common")
-app = Celery('taiga')
-app.config_from_object('django.conf:settings', namespace='CELERY')
+from taiga.celery import app
+from taiga.telemetry import services
 
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
-if settings.ENABLE_TELEMETRY:
-    app.conf.beat_schedule['send-telemetry-once-a-weekday'] = {
-        'task': 'taiga.telemetry.tasks.send_telemetry',
-        'schedule': crontab(day_of_week='mon-fri', minute=0, hour=0),
-        'args': (),
+
+@app.task
+def send_telemetry():
+    rudder_analytics.write_key = settings.RUDDER_WRITE_KEY
+    rudder_analytics.data_plane_url = settings.DATA_PLANE_URL
+
+    instance = services.get_or_create_instance_info()
+    event = 'Daily telemetry'
+
+    properties = {
+        **services.generate_platform_data(),
+        'version': '6.0.0',
+        'running_since': instance.created_at,
+        'instance_src': settings.INSTANCE_TYPE
     }
 
-if settings.SEND_BULK_EMAIL:
-    app.conf.beat_schedule['send-bulk-emails'] = {
-        'task': 'taiga.projects.notifications.tasks.send_bulk_email',
-        'schedule': settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL,
-        'args': (),
-    }
+    rudder_analytics.track(
+        user_id=instance.instance_id,
+        event=event,
+        properties=properties
+    )

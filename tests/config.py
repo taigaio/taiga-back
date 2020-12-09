@@ -75,3 +75,5 @@ if os.getenv('GITHUB_WORKFLOW'):
         }
     }
 
+
+ENABLE_TELEMETRY = False

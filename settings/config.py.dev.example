@@ -21,3 +21,5 @@ from .common import *  # noqa, pylint: disable=unused-wildcard-import
 DEBUG = True
 
 TEMPLATES[0]["OPTIONS"]['context_processors'] += "django.template.context_processors.debug"
+
+ENABLE_TELEMETRY = False

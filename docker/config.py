@@ -45,6 +45,7 @@ SITES = {
     "front": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "front"}
 }
 
+INSTANCE_TYPE = "D"
 
 #########################################
 ## EMAIL
@@ -52,14 +53,14 @@ SITES = {
 # https://docs.djangoproject.com/en/3.1/topics/email/
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'system@taiga.io')
-ENABLE_EMAIL = os.getenv('ENABLE_EMAIL', False) in (True, 'True')
+ENABLE_EMAIL = os.getenv('ENABLE_EMAIL', 'False') == 'True'
 CHANGE_NOTIFICATIONS_MIN_INTERVAL = 60  # seconds
 SEND_BULK_EMAIL = True
 
 if ENABLE_EMAIL:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False) in (True, 'True')
-    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', False) in (True, 'True')
+    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
+    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
     EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
     EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
     EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'user')
@@ -112,3 +113,9 @@ GITHUB_API_CLIENT_SECRET = os.getenv('GITHUB_API_CLIENT_SECRET')
 GITLAB_API_CLIENT_ID = os.getenv('GITLAB_API_CLIENT_ID')
 GITLAB_API_CLIENT_SECRET = os.getenv('GITLAB_API_CLIENT_SECRET')
 GITLAB_URL = os.getenv('GITLAB_URL')
+
+
+#########################################
+## TELEMETRY
+#########################################
+ENABLE_TELEMETRY = os.getenv('ENABLE_TELEMETRY', 'True') == 'True'
