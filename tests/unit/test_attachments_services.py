@@ -36,10 +36,14 @@ def test_url_is_an_attachment(url, expected):
 
 
 @pytest.mark.django_db(transaction=True)
-def test_generate_refresh_fragment():
-    att = f.IssueAttachmentFactory()
+@pytest.mark.parametrize("attachment_factory, expected", [
+    (f.WikiAttachmentFactory, "wikipage"),
+    (f.IssueAttachmentFactory, "issue"),
+])
+def test_generate_refresh_fragment(attachment_factory, expected):
+    att = attachment_factory()
     frag = services.generate_refresh_fragment(att)
-    assert "{}=issue:{}".format(services.REFRESH_PARAM, att.id) == frag
+    assert "{}={}:{}".format(services.REFRESH_PARAM, expected, att.id) == frag
 
 
 @pytest.mark.parametrize("url, expected", [

@@ -41,7 +41,7 @@ def get_attachment_by_id(project_id, attachment_id):
 def generate_refresh_fragment(attachment, type_=""):
     if not attachment:
         return ''
-    type_ = attachment.content_type.name if not type_ else type_
+    type_ = attachment.content_type.model if not type_ else type_
     return "{}={}:{}".format(REFRESH_PARAM, type_, attachment.id)
 
 
