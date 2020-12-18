@@ -70,7 +70,7 @@ LANGUAGE_CODE = 'en-us'
 # Languages we provide translations for, out of the box.
 LANGUAGES = [
     #("af", "Afrikaans"),  # Afrikaans
-    #("ar", "العربية‏"),  # Arabic
+    ("ar", "العربية‏"),  # Arabic
     #("ast", "Asturiano"),  # Asturian
     #("az", "Azərbaycan dili"),  # Azerbaijani
     #("bg", "Български"),  # Bulgarian
