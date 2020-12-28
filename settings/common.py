@@ -95,15 +95,15 @@ LANGUAGE_CODE = 'en-us'
 
 # Languages we provide translations for, out of the box.
 LANGUAGES = [
-    # ("af", "Afrikaans"),  # Afrikaans
-    # ("ar", "العربية‏"),  # Arabic
-    # ("ast", "Asturiano"),  # Asturian
-    # ("az", "Azərbaycan dili"),  # Azerbaijani
-    # ("bg", "Български"),  # Bulgarian
-    # ("be", "Беларуская"),  # Belarusian
-    # ("bn", "বাংলা"),  # Bengali
-    # ("br", "Bretón"),  # Breton
-    # ("bs", "Bosanski"),  # Bosnian
+    #("af", "Afrikaans"),  # Afrikaans
+    ("ar", "العربية‏"),  # Arabic
+    #("ast", "Asturiano"),  # Asturian
+    #("az", "Azərbaycan dili"),  # Azerbaijani
+    #("bg", "Български"),  # Bulgarian
+    #("be", "Беларуская"),  # Belarusian
+    #("bn", "বাংলা"),  # Bengali
+    #("br", "Bretón"),  # Breton
+    #("bs", "Bosanski"),  # Bosnian
     ("ca", "Català"),  # Catalan
     # ("cs", "Čeština"),  # Czech
     # ("cy", "Cymraeg"),  # Welsh

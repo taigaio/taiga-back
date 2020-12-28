@@ -185,7 +185,7 @@ class IssueAttachmentFactory(Factory):
 class WikiAttachmentFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
-    content_object = factory.SubFactory("tests.factories.WikiFactory")
+    content_object = factory.SubFactory("tests.factories.WikiPageFactory")
     attached_file = factory.django.FileField(data=b"File contents")
 
     class Meta:

@@ -46,7 +46,8 @@ class AttachmentSerializer(serializers.LightSerializer):
     preview_url = MethodField("get_preview_url")
 
     def get_url(self, obj):
-        return obj.attached_file.url
+        frag = services.generate_refresh_fragment(obj)
+        return "{}#{}".format(obj.attached_file.url, frag)
 
     def get_thumbnail_card_url(self, obj):
         return services.get_card_image_thumbnail_url(obj)

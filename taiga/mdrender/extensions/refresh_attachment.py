@@ -13,42 +13,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import re
-from urllib.parse import parse_qs, urldefrag
-
 import markdown
 from markdown.treeprocessors import Treeprocessor
 
-from taiga.projects.attachments.services import (get_attachment_by_id,
-                                                 url_is_an_attachment)
-
-REFRESH_PARAM = "_taiga-refresh"
-
-
-def extract_refresh_id(url):
-    if not url:
-        return False, False
-    _, frag = urldefrag(url)
-    if not frag:
-        return False, False
-    qs = parse_qs(frag)
-    if not qs:
-        return False, False
-    ref = qs.get(REFRESH_PARAM, False)
-    if not ref:
-        return False, False
-    type_, _, id_ = ref[0].partition(":")
-    try:
-        return type_, int(id_)
-    except ValueError:
-        return False, False
-
-
-def generate_refresh_fragment(attachment, type_=""):
-    if not attachment:
-        return ''
-    return "{}={}:{}".format(REFRESH_PARAM, type_, attachment.id)
+from taiga.projects.attachments.services import (
+    extract_refresh_id, get_attachment_by_id, generate_refresh_fragment, url_is_an_attachment
+)
 
 
 class RefreshAttachmentExtension(markdown.Extension):

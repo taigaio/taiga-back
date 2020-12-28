@@ -5,26 +5,27 @@
 #    pip-compile requirements-devel.in
 #
 attrs==20.3.0             # via -c requirements.txt, pytest
-certifi==2020.6.20        # via -c requirements.txt, requests
+certifi==2020.12.5        # via -c requirements.txt, requests
 chardet==3.0.4            # via -c requirements.txt, requests
 coverage==5.3             # via -r requirements-devel.in, coveralls
-coveralls==2.1.2          # via -r requirements-devel.in
+coveralls==2.2.0          # via -r requirements-devel.in
 docopt==0.6.2             # via -c requirements.txt, coveralls
 factory-boy==3.1.0        # via -r requirements-devel.in
-faker==4.14.2             # via factory-boy
+faker==5.0.2              # via factory-boy
 idna==2.8                 # via -c requirements.txt, requests
-importlib-metadata==2.0.0  # via -c requirements.txt, pluggy, pytest
+importlib-metadata==3.3.0  # via -c requirements.txt, pluggy, pytest
 iniconfig==1.1.1          # via pytest
-packaging==20.4           # via -c requirements.txt, pytest
+packaging==20.8           # via -c requirements.txt, pytest
 pluggy==0.13.1            # via pytest
-py==1.9.0                 # via pytest
+py==1.10.0                # via pytest
 pyparsing==2.4.7          # via -c requirements.txt, packaging
 pytest-django==4.1.0      # via -r requirements-devel.in
-pytest==6.1.2             # via -r requirements-devel.in, pytest-django
+pytest==6.2.1             # via -r requirements-devel.in, pytest-django
 python-dateutil==2.7.5    # via -c requirements.txt, faker
 requests==2.21.0          # via -c requirements.txt, coveralls
-six==1.15.0               # via -c requirements.txt, packaging, python-dateutil
+six==1.15.0               # via -c requirements.txt, python-dateutil
 text-unidecode==1.3       # via faker
 toml==0.10.2              # via pytest
+typing-extensions==3.7.4.3  # via -c requirements.txt, importlib-metadata
 urllib3==1.24.3           # via -c requirements.txt, requests
 zipp==1.2.0               # via -c requirements.txt, importlib-metadata
