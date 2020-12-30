@@ -120,15 +120,21 @@ class SeverityExportSerializer(RelatedExportSerializer):
     color = Field()
 
 
-class SwimlaneExportSerializer(RelatedExportSerializer):
-    name = Field()
-    order = Field()
-
-
 class IssueTypeExportSerializer(RelatedExportSerializer):
     name = Field()
     order = Field()
     color = Field()
+
+
+class SwimlaneUserStoryStatusExportSerializer(RelatedExportSerializer):
+    status = SlugRelatedField(slug_field="name")
+    wip_limit = Field()
+
+
+class SwimlaneExportSerializer(RelatedExportSerializer):
+    name = Field()
+    order = Field()
+    statuses = SwimlaneUserStoryStatusExportSerializer(many=True)
 
 
 class RoleExportSerializer(RelatedExportSerializer):
@@ -493,6 +499,7 @@ class ProjectExportSerializer(WatcheableObjectLightSerializerMixin):
     default_severity = SlugRelatedField(slug_field="name")
     default_issue_status = SlugRelatedField(slug_field="name")
     default_issue_type = SlugRelatedField(slug_field="name")
+    default_swimlane = SlugRelatedField(slug_field="name")
     epiccustomattributes = EpicCustomAttributesExportSerializer(many=True)
     userstorycustomattributes = UserStoryCustomAttributeExportSerializer(many=True)
     taskcustomattributes = TaskCustomAttributeExportSerializer(many=True)

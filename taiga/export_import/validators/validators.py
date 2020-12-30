@@ -104,14 +104,25 @@ class SeverityExportValidator(validators.ModelValidator):
         exclude = ('id', 'project')
 
 
-class SwimlaneExportValidator(validators.ModelValidator):
-    class Meta:
-        model = projects_models.Swimlane
-        exclude = ('id', 'project')
-
 class IssueTypeExportValidator(validators.ModelValidator):
     class Meta:
         model = projects_models.IssueType
+        exclude = ('id', 'project')
+
+
+class SwimlaneUserStoryStatusExportValidator(validators.ModelValidator):
+    status = ProjectRelatedField(slug_field="name")
+
+    class Meta:
+        model = projects_models.SwimlaneUserStoryStatus
+        exclude = ('id', 'swimlane')
+
+
+class SwimlaneExportValidator(validators.ModelValidator):
+    statuses = SwimlaneUserStoryStatusExportValidator(many=True, required=False)
+
+    class Meta:
+        model = projects_models.Swimlane
         exclude = ('id', 'project')
 
 
@@ -429,6 +440,7 @@ class ProjectExportValidator(WatcheableObjectModelValidatorMixin):
     default_severity = serializers.SlugRelatedField(slug_field="name", required=False)
     default_issue_status = serializers.SlugRelatedField(slug_field="name", required=False)
     default_issue_type = serializers.SlugRelatedField(slug_field="name", required=False)
+    default_swimlane = serializers.SlugRelatedField(slug_field="name", required=False)
     userstorycustomattributes = UserStoryCustomAttributeExportValidator(many=True, required=False)
     taskcustomattributes = TaskCustomAttributeExportValidator(many=True, required=False)
     issuecustomattributes = IssueCustomAttributeExportValidator(many=True, required=False)

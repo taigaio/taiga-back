@@ -937,6 +937,7 @@ class Swimlane(models.Model):
         verbose_name = "swimlane"
         verbose_name_plural = "swimlanes"
         ordering = ["project", "order", "name"]
+        unique_together = ("project", "name")
 
     def __str__(self):
         return self.name

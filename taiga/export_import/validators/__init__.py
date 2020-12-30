@@ -8,6 +8,7 @@ from .validators import IssueStatusExportValidator
 from .validators import IssueDueDateExportValidator
 from .validators import PriorityExportValidator
 from .validators import SeverityExportValidator
+from .validators import SwimlaneUserStoryStatusExportValidator
 from .validators import SwimlaneExportValidator
 from .validators import IssueTypeExportValidator
 from .validators import RoleExportValidator

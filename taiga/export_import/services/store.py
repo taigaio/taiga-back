@@ -42,6 +42,8 @@ from taiga.users import services as users_service
 from .. import exceptions as err
 from .. import validators
 
+import logging
+logger = logging.getLogger('taiga.export_import')
 
 ########################################################################
 ## Manage errors
@@ -81,7 +83,7 @@ def store_project(data):
         excluded_fields = [
             "default_points", "default_us_status", "default_task_status",
             "default_priority", "default_severity", "default_issue_status",
-            "default_issue_type", "default_epic_status",
+            "default_issue_type", "default_epic_status", "default_swimlane",
             "memberships", "points",
             "epic_statuses", "us_statuses", "task_statuses", "issue_statuses",
             "priorities", "severities", "swimlanes",
@@ -245,12 +247,56 @@ def store_project_attributes_values(project, data, field, serializer):
     return result
 
 
+## SWIMLANES
+
+def _store_swimlane_userstory_status(project, swimlane, data):
+    validator = validators.SwimlaneUserStoryStatusExportValidator(data=data, context={"project": project})
+    if validator.is_valid():
+        validator.object.swimlane = swimlane
+        validator.save()
+        return validator.object
+
+    add_errors("statuses", validator.errors)
+    return None
+
+
+def store_swimlane(project, data):
+    swimlane_data = {key: value for key, value in data.items() if key not in ("statuses",)}
+
+    validator = validators.SwimlaneExportValidator(data=swimlane_data, context={"project": project})
+
+    if validator.is_valid():
+        validator.object.project = project
+        validator.object._importing = True
+
+        validator.save()
+
+        for status in data.get("statuses", []):
+            _store_swimlane_userstory_status(project, validator.object, status)
+
+        return validator
+
+    add_errors("swimlanes", validator.errors)
+    return None
+
+
+def store_swimlanes(project, data):
+    results = []
+    for swimlane_data in data.get("swimlanes", []):
+        results.append(store_swimlane(project, swimlane_data))
+    return results
+
+
 ## DEFAULT PROJECT ATTRIBUTES VALUES
 
 def store_default_project_attributes_values(project, data):
     def helper(project, field, related, data):
         if field in data:
-            value = related.all().get(name=data[field])
+            name = data[field]
+            if name:
+                value = related.all().get(name=name)
+            else:
+                value = None
         else:
             value = related.all().first()
         setattr(project, field, value)
@@ -262,6 +308,7 @@ def store_default_project_attributes_values(project, data):
     helper(project, "default_task_status", project.task_statuses, data)
     helper(project, "default_priority", project.priorities, data)
     helper(project, "default_severity", project.severities, data)
+    helper(project, "default_swimlane", project.swimlanes, data)
     project._importing = True
     project.save()
 
@@ -798,10 +845,10 @@ def _populate_project_object(project, data):
     store_project_attributes_values(project, data, "issue_statuses", validators.IssueStatusExportValidator)
     store_project_attributes_values(project, data, "priorities", validators.PriorityExportValidator)
     store_project_attributes_values(project, data, "severities", validators.SeverityExportValidator)
-    store_project_attributes_values(project, data, "swimlanes", validators.SwimlaneExportValidator)
     store_project_attributes_values(project, data, "us_duedates", validators.UserStoryDueDateExportValidator)
     store_project_attributes_values(project, data, "task_duedates", validators.TaskDueDateExportValidator)
     store_project_attributes_values(project, data, "issue_duedates", validators.IssueDueDateExportValidator)
+    store_swimlanes(project, data)
     check_if_there_is_some_error(_("error importing lists of project attributes"), project)
 
     # Create default values for project attributes
@@ -876,6 +923,7 @@ def store_project_from_dict(data, owner=None):
         # raise known import errors
         raise
     except Exception as e:
+        logger.exception('Unexpected error importing project (by %s)', owner or "unknown user")
         # raise unknown errors as import error
         raise err.TaigaImportError(_("unexpected error importing project"), project)
 
