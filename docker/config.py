@@ -119,3 +119,9 @@ GITLAB_URL = os.getenv('GITLAB_URL')
 ## TELEMETRY
 #########################################
 ENABLE_TELEMETRY = os.getenv('ENABLE_TELEMETRY', 'True') == 'True'
+
+
+#########################################
+##  REGISTRATION
+#########################################
+PUBLIC_REGISTER_ENABLED = os.getenv('PUBLIC_REGISTER_ENABLED', 'False') == 'True'
