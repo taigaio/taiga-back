@@ -38,6 +38,12 @@ DATABASES = {
 
 SECRET_KEY = os.getenv('TAIGA_SECRET_KEY')
 TAIGA_URL = f"{ os.getenv('TAIGA_SITES_SCHEME') }://{ os.getenv('TAIGA_SITES_DOMAIN') }"
+SITES = {
+    "api": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "api"},
+    "front": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "front"}
+}
+
+INSTANCE_TYPE = "D"
 
 #########################################
 ## MEDIA
@@ -47,12 +53,7 @@ MEDIA_URL = f"{ TAIGA_URL }/media/"
 DEFAULT_FILE_STORAGE = "taiga_contrib_protected.storage.ProtectedFileSystemStorage"
 
 STATIC_URL = f"{ TAIGA_URL }/static/"
-SITES = {
-    "api": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "api"},
-    "front": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "front"}
-}
 
-INSTANCE_TYPE = "D"
 
 #########################################
 ## EMAIL

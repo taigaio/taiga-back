@@ -39,24 +39,103 @@ DATABASES = {
     }
 }
 
-#SITES = {
-#    "api": {
-#       "scheme": "http",
-#       "domain": "localhost:8000",
-#       "name": "api"
-#    },
-#    "front": {
-#       "scheme": "http",
-#       "domain": "localhost:9001",
-#       "name": "front"
-#    },
-#}
+SECRET_KEY = "changeme"
+TAIGA_URL = "https://example.com"
+SITES = {
+    "api": {"domain": "example.com", "scheme": "https", "name": "api"},
+    "front": {"domain": "example.com", "scheme": "https", "name": "front"}
+}
 
-#SITE_ID = "api"
+#########################################
+## MEDIA AND STATIC
+#########################################
 
-#MEDIA_ROOT = '/home/taiga/media'
-#STATIC_ROOT = '/home/taiga/static'
+# MEDIA_ROOT = '/home/taiga/media'
+MEDIA_URL = f"{ TAIGA_URL }/media/"
+DEFAULT_FILE_STORAGE = "taiga_contrib_protected.storage.ProtectedFileSystemStorage"
 
+# STATIC_ROOT = '/home/taiga/static'
+STATIC_URL = f"{ TAIGA_URL }/static/"
+
+#########################################
+## EMAIL
+#########################################
+# https://docs.djangoproject.com/en/3.1/topics/email/
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'changeme@example.com'
+CHANGE_NOTIFICATIONS_MIN_INTERVAL = 60  # seconds
+ENABLE_EMAIL = True
+SEND_BULK_EMAIL = True
+
+if ENABLE_EMAIL:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = True
+    EMAIL_HOST = 'localhost'
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = 'user'
+    EMAIL_HOST_PASSWORD = 'password'
+
+
+#########################################
+## EVENTS
+#########################################
+EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
+EVENTS_PUSH_BACKEND_OPTIONS = {
+    "url": "amqp://rabbitmquser:rabbitmqpassword@rabbitmqhost:5672/taiga"
+}
+
+
+#########################################
+## TAIGA ASYNC
+#########################################
+CELERY_ENABLED = True
+from kombu import Queue  # noqa
+
+CELERY_BROKER_URL = "amqp://rabbitmquser:rabbitmqpassword@rabbitmq:5672/taiga"
+CELERY_RESULT_BACKEND = None # for a general installation, we don't need to store the results
+CELERY_ACCEPT_CONTENT = ['pickle', ]  # Values are 'pickle', 'json', 'msgpack' and 'yaml'
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER = "pickle"
+CELERY_TIMEZONE = 'Europe/Madrid'
+CELERY_TASK_DEFAULT_QUEUE = 'tasks'
+CELERY_QUEUES = (
+    Queue('tasks', routing_key='task.#'),
+    Queue('transient', routing_key='transient.#', delivery_mode=1)
+)
+CELERY_TASK_DEFAULT_EXCHANGE = 'tasks'
+CELERY_TASK_DEFAULT_EXCHANGE_TYPE = 'topic'
+CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
+
+
+#########################################
+## CONTRIBS
+#########################################
+# INSTALLED_APPS += [
+#     "taiga_contrib_slack",
+#     "taiga_contrib_github_auth",
+#     "taiga_contrib_gitlab_auth"
+# ]
+#
+# GITHUB_API_CLIENT_ID = "changeme"
+# GITHUB_API_CLIENT_SECRET = "changeme"
+#
+# GITLAB_API_CLIENT_ID = "changeme"
+# GITLAB_API_CLIENT_SECRET = "changeme"
+# GITLAB_URL = "changeme"
+
+
+#########################################
+## TELEMETRY
+#########################################
+
+ENABLE_TELEMETRY = True
+
+#########################################
+##  REGISTRATION
+#########################################
+
+PUBLIC_REGISTER_ENABLED = False
 
 #########################################
 ## THROTTLING
@@ -81,38 +160,6 @@ DATABASES = {
 #  - Valid clients IP addresses (X-Forwarded-For header)
 #REST_FRAMEWORK["DEFAULT_THROTTLE_WHITELIST"] = []
 
-
-#########################################
-## MAIL SYSTEM SETTINGS
-#########################################
-
-#DEFAULT_FROM_EMAIL = "john@doe.com"
-#CHANGE_NOTIFICATIONS_MIN_INTERVAL = 300 #seconds
-
-# EMAIL SETTINGS EXAMPLE
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_USE_TLS = False
-#EMAIL_USE_SSL = False # You cannot use both (TLS and SSL) at the same time!
-#EMAIL_HOST = 'localhost'
-#EMAIL_PORT = 25
-#EMAIL_HOST_USER = 'user'
-#EMAIL_HOST_PASSWORD = 'password'
-
-# GMAIL SETTINGS EXAMPLE
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_USE_TLS = True
-#EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_PORT = 587
-#EMAIL_HOST_USER = 'youremail@gmail.com'
-#EMAIL_HOST_PASSWORD = 'yourpassword'
-
-
-#########################################
-## REGISTRATION
-#########################################
-
-#PUBLIC_REGISTER_ENABLED = True
-
 # LIMIT ALLOWED DOMAINS FOR REGISTER AND INVITE
 # None or [] values in USER_EMAIL_ALLOWED_DOMAINS means allow any domain
 #USER_EMAIL_ALLOWED_DOMAINS = None
@@ -122,12 +169,6 @@ DATABASES = {
 #MAX_PUBLIC_PROJECTS_PER_USER = None # None == no limit
 #MAX_MEMBERSHIPS_PRIVATE_PROJECTS = None # None == no limit
 #MAX_MEMBERSHIPS_PUBLIC_PROJECTS = None # None == no limit
-
-# GITHUB SETTINGS
-#GITHUB_URL = "https://github.com/"
-#GITHUB_API_URL = "https://api.github.com/"
-#GITHUB_API_CLIENT_ID = "yourgithubclientid"
-#GITHUB_API_CLIENT_SECRET = "yourgithubclientsecret"
 
 
 #########################################
@@ -155,20 +196,6 @@ DATABASES = {
 #STATS_ENABLED = False
 #STATS_CACHE_TIMEOUT = 60*60  # In second
 
-
-#########################################
-## CELERY
-#########################################
-# Set to True to enable celery and work in async mode or False
-# to disable it and work in sync mode. You can find the celery
-# settings in settings/celery.py and settings/celery-local.py
-#CELERY_ENABLED = True
-
-#########################################
-## TELEMETRY
-#########################################
-# Set to False to disable Telemetry anonymous data
-#ENABLE_TELEMETRY = True
 
 #########################################
 ## IMPORTERS

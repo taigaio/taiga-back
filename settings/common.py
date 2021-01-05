@@ -48,7 +48,7 @@ CACHES = {
     }
 }
 
-INSTANCE_TYPE = "R"
+INSTANCE_TYPE = "SRC"
 
 # CELERY
 CELERY_ENABLED = False
