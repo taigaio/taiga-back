@@ -891,3 +891,47 @@ def test_api_update_orders_in_bulk_invalid_before_us_because_after_us_exist(clie
     assert response.status_code == 400, response.data
     assert len(response.data) == 1
     assert "before_userstory_id" in response.data
+
+
+
+##############################
+## Move after user story status is deleted
+##############################
+
+def test_api_delete_userstory_status(client):
+    #
+    #      |  ST1  |  ST2    |                    |       |  ST1
+    # -----|-------|-------  |                    |  -----|-------
+    #  SW1 | us111 | us121   |   DELETE: st2      |       | us111
+    #      | us112 | us122   |   AND MOVE TO: st1 |   SW1 | us112
+    # -----|-------|-------  |                    |       | us121
+    #      | us211 |  us221  |                    |       | us122
+    #  SW2 |       |         |                    |  -----|-------
+    #      |       |         |                    |   SW2 | us211
+    #      |       |         |                    |       | us222
+
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    st1 = f.UserStoryStatusFactory.create(project=project, order=1)
+    st2 = f.UserStoryStatusFactory.create(project=project, order=2)
+    swl1 = f.SwimlaneFactory.create(project=project, order=1)
+    swl2 = f.SwimlaneFactory.create(project=project, order=2)
+    us111 = f.create_userstory(project=project, swimlane=swl1, status=st1, kanban_order=20)
+    us112 = f.create_userstory(project=project, swimlane=swl1, status=st1, kanban_order=40)
+    us121 = f.create_userstory(project=project, swimlane=swl1, status=st2, kanban_order=35)
+    us122 = f.create_userstory(project=project, swimlane=swl1, status=st2, kanban_order=45)
+    us211 = f.create_userstory(project=project, swimlane=swl2, status=st1, kanban_order=2)
+    us221 = f.create_userstory(project=project, swimlane=swl2, status=st2, kanban_order=1)
+
+    uss_qs = (models.UserStory.objects.values_list("id", flat=True)
+                                      .order_by("status__order", "swimlane__order", "kanban_order"))
+    url = reverse("userstory-statuses-detail", kwargs={"pk": st2.pk}) + f"?moveTo={st1.id}"
+    assert list(uss_qs) == [us111.id, us112.id, us211.id, us121.id, us122.id, us221.id]
+
+    client.login(project.owner)
+    response = client.json.delete(url)
+    assert response.status_code == 204, response.data
+
+    uss_qs = (models.UserStory.objects.values_list("id", flat=True)
+                                      .order_by("status__order", "swimlane__order", "kanban_order"))
+    assert list(uss_qs) == [us111.id, us112.id, us121.id, us122.id, us211.id, us221.id]

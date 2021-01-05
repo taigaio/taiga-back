@@ -117,6 +117,32 @@ def update_userstories_order_in_bulk(bulk_data: list, field: str,
     return us_orders
 
 
+def reset_userstories_kanban_order_in_bulk(project: Project,
+                                           bulk_userstories: List[int]):
+    """
+    Reset the order of the userstories specified adding the extra updates
+    needed to keep consistency.
+
+     - `bulk_userstories` should be a list of user stories IDs
+    """
+    base_order = models.UserStory.NEW_KANBAN_ORDER()
+    data = ((id, base_order + index) for index, id in enumerate(bulk_userstories))
+
+    sql = """
+    UPDATE userstories_userstory
+       SET kanban_order = tmp.new_kanban_order::BIGINT
+      FROM (VALUES %s) AS tmp (id, new_kanban_order)
+     WHERE tmp.id = userstories_userstory.id
+    """
+    with connection.cursor() as cursor:
+        execute_values(cursor, sql, data)
+
+    ## Sent events of updated stories
+    events.emit_event_for_ids(ids=bulk_userstories,
+                              content_type="userstories.userstory",
+                              projectid=project.id)
+
+
 def update_userstories_kanban_order_in_bulk(project: Project,
                                             status: UserStoryStatus,
                                             bulk_userstories: List[int],

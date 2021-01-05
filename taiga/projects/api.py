@@ -55,6 +55,7 @@ from taiga.projects.signals import issue_status_post_move_on_destroy as issue_st
 from taiga.projects.tasks.models import Task
 from taiga.projects.tagging.api import TagsColorsResourceMixin
 from taiga.projects.userstories.models import UserStory, RolePoints
+from taiga.projects.userstories.services import reset_userstories_kanban_order_in_bulk
 from taiga.users import services as users_services
 
 from . import filters as project_filters
@@ -619,6 +620,12 @@ class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
         project_id = request.DATA.get("project", 0)
         with advisory_lock("epic-user-story-status-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
+
+    def move_on_destroy_reorder_after_moved(self, moved_to_obj, moved_objs_queryset):
+        project = moved_to_obj.project
+        bulk_userstories_ids = (moved_objs_queryset.order_by('swimlane__order', 'kanban_order')
+                                                   .values_list('id', flat=True))
+        reset_userstories_kanban_order_in_bulk(project, bulk_userstories_ids)
 
 
 class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,

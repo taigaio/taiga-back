@@ -33,6 +33,9 @@ from taiga.projects.services.bulk_update_order import update_order_and_swimlane
 class MoveOnDestroyMixin:
     move_on_destroy_post_destroy_signal = None
 
+    def move_on_destroy_reorder_after_moved(self, moved_to_obj, moved_objs_queryset):
+        pass
+
     @tx.atomic
     def destroy(self, request, *args, **kwargs):
         # moveTo is needed
@@ -46,9 +49,11 @@ class MoveOnDestroyMixin:
 
         obj = self.get_object_or_none()
 
+        qs = self.move_on_destroy_related_class.objects.filter(**{self.move_on_destroy_related_field: obj})
+        # Reorder after moved
+        self.move_on_destroy_reorder_after_moved(move_item, qs)
         # move related objects to the new one.
         # (we need to do this befero to prevent some deletes-on-cascade behaivors)
-        qs = self.move_on_destroy_related_class.objects.filter(**{self.move_on_destroy_related_field: obj})
         qs.update(**{self.move_on_destroy_related_field: move_item})
 
         # change default project value if is needed
@@ -62,16 +67,17 @@ class MoveOnDestroyMixin:
 
         # if the object is not deleted
         if not isinstance(res, response.NoContent):
-            # Restart estatus if we can't delete the object
+            # Restart status (roolback) if we can't delete the object
             qs.update(**{self.move_on_destroy_related_field: obj})
 
             # Restart default value
             if changed_default_value:
                 setattr(obj.project, self.move_on_destroy_project_default_field, obj)
                 obj.project.save()
-        elif self.move_on_destroy_post_destroy_signal:
-            # throw  post delete signal
-            self.move_on_destroy_post_destroy_signal.send(obj.__class__, deleted=obj, moved=move_item)
+        else:
+            if self.move_on_destroy_post_destroy_signal:
+                # throw  post delete signal
+                self.move_on_destroy_post_destroy_signal.send(obj.__class__, deleted=obj, moved=move_item)
 
         return res
 
