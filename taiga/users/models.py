@@ -25,7 +25,7 @@ import re
 from django.apps import apps
 from django.apps.config import MODELS_MODULE_NAME
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import ArrayField
 from django.core import validators
@@ -91,36 +91,6 @@ def get_user_file_path(instance, filename):
     return get_file_path(instance, filename, "user")
 
 
-class MyUserManager(BaseUserManager):
-    def create_user(self, username, email, password=None, **kwargs):
-        """
-        Creates and saves a User with the given username, email and password.
-        """
-        if not email:
-            raise ValueError('Users must have an email address')
-
-        user = self.model(
-            username=username,
-            email=self.normalize_email(email),
-            **kwargs,
-        )
-        user.set_password(password)
-        user.save()
-        return user
-
-    def create_superuser(self, username, email, password):
-        """
-        Creates and saves a superuser with the given username, email, password.
-        """
-        user = self.create_user(
-            username=username,
-            email=email,
-            password=password,
-            is_superuser=True
-        )
-        return user
-
-
 class PermissionsMixin(models.Model):
     """
     A mixin class that adds the fields and methods necessary to support
@@ -151,10 +121,6 @@ class PermissionsMixin(models.Model):
         """
         return self.is_active and self.is_superuser
 
-    @property
-    def is_staff(self):
-        return self.is_superuser
-
 
 def get_default_uuid():
     return uuid.uuid4().hex
@@ -173,6 +139,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_("active"), default=True,
         help_text=_("Designates whether this user should be treated as "
                     "active. Unselect this instead of deleting accounts."))
+    is_staff = models.BooleanField(_('staff status'), default=False,
+        help_text=_('Designates whether the user can log into this admin site.'),
+    )
 
     full_name = models.CharField(_("full name"), max_length=256, blank=True)
     color = models.CharField(max_length=9, null=False, blank=True, default=generate_random_hex_color,
@@ -226,7 +195,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email"]
 
-    objects = MyUserManager()
+    objects = UserManager()
 
     class Meta:
         verbose_name = "user"
