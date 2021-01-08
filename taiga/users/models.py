@@ -104,7 +104,6 @@ class MyUserManager(BaseUserManager):
             email=self.normalize_email(email),
             **kwargs,
         )
-        user.save(using=self._db)
         user.set_password(password)
         user.save()
         return user
@@ -116,11 +115,9 @@ class MyUserManager(BaseUserManager):
         user = self.create_user(
             username=username,
             email=email,
-            password=password
+            password=password,
+            is_superuser=True
         )
-        user.is_superuser = True
-        user.is_admin = True
-        user.save()
         return user
 
 
