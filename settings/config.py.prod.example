@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 from .common import *   # noqa, pylint: disable=unused-wildcard-import
 
 #########################################
@@ -89,7 +91,8 @@ EVENTS_PUSH_BACKEND_OPTIONS = {
 #########################################
 ## TAIGA ASYNC
 #########################################
-CELERY_ENABLED = True
+CELERY_ENABLED = os.getenv('CELERY_ENABLED', 'True') == 'True'
+
 from kombu import Queue  # noqa
 
 CELERY_BROKER_URL = "amqp://rabbitmquser:rabbitmqpassword@rabbitmq:5672/taiga"

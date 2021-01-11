@@ -87,7 +87,7 @@ EVENTS_PUSH_BACKEND_OPTIONS = {
 #########################################
 ## TAIGA ASYNC
 #########################################
-CELERY_ENABLED = True
+CELERY_ENABLED = os.getenv('CELERY_ENABLED', 'True') == 'True'
 from kombu import Queue  # noqa
 
 CELERY_BROKER_URL = f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@taiga-async-rabbitmq:5672/taiga"
