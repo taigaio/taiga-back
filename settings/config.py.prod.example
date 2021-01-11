@@ -226,7 +226,7 @@ PUBLIC_REGISTER_ENABLED = False
 #    "pub_cert": "XXXXXX_get_a_valid_pub_cert_from_jira_XXXXXX"
 #}
 
-# Configuration for the Asane importer
+# Configuration for the Asana importer
 # Remember to enable it in the front client too.
 #IMPORTERS["asana"] = {
 #    "active": True, # Enable or disable the importer

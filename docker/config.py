@@ -133,3 +133,43 @@ ENABLE_TELEMETRY = os.getenv('ENABLE_TELEMETRY', 'True') == 'True'
 ##  REGISTRATION
 #########################################
 PUBLIC_REGISTER_ENABLED = os.getenv('PUBLIC_REGISTER_ENABLED', 'False') == 'True'
+
+
+#########################################
+##  IMPORTERS
+#########################################
+
+ENABLE_ASANA_IMPORTER = os.getenv('ENABLE_ASANA_IMPORTER', 'False') == 'True'
+if ENABLE_ASANA_IMPORTER:
+    IMPORTERS["asana"] = {
+        "active": True,
+        "callback_url": "{}://{}/project/new/import/asana".format(SITES["front"]["scheme"],
+                                                                  SITES["front"]["domain"]),
+        "app_id": os.getenv('ASANA_IMPORTER_APP_ID'),
+        "app_secret": os.getenv('ASANA_IMPORTER_APP_SCRET')
+    }
+
+ENABLE_GITHUB_IMPORTER = os.getenv('ENABLE_GITHUB_IMPORTER', 'False') == 'True'
+if ENABLE_GITHUB_IMPORTER:
+    IMPORTERS["github"] = {
+        "active": True,
+        "client_id": os.getenv('GITHUB_IMPORTER_CLIENT_ID'),
+        "client_secret": os.getenv('GITHUB_IMPORTER_CLIENT_SECRET')
+    }
+
+ENABLE_JIRA_IMPORTER = os.getenv('ENABLE_JIRA_IMPORTER', 'False') == 'True'
+if ENABLE_JIRA_IMPORTER:
+    IMPORTERS["jira"] = {
+        "active": True,
+        "consumer_key": os.getenv('JIRA_IMPORTER_CONSUMER_KEY'),
+        "cert": os.getenv('JIRA_IMPORTER_CERT'),
+        "pub_cert": os.getenv('JIRA_IMPORTER_PUB_CERT')
+    }
+
+ENABLE_TRELLO_IMPORTER = os.getenv('ENABLE_TRELLO_IMPORTER', 'False') == 'True'
+if ENABLE_TRELLO_IMPORTER:
+    IMPORTERS["trello"] = {
+        "active": True,
+        "api_key": os.getenv('TRELLO_IMPORTER_API_KEY'),
+        "secret_key": os.getenv('TRELLO_IMPORTER_SECRET_KEY')
+    }
