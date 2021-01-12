@@ -14,8 +14,6 @@
 
 - Improved performance when reordering
 
-## Unreleased
-
 ## 5.5.9 (2020-12-21)
 
 ### Fix
