@@ -322,7 +322,7 @@ def userstories_to_csv(project, queryset):
                   "sprint_estimated_start", "sprint_estimated_finish", "owner",
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
                   "assigned_users", "assigned_users_full_name", "status",
-                  "is_closed"]
+                  "is_closed", "swimlane"]
 
     roles = project.roles.filter(computable=True).order_by('slug')
     for role in roles:
@@ -385,6 +385,7 @@ def userstories_to_csv(project, queryset):
                  us.assigned_users.all()]),
             "status": us.status.name if us.status else None,
             "is_closed": us.is_closed,
+            "swimlane": us.swimlane.name if us.swimlane else None,
             "backlog_order": us.backlog_order,
             "sprint_order": us.sprint_order,
             "kanban_order": us.kanban_order,
