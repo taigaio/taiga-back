@@ -17,10 +17,3 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '6.0.0'
-
-
-from django.conf import settings
-
-
-if settings.CELERY_ENABLED:
-    from . import celery
