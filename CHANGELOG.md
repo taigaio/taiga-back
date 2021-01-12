@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.0.0
+
+### Features
+
+- Swimlanes
+
+- Generate docker image
+
+### Misc
+
+- Changed the configuration style to expect DJANGO_SETTINGS_MODULE
+
+- Improved performance when reordering
+
 ## Unreleased
 
 ## 5.5.9 (2020-12-21)
