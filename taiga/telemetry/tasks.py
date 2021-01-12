@@ -19,6 +19,7 @@
 from django.conf import settings
 import rudder_analytics
 
+import taiga
 from taiga.celery import app
 from taiga.telemetry import services
 
@@ -34,7 +35,7 @@ def send_telemetry():
 
     properties = {
         **services.generate_platform_data(),
-        'version': '6.0.0',
+        'version': taiga.__version__,
         'running_since': instance.created_at,
         'instance_src': settings.INSTANCE_TYPE
     }
