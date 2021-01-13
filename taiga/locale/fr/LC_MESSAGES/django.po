@@ -4,12 +4,14 @@
 #
 # Translators:
 # Translators:
+# 145d476c91450a2a8706fd7b160b27d7_b2328b5 <c7b4b2acae39f8349ced5e4f194f7733_317745>, 2015
 # Abdelouahad Megder <megdera@gmail.com>, 2016
 # Alain Poirier <alain.poirier@net-ng.com>, 2015
 # Charles Bonnet <charles.bonnet@intermi.eu>, 2017
 # David Barragán <bameda@gmail.com>, 2015
 # Djyp Forest Fortin <contact@h3p.eu>, 2015
 # Donatien Schmitz <donatien@schmitz.cc>, 2018
+# eldk <webmaster@opalesurfcasting.net>, 2017
 # eldk <webmaster@opalesurfcasting.net>, 2017
 # Florent B. <me@kxrz.me>, 2015
 # Gary <gary.houbre@epitech.eu>, 2017
@@ -18,6 +20,7 @@
 # John Weetaker <jjdormevil@gmail.com>, 2017
 # Laurent Cabaret <laurent.cabaret@ecp.fr>, 2016
 # Louis-Michel Couture <louim_1@hotmail.com>, 2015
+# madmarsu <madmarsu@gmail.com>, 2017
 # madmarsu <madmarsu@gmail.com>, 2017
 # Matthieu Durocher <matthieu@technocyclope.com>, 2015
 # 145d476c91450a2a8706fd7b160b27d7_b2328b5 <c7b4b2acae39f8349ced5e4f194f7733_317745>, 2015
@@ -34,9 +37,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-14 19:17+0200\n"
-"PO-Revision-Date: 2020-09-14 17:17+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"POT-Creation-Date: 2021-01-13 13:14+0100\n"
+"PO-Revision-Date: 2021-01-13 12:21+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -84,7 +87,7 @@ msgstr "Cet utilisateur est déjà inscrit."
 msgid "This user is already a member of the project."
 msgstr "L'utilisateur est déjà membre du projet."
 
-#: taiga/auth/services.py:169
+#: taiga/auth/services.py:173
 msgid "Error while creating new user."
 msgstr "Erreur à la création de l'utilisateur."
 
@@ -258,7 +261,7 @@ msgstr ""
 msgid "Invalid page (%(page_number)s): %(message)s"
 msgstr "Page invalide (%(page_number)s): %(message)s"
 
-#: taiga/base/api/permissions.py:65
+#: taiga/base/api/permissions.py:64
 msgid "Invalid permission definition."
 msgstr "Définition de permission invalide."
 
@@ -4485,17 +4488,16 @@ msgstr "[Taiga] Récupération du mot de passe"
 #, python-format
 msgid ""
 "\n"
-"              <p>Please confirm your email</p>\n"
-"              <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
+"            <p>Please confirm your email</p>\n"
+"            <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
 "\">Confirm email</a>\n"
-"              "
+"            "
 msgstr ""
 
-#: taiga/users/templates/emails/registered_user-body-html.jinja:14
+#: taiga/users/templates/emails/registered_user-body-html.jinja:13
 #, python-format
 msgid ""
 "\n"
-"        <td>\n"
 "            <h2>Thank you for registering in %(product_name)s</h2>\n"
 "            <p>We're thrilled you've joined our growing community of "
 "professionals revolutionizing their way of working and hope you enjoy it.</"
@@ -4507,7 +4509,7 @@ msgid ""
 "        "
 msgstr ""
 
-#: taiga/users/templates/emails/registered_user-body-html.jinja:30
+#: taiga/users/templates/emails/registered_user-body-html.jinja:28
 #, python-format
 msgid ""
 "\n"

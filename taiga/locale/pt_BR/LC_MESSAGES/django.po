@@ -21,20 +21,24 @@
 # Marcos Insfran <rester.marcos@gmail.com>, 2019
 # Marlon Carvalho <m.lopes@qiwi.com>, 2015
 # Michael Douglas Meneses de Souza <michael.douglas.meneses.2@gmail.com>, 2018
+# Michael Douglas Meneses de Souza <michael.douglas.meneses.2@gmail.com>, 2018
 # Michel Wilhelm <michelwilhelm@gmail.com>, 2016
 # pedromvm <pedromvm@gmail.com>, 2015
+# pedromvm <pedromvm@gmail.com>, 2015
+# Pedro Rangel Raft <me@pedroraft.com>, 2017
 # Pedro Rangel Raft <me@pedroraft.com>, 2017
 # Renato Prado <prkstaff@gmail.com>, 2015
 # Thiago Almeida <thiagoalmeidasa@gmail.com>, 2016
+# Thiago Muramatsu <contato@yusuke.com.br>, 2015
 # Thiago Muramatsu <contato@yusuke.com.br>, 2015
 # Walker de Alencar <walkeralencar@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-14 19:17+0200\n"
-"PO-Revision-Date: 2020-09-21 12:36+0000\n"
-"Last-Translator: Laura Capurro <lauracapurromt@gmail.com>\n"
+"POT-Creation-Date: 2021-01-13 13:14+0100\n"
+"PO-Revision-Date: 2021-01-13 12:21+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -80,7 +84,7 @@ msgstr "Usuário já cadastrado."
 msgid "This user is already a member of the project."
 msgstr "O usuário já é membro do projeto."
 
-#: taiga/auth/services.py:169
+#: taiga/auth/services.py:173
 msgid "Error while creating new user."
 msgstr ""
 
@@ -241,7 +245,7 @@ msgstr "Página não é \"última\", nem pode ser convertída para um inteiro."
 msgid "Invalid page (%(page_number)s): %(message)s"
 msgstr "Página inválida (%(page_number)s): %(message)s"
 
-#: taiga/base/api/permissions.py:65
+#: taiga/base/api/permissions.py:64
 msgid "Invalid permission definition."
 msgstr "Definição de permissão inválida."
 
@@ -4424,17 +4428,16 @@ msgstr "[Taiga] Recuperação de senha"
 #, python-format
 msgid ""
 "\n"
-"              <p>Please confirm your email</p>\n"
-"              <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
+"            <p>Please confirm your email</p>\n"
+"            <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
 "\">Confirm email</a>\n"
-"              "
+"            "
 msgstr ""
 
-#: taiga/users/templates/emails/registered_user-body-html.jinja:14
+#: taiga/users/templates/emails/registered_user-body-html.jinja:13
 #, python-format
 msgid ""
 "\n"
-"        <td>\n"
 "            <h2>Thank you for registering in %(product_name)s</h2>\n"
 "            <p>We're thrilled you've joined our growing community of "
 "professionals revolutionizing their way of working and hope you enjoy it.</"
@@ -4446,7 +4449,7 @@ msgid ""
 "        "
 msgstr ""
 
-#: taiga/users/templates/emails/registered_user-body-html.jinja:30
+#: taiga/users/templates/emails/registered_user-body-html.jinja:28
 #, python-format
 msgid ""
 "\n"

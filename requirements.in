@@ -3,7 +3,7 @@ bleach
 celery==4.3.0
 diff-match-patch==20121119
 django-ipware==1.1.6
-django-jinja==2.3.1
+django-jinja==2.7.0
 django-picklefield==0.3.2
 django-pglocks==1.0.2
 django-sampledatahelper==0.4.1

@@ -22,7 +22,7 @@ cssselect==1.1.0          # via cairosvg, premailer
 cssutils==1.0.2           # via premailer
 diff-match-patch==20121119  # via -r requirements.in
 django-ipware==1.1.6      # via -r requirements.in
-django-jinja==2.3.1       # via -r requirements.in
+django-jinja==2.7.0       # via -r requirements.in
 django-pglocks==1.0.2     # via -r requirements.in
 django-picklefield==0.3.2  # via -r requirements.in
 django-sampledatahelper==0.4.1  # via -r requirements.in
@@ -64,7 +64,7 @@ requests==2.21.0          # via -r requirements.in, asana, premailer, requests-o
 rudder-sdk-python==1.0.0b1  # via -r requirements.in
 sampledata==0.3.7         # via django-sampledatahelper
 serpy==0.1.1              # via -r requirements.in
-six==1.15.0               # via asana, bleach, cryptography, django-sampledatahelper, html5lib, packaging, python-dateutil, rudder-sdk-python, sampledata, serpy, webcolors
+six==1.15.0               # via asana, bleach, cryptography, django-sampledatahelper, html5lib, python-dateutil, rudder-sdk-python, sampledata, serpy, webcolors
 sqlparse==0.4.1           # via django
 tinycss==0.4              # via cairosvg
 typing-extensions==3.7.4.3  # via importlib-metadata

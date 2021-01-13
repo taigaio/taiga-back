@@ -8,13 +8,14 @@
 # Oskars G <oskars@alumni.lu.lv>, 2020
 # Sergey Skibust <sergey@skyboost.lv>, 2017
 # vsv <vs@ktr.lv>, 2020
+# vsv <vs@ktr.lv>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-14 19:17+0200\n"
-"PO-Revision-Date: 2020-09-14 17:17+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"POT-Creation-Date: 2021-01-13 13:14+0100\n"
+"PO-Revision-Date: 2021-01-13 12:21+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Latvian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/lv/)\n"
 "MIME-Version: 1.0\n"
@@ -61,7 +62,7 @@ msgstr "Lietotājs jau ir reģistrēts."
 msgid "This user is already a member of the project."
 msgstr "Šis lietotājs jau ir projekta dalībnieks."
 
-#: taiga/auth/services.py:169
+#: taiga/auth/services.py:173
 msgid "Error while creating new user."
 msgstr "Kļūda veidojot lietotāju"
 
@@ -229,7 +230,7 @@ msgstr "Lapa nav 'pēdējā', un to nevar arī pārveidot par veselu skaitli (in
 msgid "Invalid page (%(page_number)s): %(message)s"
 msgstr "Nederīga lapa (%(page_number)s): %(message)s"
 
-#: taiga/base/api/permissions.py:65
+#: taiga/base/api/permissions.py:64
 msgid "Invalid permission definition."
 msgstr "Nederīga atļaujas definēšana."
 
@@ -4502,17 +4503,16 @@ msgstr "[Taiga] Paroles atgūšana"
 #, python-format
 msgid ""
 "\n"
-"              <p>Please confirm your email</p>\n"
-"              <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
+"            <p>Please confirm your email</p>\n"
+"            <a class=\"button\" href=\"%(url)s\" title=\"Confirm email"
 "\">Confirm email</a>\n"
-"              "
+"            "
 msgstr ""
 
-#: taiga/users/templates/emails/registered_user-body-html.jinja:14
+#: taiga/users/templates/emails/registered_user-body-html.jinja:13
 #, python-format
 msgid ""
 "\n"
-"        <td>\n"
 "            <h2>Thank you for registering in %(product_name)s</h2>\n"
 "            <p>We're thrilled you've joined our growing community of "
 "professionals revolutionizing their way of working and hope you enjoy it.</"
@@ -4524,7 +4524,7 @@ msgid ""
 "        "
 msgstr ""
 
-#: taiga/users/templates/emails/registered_user-body-html.jinja:30
+#: taiga/users/templates/emails/registered_user-body-html.jinja:28
 #, python-format
 msgid ""
 "\n"

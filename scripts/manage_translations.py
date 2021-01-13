@@ -24,14 +24,18 @@
 #  $ python scripts/manage_translations.py lang_stats --language=es --resources=taiga
 
 
-import os
+import os, errno
 from argparse import ArgumentParser
 from argparse import RawTextHelpFormatter
 
 from subprocess import PIPE, Popen, call
 
+import django
+from django.core.management import call_command
 from django_jinja.management.commands import makemessages
 
+
+SOURCE_LANG = "en"
 
 def _get_locale_dirs(resources):
     """
@@ -81,10 +85,18 @@ def update_catalogs(resources=None, languages=None):
     Update the en/LC_MESSAGES/django.po (all) files with
     new/updated translatable strings.
     """
+    os.chdir(os.getcwd())
+
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.common')
+    from django.conf import settings
+
+    settings.configure()
+    django.setup()
+
     cmd = makemessages.Command()
     opts = {
-        "locale": ["en"],
-	"exclude": [],
+        "locale": [SOURCE_LANG],
+        "exclude": [],
         "extensions": ["py", "jinja"],
 
         # Default values
@@ -104,11 +116,10 @@ def update_catalogs(resources=None, languages=None):
     if resources is not None:
         print("`update_catalogs` will always process all resources.")
 
-    os.chdir(os.getcwd())
     print("Updating en catalogs for all taiga-back resourcess...")
-    cmd.handle(**opts)
+    call_command(cmd, **opts)
 
-    # Output changed stats
+    ## Output changed stats
     contrib_dirs = _get_locale_dirs(None)
     for name, dir_ in contrib_dirs:
         _check_diff(name, dir_)
@@ -158,7 +169,7 @@ def fetch(resources=None, languages=None):
         # Transifex pull
         if languages is None:
             call("tx pull -r {res} -f  --minimum-perc=5".format(res=_tx_resource_for_name(name)), shell=True)
-            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != "en"])
+            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != SOURCE_LANG])
         else:
             for lang in languages:
                 call("tx pull -r {res} -f -l {lang}".format(res=_tx_resource_for_name(name), lang=lang), shell=True)
@@ -194,7 +205,7 @@ def regenerate(resources=None, languages=None):
 
     for name, dir_ in locale_dirs:
         if languages is None:
-            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != "en"])
+            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != SOURCE_LANG])
 
         for lang in languages:
             po_path = "{path}/{lang}/LC_MESSAGES/django.po".format(path=dir_, lang=lang)
@@ -216,6 +227,7 @@ def regenerate(resources=None, languages=None):
 
         exit(1)
 
+
 def commit(resources=None, languages=None):
     """
     Commit messages to Transifex,
@@ -226,10 +238,11 @@ def commit(resources=None, languages=None):
     for name, dir_ in locale_dirs:
         # Transifex push
         if languages is None:
-            call("tx push -r {res} -s -l en".format(res=_tx_resource_for_name(name)), shell=True)
+            call("tx push -r {res} -s -l {lang}".format(res=_tx_resource_for_name(name), lang=SOURCE_LANG), shell=True)
         else:
             for lang in languages:
-                call("tx push -r {res} -l {lang}".format(res= _tx_resource_for_name(name), lang=lang), shell=True)
+                type = "-s" if lang == SOURCE_LANG else "-t"
+                call("tx push -r {res} -l {lang} {type}".format(res= _tx_resource_for_name(name), lang=lang, type=type), shell=True)
 
 
 if __name__ == "__main__":
@@ -237,7 +250,7 @@ if __name__ == "__main__":
         devnull = open(os.devnull)
         Popen(["tx"], stdout=devnull, stderr=devnull).communicate()
     except OSError as e:
-        if e.errno == os.errno.ENOENT:
+        if e.errno == errno.ENOENT:
             print("""
 You need transifex-client, install it.
 
