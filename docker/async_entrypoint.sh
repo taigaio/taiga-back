@@ -9,5 +9,5 @@ chown -R taiga:taiga /taiga-back
 echo Starting Celery...
 exec gosu taiga celery -A taiga.celery worker -B \
     --concurrency 4 \
-    -l DEBUG \
+    -l INFO \
     "$@"
