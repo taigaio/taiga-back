@@ -42,7 +42,7 @@ if settings.ENABLE_TELEMETRY:
         'args': (),
     }
 
-if settings.SEND_BULK_EMAIL:
+if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL > 0:
     app.conf.beat_schedule['send-bulk-emails'] = {
         'task': 'taiga.projects.notifications.tasks.send_bulk_email',
         'schedule': settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL,

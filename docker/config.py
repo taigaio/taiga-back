@@ -59,21 +59,16 @@ STATIC_URL = f"{ TAIGA_URL }/static/"
 ## EMAIL
 #########################################
 # https://docs.djangoproject.com/en/3.1/topics/email/
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+CHANGE_NOTIFICATIONS_MIN_INTERVAL = 120  # seconds
+
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'system@taiga.io')
-ENABLE_EMAIL = os.getenv('ENABLE_EMAIL', 'False') == 'True'
-CHANGE_NOTIFICATIONS_MIN_INTERVAL = 60  # seconds
-SEND_BULK_EMAIL = True
-
-if ENABLE_EMAIL:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
-    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
-    EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
-    EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'user')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')
-
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
+EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'user')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')
 
 #########################################
 ## EVENTS

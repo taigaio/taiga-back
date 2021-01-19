@@ -208,6 +208,11 @@ CSRF_COOKIE_SECURE = True
 # MAIL OPTIONS
 DEFAULT_FROM_EMAIL = "john@doe.com"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# 0 notifications will work in a synchronous way
+# >0 an external process will check the pending notifications and will send them
+# collapsed during that interval
+CHANGE_NOTIFICATIONS_MIN_INTERVAL = 0  # seconds
+
 
 DJMAIL_REAL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DJMAIL_SEND_ASYNC = True
@@ -555,12 +560,6 @@ FEEDBACK_EMAIL = "support@taiga.io"
 # Stats module settings
 STATS_ENABLED = False
 STATS_CACHE_TIMEOUT = 60 * 60  # In second
-
-# 0 notifications will work in a synchronous way
-# >0 an external process will check the pending notifications and will send them
-# collapsed during that interval
-CHANGE_NOTIFICATIONS_MIN_INTERVAL = 0  # seconds
-SEND_BULK_EMAIL = False
 
 # List of functions called for filling correctly the ProjectModulesConfig associated to a project
 # This functions should receive a Project parameter and return a dict with the desired configuration

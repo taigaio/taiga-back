@@ -63,21 +63,16 @@ STATIC_URL = f"{ TAIGA_URL }/static/"
 ## EMAIL
 #########################################
 # https://docs.djangoproject.com/en/3.1/topics/email/
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+CHANGE_NOTIFICATIONS_MIN_INTERVAL = 120  # seconds
+
 DEFAULT_FROM_EMAIL = 'changeme@example.com'
-CHANGE_NOTIFICATIONS_MIN_INTERVAL = 60  # seconds
-ENABLE_EMAIL = True
-SEND_BULK_EMAIL = True
-
-if ENABLE_EMAIL:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_USE_TLS = True
-    EMAIL_USE_SSL = True
-    EMAIL_HOST = 'localhost'
-    EMAIL_PORT = 587
-    EMAIL_HOST_USER = 'user'
-    EMAIL_HOST_PASSWORD = 'password'
-
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'user'
+EMAIL_HOST_PASSWORD = 'password'
 
 #########################################
 ## EVENTS
