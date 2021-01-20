@@ -645,7 +645,7 @@ MDRENDER_CACHE_TIMEOUT = 86400
 
 ENABLE_TELEMETRY = True
 RUDDER_WRITE_KEY = "1kmTTxJoSmaZNRpU1uORpyZ8mqv"
-DATA_PLANE_URL = "https://telemetry.taiga.io"
+DATA_PLANE_URL = "https://telemetry.taiga.io/"
 INSTALLED_APPS += [
         "taiga.telemetry"
 ]

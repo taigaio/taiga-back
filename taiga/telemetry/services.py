@@ -292,11 +292,17 @@ def generate_platform_data():
 
 
 def _get_tt_percent_uss_assigned(total_uss):
+    if total_uss == 0:
+        return 0
+
     assigned_uss = UserStory.objects.filter(assigned_users__isnull=False).count()
     return assigned_uss * 100 / total_uss
 
 
 def _get_tt_percent_uss_watched(total_uss):
+    if total_uss == 0:
+        return 0
+
     content_type = ContentType.objects.get(model='userstory')
     watched_uss = Watched.objects.filter(content_type=content_type).distinct('object_id').count()
     return watched_uss * 100 / total_uss
