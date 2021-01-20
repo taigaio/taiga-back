@@ -109,6 +109,12 @@ def create_related_userstories_in_bulk(bulk_data, epic, **additional_fields):
     """
     userstories = get_userstories_from_bulk(bulk_data, **additional_fields)
     project = additional_fields.get("project")
+
+    # Set default swimlane if kanban module is enabled
+    if project.is_kanban_activated:
+        for user_story in userstories:
+            user_story.swimlane = project.default_swimlane
+
     disconnect_userstories_signals()
 
     try:
