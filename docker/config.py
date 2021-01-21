@@ -134,16 +134,6 @@ PUBLIC_REGISTER_ENABLED = os.getenv('PUBLIC_REGISTER_ENABLED', 'False') == 'True
 ##  IMPORTERS
 #########################################
 
-ENABLE_ASANA_IMPORTER = os.getenv('ENABLE_ASANA_IMPORTER', 'False') == 'True'
-if ENABLE_ASANA_IMPORTER:
-    IMPORTERS["asana"] = {
-        "active": True,
-        "callback_url": "{}://{}/project/new/import/asana".format(SITES["front"]["scheme"],
-                                                                  SITES["front"]["domain"]),
-        "app_id": os.getenv('ASANA_IMPORTER_APP_ID'),
-        "app_secret": os.getenv('ASANA_IMPORTER_APP_SCRET')
-    }
-
 ENABLE_GITHUB_IMPORTER = os.getenv('ENABLE_GITHUB_IMPORTER', 'False') == 'True'
 if ENABLE_GITHUB_IMPORTER:
     IMPORTERS["github"] = {
