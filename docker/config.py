@@ -71,6 +71,12 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'user')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')
 
 #########################################
+## SESSION
+#########################################
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'True') == 'True'
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'True') == 'True'
+
+#########################################
 ## EVENTS
 #########################################
 EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
