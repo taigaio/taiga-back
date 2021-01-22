@@ -71,7 +71,7 @@ class UserPkField(Field):
         try:
             user = cached_get_user_by_pk(obj)
             return user.email
-        except users_models.User.DoesNotExist:
+        except Exception:
             return None
 
 

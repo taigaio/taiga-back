@@ -116,7 +116,7 @@ class UserPkField(serializers.RelatedField):
         try:
             user = cached_get_user_by_email(data)
             return user.pk
-        except users_models.User.DoesNotExist:
+        except Exception:
             return None
 
 
