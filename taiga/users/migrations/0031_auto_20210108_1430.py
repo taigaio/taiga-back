@@ -9,6 +9,10 @@ def update_is_staff(apps, schema_editor):
     user_model.objects.filter(is_superuser=True).update(is_staff=True)
 
 
+def empty_reverse(apps, schema_editor):
+    pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -27,5 +31,5 @@ class Migration(migrations.Migration):
             name='is_staff',
             field=models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status'),
         ),
-        migrations.RunPython(update_is_staff)
+        migrations.RunPython(update_is_staff, empty_reverse)
     ]

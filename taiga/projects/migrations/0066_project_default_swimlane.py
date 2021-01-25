@@ -13,6 +13,10 @@ def set_first_swimlane_as_default(apps, schema_editor):
         project.save()
 
 
+def empty_reverse(apps, schema_editor):
+    pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -25,5 +29,5 @@ class Migration(migrations.Migration):
             name='default_swimlane',
             field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='projects.Swimlane', verbose_name='default swimlane'),
         ),
-        migrations.RunPython(set_first_swimlane_as_default),
+        migrations.RunPython(set_first_swimlane_as_default, empty_reverse),
     ]

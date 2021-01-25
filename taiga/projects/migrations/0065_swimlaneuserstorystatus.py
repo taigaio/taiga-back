@@ -24,6 +24,10 @@ def create_swimlane_userstory_statuses_for_existing_swimlanes(apps, schema_edito
     SwimlaneUserStoryStatus.objects.bulk_create(objects)
 
 
+def empty_reverse(apps, schema_editor):
+    pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -46,5 +50,5 @@ class Migration(migrations.Migration):
                 'unique_together': {('swimlane', 'status')},
             },
         ),
-        migrations.RunPython(create_swimlane_userstory_statuses_for_existing_swimlanes),
+        migrations.RunPython(create_swimlane_userstory_statuses_for_existing_swimlanes, empty_reverse),
     ]
