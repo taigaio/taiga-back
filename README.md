@@ -44,8 +44,7 @@ If you **need help to setup Taiga**, want to **talk about some cool enhancemnt**
 
 If you **find a bug** in Taiga you can always report it:
 
-- in our [mailing list](http://groups.google.com/d/forum/taigaio).
-- in [github issues](https://github.com/taigaio/taiga-back/issues).
+- in [Taiga issues](https://tree.taiga.io/project/taiga/issues).
 - send us a mail to support@taiga.io if is a bug related to [tree.taiga.io](https://tree.taiga.io).
 - send a mail to security@taiga.io if is a **security bug**.
 
@@ -60,9 +59,9 @@ We are gathering lots of information from our users to build and enhance our doc
 
 Currently, we have authored three main documentation hubs:
 
-- **[API Docs](https://github.com/taigaio/taiga-doc)**: Our API documentation and reference for developing from Taiga API.
-- **[Installation Guide](https://github.com/taigaio/taiga-doc)**: If you need to install Taiga on your own server, this is the place to find some guides.
-- **[Taiga Support](https://github.com/taigaio/taiga-doc)**: This page is intended to be the support reference page for the users. If you find any mistake, please report it.
+- **[API](https://taigaio.github.io/taiga-doc/dist/api.html)**: Our API documentation and reference for developing from Taiga API.
+- **[Documentation](https://taigaio.github.io/taiga-doc/dist/)**: If you need to install Taiga on your own server, this is the place to find some guides.
+- **[Taiga Resources](https://resources.taiga.io)**: This page is intended to be the support reference page for the users. If you find any mistake, please report it.
 
 
 #### Translation ####
@@ -87,10 +86,11 @@ There are two possible ways to contribute to our UI:
 - **Language Localization**: We are eager to offer localized versions of Taiga. Some members of the community have already volunteered to work to provide a variety of languages. We are working to implement some changes to allow for this and expect to accept these requests in the near future.
 
 
-
 ## Setup development environment ##
 
-Just execute these commands in your virtualenv(wrapper):
+**IMPORTANT: Taiga only runs with Python >=3.6**
+
+Just execute these commands in your virtualenv:
 
 ```
 pip install -r requirements.txt
@@ -100,9 +100,6 @@ python manage.py loaddata initial_project_templates
 python manage.py sample_data
 ```
 
-**IMPORTANT: Taiga only runs with python 3.5+**
-
 Initial auth data: admin/123123
 
-If you want a complete environment for production usage, you can try the taiga bootstrapping
-scripts https://github.com/taigaio/taiga-scripts (warning: alpha state). All the information about the different installation methods (production, development, vagrant, docker...) can be found here http://taigaio.github.io/taiga-doc/dist/#_installation_guide.
+All the information about the different installation methods can be found here https://taigaio.github.io/taiga-doc/dist/#installation-guide.
