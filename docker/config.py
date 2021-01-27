@@ -17,10 +17,10 @@
 from .common import *
 import os
 
+
 #########################################
 ## GENERIC
 #########################################
-
 DEBUG = False
 
 DATABASES = {
@@ -43,12 +43,13 @@ SITES = {
 
 INSTANCE_TYPE = "D"
 
+
 #########################################
 ## MEDIA
 #########################################
-
 MEDIA_URL = f"{ TAIGA_URL }/media/"
 DEFAULT_FILE_STORAGE = "taiga_contrib_protected.storage.ProtectedFileSystemStorage"
+THUMBNAIL_DEFAULT_STORAGE = DEFAULT_FILE_STORAGE
 
 STATIC_URL = f"{ TAIGA_URL }/static/"
 
@@ -68,11 +69,13 @@ EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'user')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'password')
 
+
 #########################################
 ## SESSION
 #########################################
 SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'True') == 'True'
 CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'True') == 'True'
+
 
 #########################################
 ## EVENTS
@@ -137,7 +140,6 @@ PUBLIC_REGISTER_ENABLED = os.getenv('PUBLIC_REGISTER_ENABLED', 'False') == 'True
 #########################################
 ##  IMPORTERS
 #########################################
-
 ENABLE_GITHUB_IMPORTER = os.getenv('ENABLE_GITHUB_IMPORTER', 'False') == 'True'
 if ENABLE_GITHUB_IMPORTER:
     IMPORTERS["github"] = {

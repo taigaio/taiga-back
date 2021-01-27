@@ -53,6 +53,7 @@ SITES = {
 # MEDIA_ROOT = '/home/taiga/media'
 MEDIA_URL = f"{ TAIGA_URL }/media/"
 DEFAULT_FILE_STORAGE = "taiga_contrib_protected.storage.ProtectedFileSystemStorage"
+THUMBNAIL_DEFAULT_STORAGE = DEFAULT_FILE_STORAGE
 
 # STATIC_ROOT = '/home/taiga/static'
 STATIC_URL = f"{ TAIGA_URL }/static/"
