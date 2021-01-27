@@ -24,7 +24,7 @@ If you **find a bug** in Taiga you can always report it:
 - in [Taiga issues](https://tree.taiga.io/project/taiga/issues). **This is the preferred way**
 - in [Github issues](https://github.com/taigaio/taiga-back/issues)
 - send us a mail to support@taiga.io if is a bug related to [tree.taiga.io](https://tree.taiga.io)
-- send us a mail to security@taiga.io if is a **security bug**.
+- send us a mail to security@taiga.io if is a **security bug**
 
 One of our fellow Taiga developers will search, find and hunt it as soon as possible.
 
