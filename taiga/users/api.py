@@ -176,7 +176,7 @@ class UsersViewSet(ModelCrudViewSet):
         email = mail_builder.password_recovery(user, {"user": user})
         email.send()
 
-        return response.Ok({"detail": _("Mail sent successful!")})
+        return response.Ok({"detail": _("Mail sent successfully!")})
 
     @list_route(methods=["POST"])
     def change_password_from_recovery(self, request, pk=None):
@@ -188,7 +188,7 @@ class UsersViewSet(ModelCrudViewSet):
 
         validator = validators.RecoveryValidator(data=request.DATA, many=False)
         if not validator.is_valid():
-            raise exc.WrongArguments(_("Token is invalid"))
+            return response.BadRequest(validator.errors)
 
         try:
             user = models.User.objects.get(token=validator.data["token"])
@@ -270,8 +270,7 @@ class UsersViewSet(ModelCrudViewSet):
         """
         validator = validators.ChangeEmailValidator(data=request.DATA, many=False)
         if not validator.is_valid():
-            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you "
-                                       "didn't use it before?"))
+            return response.BadRequest(validator.errors)
 
         try:
             user = models.User.objects.get(email_token=validator.data["email_token"])

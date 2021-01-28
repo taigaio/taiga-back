@@ -29,7 +29,7 @@ class BaseRegisterValidator(validators.Validator):
     full_name = serializers.CharField(max_length=36)
     email = serializers.EmailField(max_length=255)
     username = serializers.CharField(max_length=255)
-    password = serializers.CharField(min_length=4)
+    password = serializers.CharField(min_length=6)
 
     def validate_username(self, attrs, source):
         value = attrs[source]
