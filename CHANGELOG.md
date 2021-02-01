@@ -5,33 +5,30 @@
 ### Features
 
 - Swimlanes
-
 - Generate docker image
+- Revamp email design
 
 ### Misc
 
 - Changed the configuration style to expect DJANGO_SETTINGS_MODULE
-
 - Improved performance when reordering
+- Updated dependencies
 
 ## 5.5.9 (2020-12-21)
 
 ### Fix
 
 - Fix attachment refresh feature.
-
 - Fix welcome email template layout.
 
 ### Misc
 
 - Updated requirements. **Please note that Python 3.5 is not supported**.
-
 - Several minor changes.
 
 ### i18n
 
 - Add Arabic.
-
 - Update Russian.
 
 ## 5.5.7 (2020-11-11)
@@ -39,7 +36,6 @@
 ### Misc
 
 - Upgrade requirements.
-
 - Fix deprecation warnings.
 
 ## 5.5.5 (2020-09-16)
