@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-21 19:28+0100\n"
-"PO-Revision-Date: 2021-01-21 18:29+0000\n"
+"POT-Creation-Date: 2021-01-28 14:37+0100\n"
+"PO-Revision-Date: 2021-01-28 13:44+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Korean (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ko/)\n"
@@ -28,182 +28,182 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 2.3\n"
 
-#: taiga/auth/api.py:71
+#: taiga/auth/api.py:69
 msgid "Public registration is disabled."
 msgstr ""
 
-#: taiga/auth/api.py:93
+#: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
 msgstr ""
 
-#: taiga/auth/api.py:102
+#: taiga/auth/api.py:100
 msgid "invalid registration type"
 msgstr ""
 
-#: taiga/auth/api.py:118
+#: taiga/auth/api.py:116
 msgid "invalid login type"
 msgstr "유효하지 않은 로그인 형태"
 
-#: taiga/auth/services.py:77
+#: taiga/auth/services.py:75
 msgid "Username is already in use."
 msgstr "이미 사용중인 아이디입니다."
 
-#: taiga/auth/services.py:80
+#: taiga/auth/services.py:78
 msgid "Email is already in use."
 msgstr "이미 사용중인 이메일입니다. "
 
-#: taiga/auth/services.py:96
+#: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
 msgstr ""
 
-#: taiga/auth/services.py:128
+#: taiga/auth/services.py:126
 msgid "User is already registered."
 msgstr "이미 등록된 사용자입니다. "
 
-#: taiga/auth/services.py:145
+#: taiga/auth/services.py:143
 msgid "This user is already a member of the project."
 msgstr "이 사용자는 이미 프로젝트의 회원입니다."
 
-#: taiga/auth/services.py:173
+#: taiga/auth/services.py:171
 msgid "Error while creating new user."
 msgstr ""
 
-#: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
-#: taiga/external_apps/services.py:34 taiga/projects/api.py:434
-#: taiga/projects/api.py:455
+#: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
+#: taiga/external_apps/services.py:32 taiga/projects/api.py:432
+#: taiga/projects/api.py:453
 msgid "Invalid token"
 msgstr "유효하지 않은 토큰"
 
-#: taiga/auth/validators.py:38 taiga/users/validators.py:47
+#: taiga/auth/validators.py:36 taiga/users/validators.py:45
 msgid "invalid username"
 msgstr "유효하지 않은 아이디"
 
-#: taiga/auth/validators.py:43 taiga/users/validators.py:53
+#: taiga/auth/validators.py:41 taiga/users/validators.py:51
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
 msgstr "필수. 255자 이하. 문자, 숫자 그리고 /./-/_ 만 사용 가능합니다'"
 
-#: taiga/auth/validators.py:50 taiga/auth/validators.py:53
-#: taiga/users/validators.py:66 taiga/users/validators.py:69
+#: taiga/auth/validators.py:48 taiga/auth/validators.py:51
+#: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
 msgstr ""
 
-#: taiga/base/api/fields.py:294
+#: taiga/base/api/fields.py:292
 msgid "This field is required."
 msgstr "필수 입력필드입니다."
 
-#: taiga/base/api/fields.py:295 taiga/base/api/relations.py:337
+#: taiga/base/api/fields.py:293 taiga/base/api/relations.py:335
 msgid "Invalid value."
 msgstr "유효하지 않은 값."
 
-#: taiga/base/api/fields.py:484
+#: taiga/base/api/fields.py:482
 #, python-format
 msgid "'%s' value must be either True or False."
 msgstr "'%s' 값은 반드시 True 또는 False이어야 합니다. "
 
-#: taiga/base/api/fields.py:549
+#: taiga/base/api/fields.py:547
 msgid ""
 "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
 msgstr ""
 "문자, 숫자, 언더 스코어(_)또는 하이픈(-)으로 이루어진 올바른 '슬러그'를 입력"
 "하세요."
 
-#: taiga/base/api/fields.py:564
+#: taiga/base/api/fields.py:562
 #, python-format
 msgid "Select a valid choice. %(value)s is not one of the available choices."
 msgstr ""
 "%(value)s 는 사용 가능한 선택 중 하나가 아닙니다. 올바른 것을 선택하세요."
 
-#: taiga/base/api/fields.py:638
+#: taiga/base/api/fields.py:636
 msgid "You email domain is not allowed"
 msgstr "당신의 이메일 도메인은 허용되지 않았"
 
-#: taiga/base/api/fields.py:647
+#: taiga/base/api/fields.py:645
 msgid "Enter a valid email address."
 msgstr "이메일 주소를 입력하세요."
 
-#: taiga/base/api/fields.py:689
+#: taiga/base/api/fields.py:687
 #, python-format
 msgid "Date has wrong format. Use one of these formats instead: %s"
 msgstr ""
 "날짜 형식이 잘못되었습니다. %s 대신에 아래의 포맷중에 하나를 사용해 주세요."
 
-#: taiga/base/api/fields.py:753
+#: taiga/base/api/fields.py:751
 #, python-format
 msgid "Datetime has wrong format. Use one of these formats instead: %s"
 msgstr ""
 "날짜와 시간의 형식이 잘못되었습니다. %s 대신에 아래의 포맷중에 하나를 사용해 "
 "주세요."
 
-#: taiga/base/api/fields.py:823
+#: taiga/base/api/fields.py:821
 #, python-format
 msgid "Time has wrong format. Use one of these formats instead: %s"
 msgstr ""
 "시간 형식이 잘못되었습니다. %s 대신에 아래의 포맷중에 하나를 사용해 주세요."
 
-#: taiga/base/api/fields.py:880
+#: taiga/base/api/fields.py:878
 msgid "Enter a whole number."
 msgstr "번호 전체를 입력하세요"
 
-#: taiga/base/api/fields.py:881 taiga/base/api/fields.py:934
+#: taiga/base/api/fields.py:879 taiga/base/api/fields.py:932
 #, python-format
 msgid "Ensure this value is less than or equal to %(limit_value)s."
 msgstr "이 값은 %(limit_value)s 보다 작거나 같아야 합니다."
 
-#: taiga/base/api/fields.py:882 taiga/base/api/fields.py:935
+#: taiga/base/api/fields.py:880 taiga/base/api/fields.py:933
 #, python-format
 msgid "Ensure this value is greater than or equal to %(limit_value)s."
 msgstr ""
 "이 값은 %(limit_value)s 보다 크거나 같아야 합니다.Ensure this value is "
 "greater than or equal to "
 
-#: taiga/base/api/fields.py:912
+#: taiga/base/api/fields.py:910
 #, python-format
 msgid "\"%s\" value must be a float."
 msgstr "\"%s\""
 
-#: taiga/base/api/fields.py:933
+#: taiga/base/api/fields.py:931
 msgid "Enter a number."
 msgstr "숫자를 입력하세요."
 
-#: taiga/base/api/fields.py:936
+#: taiga/base/api/fields.py:934
 #, python-format
 msgid "Ensure that there are no more than %s digits in total."
 msgstr "총계는 %s 자릿수가 넘지 않아야 합니다."
 
-#: taiga/base/api/fields.py:937
+#: taiga/base/api/fields.py:935
 #, python-format
 msgid "Ensure that there are no more than %s decimal places."
 msgstr "%s 자리 이하 여야합니다."
 
-#: taiga/base/api/fields.py:938
+#: taiga/base/api/fields.py:936
 #, python-format
 msgid "Ensure that there are no more than %s digits before the decimal point."
 msgstr "소수점 앞이 %s 자리 이하인지 확인하십시오."
 
-#: taiga/base/api/fields.py:1005
+#: taiga/base/api/fields.py:1003
 msgid "No file was submitted. Check the encoding type on the form."
 msgstr "제출된 파일이 없습니다. "
 
-#: taiga/base/api/fields.py:1006
+#: taiga/base/api/fields.py:1004
 msgid "No file was submitted."
 msgstr "제출한 파일이 없습니다."
 
-#: taiga/base/api/fields.py:1007
+#: taiga/base/api/fields.py:1005
 msgid "The submitted file is empty."
 msgstr "전송된 파일이 비어있습니다."
 
-#: taiga/base/api/fields.py:1008
+#: taiga/base/api/fields.py:1006
 #, python-format
 msgid ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr "이 파일 이름의 %(max)d 자 (%(length)d)를 초과하지 않도록하십시오."
 
-#: taiga/base/api/fields.py:1009
+#: taiga/base/api/fields.py:1007
 msgid "Please either submit a file or check the clear checkbox, not both."
 msgstr "파일을 제출하거나 모두 지우기 체크박스를 선택하십시오."
 
-#: taiga/base/api/fields.py:1049
+#: taiga/base/api/fields.py:1047
 msgid ""
 "Upload a valid image. The file you uploaded was either not an image or a "
 "corrupted image."
@@ -211,180 +211,180 @@ msgstr ""
 "유효한 이미지를 업로드하십시오. 업로드 한 파일이 이미지도 아니며 손상된 이미"
 "지 또한 아닙니다."
 
-#: taiga/base/api/mixins.py:281 taiga/base/exceptions.py:211
-#: taiga/hooks/api.py:69 taiga/projects/api.py:469 taiga/projects/api.py:502
-#: taiga/projects/api.py:1045 taiga/projects/epics/api.py:200
-#: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:237
-#: taiga/projects/mixins/ordering.py:58 taiga/projects/tasks/api.py:265
-#: taiga/projects/tasks/api.py:307 taiga/projects/userstories/api.py:395
-#: taiga/projects/userstories/api.py:448 taiga/projects/userstories/api.py:478
-#: taiga/webhooks/api.py:71
+#: taiga/base/api/mixins.py:279 taiga/base/exceptions.py:209
+#: taiga/hooks/api.py:67 taiga/projects/api.py:467 taiga/projects/api.py:500
+#: taiga/projects/api.py:1043 taiga/projects/epics/api.py:198
+#: taiga/projects/epics/api.py:282 taiga/projects/issues/api.py:238
+#: taiga/projects/mixins/ordering.py:56 taiga/projects/tasks/api.py:263
+#: taiga/projects/tasks/api.py:305 taiga/projects/userstories/api.py:393
+#: taiga/projects/userstories/api.py:446 taiga/projects/userstories/api.py:476
+#: taiga/webhooks/api.py:69
 msgid "Blocked element"
 msgstr "차단된 엘리먼트"
 
-#: taiga/base/api/pagination.py:228
+#: taiga/base/api/pagination.py:226
 msgid "Page is not 'last', nor can it be converted to an int."
 msgstr "페이지가 '마지막'이 아니며 int로 변환 될 수도 없습니다."
 
-#: taiga/base/api/pagination.py:232
+#: taiga/base/api/pagination.py:230
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
 msgstr "잘못된 페이지 (%(page_number)s): %(message)s"
 
-#: taiga/base/api/permissions.py:65
+#: taiga/base/api/permissions.py:63
 msgid "Invalid permission definition."
 msgstr "권한 정의가 잘못되었습니다."
 
-#: taiga/base/api/relations.py:247
+#: taiga/base/api/relations.py:245
 #, python-format
 msgid "Invalid pk '%s' - object does not exist."
 msgstr "잘못된 pk '%s' - 객체가 존재하지 않습니다."
 
-#: taiga/base/api/relations.py:248
+#: taiga/base/api/relations.py:246
 #, python-format
 msgid "Incorrect type. Expected pk value, received %s."
 msgstr "pk값을 받을거라 예상했지만 %s 를 받음. 정확하지 않은 형식"
 
-#: taiga/base/api/relations.py:336
+#: taiga/base/api/relations.py:334
 #, python-format
 msgid "Object with %s=%s does not exist."
 msgstr "%s = %s의 객체가 존재하지 않습니다."
 
-#: taiga/base/api/relations.py:372
+#: taiga/base/api/relations.py:370
 msgid "Invalid hyperlink - No URL match"
 msgstr "잘못된 하이퍼 링크 - 일치하는 URL 없음"
 
-#: taiga/base/api/relations.py:373
+#: taiga/base/api/relations.py:371
 msgid "Invalid hyperlink - Incorrect URL match"
 msgstr "잘못된 하이퍼 링크 - 잘못된 URL 일치"
 
-#: taiga/base/api/relations.py:374
+#: taiga/base/api/relations.py:372
 msgid "Invalid hyperlink due to configuration error"
 msgstr "구성 오류로 인한 잘못된 하이퍼 링크"
 
-#: taiga/base/api/relations.py:375
+#: taiga/base/api/relations.py:373
 msgid "Invalid hyperlink - object does not exist."
 msgstr "유효하지 않은 하이퍼링크 - 객체가 존재하지 않음."
 
-#: taiga/base/api/relations.py:376
+#: taiga/base/api/relations.py:374
 #, python-format
 msgid "Incorrect type.  Expected url string, received %s."
 msgstr "url 문자를 받을거라 예상했지만 %s 를 받음. 정확하지 않은 형식"
 
-#: taiga/base/api/serializers.py:324
+#: taiga/base/api/serializers.py:322
 msgid "Invalid data"
 msgstr "데이터가 유효하지 않습니다."
 
-#: taiga/base/api/serializers.py:416
+#: taiga/base/api/serializers.py:414
 msgid "No input provided"
 msgstr "제공된 입력 없음"
 
-#: taiga/base/api/serializers.py:579
+#: taiga/base/api/serializers.py:577
 msgid "Cannot create a new item, only existing items may be updated."
 msgstr "새 항목을 만들 수 없으며 기존 항목 만 수정 할 수 있습니다."
 
-#: taiga/base/api/serializers.py:590
+#: taiga/base/api/serializers.py:588
 msgid "Expected a list of items."
 msgstr "예상되는 항목 목록."
 
-#: taiga/base/api/views.py:126
+#: taiga/base/api/views.py:124
 msgid "Not found"
 msgstr "찾지 못함"
 
-#: taiga/base/api/views.py:129
+#: taiga/base/api/views.py:127
 msgid "Permission denied"
 msgstr "권한이 없습니다"
 
-#: taiga/base/api/views.py:491
+#: taiga/base/api/views.py:489
 msgid "Server application error"
 msgstr "서버 애플리케이션 에러"
 
-#: taiga/base/connectors/exceptions.py:26
+#: taiga/base/connectors/exceptions.py:24
 msgid "Connection error."
 msgstr "연결 에러"
 
-#: taiga/base/exceptions.py:79
+#: taiga/base/exceptions.py:77
 msgid "Malformed request."
 msgstr "형식에 어긋난 요청."
 
-#: taiga/base/exceptions.py:84
+#: taiga/base/exceptions.py:82
 msgid "Incorrect authentication credentials."
 msgstr "정확하지 않은 인증 자격 증명."
 
-#: taiga/base/exceptions.py:89
+#: taiga/base/exceptions.py:87
 msgid "Authentication credentials were not provided."
 msgstr "인증 자격 증명이 제공되지 않았습니다."
 
-#: taiga/base/exceptions.py:94
+#: taiga/base/exceptions.py:92
 msgid "You do not have permission to perform this action."
 msgstr "이 작업을 할 권한이 없습니다."
 
-#: taiga/base/exceptions.py:99
+#: taiga/base/exceptions.py:97
 #, python-format
 msgid "Method '%s' not allowed."
 msgstr "메서드 '%s' 가 허용되지 않았습니다."
 
-#: taiga/base/exceptions.py:107
+#: taiga/base/exceptions.py:105
 msgid "Could not satisfy the request's Accept header"
 msgstr "요청의 Accept 헤더를 만족시킬 수 없습니다."
 
-#: taiga/base/exceptions.py:116
+#: taiga/base/exceptions.py:114
 #, python-format
 msgid "Unsupported media type '%s' in request."
 msgstr "요청시 지원되지 않는 미디어 유형 '%s'"
 
-#: taiga/base/exceptions.py:124
+#: taiga/base/exceptions.py:122
 msgid "Request was throttled."
 msgstr "요청이 제한되었습니다."
 
-#: taiga/base/exceptions.py:125
+#: taiga/base/exceptions.py:123
 #, python-format
 msgid "Expected available in %d second%s."
 msgstr "%d 초%s에서 사용할 수 있습니다."
 
-#: taiga/base/exceptions.py:139
+#: taiga/base/exceptions.py:137
 msgid "Unexpected error"
 msgstr "알 수 없는 에러"
 
-#: taiga/base/exceptions.py:151
+#: taiga/base/exceptions.py:149
 msgid "Not found."
 msgstr "찾지 못함."
 
-#: taiga/base/exceptions.py:156
+#: taiga/base/exceptions.py:154
 msgid "Method not supported for this endpoint."
 msgstr "이 끝점에서 지원되지 않는 메서드입니다."
 
-#: taiga/base/exceptions.py:164 taiga/base/exceptions.py:172
+#: taiga/base/exceptions.py:162 taiga/base/exceptions.py:170
 msgid "Wrong arguments."
 msgstr "잘못된 인수"
 
-#: taiga/base/exceptions.py:176
+#: taiga/base/exceptions.py:174
 msgid "Data validation error"
 msgstr "데이터 검증 에러"
 
-#: taiga/base/exceptions.py:188
+#: taiga/base/exceptions.py:186
 msgid "Integrity Error for wrong or invalid arguments"
 msgstr "잘못되었거나 유효하지 않은 인수에 대한 무결성 오류"
 
-#: taiga/base/exceptions.py:195
+#: taiga/base/exceptions.py:193
 msgid "Precondition error"
 msgstr "필수조건 오류"
 
-#: taiga/base/exceptions.py:219
+#: taiga/base/exceptions.py:217
 msgid "No room left for more projects."
 msgstr "더 많은 프로젝트를 위한 공간이 남지 않았습니다."
 
-#: taiga/base/fields.py:88
+#: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
 msgstr ""
 
-#: taiga/base/filters.py:106 taiga/base/filters.py:635
+#: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
 msgstr "필터 매개 변수 유형에 오류가 있습니다."
 
-#: taiga/base/filters.py:173 taiga/base/filters.py:297
-#: taiga/base/filters.py:531 taiga/projects/filters.py:65
+#: taiga/base/filters.py:171 taiga/base/filters.py:295
+#: taiga/base/filters.py:529 taiga/projects/filters.py:63
 msgid "'project' must be an integer value."
 msgstr "'project'는 반드시 정수이어야 합니다."
 
@@ -396,7 +396,7 @@ msgstr "타이가"
 msgid "You have been Taigatized"
 msgstr "당신은 타이가화 되었습니다."
 
-#: taiga/base/templates/emails/hero-body-html.jinja:297
+#: taiga/base/templates/emails/hero-body-html.jinja:298
 #, python-format
 msgid ""
 "\n"
@@ -430,11 +430,11 @@ msgstr "GitHub에서 코드 가져오기"
 msgid "[Taiga] Updates"
 msgstr "[타이가] 업데이트"
 
-#: taiga/base/templates/emails/updates-body-html.jinja:359
+#: taiga/base/templates/emails/updates-body-html.jinja:360
 msgid "Updates"
 msgstr "업데이트"
 
-#: taiga/base/templates/emails/updates-body-html.jinja:365
+#: taiga/base/templates/emails/updates-body-html.jinja:366
 #, python-format
 msgid ""
 "\n"
@@ -462,176 +462,176 @@ msgstr ""
 "    댓글: %(comment)s\n"
 "        "
 
-#: taiga/base/utils/urls.py:68
+#: taiga/base/utils/urls.py:65
 msgid "Host access error"
 msgstr ""
 
-#: taiga/base/utils/urls.py:74
+#: taiga/base/utils/urls.py:71
 msgid "IP Address error"
 msgstr ""
 
-#: taiga/events/events.py:121
+#: taiga/events/events.py:119
 msgid "User story created"
 msgstr ""
 
-#: taiga/events/events.py:124
+#: taiga/events/events.py:122
 msgid "User story changed"
 msgstr ""
 
-#: taiga/events/events.py:127
+#: taiga/events/events.py:125
 msgid "User story deleted"
 msgstr ""
 
-#: taiga/events/events.py:129
+#: taiga/events/events.py:127
 msgid "US #{} - {}"
 msgstr ""
 
-#: taiga/events/events.py:132
+#: taiga/events/events.py:130
 msgid "Task created"
 msgstr ""
 
-#: taiga/events/events.py:135
+#: taiga/events/events.py:133
 msgid "Task changed"
 msgstr ""
 
-#: taiga/events/events.py:138
+#: taiga/events/events.py:136
 msgid "Task deleted"
 msgstr ""
 
-#: taiga/events/events.py:140
+#: taiga/events/events.py:138
 msgid "Task #{} - {}"
 msgstr ""
 
-#: taiga/events/events.py:143
+#: taiga/events/events.py:141
 msgid "Issue created"
 msgstr ""
 
-#: taiga/events/events.py:146
+#: taiga/events/events.py:144
 msgid "Issue changed"
 msgstr ""
 
-#: taiga/events/events.py:149
+#: taiga/events/events.py:147
 msgid "Issue deleted"
 msgstr ""
 
-#: taiga/events/events.py:151
+#: taiga/events/events.py:149
 msgid "Issue: #{} - {}"
 msgstr ""
 
-#: taiga/events/events.py:154
+#: taiga/events/events.py:152
 msgid "Wiki Page created"
 msgstr ""
 
-#: taiga/events/events.py:157
+#: taiga/events/events.py:155
 msgid "Wiki Page changed"
 msgstr ""
 
-#: taiga/events/events.py:160
+#: taiga/events/events.py:158
 msgid "Wiki Page deleted"
 msgstr ""
 
-#: taiga/events/events.py:162
+#: taiga/events/events.py:160
 msgid "Wiki Page: {}"
 msgstr ""
 
-#: taiga/events/events.py:165
+#: taiga/events/events.py:163
 msgid "Sprint created"
 msgstr ""
 
-#: taiga/events/events.py:168
+#: taiga/events/events.py:166
 msgid "Sprint changed"
 msgstr ""
 
-#: taiga/events/events.py:171
+#: taiga/events/events.py:169
 msgid "Sprint deleted"
 msgstr ""
 
-#: taiga/events/events.py:173
+#: taiga/events/events.py:171
 msgid "Sprint: {}"
 msgstr ""
 
-#: taiga/export_import/api.py:127
+#: taiga/export_import/api.py:125
 msgid "We needed at least one role"
 msgstr "최소 한 개의 역할이 필요합니다."
 
-#: taiga/export_import/api.py:339
+#: taiga/export_import/api.py:337
 msgid "Needed dump file"
 msgstr "덤프 파일이 필요함"
 
-#: taiga/export_import/api.py:349
+#: taiga/export_import/api.py:347
 msgid "Invalid dump format"
 msgstr "잘못된 덤프 포맷"
 
-#: taiga/export_import/services/store.py:803
-#: taiga/export_import/services/store.py:825
+#: taiga/export_import/services/store.py:801
+#: taiga/export_import/services/store.py:823
 msgid "error importing project data"
 msgstr "프로젝트 데이터를 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:832
+#: taiga/export_import/services/store.py:830
 msgid "error importing roles"
 msgstr "역할을 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:837
+#: taiga/export_import/services/store.py:835
 msgid "error importing memberships"
 msgstr "회원을 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:852
+#: taiga/export_import/services/store.py:850
 msgid "error importing lists of project attributes"
 msgstr "프로젝트 속성 목록을 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:856
+#: taiga/export_import/services/store.py:854
 msgid "error importing default project attribute values"
 msgstr ""
 
-#: taiga/export_import/services/store.py:867
+#: taiga/export_import/services/store.py:865
 msgid "error importing custom attributes"
 msgstr "사용자 정의 속성을 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:870
+#: taiga/export_import/services/store.py:868
 msgid "error importing sprints"
 msgstr "스프린트를 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:874
+#: taiga/export_import/services/store.py:872
 msgid "error importing issues"
 msgstr "이슈를 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:878
+#: taiga/export_import/services/store.py:876
 msgid "error importing user stories"
 msgstr "유저 스토리를 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:882
+#: taiga/export_import/services/store.py:880
 msgid "error importing epics"
 msgstr "에픽을 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:886
+#: taiga/export_import/services/store.py:884
 msgid "error importing tasks"
 msgstr "태스크를 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:893
+#: taiga/export_import/services/store.py:891
 msgid "error importing wiki pages"
 msgstr "위키 페이지를 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:897
+#: taiga/export_import/services/store.py:895
 msgid "error importing wiki links"
 msgstr "위키 링크를 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:901
+#: taiga/export_import/services/store.py:899
 msgid "error importing tags"
 msgstr "태그를 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:905
+#: taiga/export_import/services/store.py:903
 msgid "error importing timelines"
 msgstr "타임라인을 가져오는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/services/store.py:928
+#: taiga/export_import/services/store.py:926
 msgid "unexpected error importing project"
 msgstr "예상치 못한 프로젝트 가져 오기 오류가 발생하였습니다."
 
-#: taiga/export_import/tasks.py:62 taiga/export_import/tasks.py:63
+#: taiga/export_import/tasks.py:60 taiga/export_import/tasks.py:61
 msgid "Error generating project dump"
 msgstr "프로젝트 덤프를 생성하는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/tasks.py:91
+#: taiga/export_import/tasks.py:89
 #, python-brace-format
 msgid ""
 "\n"
@@ -666,15 +666,15 @@ msgstr ""
 "에러 추적:\n"
 "------------"
 
-#: taiga/export_import/tasks.py:120
+#: taiga/export_import/tasks.py:118
 msgid "Error loading project dump"
 msgstr "프로젝트 덤프를 로드하는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/tasks.py:121
+#: taiga/export_import/tasks.py:119
 msgid "Error loading your project dump file"
 msgstr "프로젝트 덤프 파일을 로드하는 중 오류가 발생하였습니다."
 
-#: taiga/export_import/tasks.py:136
+#: taiga/export_import/tasks.py:134
 msgid "  -- no detail info --"
 msgstr "-- 상세 정보가 없습니다. --"
 
@@ -726,7 +726,7 @@ msgid ""
 "    <p>The Taiga system administrators have been informed.<br/> Please, try "
 "it again or contact with the support team at\n"
 "       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
-"\"color: #699b05\">%(support_email)s</a></p>\n"
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
@@ -763,7 +763,7 @@ msgid ""
 "    <p>The %(product_name)s system administrators have been informed.<br/> "
 "Please, try it again or contact with the support team at\n"
 "       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
-"\"color: #699b05\">%(support_email)s</a></p>\n"
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    <h2>Error details</h2>\n"
 "    <pre>%(details)s</pre>\n"
@@ -829,104 +829,104 @@ msgstr ""
 msgid "[%(project)s] Your project dump has been imported"
 msgstr "[%(project)s] 프로젝트 덤프를 가져오기 하였습니다."
 
-#: taiga/export_import/validators/fields.py:144
+#: taiga/export_import/validators/fields.py:142
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\" 이 프로젝트에서 찾을 수 없습니다."
 
-#: taiga/export_import/validators/validators.py:184
-#: taiga/projects/custom_attributes/validators.py:109
+#: taiga/export_import/validators/validators.py:182
+#: taiga/projects/custom_attributes/validators.py:107
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "잘못된 컨텐츠. 반드시 {\"key\": \"value\",...} 형태이어야 합니다."
 
-#: taiga/export_import/validators/validators.py:199
-#: taiga/projects/custom_attributes/validators.py:124
+#: taiga/export_import/validators/validators.py:197
+#: taiga/projects/custom_attributes/validators.py:122
 msgid "It contains invalid custom fields."
 msgstr ""
 
-#: taiga/export_import/validators/validators.py:279
-#: taiga/projects/validators.py:54
+#: taiga/export_import/validators/validators.py:277
+#: taiga/projects/validators.py:52
 msgid "Name duplicated for the project"
 msgstr "프로젝트 이름이 중복되었습니다."
 
-#: taiga/export_import/validators/validators.py:314
+#: taiga/export_import/validators/validators.py:312
 #, python-format
 msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
 
-#: taiga/external_apps/api.py:43 taiga/external_apps/api.py:70
-#: taiga/external_apps/api.py:82
+#: taiga/external_apps/api.py:41 taiga/external_apps/api.py:68
+#: taiga/external_apps/api.py:80
 msgid "Authentication required"
 msgstr "인증 필요"
 
-#: taiga/external_apps/models.py:35
-#: taiga/projects/custom_attributes/models.py:36
-#: taiga/projects/milestones/models.py:37 taiga/projects/models.py:175
-#: taiga/projects/models.py:566 taiga/projects/models.py:605
-#: taiga/projects/models.py:649 taiga/projects/models.py:675
-#: taiga/projects/models.py:706 taiga/projects/models.py:744
-#: taiga/projects/models.py:776 taiga/projects/models.py:802
-#: taiga/projects/models.py:828 taiga/projects/models.py:866
-#: taiga/projects/models.py:892 taiga/projects/models.py:930
-#: taiga/projects/models.py:993 taiga/users/admin.py:54
-#: taiga/users/models.py:311 taiga/webhooks/models.py:34
+#: taiga/external_apps/models.py:33
+#: taiga/projects/custom_attributes/models.py:34
+#: taiga/projects/milestones/models.py:35 taiga/projects/models.py:173
+#: taiga/projects/models.py:564 taiga/projects/models.py:603
+#: taiga/projects/models.py:647 taiga/projects/models.py:673
+#: taiga/projects/models.py:704 taiga/projects/models.py:742
+#: taiga/projects/models.py:774 taiga/projects/models.py:800
+#: taiga/projects/models.py:826 taiga/projects/models.py:864
+#: taiga/projects/models.py:890 taiga/projects/models.py:928
+#: taiga/projects/models.py:991 taiga/users/admin.py:52
+#: taiga/users/models.py:309 taiga/webhooks/models.py:32
 msgid "name"
 msgstr "이름"
 
-#: taiga/external_apps/models.py:37
+#: taiga/external_apps/models.py:35
 msgid "Icon url"
 msgstr "아이콘 url"
 
-#: taiga/external_apps/models.py:38
+#: taiga/external_apps/models.py:36
 msgid "web"
 msgstr "웹"
 
-#: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:78
-#: taiga/projects/custom_attributes/models.py:37
-#: taiga/projects/epics/models.py:67
-#: taiga/projects/history/templatetags/functions.py:25
-#: taiga/projects/issues/models.py:104 taiga/projects/models.py:179
-#: taiga/projects/models.py:997 taiga/projects/tasks/models.py:94
-#: taiga/projects/userstories/models.py:121
+#: taiga/external_apps/models.py:37 taiga/projects/attachments/models.py:76
+#: taiga/projects/custom_attributes/models.py:35
+#: taiga/projects/epics/models.py:65
+#: taiga/projects/history/templatetags/functions.py:23
+#: taiga/projects/issues/models.py:102 taiga/projects/models.py:177
+#: taiga/projects/models.py:995 taiga/projects/tasks/models.py:92
+#: taiga/projects/userstories/models.py:119
 msgid "description"
 msgstr "설명"
 
-#: taiga/external_apps/models.py:41
+#: taiga/external_apps/models.py:39
 msgid "Next url"
 msgstr "다음 url"
 
-#: taiga/external_apps/models.py:58 taiga/projects/contact/models.py:28
-#: taiga/projects/likes/models.py:35 taiga/projects/notifications/models.py:106
-#: taiga/projects/votes/models.py:56
+#: taiga/external_apps/models.py:56 taiga/projects/contact/models.py:26
+#: taiga/projects/likes/models.py:32 taiga/projects/notifications/models.py:104
+#: taiga/projects/votes/models.py:53
 msgid "user"
 msgstr "유저"
 
-#: taiga/external_apps/models.py:67
+#: taiga/external_apps/models.py:65
 msgid "application"
 msgstr "어플리케이션"
 
-#: taiga/feedback/models.py:25 taiga/users/models.py:146
+#: taiga/feedback/models.py:23 taiga/users/models.py:144
 msgid "full name"
 msgstr "성명"
 
-#: taiga/feedback/models.py:27 taiga/users/models.py:138
+#: taiga/feedback/models.py:25 taiga/users/models.py:136
 msgid "email address"
 msgstr "이메일 주소"
 
-#: taiga/feedback/models.py:29 taiga/projects/contact/models.py:41
+#: taiga/feedback/models.py:27 taiga/projects/contact/models.py:39
 msgid "comment"
 msgstr "댓글"
 
-#: taiga/feedback/models.py:31 taiga/projects/attachments/models.py:64
-#: taiga/projects/contact/models.py:44
-#: taiga/projects/custom_attributes/models.py:52
-#: taiga/projects/epics/models.py:60 taiga/projects/issues/models.py:96
-#: taiga/projects/likes/models.py:39 taiga/projects/milestones/models.py:60
-#: taiga/projects/models.py:186 taiga/projects/models.py:1001
-#: taiga/projects/notifications/models.py:110 taiga/projects/tasks/models.py:80
-#: taiga/projects/userstories/models.py:113 taiga/projects/votes/models.py:60
-#: taiga/projects/wiki/models.py:62 taiga/userstorage/models.py:35
+#: taiga/feedback/models.py:29 taiga/projects/attachments/models.py:62
+#: taiga/projects/contact/models.py:42
+#: taiga/projects/custom_attributes/models.py:50
+#: taiga/projects/epics/models.py:58 taiga/projects/issues/models.py:94
+#: taiga/projects/likes/models.py:36 taiga/projects/milestones/models.py:58
+#: taiga/projects/models.py:184 taiga/projects/models.py:999
+#: taiga/projects/notifications/models.py:108 taiga/projects/tasks/models.py:78
+#: taiga/projects/userstories/models.py:111 taiga/projects/votes/models.py:57
+#: taiga/projects/wiki/models.py:60 taiga/userstorage/models.py:33
 msgid "created date"
 msgstr "생성된 날짜"
 
@@ -957,7 +957,7 @@ msgstr ""
 "    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:18
-#: taiga/projects/admin.py:106 taiga/users/admin.py:120
+#: taiga/projects/admin.py:104 taiga/users/admin.py:118
 msgid "Extra info"
 msgstr "추가 정보"
 
@@ -1015,21 +1015,21 @@ msgstr ""
 "\n"
 "[타이가] %(full_name)s <%(email)s>의 피드백\n"
 
-#: taiga/hooks/api.py:54
+#: taiga/hooks/api.py:52
 msgid "The payload is not valid json"
 msgstr ""
 
-#: taiga/hooks/api.py:63 taiga/projects/epics/api.py:154
-#: taiga/projects/issues/api.py:145 taiga/projects/tasks/api.py:216
-#: taiga/projects/userstories/api.py:341
+#: taiga/hooks/api.py:61 taiga/projects/epics/api.py:152
+#: taiga/projects/issues/api.py:146 taiga/projects/tasks/api.py:214
+#: taiga/projects/userstories/api.py:339
 msgid "The project doesn't exist"
 msgstr "프로젝트가 존재하지 않습니다."
 
-#: taiga/hooks/api.py:66
+#: taiga/hooks/api.py:64
 msgid "Bad signature"
 msgstr "좋지 않은 기호"
 
-#: taiga/hooks/event_hooks.py:81
+#: taiga/hooks/event_hooks.py:79
 #, python-brace-format
 msgid ""
 "[@{user_name}]({user_url} \"See @{user_name}'s {platform} profile\") says in "
@@ -1042,7 +1042,7 @@ msgstr ""
 "\n"
 "\"{comment_message}\""
 
-#: taiga/hooks/event_hooks.py:86
+#: taiga/hooks/event_hooks.py:84
 #, python-brace-format
 msgid ""
 "Comment From {platform}:\n"
@@ -1053,11 +1053,11 @@ msgstr ""
 "\n"
 "> {comment_message}"
 
-#: taiga/hooks/event_hooks.py:99
+#: taiga/hooks/event_hooks.py:97
 msgid "Invalid issue comment information"
 msgstr "이슈 댓글 정보가 유효하지 않습니다."
 
-#: taiga/hooks/event_hooks.py:145
+#: taiga/hooks/event_hooks.py:143
 #, python-brace-format
 msgid ""
 "Issue created by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
@@ -1067,56 +1067,56 @@ msgstr ""
 "[{platform}#{number}]({url} \"이슈로 가기\"). 플랫폼으로부터 이슈가 생성되었"
 "습니다."
 
-#: taiga/hooks/event_hooks.py:149
+#: taiga/hooks/event_hooks.py:147
 #, python-brace-format
 msgid "Issue created from {platform}."
 msgstr "{platform} 플랫폼으로부터 이슈가 생성되었습니다."
 
-#: taiga/hooks/event_hooks.py:157
+#: taiga/hooks/event_hooks.py:155
 #, python-brace-format
 msgid ""
 "Issue modified by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
-#: taiga/hooks/event_hooks.py:161
+#: taiga/hooks/event_hooks.py:159
 #, python-brace-format
 msgid "Issue modified from {platform}."
 msgstr ""
 
-#: taiga/hooks/event_hooks.py:169
+#: taiga/hooks/event_hooks.py:167
 #, python-brace-format
 msgid ""
 "Issue closed by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
-#: taiga/hooks/event_hooks.py:173
+#: taiga/hooks/event_hooks.py:171
 #, python-brace-format
 msgid "Issue closed from {platform}."
 msgstr ""
 
-#: taiga/hooks/event_hooks.py:181
+#: taiga/hooks/event_hooks.py:179
 #, python-brace-format
 msgid ""
 "Issue reopened by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
-#: taiga/hooks/event_hooks.py:185
+#: taiga/hooks/event_hooks.py:183
 #, python-brace-format
 msgid "Issue reopened from {platform}."
 msgstr ""
 
-#: taiga/hooks/event_hooks.py:280
+#: taiga/hooks/event_hooks.py:278
 msgid "Invalid issue information"
 msgstr "이슈 정보가 유효하지 않습니다."
 
-#: taiga/hooks/event_hooks.py:302 taiga/hooks/event_hooks.py:324
+#: taiga/hooks/event_hooks.py:300 taiga/hooks/event_hooks.py:322
 msgid "unknown user"
 msgstr "알수 없는 유저"
 
-#: taiga/hooks/event_hooks.py:309
+#: taiga/hooks/event_hooks.py:307
 #, python-brace-format
 msgid ""
 "{user_text} changed the status from [{platform} commit]({commit_url} \"See "
@@ -1125,7 +1125,7 @@ msgid ""
 "  - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
 
-#: taiga/hooks/event_hooks.py:314
+#: taiga/hooks/event_hooks.py:312
 #, python-brace-format
 msgid ""
 "Changed status from {platform} commit.\n"
@@ -1136,7 +1136,7 @@ msgstr ""
 "\n"
 " - 상태: **{src_status}** → **{dst_status}**"
 
-#: taiga/hooks/event_hooks.py:332
+#: taiga/hooks/event_hooks.py:330
 #, python-brace-format
 msgid ""
 "This {type_name} has been mentioned by {user_text} in the [{platform} commit]"
@@ -1144,81 +1144,81 @@ msgid ""
 "\"{commit_message}\""
 msgstr ""
 
-#: taiga/hooks/event_hooks.py:337
+#: taiga/hooks/event_hooks.py:335
 #, python-brace-format
 msgid ""
 "This issue has been mentioned in the {platform} commit \"{commit_message}\""
 msgstr "{platform} 커밋에서 이 이슈가 언급되었습니다. \"{commit_message}\""
 
-#: taiga/hooks/event_hooks.py:359
+#: taiga/hooks/event_hooks.py:357
 msgid "The referenced element doesn't exist"
 msgstr "참조된 엘리먼트가 존재하지 않습니다."
 
-#: taiga/hooks/event_hooks.py:375
+#: taiga/hooks/event_hooks.py:373
 msgid "The status doesn't exist"
 msgstr "상태가 존재하지 않습니다."
 
-#: taiga/importers/asana/api.py:43 taiga/importers/asana/api.py:85
-#: taiga/importers/github/api.py:44 taiga/importers/github/api.py:74
-#: taiga/importers/jira/api.py:60 taiga/importers/jira/api.py:106
-#: taiga/importers/pivotal/api.py:43 taiga/importers/pivotal/api.py:80
-#: taiga/importers/trello/api.py:46 taiga/importers/trello/api.py:83
+#: taiga/importers/asana/api.py:44 taiga/importers/asana/api.py:86
+#: taiga/importers/github/api.py:45 taiga/importers/github/api.py:75
+#: taiga/importers/jira/api.py:61 taiga/importers/jira/api.py:107
+#: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
+#: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
 msgid "The project param is needed"
 msgstr "프로젝트 값이 필요합니다."
 
-#: taiga/importers/asana/api.py:50 taiga/importers/asana/api.py:73
-#: taiga/importers/asana/api.py:139
+#: taiga/importers/asana/api.py:51 taiga/importers/asana/api.py:74
+#: taiga/importers/asana/api.py:140
 msgid "Invalid Asana API request"
 msgstr "Asana API 요청이 올바르지 않습니다."
 
-#: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
-#: taiga/importers/asana/api.py:141
+#: taiga/importers/asana/api.py:53 taiga/importers/asana/api.py:76
+#: taiga/importers/asana/api.py:142
 msgid "Failed to make the request to Asana API"
 msgstr "Asana API에 요청하는 중 실패하였습니다."
 
-#: taiga/importers/asana/api.py:129 taiga/importers/github/api.py:123
+#: taiga/importers/asana/api.py:130 taiga/importers/github/api.py:124
 msgid "Code param needed"
 msgstr "Code 값이 필요합니다."
 
-#: taiga/importers/asana/tasks.py:42 taiga/importers/asana/tasks.py:43
+#: taiga/importers/asana/tasks.py:40 taiga/importers/asana/tasks.py:41
 msgid "Error importing Asana project"
 msgstr "Asana 프로젝트를 가져오는 중 에러가 발생하였습니다."
 
-#: taiga/importers/github/api.py:135
+#: taiga/importers/github/api.py:136
 msgid "Invalid auth data"
 msgstr "인증 정보가 유효하지 않습니다."
 
-#: taiga/importers/github/api.py:137
+#: taiga/importers/github/api.py:138
 msgid "Third party service failing"
 msgstr "서드 파티 서비스에 실패하였습니다."
 
-#: taiga/importers/github/tasks.py:42 taiga/importers/github/tasks.py:43
+#: taiga/importers/github/tasks.py:40 taiga/importers/github/tasks.py:41
 msgid "Error importing GitHub project"
 msgstr "GitHub프로젝트를 가져오는 중 에러가 발생하였습니다."
 
-#: taiga/importers/jira/api.py:62 taiga/importers/jira/api.py:89
-#: taiga/importers/jira/api.py:109 taiga/importers/jira/api.py:182
+#: taiga/importers/jira/api.py:63 taiga/importers/jira/api.py:90
+#: taiga/importers/jira/api.py:110 taiga/importers/jira/api.py:183
 msgid "The url param is needed"
 msgstr "url값이 필요합니다."
 
-#: taiga/importers/jira/api.py:158
+#: taiga/importers/jira/api.py:159
 msgid "Invalid project_type {}"
 msgstr "유효하지 않은 프로젝트_유형 {}"
 
-#: taiga/importers/jira/api.py:192
+#: taiga/importers/jira/api.py:193
 msgid "Invalid Jira server configuration."
 msgstr "잘못된 지라 서버 설정입니다."
 
-#: taiga/importers/jira/api.py:233 taiga/importers/pivotal/api.py:138
-#: taiga/importers/trello/api.py:143
+#: taiga/importers/jira/api.py:234 taiga/importers/pivotal/api.py:139
+#: taiga/importers/trello/api.py:144
 msgid "Invalid or expired auth token"
 msgstr "인증 토큰이 유효하지 않거나 만료되었습니다."
 
-#: taiga/importers/jira/tasks.py:48 taiga/importers/jira/tasks.py:49
+#: taiga/importers/jira/tasks.py:46 taiga/importers/jira/tasks.py:47
 msgid "Error importing Jira project"
 msgstr "Jira 프로젝트를 가져오는 중 에러가 발생하였습니다."
 
-#: taiga/importers/pivotal/tasks.py:42 taiga/importers/pivotal/tasks.py:43
+#: taiga/importers/pivotal/tasks.py:40 taiga/importers/pivotal/tasks.py:41
 msgid "Error importing PivotalTracker project"
 msgstr "PivotalTracker 프로젝트를 가져오는 중 에러가 발생하였습니다."
 
@@ -1300,7 +1300,7 @@ msgid ""
 "    <p>The %(product_name)s system administrators have been informed.<br/> "
 "Please, try it again or contact with the support team at\n"
 "       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
-"\"color: #699b05\">%(support_email)s</a></p>\n"
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
@@ -1373,304 +1373,304 @@ msgstr ""
 msgid "[%(project)s] Your Trello project has been imported"
 msgstr "[%(project)s] 당신의 Trello project 를 성공적으로 가져왔습니다."
 
-#: taiga/importers/trello/importer.py:78
+#: taiga/importers/trello/importer.py:76
 #, python-format
 msgid "Invalid Request: %s at %s"
 msgstr "유효하지 않은 요청: %s 의 %s"
 
-#: taiga/importers/trello/importer.py:80 taiga/importers/trello/importer.py:82
+#: taiga/importers/trello/importer.py:78 taiga/importers/trello/importer.py:80
 #, python-format
 msgid "Unauthorized: %s at %s"
 msgstr "인증되지 않음: %s 의 %s"
 
-#: taiga/importers/trello/importer.py:84 taiga/importers/trello/importer.py:86
+#: taiga/importers/trello/importer.py:82 taiga/importers/trello/importer.py:84
 #, python-format
 msgid "Resource Unavailable: %s at %s"
 msgstr "자원 사용 불가: %s 의 %s"
 
-#: taiga/importers/trello/tasks.py:42 taiga/importers/trello/tasks.py:43
+#: taiga/importers/trello/tasks.py:40 taiga/importers/trello/tasks.py:41
 msgid "Error importing Trello project"
 msgstr "Trello 프로젝트를 가져오는 중 에러가 발생하였습니다."
 
-#: taiga/permissions/choices.py:23 taiga/permissions/choices.py:34
+#: taiga/permissions/choices.py:20 taiga/permissions/choices.py:31
 msgid "View project"
 msgstr "프로젝트 보기"
 
-#: taiga/permissions/choices.py:24 taiga/permissions/choices.py:36
+#: taiga/permissions/choices.py:21 taiga/permissions/choices.py:33
 msgid "View milestones"
 msgstr "마일스톤 보기"
 
-#: taiga/permissions/choices.py:25 taiga/permissions/choices.py:41
+#: taiga/permissions/choices.py:22 taiga/permissions/choices.py:38
 msgid "View epic"
 msgstr "에픽 보기"
 
-#: taiga/permissions/choices.py:26
+#: taiga/permissions/choices.py:23
 msgid "View user stories"
 msgstr "유저 스토리 보기"
 
-#: taiga/permissions/choices.py:27 taiga/permissions/choices.py:53
+#: taiga/permissions/choices.py:24 taiga/permissions/choices.py:50
 msgid "View tasks"
 msgstr "태스크 보기"
 
-#: taiga/permissions/choices.py:28 taiga/permissions/choices.py:59
+#: taiga/permissions/choices.py:25 taiga/permissions/choices.py:56
 msgid "View issues"
 msgstr "이슈 보기"
 
-#: taiga/permissions/choices.py:29 taiga/permissions/choices.py:65
+#: taiga/permissions/choices.py:26 taiga/permissions/choices.py:62
 msgid "View wiki pages"
 msgstr "위키 페이지 보기"
 
-#: taiga/permissions/choices.py:30 taiga/permissions/choices.py:71
+#: taiga/permissions/choices.py:27 taiga/permissions/choices.py:68
 msgid "View wiki links"
 msgstr "위키 링크 보기"
 
-#: taiga/permissions/choices.py:37
+#: taiga/permissions/choices.py:34
 msgid "Add milestone"
 msgstr "마일스톤 추가"
 
-#: taiga/permissions/choices.py:38
+#: taiga/permissions/choices.py:35
 msgid "Modify milestone"
 msgstr "마일스톤 수정"
 
-#: taiga/permissions/choices.py:39
+#: taiga/permissions/choices.py:36
 msgid "Delete milestone"
 msgstr "마일스톤 삭제"
 
-#: taiga/permissions/choices.py:42
+#: taiga/permissions/choices.py:39
 msgid "Add epic"
 msgstr "에픽 추가"
 
-#: taiga/permissions/choices.py:43
+#: taiga/permissions/choices.py:40
 msgid "Modify epic"
 msgstr "에픽 수정"
 
-#: taiga/permissions/choices.py:44
+#: taiga/permissions/choices.py:41
 msgid "Comment epic"
 msgstr "에픽 댓글"
 
-#: taiga/permissions/choices.py:45
+#: taiga/permissions/choices.py:42
 msgid "Delete epic"
 msgstr "에픽 삭제"
 
-#: taiga/permissions/choices.py:47
+#: taiga/permissions/choices.py:44
 msgid "View user story"
 msgstr "유저 스토리 보기"
 
-#: taiga/permissions/choices.py:48
+#: taiga/permissions/choices.py:45
 msgid "Add user story"
 msgstr "유저 스토리 추가"
 
-#: taiga/permissions/choices.py:49
+#: taiga/permissions/choices.py:46
 msgid "Modify user story"
 msgstr "유저 스토리 수정"
 
-#: taiga/permissions/choices.py:50
+#: taiga/permissions/choices.py:47
 msgid "Comment user story"
 msgstr "유저 스토리 댓글"
 
-#: taiga/permissions/choices.py:51
+#: taiga/permissions/choices.py:48
 msgid "Delete user story"
 msgstr "유저 스토리 삭제"
 
-#: taiga/permissions/choices.py:54
+#: taiga/permissions/choices.py:51
 msgid "Add task"
 msgstr "태스크 추가"
 
-#: taiga/permissions/choices.py:55
+#: taiga/permissions/choices.py:52
 msgid "Modify task"
 msgstr "태스크 수정"
 
-#: taiga/permissions/choices.py:56
+#: taiga/permissions/choices.py:53
 msgid "Comment task"
 msgstr "태스크 댓글"
 
-#: taiga/permissions/choices.py:57
+#: taiga/permissions/choices.py:54
 msgid "Delete task"
 msgstr "태스크 삭제"
 
-#: taiga/permissions/choices.py:60
+#: taiga/permissions/choices.py:57
 msgid "Add issue"
 msgstr "이슈 추가"
 
-#: taiga/permissions/choices.py:61
+#: taiga/permissions/choices.py:58
 msgid "Modify issue"
 msgstr "이슈 수정"
 
-#: taiga/permissions/choices.py:62
+#: taiga/permissions/choices.py:59
 msgid "Comment issue"
 msgstr "이슈 댓글"
 
-#: taiga/permissions/choices.py:63
+#: taiga/permissions/choices.py:60
 msgid "Delete issue"
 msgstr "이슈 삭제"
 
-#: taiga/permissions/choices.py:66
+#: taiga/permissions/choices.py:63
 msgid "Add wiki page"
 msgstr "위키 페이지 추가"
 
-#: taiga/permissions/choices.py:67
+#: taiga/permissions/choices.py:64
 msgid "Modify wiki page"
 msgstr "위키 페이지 수정"
 
-#: taiga/permissions/choices.py:68
+#: taiga/permissions/choices.py:65
 msgid "Comment wiki page"
 msgstr "위키 페이지 댓글"
 
-#: taiga/permissions/choices.py:69
+#: taiga/permissions/choices.py:66
 msgid "Delete wiki page"
 msgstr "위키 페이지 삭제"
 
-#: taiga/permissions/choices.py:72
+#: taiga/permissions/choices.py:69
 msgid "Add wiki link"
 msgstr "위키 링크 추가"
 
-#: taiga/permissions/choices.py:73
+#: taiga/permissions/choices.py:70
 msgid "Modify wiki link"
 msgstr "위키 링크 수정"
 
-#: taiga/permissions/choices.py:74
+#: taiga/permissions/choices.py:71
 msgid "Delete wiki link"
 msgstr "위키 링크 삭제"
 
-#: taiga/permissions/choices.py:78
+#: taiga/permissions/choices.py:75
 msgid "Modify project"
 msgstr "프로젝트 수정"
 
-#: taiga/permissions/choices.py:79
+#: taiga/permissions/choices.py:76
 msgid "Delete project"
 msgstr "프로젝트 삭제"
 
-#: taiga/permissions/choices.py:80
+#: taiga/permissions/choices.py:77
 msgid "Add member"
 msgstr "회원 추가"
 
-#: taiga/permissions/choices.py:81
+#: taiga/permissions/choices.py:78
 msgid "Remove member"
 msgstr "회원 삭제"
 
-#: taiga/permissions/choices.py:82
+#: taiga/permissions/choices.py:79
 msgid "Admin project values"
 msgstr "운영자 프로젝트 값"
 
-#: taiga/permissions/choices.py:83
+#: taiga/permissions/choices.py:80
 msgid "Admin roles"
 msgstr "운영자 역할"
 
-#: taiga/projects/admin.py:100
+#: taiga/projects/admin.py:98
 msgid "Privacy"
 msgstr ""
 
-#: taiga/projects/admin.py:111
+#: taiga/projects/admin.py:109
 msgid "Modules"
 msgstr "모듈"
 
-#: taiga/projects/admin.py:119
+#: taiga/projects/admin.py:117
 msgid "Default values"
 msgstr "기본값"
 
-#: taiga/projects/admin.py:126
+#: taiga/projects/admin.py:124
 msgid "Activity"
 msgstr "활동"
 
-#: taiga/projects/admin.py:131
+#: taiga/projects/admin.py:129
 msgid "Fans"
 msgstr "좋아요"
 
-#: taiga/projects/admin.py:145 taiga/projects/attachments/models.py:42
-#: taiga/projects/epics/models.py:50 taiga/projects/issues/models.py:43
-#: taiga/projects/milestones/models.py:46 taiga/projects/models.py:195
-#: taiga/projects/notifications/models.py:68 taiga/projects/tasks/models.py:51
-#: taiga/projects/userstories/models.py:95 taiga/projects/wiki/models.py:50
-#: taiga/users/admin.py:69 taiga/userstorage/models.py:31
+#: taiga/projects/admin.py:143 taiga/projects/attachments/models.py:40
+#: taiga/projects/epics/models.py:48 taiga/projects/issues/models.py:41
+#: taiga/projects/milestones/models.py:44 taiga/projects/models.py:193
+#: taiga/projects/notifications/models.py:66 taiga/projects/tasks/models.py:49
+#: taiga/projects/userstories/models.py:93 taiga/projects/wiki/models.py:48
+#: taiga/users/admin.py:67 taiga/userstorage/models.py:29
 msgid "owner"
 msgstr "소유자"
 
-#: taiga/projects/admin.py:191
+#: taiga/projects/admin.py:189
 #, python-brace-format
 msgid "{count} successfully made public."
 msgstr "{count} 개를 공개로 만드는데 성공하였습니다."
 
-#: taiga/projects/admin.py:192
+#: taiga/projects/admin.py:190
 msgid "Make public"
 msgstr "공개로 만들기"
 
-#: taiga/projects/admin.py:206
+#: taiga/projects/admin.py:204
 #, python-brace-format
 msgid "{count} successfully made private."
 msgstr "{count} 개를 비공개로 만드는데 성공하였습니다."
 
-#: taiga/projects/admin.py:207
+#: taiga/projects/admin.py:205
 msgid "Make private"
 msgstr "비공개로 만들기"
 
-#: taiga/projects/api.py:183 taiga/users/api.py:244
+#: taiga/projects/api.py:181 taiga/users/api.py:242
 msgid "Incomplete arguments"
 msgstr "매개변수가 완전하지 않습니다."
 
-#: taiga/projects/api.py:187 taiga/users/api.py:249
+#: taiga/projects/api.py:185 taiga/users/api.py:247
 msgid "Invalid image format"
 msgstr "이미지 형식이 유효하지 않습니다."
 
-#: taiga/projects/api.py:248
+#: taiga/projects/api.py:246
 msgid "Invalid template name"
 msgstr ""
 
-#: taiga/projects/api.py:251
+#: taiga/projects/api.py:249
 msgid "Invalid template description"
 msgstr ""
 
-#: taiga/projects/api.py:414 taiga/projects/api.py:1089
+#: taiga/projects/api.py:412 taiga/projects/api.py:1087
 msgid "Invalid user id"
 msgstr "사용자 아이디가 유효하지 않습니다."
 
-#: taiga/projects/api.py:420 taiga/projects/api.py:1095
+#: taiga/projects/api.py:418 taiga/projects/api.py:1093
 msgid "The user doesn't exist"
 msgstr "사용자가 존재하지 않습니다."
 
-#: taiga/projects/api.py:424
+#: taiga/projects/api.py:422
 msgid "The user must already be a project member"
 msgstr ""
 
-#: taiga/projects/api.py:686
+#: taiga/projects/api.py:684
 msgid "The default swimlane cannot be deleted."
 msgstr ""
 
-#: taiga/projects/api.py:716
+#: taiga/projects/api.py:714
 msgid "You can't delete the default due date status of a user story"
 msgstr ""
 
-#: taiga/projects/api.py:732
+#: taiga/projects/api.py:730
 msgid "Project does already have due dates"
 msgstr ""
 
-#: taiga/projects/api.py:792
+#: taiga/projects/api.py:790
 msgid "You can't delete the default due date status of a task"
 msgstr ""
 
-#: taiga/projects/api.py:808
+#: taiga/projects/api.py:806
 msgid "Project does already have task due dates"
 msgstr ""
 
-#: taiga/projects/api.py:933
+#: taiga/projects/api.py:931
 msgid "You can't delete the default due date status of an issue"
 msgstr ""
 
-#: taiga/projects/api.py:949
+#: taiga/projects/api.py:947
 msgid "Project does already have issue due dates"
 msgstr ""
 
-#: taiga/projects/api.py:1049 taiga/projects/validators.py:241
+#: taiga/projects/api.py:1047 taiga/projects/validators.py:239
 msgid ""
 "To add members to a project, first you have to verify your email address"
 msgstr ""
 
-#: taiga/projects/api.py:1107
+#: taiga/projects/api.py:1105
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
 msgstr ""
 
-#: taiga/projects/api.py:1117
+#: taiga/projects/api.py:1115
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
@@ -1678,115 +1678,115 @@ msgstr ""
 "프로젝트는 반드시 소유자가 있어야하며 사용자 중 적어도 한 명이 활성 관리자이"
 "어야 합니다."
 
-#: taiga/projects/api.py:1151
+#: taiga/projects/api.py:1149
 msgid "You don't have permissions to see that."
 msgstr ""
 
-#: taiga/projects/attachments/api.py:54
+#: taiga/projects/attachments/api.py:52
 msgid "Partial updates are not supported"
 msgstr "부분 업데이트는 지원되지 않습니다."
 
-#: taiga/projects/attachments/api.py:69
+#: taiga/projects/attachments/api.py:67
 msgid "Object id issue doesn't exist"
 msgstr ""
 
-#: taiga/projects/attachments/api.py:72
+#: taiga/projects/attachments/api.py:70
 msgid "Project ID does not match between object and project"
 msgstr ""
 
-#: taiga/projects/attachments/models.py:50 taiga/projects/contact/models.py:37
-#: taiga/projects/custom_attributes/models.py:47
-#: taiga/projects/epics/models.py:42 taiga/projects/issues/models.py:92
-#: taiga/projects/milestones/models.py:54 taiga/projects/models.py:552
-#: taiga/projects/models.py:580 taiga/projects/models.py:623
-#: taiga/projects/models.py:659 taiga/projects/models.py:689
-#: taiga/projects/models.py:720 taiga/projects/models.py:758
-#: taiga/projects/models.py:786 taiga/projects/models.py:812
-#: taiga/projects/models.py:842 taiga/projects/models.py:876
-#: taiga/projects/models.py:906 taiga/projects/models.py:926
-#: taiga/projects/notifications/models.py:86
-#: taiga/projects/notifications/models.py:115 taiga/projects/tasks/models.py:67
-#: taiga/projects/userstories/models.py:91 taiga/projects/wiki/models.py:38
-#: taiga/projects/wiki/models.py:91 taiga/users/models.py:326
+#: taiga/projects/attachments/models.py:48 taiga/projects/contact/models.py:35
+#: taiga/projects/custom_attributes/models.py:45
+#: taiga/projects/epics/models.py:40 taiga/projects/issues/models.py:90
+#: taiga/projects/milestones/models.py:52 taiga/projects/models.py:550
+#: taiga/projects/models.py:578 taiga/projects/models.py:621
+#: taiga/projects/models.py:657 taiga/projects/models.py:687
+#: taiga/projects/models.py:718 taiga/projects/models.py:756
+#: taiga/projects/models.py:784 taiga/projects/models.py:810
+#: taiga/projects/models.py:840 taiga/projects/models.py:874
+#: taiga/projects/models.py:904 taiga/projects/models.py:924
+#: taiga/projects/notifications/models.py:84
+#: taiga/projects/notifications/models.py:113 taiga/projects/tasks/models.py:65
+#: taiga/projects/userstories/models.py:89 taiga/projects/wiki/models.py:36
+#: taiga/projects/wiki/models.py:89 taiga/users/models.py:324
 msgid "project"
 msgstr "프로젝트"
 
-#: taiga/projects/attachments/models.py:57
+#: taiga/projects/attachments/models.py:55
 msgid "content type"
 msgstr "컨텐츠 형태"
 
-#: taiga/projects/attachments/models.py:61
+#: taiga/projects/attachments/models.py:59
 msgid "object id"
 msgstr "객체 아이디"
 
-#: taiga/projects/attachments/models.py:67
-#: taiga/projects/custom_attributes/models.py:54
-#: taiga/projects/epics/models.py:63 taiga/projects/issues/models.py:99
-#: taiga/projects/milestones/models.py:63 taiga/projects/models.py:189
-#: taiga/projects/models.py:1004 taiga/projects/tasks/models.py:83
-#: taiga/projects/userstories/models.py:116 taiga/projects/wiki/models.py:65
-#: taiga/userstorage/models.py:37
+#: taiga/projects/attachments/models.py:65
+#: taiga/projects/custom_attributes/models.py:52
+#: taiga/projects/epics/models.py:61 taiga/projects/issues/models.py:97
+#: taiga/projects/milestones/models.py:61 taiga/projects/models.py:187
+#: taiga/projects/models.py:1002 taiga/projects/tasks/models.py:81
+#: taiga/projects/userstories/models.py:114 taiga/projects/wiki/models.py:63
+#: taiga/userstorage/models.py:35
 msgid "modified date"
 msgstr "날짜가 변경되었습니다."
 
-#: taiga/projects/attachments/models.py:72
+#: taiga/projects/attachments/models.py:70
 msgid "attached file"
 msgstr "파일이 첨부되었습니다."
 
-#: taiga/projects/attachments/models.py:74
+#: taiga/projects/attachments/models.py:72
 msgid "sha1"
 msgstr "sha1"
 
-#: taiga/projects/attachments/models.py:76
+#: taiga/projects/attachments/models.py:74
 msgid "is deprecated"
 msgstr "지원안함"
 
-#: taiga/projects/attachments/models.py:77
+#: taiga/projects/attachments/models.py:75
 msgid "from comment"
 msgstr "댓글로부터"
 
-#: taiga/projects/attachments/models.py:79
-#: taiga/projects/custom_attributes/models.py:41
-#: taiga/projects/epics/models.py:121 taiga/projects/milestones/models.py:69
-#: taiga/projects/models.py:570 taiga/projects/models.py:609
-#: taiga/projects/models.py:651 taiga/projects/models.py:677
-#: taiga/projects/models.py:710 taiga/projects/models.py:746
-#: taiga/projects/models.py:778 taiga/projects/models.py:804
-#: taiga/projects/models.py:832 taiga/projects/models.py:868
-#: taiga/projects/models.py:894 taiga/projects/models.py:932
-#: taiga/projects/wiki/models.py:98 taiga/users/models.py:317
+#: taiga/projects/attachments/models.py:77
+#: taiga/projects/custom_attributes/models.py:39
+#: taiga/projects/epics/models.py:119 taiga/projects/milestones/models.py:67
+#: taiga/projects/models.py:568 taiga/projects/models.py:607
+#: taiga/projects/models.py:649 taiga/projects/models.py:675
+#: taiga/projects/models.py:708 taiga/projects/models.py:744
+#: taiga/projects/models.py:776 taiga/projects/models.py:802
+#: taiga/projects/models.py:830 taiga/projects/models.py:866
+#: taiga/projects/models.py:892 taiga/projects/models.py:930
+#: taiga/projects/wiki/models.py:96 taiga/users/models.py:315
 msgid "order"
 msgstr "순서"
 
-#: taiga/projects/choices.py:23
+#: taiga/projects/choices.py:21
 msgid "Whereby.com"
 msgstr ""
 
-#: taiga/projects/choices.py:24
+#: taiga/projects/choices.py:22
 msgid "Jitsi"
 msgstr "Jitsi"
 
-#: taiga/projects/choices.py:25
+#: taiga/projects/choices.py:23
 msgid "Custom"
 msgstr "사용자 정의"
 
-#: taiga/projects/choices.py:26
+#: taiga/projects/choices.py:24
 msgid "Talky"
 msgstr "Talky"
 
-#: taiga/projects/choices.py:35
+#: taiga/projects/choices.py:33
 msgid "This project is blocked due to payment failure"
 msgstr "이 프로젝트는 결제 실패로 인해 차단되었습니다."
 
-#: taiga/projects/choices.py:36
+#: taiga/projects/choices.py:34
 msgid "This project is blocked by admin staff"
 msgstr "관리자에 의해 프로젝트가 차단되었습니다."
 
-#: taiga/projects/choices.py:37
+#: taiga/projects/choices.py:35
 msgid "This project is blocked because the owner left"
 msgstr "소유자가 남아 있어 프로젝트가 차단되었습니다."
 
-#: taiga/projects/choices.py:38
+#: taiga/projects/choices.py:36
 msgid "This project is blocked while it's deleted"
 msgstr "이 프로젝트는 삭제되는 동안 차단됩니다."
 
@@ -1858,160 +1858,160 @@ msgstr ""
 "[Taiga] %(full_name)s 님께서 %(project_name)s 프로젝트에 메시지를 보냈습니"
 "다.\n"
 
-#: taiga/projects/custom_attributes/choices.py:32
+#: taiga/projects/custom_attributes/choices.py:30
 msgid "Text"
 msgstr "텍스트"
 
-#: taiga/projects/custom_attributes/choices.py:33
+#: taiga/projects/custom_attributes/choices.py:31
 msgid "Multi-Line Text"
 msgstr "여러 줄의 텍스트"
 
-#: taiga/projects/custom_attributes/choices.py:34
+#: taiga/projects/custom_attributes/choices.py:32
 msgid "Rich text"
 msgstr "서식있는 텍스트"
 
-#: taiga/projects/custom_attributes/choices.py:35
+#: taiga/projects/custom_attributes/choices.py:33
 msgid "Date"
 msgstr "날짜"
 
-#: taiga/projects/custom_attributes/choices.py:36
+#: taiga/projects/custom_attributes/choices.py:34
 msgid "Url"
 msgstr "Url"
 
-#: taiga/projects/custom_attributes/choices.py:37
+#: taiga/projects/custom_attributes/choices.py:35
 msgid "Dropdown"
 msgstr ""
 
-#: taiga/projects/custom_attributes/choices.py:38
+#: taiga/projects/custom_attributes/choices.py:36
 msgid "Checkbox"
 msgstr ""
 
-#: taiga/projects/custom_attributes/choices.py:39
+#: taiga/projects/custom_attributes/choices.py:37
 msgid "Number"
 msgstr ""
 
-#: taiga/projects/custom_attributes/models.py:40
-#: taiga/projects/issues/models.py:75
+#: taiga/projects/custom_attributes/models.py:38
+#: taiga/projects/issues/models.py:73
 msgid "type"
 msgstr "형태"
 
-#: taiga/projects/custom_attributes/models.py:101
+#: taiga/projects/custom_attributes/models.py:99
 msgid "values"
 msgstr "값"
 
-#: taiga/projects/custom_attributes/models.py:114
+#: taiga/projects/custom_attributes/models.py:112
 msgid "epic"
 msgstr "에픽"
 
-#: taiga/projects/custom_attributes/models.py:135
-#: taiga/projects/tasks/models.py:40 taiga/projects/userstories/models.py:42
+#: taiga/projects/custom_attributes/models.py:133
+#: taiga/projects/tasks/models.py:38 taiga/projects/userstories/models.py:40
 msgid "user story"
 msgstr "유저 스토리"
 
-#: taiga/projects/custom_attributes/models.py:156
+#: taiga/projects/custom_attributes/models.py:154
 msgid "task"
 msgstr "태스크"
 
-#: taiga/projects/custom_attributes/models.py:177
+#: taiga/projects/custom_attributes/models.py:175
 msgid "issue"
 msgstr "이슈"
 
-#: taiga/projects/custom_attributes/validators.py:58
+#: taiga/projects/custom_attributes/validators.py:56
 msgid "Already exists one with the same name."
 msgstr "이미 동일한 이름이 존재합니다."
 
-#: taiga/projects/due_dates/models.py:21
+#: taiga/projects/due_dates/models.py:22
 msgid "due date"
 msgstr ""
 
-#: taiga/projects/due_dates/models.py:24
+#: taiga/projects/due_dates/models.py:25
 msgid "reason for the due date"
 msgstr ""
 
-#: taiga/projects/epics/api.py:94
+#: taiga/projects/epics/api.py:92
 msgid "You don't have permissions to set this status to this epic."
 msgstr "이 에픽의 상태를 설정할 권한이 없습니다."
 
-#: taiga/projects/epics/models.py:36 taiga/projects/issues/models.py:36
-#: taiga/projects/tasks/models.py:44 taiga/projects/userstories/models.py:82
+#: taiga/projects/epics/models.py:34 taiga/projects/issues/models.py:34
+#: taiga/projects/tasks/models.py:42 taiga/projects/userstories/models.py:80
 msgid "ref"
 msgstr "참조"
 
-#: taiga/projects/epics/models.py:54 taiga/projects/issues/models.py:51
-#: taiga/projects/models.py:963 taiga/projects/tasks/models.py:59
-#: taiga/projects/userstories/models.py:98
+#: taiga/projects/epics/models.py:52 taiga/projects/issues/models.py:49
+#: taiga/projects/models.py:961 taiga/projects/tasks/models.py:57
+#: taiga/projects/userstories/models.py:96
 msgid "status"
 msgstr "상태"
 
-#: taiga/projects/epics/models.py:57
+#: taiga/projects/epics/models.py:55
 msgid "epics order"
 msgstr "에픽 순서"
 
-#: taiga/projects/epics/models.py:66 taiga/projects/issues/models.py:103
-#: taiga/projects/tasks/models.py:87 taiga/projects/userstories/models.py:120
+#: taiga/projects/epics/models.py:64 taiga/projects/issues/models.py:101
+#: taiga/projects/tasks/models.py:85 taiga/projects/userstories/models.py:118
 msgid "subject"
 msgstr "제목"
 
-#: taiga/projects/epics/models.py:70 taiga/projects/models.py:574
-#: taiga/projects/models.py:615 taiga/projects/models.py:681
-#: taiga/projects/models.py:714 taiga/projects/models.py:750
-#: taiga/projects/models.py:780 taiga/projects/models.py:806
-#: taiga/projects/models.py:836 taiga/projects/models.py:870
-#: taiga/projects/models.py:898 taiga/users/models.py:148
+#: taiga/projects/epics/models.py:68 taiga/projects/models.py:572
+#: taiga/projects/models.py:613 taiga/projects/models.py:679
+#: taiga/projects/models.py:712 taiga/projects/models.py:748
+#: taiga/projects/models.py:778 taiga/projects/models.py:804
+#: taiga/projects/models.py:834 taiga/projects/models.py:868
+#: taiga/projects/models.py:896 taiga/users/models.py:146
 msgid "color"
 msgstr "색"
 
-#: taiga/projects/epics/models.py:77 taiga/projects/issues/models.py:111
-#: taiga/projects/tasks/models.py:101 taiga/projects/userstories/models.py:128
+#: taiga/projects/epics/models.py:75 taiga/projects/issues/models.py:109
+#: taiga/projects/tasks/models.py:99 taiga/projects/userstories/models.py:126
 msgid "assigned to"
 msgstr "할당됨"
 
-#: taiga/projects/epics/models.py:81 taiga/projects/userstories/models.py:135
+#: taiga/projects/epics/models.py:79 taiga/projects/userstories/models.py:133
 msgid "is client requirement"
 msgstr "고객 요구 사항"
 
-#: taiga/projects/epics/models.py:83 taiga/projects/userstories/models.py:137
+#: taiga/projects/epics/models.py:81 taiga/projects/userstories/models.py:135
 msgid "is team requirement"
 msgstr "팀 요구 사항"
 
-#: taiga/projects/epics/models.py:87
+#: taiga/projects/epics/models.py:85
 msgid "user stories"
 msgstr "유저 스토리"
 
-#: taiga/projects/epics/models.py:89 taiga/projects/issues/models.py:116
-#: taiga/projects/tasks/models.py:108 taiga/projects/userstories/models.py:149
+#: taiga/projects/epics/models.py:87 taiga/projects/issues/models.py:114
+#: taiga/projects/tasks/models.py:106 taiga/projects/userstories/models.py:147
 msgid "external reference"
 msgstr "외부 참조"
 
-#: taiga/projects/epics/validators.py:37
+#: taiga/projects/epics/validators.py:35
 msgid "There's no epic with that id"
 msgstr "아이디를 가진 에픽이 없습니다."
 
-#: taiga/projects/history/api.py:100
+#: taiga/projects/history/api.py:98
 msgid "comment is required"
 msgstr "comment가 필수입니다."
 
-#: taiga/projects/history/api.py:103
+#: taiga/projects/history/api.py:101
 msgid "deleted comments can't be edited"
 msgstr "삭제된 댓글은 수정할 수 없습니다."
 
-#: taiga/projects/history/api.py:146
+#: taiga/projects/history/api.py:144
 msgid "Comment already deleted"
 msgstr "댓글이 이미 삭제되었습니다."
 
-#: taiga/projects/history/api.py:167
+#: taiga/projects/history/api.py:165
 msgid "Comment not deleted"
 msgstr "댓글이 삭제되지 않았습니다."
 
-#: taiga/projects/history/choices.py:31
+#: taiga/projects/history/choices.py:29
 msgid "Change"
 msgstr "수정"
 
-#: taiga/projects/history/choices.py:32
+#: taiga/projects/history/choices.py:30
 msgid "Create"
 msgstr "생성"
 
-#: taiga/projects/history/choices.py:33
+#: taiga/projects/history/choices.py:31
 msgid "Delete"
 msgstr "삭제"
 
@@ -2077,7 +2077,7 @@ msgstr "삭제되었습니다."
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:148
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:191
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:202
-#: taiga/projects/services/stats.py:55 taiga/projects/services/stats.py:56
+#: taiga/projects/services/stats.py:53 taiga/projects/services/stats.py:54
 msgid "Unassigned"
 msgstr "할당되지 않았습니다."
 
@@ -2129,488 +2129,488 @@ msgstr "보낸이:"
 msgid "To:"
 msgstr "받는이:"
 
-#: taiga/projects/history/templatetags/functions.py:26
-#: taiga/projects/wiki/models.py:44
+#: taiga/projects/history/templatetags/functions.py:24
+#: taiga/projects/wiki/models.py:42
 msgid "content"
 msgstr "컨텐츠"
 
-#: taiga/projects/history/templatetags/functions.py:27
-#: taiga/projects/mixins/blocked.py:33
+#: taiga/projects/history/templatetags/functions.py:25
+#: taiga/projects/mixins/blocked.py:31
 msgid "blocked note"
 msgstr "차단된 노트"
 
-#: taiga/projects/history/templatetags/functions.py:28
+#: taiga/projects/history/templatetags/functions.py:26
 msgid "sprint"
 msgstr "스프린트"
 
-#: taiga/projects/issues/api.py:167
+#: taiga/projects/issues/api.py:168
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "이 이슈의 스프린트를 설정할 권한이 없습니다."
 
-#: taiga/projects/issues/api.py:171
+#: taiga/projects/issues/api.py:172
 msgid "You don't have permissions to set this status to this issue."
 msgstr "이 이슈의 상태를 설정할 권한이 없습니다."
 
-#: taiga/projects/issues/api.py:175
+#: taiga/projects/issues/api.py:176
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "이 이슈의 심각도를 설정할 권한이 없습니다."
 
-#: taiga/projects/issues/api.py:179
+#: taiga/projects/issues/api.py:180
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "이 우선 순위의 형태를 설정할 권한이 없습니다."
 
-#: taiga/projects/issues/api.py:183
+#: taiga/projects/issues/api.py:184
 msgid "You don't have permissions to set this type to this issue."
 msgstr "이 이슈에 형태를 설정할 권한이 없습니다."
 
-#: taiga/projects/issues/models.py:59
+#: taiga/projects/issues/models.py:57
 msgid "severity"
 msgstr "심각도"
 
-#: taiga/projects/issues/models.py:67
+#: taiga/projects/issues/models.py:65
 msgid "priority"
 msgstr "우선 순위"
 
-#: taiga/projects/issues/models.py:84 taiga/projects/tasks/models.py:77
-#: taiga/projects/userstories/models.py:85
+#: taiga/projects/issues/models.py:82 taiga/projects/tasks/models.py:75
+#: taiga/projects/userstories/models.py:83
 msgid "milestone"
 msgstr "마일스톤"
 
-#: taiga/projects/issues/models.py:101 taiga/projects/tasks/models.py:85
+#: taiga/projects/issues/models.py:99 taiga/projects/tasks/models.py:83
 msgid "finished date"
 msgstr "종료된 날짜"
 
-#: taiga/projects/issues/validators.py:66
-#: taiga/projects/tasks/validators.py:176
-#: taiga/projects/userstories/validators.py:260
+#: taiga/projects/issues/validators.py:67
+#: taiga/projects/tasks/validators.py:174
+#: taiga/projects/userstories/validators.py:258
 msgid "The milestone isn't valid for the project"
 msgstr "마일스톤은 프로젝트에 유효하지 않습니다."
 
-#: taiga/projects/issues/validators.py:76
+#: taiga/projects/issues/validators.py:77
 msgid "All the issues must be from the same project"
 msgstr ""
 
-#: taiga/projects/likes/models.py:42
+#: taiga/projects/likes/models.py:39
 msgid "Like"
 msgstr "좋아요"
 
-#: taiga/projects/likes/models.py:43
+#: taiga/projects/likes/models.py:40
 msgid "Likes"
 msgstr "좋아요"
 
-#: taiga/projects/milestones/models.py:40 taiga/projects/models.py:177
-#: taiga/projects/models.py:568 taiga/projects/models.py:607
-#: taiga/projects/models.py:708 taiga/projects/models.py:830
-#: taiga/projects/models.py:995 taiga/projects/wiki/models.py:42
-#: taiga/users/admin.py:58 taiga/users/models.py:313
+#: taiga/projects/milestones/models.py:38 taiga/projects/models.py:175
+#: taiga/projects/models.py:566 taiga/projects/models.py:605
+#: taiga/projects/models.py:706 taiga/projects/models.py:828
+#: taiga/projects/models.py:993 taiga/projects/wiki/models.py:40
+#: taiga/users/admin.py:56 taiga/users/models.py:311
 msgid "slug"
 msgstr "슬러그"
 
-#: taiga/projects/milestones/models.py:57
+#: taiga/projects/milestones/models.py:55
 msgid "estimated start date"
 msgstr "예측 시작일"
 
-#: taiga/projects/milestones/models.py:58
+#: taiga/projects/milestones/models.py:56
 msgid "estimated finish date"
 msgstr "예측 종료일"
 
-#: taiga/projects/milestones/models.py:65 taiga/projects/models.py:572
-#: taiga/projects/models.py:611 taiga/projects/models.py:712
-#: taiga/projects/models.py:834
+#: taiga/projects/milestones/models.py:63 taiga/projects/models.py:570
+#: taiga/projects/models.py:609 taiga/projects/models.py:710
+#: taiga/projects/models.py:832
 msgid "is closed"
 msgstr "완료됨"
 
-#: taiga/projects/milestones/models.py:67
+#: taiga/projects/milestones/models.py:65
 msgid "disponibility"
 msgstr "가용성"
 
-#: taiga/projects/milestones/models.py:88
+#: taiga/projects/milestones/models.py:86
 msgid "The estimated start must be previous to the estimated finish."
 msgstr "예측 시작은 반드시 예측 종료보다 이전이어야 합니다."
 
-#: taiga/projects/milestones/validators.py:35
+#: taiga/projects/milestones/validators.py:33
 msgid "There's no milestone with that id"
 msgstr "아이디를 가진 마일스톤이 없습니다."
 
-#: taiga/projects/milestones/validators.py:66
-#: taiga/projects/userstories/validators.py:270
+#: taiga/projects/milestones/validators.py:64
+#: taiga/projects/userstories/validators.py:268
 msgid "All the user stories must be from the same project"
 msgstr "모든 유저 스토리는 반드시 동일한 프로젝트에 속해야 합니다."
 
-#: taiga/projects/mixins/blocked.py:31
+#: taiga/projects/mixins/blocked.py:29
 msgid "is blocked"
 msgstr "차단됨"
 
-#: taiga/projects/mixins/by_ref.py:32
+#: taiga/projects/mixins/by_ref.py:30
 msgid "ref param is needed"
 msgstr "ref 매개변수가 필요합니다."
 
-#: taiga/projects/mixins/by_ref.py:35
+#: taiga/projects/mixins/by_ref.py:33
 msgid "project or project__slug param is needed"
 msgstr "project 또는 project__slug 매개변수가 필요합니다."
 
-#: taiga/projects/mixins/on_destroy.py:44
+#: taiga/projects/mixins/on_destroy.py:42
 msgid "Query param 'moveTo' is required"
 msgstr ""
 
-#: taiga/projects/mixins/on_destroy.py:96
+#: taiga/projects/mixins/on_destroy.py:94
 msgid "Cannot set swimlane to None if there are available swimlanes"
 msgstr ""
 
-#: taiga/projects/mixins/ordering.py:48
+#: taiga/projects/mixins/ordering.py:46
 #, python-brace-format
 msgid "'{param}' parameter is mandatory"
 msgstr "'{param}' 매개변수는 필수입니다."
 
-#: taiga/projects/mixins/ordering.py:52
+#: taiga/projects/mixins/ordering.py:50
 msgid "'project' parameter is mandatory"
 msgstr "'project' 매개변수는 필수입니다."
 
-#: taiga/projects/mixins/validators.py:22
+#: taiga/projects/mixins/validators.py:38
 msgid "The user must be a project member."
 msgstr "반드시 프로젝트 회원이어야 합니다."
 
-#: taiga/projects/models.py:97
+#: taiga/projects/models.py:95
 msgid "email"
 msgstr "이메일"
 
-#: taiga/projects/models.py:99
+#: taiga/projects/models.py:97
 msgid "create at"
 msgstr "생성일"
 
-#: taiga/projects/models.py:101 taiga/users/models.py:165
+#: taiga/projects/models.py:99 taiga/users/models.py:163
 msgid "token"
 msgstr "토큰"
 
-#: taiga/projects/models.py:112
+#: taiga/projects/models.py:110
 msgid "invitation extra text"
 msgstr "초대장 추가 문자"
 
-#: taiga/projects/models.py:115 taiga/projects/models.py:999
+#: taiga/projects/models.py:113 taiga/projects/models.py:997
 msgid "user order"
 msgstr "유저 순서"
 
-#: taiga/projects/models.py:131
+#: taiga/projects/models.py:129
 msgid "The user is already member of the project"
 msgstr "이미 프로젝트의 일원입니다."
 
-#: taiga/projects/models.py:138
+#: taiga/projects/models.py:136
 msgid "default epic status"
 msgstr "기본 에픽 상태"
 
-#: taiga/projects/models.py:142
+#: taiga/projects/models.py:140
 msgid "default US status"
 msgstr "기본 유저 스토리 상태"
 
-#: taiga/projects/models.py:145
+#: taiga/projects/models.py:143
 msgid "default points"
 msgstr "기본 포인트"
 
-#: taiga/projects/models.py:149
+#: taiga/projects/models.py:147
 msgid "default task status"
 msgstr "기본 태스크 상태"
 
-#: taiga/projects/models.py:152
+#: taiga/projects/models.py:150
 msgid "default priority"
 msgstr "기본 우선순위"
 
-#: taiga/projects/models.py:155
+#: taiga/projects/models.py:153
 msgid "default severity"
 msgstr "기본 심각도"
 
-#: taiga/projects/models.py:159
+#: taiga/projects/models.py:157
 msgid "default issue status"
 msgstr "기본 이슈 상태"
 
-#: taiga/projects/models.py:163
+#: taiga/projects/models.py:161
 msgid "default issue type"
 msgstr "기본 이슈 형태"
 
-#: taiga/projects/models.py:167
+#: taiga/projects/models.py:165
 msgid "default swimlane"
 msgstr ""
 
-#: taiga/projects/models.py:183
+#: taiga/projects/models.py:181
 msgid "logo"
 msgstr "로고"
 
-#: taiga/projects/models.py:200
+#: taiga/projects/models.py:198
 msgid "members"
 msgstr "회원"
 
-#: taiga/projects/models.py:203
+#: taiga/projects/models.py:201
 msgid "total of milestones"
 msgstr "마일스톤 합계"
 
-#: taiga/projects/models.py:204
+#: taiga/projects/models.py:202
 msgid "total story points"
 msgstr "총 스토리 포인트"
 
-#: taiga/projects/models.py:206 taiga/projects/models.py:1009
+#: taiga/projects/models.py:204 taiga/projects/models.py:1007
 msgid "active contact"
 msgstr "연락처 활성"
 
-#: taiga/projects/models.py:208 taiga/projects/models.py:1011
+#: taiga/projects/models.py:206 taiga/projects/models.py:1009
 msgid "active epics panel"
 msgstr "에픽 활성"
 
-#: taiga/projects/models.py:210 taiga/projects/models.py:1013
+#: taiga/projects/models.py:208 taiga/projects/models.py:1011
 msgid "active backlog panel"
 msgstr "백로그 활성"
 
-#: taiga/projects/models.py:212 taiga/projects/models.py:1015
+#: taiga/projects/models.py:210 taiga/projects/models.py:1013
 msgid "active kanban panel"
 msgstr "칸반 활성"
 
-#: taiga/projects/models.py:214 taiga/projects/models.py:1017
+#: taiga/projects/models.py:212 taiga/projects/models.py:1015
 msgid "active wiki panel"
 msgstr "위키 활성"
 
-#: taiga/projects/models.py:216 taiga/projects/models.py:1019
+#: taiga/projects/models.py:214 taiga/projects/models.py:1017
 msgid "active issues panel"
 msgstr "이슈 활성"
 
-#: taiga/projects/models.py:219 taiga/projects/models.py:1026
+#: taiga/projects/models.py:217 taiga/projects/models.py:1024
 msgid "videoconference system"
 msgstr "화상회의 시스템"
 
-#: taiga/projects/models.py:221 taiga/projects/models.py:1028
+#: taiga/projects/models.py:219 taiga/projects/models.py:1026
 msgid "videoconference extra data"
 msgstr "화상회의 추가 데이터"
 
-#: taiga/projects/models.py:230
+#: taiga/projects/models.py:228
 msgid "creation template"
 msgstr "탬플릿 생성"
 
-#: taiga/projects/models.py:233 taiga/users/admin.py:62
+#: taiga/projects/models.py:231 taiga/users/admin.py:60
 msgid "is private"
 msgstr "비공개"
 
-#: taiga/projects/models.py:235
+#: taiga/projects/models.py:233
 msgid "anonymous permissions"
 msgstr "익명 사용자 권한"
 
-#: taiga/projects/models.py:237
+#: taiga/projects/models.py:235
 msgid "user permissions"
 msgstr "사용자 권한"
 
-#: taiga/projects/models.py:240
+#: taiga/projects/models.py:238
 msgid "is featured"
 msgstr "추천됨"
 
-#: taiga/projects/models.py:243 taiga/projects/models.py:1021
+#: taiga/projects/models.py:241 taiga/projects/models.py:1019
 msgid "is looking for people"
 msgstr "구인중"
 
-#: taiga/projects/models.py:245 taiga/projects/models.py:1023
+#: taiga/projects/models.py:243 taiga/projects/models.py:1021
 msgid "looking for people note"
 msgstr "구인 메모"
 
-#: taiga/projects/models.py:259
+#: taiga/projects/models.py:257
 msgid "project transfer token"
 msgstr "프로젝트 이전 토큰"
 
-#: taiga/projects/models.py:263
+#: taiga/projects/models.py:261
 msgid "blocked code"
 msgstr "코드 차단됨"
 
-#: taiga/projects/models.py:266 taiga/projects/notifications/models.py:75
+#: taiga/projects/models.py:264 taiga/projects/notifications/models.py:73
 msgid "updated date time"
 msgstr "날짜 시간 수정됨"
 
-#: taiga/projects/models.py:269 taiga/projects/models.py:281
-#: taiga/projects/votes/models.py:30
+#: taiga/projects/models.py:267 taiga/projects/models.py:279
+#: taiga/projects/votes/models.py:27
 msgid "count"
 msgstr "개수"
 
-#: taiga/projects/models.py:272
+#: taiga/projects/models.py:270
 msgid "fans last week"
 msgstr "지난 주의 좋아요"
 
-#: taiga/projects/models.py:275
+#: taiga/projects/models.py:273
 msgid "fans last month"
 msgstr "지난 달의 좋아요"
 
-#: taiga/projects/models.py:278
+#: taiga/projects/models.py:276
 msgid "fans last year"
 msgstr "작년의 좋아요"
 
-#: taiga/projects/models.py:285
+#: taiga/projects/models.py:283
 msgid "activity last week"
 msgstr "지난 주의 활동"
 
-#: taiga/projects/models.py:289
+#: taiga/projects/models.py:287
 msgid "activity last month"
 msgstr "지난 달의 활동"
 
-#: taiga/projects/models.py:293
+#: taiga/projects/models.py:291
 msgid "activity last year"
 msgstr "작년의 활동"
 
-#: taiga/projects/models.py:555
+#: taiga/projects/models.py:553
 msgid "modules config"
 msgstr "모듈 설정"
 
-#: taiga/projects/models.py:613
+#: taiga/projects/models.py:611
 msgid "is archived"
 msgstr "보관됨"
 
-#: taiga/projects/models.py:617 taiga/projects/models.py:948
+#: taiga/projects/models.py:615 taiga/projects/models.py:946
 msgid "work in progress limit"
 msgstr "작업 진행 한계"
 
-#: taiga/projects/models.py:653 taiga/userstorage/models.py:39
+#: taiga/projects/models.py:651 taiga/userstorage/models.py:37
 msgid "value"
 msgstr "값"
 
-#: taiga/projects/models.py:679 taiga/projects/models.py:748
-#: taiga/projects/models.py:896
+#: taiga/projects/models.py:677 taiga/projects/models.py:746
+#: taiga/projects/models.py:894
 msgid "by default"
 msgstr ""
 
-#: taiga/projects/models.py:683 taiga/projects/models.py:752
-#: taiga/projects/models.py:900
+#: taiga/projects/models.py:681 taiga/projects/models.py:750
+#: taiga/projects/models.py:898
 msgid "days to due"
 msgstr ""
 
-#: taiga/projects/models.py:955
+#: taiga/projects/models.py:953
 msgid "user story status"
 msgstr ""
 
-#: taiga/projects/models.py:1007
+#: taiga/projects/models.py:1005
 msgid "default owner's role"
 msgstr "소유자의 기본 역할"
 
-#: taiga/projects/models.py:1030
+#: taiga/projects/models.py:1028
 msgid "default options"
 msgstr "기본 옵션"
 
-#: taiga/projects/models.py:1031
+#: taiga/projects/models.py:1029
 msgid "epic statuses"
 msgstr "에픽 상태"
 
-#: taiga/projects/models.py:1032
+#: taiga/projects/models.py:1030
 msgid "us statuses"
 msgstr "유저 스토리 상태"
 
-#: taiga/projects/models.py:1033
+#: taiga/projects/models.py:1031
 msgid "us duedates"
 msgstr ""
 
-#: taiga/projects/models.py:1034 taiga/projects/userstories/models.py:58
-#: taiga/projects/userstories/models.py:103
+#: taiga/projects/models.py:1032 taiga/projects/userstories/models.py:56
+#: taiga/projects/userstories/models.py:101
 msgid "points"
 msgstr "포인트"
 
-#: taiga/projects/models.py:1035
+#: taiga/projects/models.py:1033
 msgid "task statuses"
 msgstr "태스크 상태"
 
-#: taiga/projects/models.py:1036
+#: taiga/projects/models.py:1034
 msgid "task duedates"
 msgstr ""
 
-#: taiga/projects/models.py:1037
+#: taiga/projects/models.py:1035
 msgid "issue statuses"
 msgstr "이슈 상태"
 
-#: taiga/projects/models.py:1038
+#: taiga/projects/models.py:1036
 msgid "issue types"
 msgstr "이슈 형태"
 
-#: taiga/projects/models.py:1039
+#: taiga/projects/models.py:1037
 msgid "issue duedates"
 msgstr ""
 
-#: taiga/projects/models.py:1040
+#: taiga/projects/models.py:1038
 msgid "priorities"
 msgstr "우선순위"
 
-#: taiga/projects/models.py:1041
+#: taiga/projects/models.py:1039
 msgid "severities"
 msgstr "심각도"
 
-#: taiga/projects/models.py:1042
+#: taiga/projects/models.py:1040
 msgid "roles"
 msgstr "역할"
 
-#: taiga/projects/models.py:1043
+#: taiga/projects/models.py:1041
 msgid "epic custom attributes"
 msgstr "에픽 사용자 정의 속성"
 
-#: taiga/projects/models.py:1044
+#: taiga/projects/models.py:1042
 msgid "us custom attributes"
 msgstr "유저 스토리 사용자 정의 속성"
 
-#: taiga/projects/models.py:1045
+#: taiga/projects/models.py:1043
 msgid "task custom attributes"
 msgstr "태스크 사용자 정의 속성"
 
-#: taiga/projects/models.py:1046
+#: taiga/projects/models.py:1044
 msgid "issue custom attributes"
 msgstr "이슈 사용자 정의 속성"
 
-#: taiga/projects/notifications/choices.py:30
+#: taiga/projects/notifications/choices.py:28
 msgid "Involved"
 msgstr "관련됨"
 
-#: taiga/projects/notifications/choices.py:31
+#: taiga/projects/notifications/choices.py:29
 msgid "All"
 msgstr "모두"
 
-#: taiga/projects/notifications/choices.py:32
+#: taiga/projects/notifications/choices.py:30
 msgid "None"
 msgstr "없음"
 
-#: taiga/projects/notifications/choices.py:46
+#: taiga/projects/notifications/choices.py:44
 msgid "Assigned"
 msgstr ""
 
-#: taiga/projects/notifications/choices.py:47
+#: taiga/projects/notifications/choices.py:45
 msgid "Mentioned"
 msgstr ""
 
-#: taiga/projects/notifications/choices.py:48
+#: taiga/projects/notifications/choices.py:46
 msgid "Added as watcher"
 msgstr ""
 
-#: taiga/projects/notifications/choices.py:49
+#: taiga/projects/notifications/choices.py:47
 msgid "Added as member"
 msgstr ""
 
-#: taiga/projects/notifications/choices.py:50
+#: taiga/projects/notifications/choices.py:48
 msgid "Comment"
 msgstr ""
 
-#: taiga/projects/notifications/choices.py:51
+#: taiga/projects/notifications/choices.py:49
 msgid "Mentioned in comment"
 msgstr ""
 
-#: taiga/projects/notifications/models.py:73
+#: taiga/projects/notifications/models.py:71
 msgid "created date time"
 msgstr "날짜 시간 생성됨"
 
-#: taiga/projects/notifications/models.py:77
+#: taiga/projects/notifications/models.py:75
 msgid "history entries"
 msgstr "내역 항목"
 
-#: taiga/projects/notifications/models.py:80
+#: taiga/projects/notifications/models.py:78
 msgid "notify users"
 msgstr "사용자 알림"
 
-#: taiga/projects/notifications/models.py:120
-#: taiga/projects/notifications/models.py:121
+#: taiga/projects/notifications/models.py:118
+#: taiga/projects/notifications/models.py:119
 msgid "Watched"
 msgstr "구독됨"
 
-#: taiga/projects/notifications/services.py:79
-#: taiga/projects/notifications/services.py:103
-#: taiga/projects/settings/services.py:49
-#: taiga/projects/settings/services.py:67
+#: taiga/projects/notifications/services.py:77
+#: taiga/projects/notifications/services.py:101
+#: taiga/projects/settings/services.py:47
+#: taiga/projects/settings/services.py:65
 msgid "Notify exists for specified user and project"
 msgstr "지정된 사용자 및 프로젝트에 대한 알림이 있습니다."
 
-#: taiga/projects/notifications/services.py:526
+#: taiga/projects/notifications/services.py:524
 msgid "Invalid value for notify level"
 msgstr "알림 수준의 값이 유효하지 않습니다."
 
@@ -3248,131 +3248,130 @@ msgstr ""
 "\n"
 "[%(project)s] \"%(page)s\" 위키 페이지가 삭제되었습니다.\n"
 
-#: taiga/projects/notifications/validators.py:48
+#: taiga/projects/notifications/validators.py:46
 msgid "Watchers contains invalid users"
 msgstr "구독중인 사람들중에 유효하지 않은 사용자가 포함되어 있습니다."
 
-#: taiga/projects/occ/mixins.py:37
+#: taiga/projects/occ/mixins.py:35
 msgid "The version must be an integer"
 msgstr "버전은 반드시 정수이어야 합니다."
 
-#: taiga/projects/occ/mixins.py:60
+#: taiga/projects/occ/mixins.py:58
 msgid "The version parameter is not valid"
 msgstr "버전 매개변수가 유효하지 않습니다."
 
-#: taiga/projects/occ/mixins.py:76
+#: taiga/projects/occ/mixins.py:74
 msgid "The version doesn't match with the current one"
 msgstr "현재 버전과 일치하지 않습니다."
 
-#: taiga/projects/occ/mixins.py:95
+#: taiga/projects/occ/mixins.py:93
 msgid "version"
 msgstr "버전"
 
-#: taiga/projects/permissions.py:45
+#: taiga/projects/permissions.py:43
 msgid ""
 "You can't leave the project if you are the owner or there are no more admins"
 msgstr "당신이 소유자이거나 다른 관리자가 없다면 프로젝트를 떠날 수 없습니다."
 
-#: taiga/projects/services/members.py:133
+#: taiga/projects/services/members.py:131
 msgid "Project without owner"
 msgstr "소유자 없는 프로젝트"
 
-#: taiga/projects/services/members.py:138
+#: taiga/projects/services/members.py:136
 msgid "You have reached your current limit of memberships for private projects"
 msgstr "당신의 현재 비공개 프로젝트 최대 수용 인원수에 도달하였습니다."
 
-#: taiga/projects/services/members.py:142
+#: taiga/projects/services/members.py:140
 msgid "You have reached your current limit of memberships for public projects"
 msgstr "당신의 현재 공공 프로젝트 최대 수용 인원수에 도달하였습니다."
 
-#: taiga/projects/services/members.py:148
+#: taiga/projects/services/members.py:146
 msgid "You have reached the current limit of pending memberships"
 msgstr "당신의 현재 최대 보류중 회원수 제한에 도달하였습니다."
 
-#: taiga/projects/services/projects.py:101
-#: taiga/projects/services/projects.py:141 taiga/users/services.py:600
+#: taiga/projects/services/projects.py:99
+#: taiga/projects/services/projects.py:139 taiga/users/services.py:598
 msgid "You can't have more private projects"
 msgstr "더 이상의 비공개 프로젝트를 소유하실 수 없습니다."
 
-#: taiga/projects/services/projects.py:105
-#: taiga/projects/services/projects.py:145 taiga/users/services.py:603
+#: taiga/projects/services/projects.py:103
+#: taiga/projects/services/projects.py:143 taiga/users/services.py:601
 msgid ""
 "This project reaches your current limit of memberships for private projects"
 msgstr ""
 "이 프로젝트는 당신의 비공개 프로젝트 최대 수용 인원수에 도달하였습니다."
 
-#: taiga/projects/services/projects.py:109
-#: taiga/projects/services/projects.py:149 taiga/users/services.py:607
+#: taiga/projects/services/projects.py:107
+#: taiga/projects/services/projects.py:147 taiga/users/services.py:605
 msgid "You can't have more public projects"
 msgstr "더 이상의 공공 프로젝트를 소유하실 수 없습니다."
 
-#: taiga/projects/services/projects.py:113
-#: taiga/projects/services/projects.py:153 taiga/users/services.py:610
+#: taiga/projects/services/projects.py:111
+#: taiga/projects/services/projects.py:151 taiga/users/services.py:608
 msgid ""
 "This project reaches your current limit of memberships for public projects"
 msgstr "이 프로젝트는 당신의 공공 프로젝트 최대 수용 인원수에 도달하였습니다."
 
-#: taiga/projects/services/promote.py:46
+#: taiga/projects/services/promote.py:47
 #, python-format
 msgid "Task #%(ref)s"
 msgstr ""
 
-#: taiga/projects/services/stats.py:197
+#: taiga/projects/services/stats.py:195
 msgid "Future sprint"
 msgstr "앞으로의 스프린트"
 
-#: taiga/projects/services/stats.py:217
+#: taiga/projects/services/stats.py:215
 msgid "Project End"
 msgstr "프로젝트 종료"
 
-#: taiga/projects/services/transfer.py:62
-#: taiga/projects/services/transfer.py:69
-#: taiga/projects/services/transfer.py:72 taiga/users/api.py:193
-#: taiga/users/api.py:198
+#: taiga/projects/services/transfer.py:60
+#: taiga/projects/services/transfer.py:67
+#: taiga/projects/services/transfer.py:70 taiga/users/api.py:196
 msgid "Token is invalid"
 msgstr "토큰이 유효하지 않습니다."
 
-#: taiga/projects/services/transfer.py:67
+#: taiga/projects/services/transfer.py:65
 msgid "Token has expired"
 msgstr "토큰이 만료되었습니다."
 
-#: taiga/projects/settings/choices.py:33
+#: taiga/projects/settings/choices.py:31
 msgid "Timeline"
 msgstr ""
 
-#: taiga/projects/settings/choices.py:34
+#: taiga/projects/settings/choices.py:32
 msgid "Epics"
 msgstr ""
 
-#: taiga/projects/settings/choices.py:35
+#: taiga/projects/settings/choices.py:33
 msgid "Backlog"
 msgstr ""
 
 #. Translators: Name of kanban project template.
-#: taiga/projects/settings/choices.py:36 taiga/projects/translations.py:35
+#: taiga/projects/settings/choices.py:34 taiga/projects/translations.py:33
 msgid "Kanban"
 msgstr "칸반"
 
-#: taiga/projects/settings/choices.py:37
+#: taiga/projects/settings/choices.py:35
 msgid "Issues"
 msgstr ""
 
-#: taiga/projects/settings/choices.py:38
+#: taiga/projects/settings/choices.py:36
 msgid "TeamWiki"
 msgstr ""
 
-#: taiga/projects/settings/validators.py:36
+#: taiga/projects/settings/validators.py:34
 msgid "You don't have access to this section"
 msgstr ""
 
-#: taiga/projects/tagging/fields.py:52
+#: taiga/projects/tagging/fields.py:50
 #, python-brace-format
 msgid "Invalid tag '{value}'. The color is not a valid HEX color or null."
 msgstr ""
 "'{value}' 태그는 유효하지 않습니다. 색이 유효하지 않은 HEX색 이거나 null 입니"
 "다."
 
-#: taiga/projects/tagging/fields.py:55
+#: taiga/projects/tagging/fields.py:53
 #, python-brace-format
 msgid ""
 "Invalid tag '{value}'. it must be the name or a pair '[\"name\", \"hex color/"
@@ -3381,91 +3380,91 @@ msgstr ""
 "'{value}' 태그는 유효하지 않습니다. 이름이나 쌍을 이루어야 합니다. '[\"name"
 "\", \"hex color/\" | null]'."
 
-#: taiga/projects/tagging/fields.py:77
+#: taiga/projects/tagging/fields.py:75
 #, python-brace-format
 msgid "Invalid tag '{value}'. It must be the tag name."
 msgstr "'{value}' 태그는 유효하지 않습니다. 태그 이름이어야 합니다."
 
-#: taiga/projects/tagging/models.py:27
+#: taiga/projects/tagging/models.py:24
 msgid "tags"
 msgstr "태그"
 
-#: taiga/projects/tagging/models.py:35
+#: taiga/projects/tagging/models.py:32
 msgid "tags colors"
 msgstr "태그 색"
 
-#: taiga/projects/tagging/validators.py:47
-#: taiga/projects/tagging/validators.py:74
+#: taiga/projects/tagging/validators.py:45
+#: taiga/projects/tagging/validators.py:72
 msgid "This tag already exists."
 msgstr "이 태그는 이미 존재합니다."
 
-#: taiga/projects/tagging/validators.py:54
-#: taiga/projects/tagging/validators.py:81
+#: taiga/projects/tagging/validators.py:52
+#: taiga/projects/tagging/validators.py:79
 msgid "The color is not a valid HEX color."
 msgstr "색이 유효하지 않은 HEX색 입니다."
 
-#: taiga/projects/tagging/validators.py:67
-#: taiga/projects/tagging/validators.py:101
-#: taiga/projects/tagging/validators.py:114
-#: taiga/projects/tagging/validators.py:121
+#: taiga/projects/tagging/validators.py:65
+#: taiga/projects/tagging/validators.py:99
+#: taiga/projects/tagging/validators.py:112
+#: taiga/projects/tagging/validators.py:119
 msgid "The tag doesn't exist."
 msgstr "태그가 존재하지 않습니다."
 
-#: taiga/projects/tasks/api.py:113 taiga/projects/tasks/api.py:122
+#: taiga/projects/tasks/api.py:111 taiga/projects/tasks/api.py:120
 msgid "You don't have permissions to set this sprint to this task."
 msgstr "이 태스크의 스프린트를 설정할 권한이 없습니다."
 
-#: taiga/projects/tasks/api.py:116
+#: taiga/projects/tasks/api.py:114
 msgid "You don't have permissions to set this user story to this task."
 msgstr "이 태스크의 유저 스토리를 설정할 권한이 없습니다."
 
-#: taiga/projects/tasks/api.py:119
+#: taiga/projects/tasks/api.py:117
 msgid "You don't have permissions to set this status to this task."
 msgstr "이 태스크의 상태를 설정할 권한이 없습니다."
 
-#: taiga/projects/tasks/models.py:90
+#: taiga/projects/tasks/models.py:88
 msgid "us order"
 msgstr "유저 스토리 순서"
 
-#: taiga/projects/tasks/models.py:92
+#: taiga/projects/tasks/models.py:90
 msgid "taskboard order"
 msgstr "태스크보드 순서"
 
-#: taiga/projects/tasks/models.py:106
+#: taiga/projects/tasks/models.py:104
 msgid "is iocaine"
 msgstr "아이오케인 입니다."
 
-#: taiga/projects/tasks/validators.py:61
+#: taiga/projects/tasks/validators.py:59
 msgid "Invalid milestone id."
 msgstr "마일스톤 아이디가 유효하지 않습니다."
 
-#: taiga/projects/tasks/validators.py:72
+#: taiga/projects/tasks/validators.py:70
 msgid "Invalid task status id."
 msgstr "태스크 상태 아이디가 유효하지 않습니다."
 
-#: taiga/projects/tasks/validators.py:85
+#: taiga/projects/tasks/validators.py:83
 msgid "Invalid user story id."
 msgstr "유저 스토리 아이디가 유효하지 않습니다."
 
-#: taiga/projects/tasks/validators.py:109
+#: taiga/projects/tasks/validators.py:107
 msgid "Invalid task status id. The status must belong to the same project."
 msgstr ""
 "태스크 상태 아이디가 유효하지 않습니다. 상태는 반드시 같은 프로젝트에 속해야 "
 "합니다."
 
-#: taiga/projects/tasks/validators.py:123
+#: taiga/projects/tasks/validators.py:121
 msgid "Invalid user story id. The user story must belong to the same project."
 msgstr ""
 "유저 스토리 아이디가 유효하지 않습니다. 유저 스토리는 반드시 같은 프로젝트에 "
 "속해야 합니다."
 
-#: taiga/projects/tasks/validators.py:135
+#: taiga/projects/tasks/validators.py:133
 msgid "Invalid milestone id. The milestone must belong to the same project."
 msgstr ""
 "마일스톤 아이디가 유효하지 않습니다. 마일스톤은 반드시 같은 프로젝트에 속해"
 "야 합니다."
 
-#: taiga/projects/tasks/validators.py:152
+#: taiga/projects/tasks/validators.py:150
 msgid ""
 "Invalid task ids. All tasks must belong to the same project and, if it "
 "exists, to the same status, user story and/or milestone."
@@ -3474,7 +3473,7 @@ msgstr ""
 "해야하며, 만약 존재한다면, 같은 상태, 마일스톤이거나 상태, 유저 스토리, 마일"
 "스톤이어야 합니다."
 
-#: taiga/projects/tasks/validators.py:186
+#: taiga/projects/tasks/validators.py:184
 msgid "All the tasks must be from the same project"
 msgstr ""
 
@@ -3874,12 +3873,12 @@ msgstr ""
 "[%(project)s] 프로젝트 소유권 이전 제안\n"
 
 #. Translators: Name of scrum project template.
-#: taiga/projects/translations.py:30
+#: taiga/projects/translations.py:28
 msgid "Scrum"
 msgstr "스크럼"
 
 #. Translators: Description of scrum project template.
-#: taiga/projects/translations.py:32
+#: taiga/projects/translations.py:30
 msgid ""
 "The agile product backlog in Scrum is a prioritized features list, "
 "containing short descriptions of all functionality desired in the product. "
@@ -3894,7 +3893,7 @@ msgstr ""
 "백 로그는 제품과 고객에 대해 더 많이 알게되면 확대되고 변경 될 수 있습니다."
 
 #. Translators: Description of kanban project template.
-#: taiga/projects/translations.py:37
+#: taiga/projects/translations.py:35
 msgid ""
 "Kanban is a method for managing knowledge work with an emphasis on just-in-"
 "time delivery while not overloading the team members. In this approach, the "
@@ -3906,299 +3905,299 @@ msgstr ""
 "볼 수 있도록 표시되고 팀 구성원이 대기열로부터 일을 가져올 수 있습니다."
 
 #. Translators: User story point value (value = undefined)
-#: taiga/projects/translations.py:45
+#: taiga/projects/translations.py:43
 msgid "?"
 msgstr "?"
 
 #. Translators: User story point value (value = 0)
-#: taiga/projects/translations.py:47
+#: taiga/projects/translations.py:45
 msgid "0"
 msgstr "0"
 
 #. Translators: User story point value (value = 0.5)
-#: taiga/projects/translations.py:49
+#: taiga/projects/translations.py:47
 msgid "1/2"
 msgstr "1/2"
 
 #. Translators: User story point value (value = 1)
-#: taiga/projects/translations.py:51
+#: taiga/projects/translations.py:49
 msgid "1"
 msgstr "1"
 
 #. Translators: User story point value (value = 2)
-#: taiga/projects/translations.py:53
+#: taiga/projects/translations.py:51
 msgid "2"
 msgstr "2"
 
 #. Translators: User story point value (value = 3)
-#: taiga/projects/translations.py:55
+#: taiga/projects/translations.py:53
 msgid "3"
 msgstr "3"
 
 #. Translators: User story point value (value = 5)
-#: taiga/projects/translations.py:57
+#: taiga/projects/translations.py:55
 msgid "5"
 msgstr "5"
 
 #. Translators: User story point value (value = 8)
-#: taiga/projects/translations.py:59
+#: taiga/projects/translations.py:57
 msgid "8"
 msgstr "8"
 
 #. Translators: User story point value (value = 10)
-#: taiga/projects/translations.py:61
+#: taiga/projects/translations.py:59
 msgid "10"
 msgstr "10"
 
 #. Translators: User story point value (value = 13)
-#: taiga/projects/translations.py:63
+#: taiga/projects/translations.py:61
 msgid "13"
 msgstr "13"
 
 #. Translators: User story point value (value = 20)
-#: taiga/projects/translations.py:65
+#: taiga/projects/translations.py:63
 msgid "20"
 msgstr "20"
 
 #. Translators: User story point value (value = 40)
-#: taiga/projects/translations.py:67
+#: taiga/projects/translations.py:65
 msgid "40"
 msgstr "40"
 
 #. Translators: User story status
 #. Translators: Task status
 #. Translators: Issue status
-#: taiga/projects/translations.py:75 taiga/projects/translations.py:98
-#: taiga/projects/translations.py:114
+#: taiga/projects/translations.py:73 taiga/projects/translations.py:96
+#: taiga/projects/translations.py:112
 msgid "New"
 msgstr "신규"
 
 #. Translators: User story status
-#: taiga/projects/translations.py:78
+#: taiga/projects/translations.py:76
 msgid "Ready"
 msgstr "준비"
 
 #. Translators: User story status
 #. Translators: Task status
 #. Translators: Issue status
-#: taiga/projects/translations.py:81 taiga/projects/translations.py:100
-#: taiga/projects/translations.py:116
+#: taiga/projects/translations.py:79 taiga/projects/translations.py:98
+#: taiga/projects/translations.py:114
 msgid "In progress"
 msgstr "작업중"
 
 #. Translators: User story status
 #. Translators: Task status
 #. Translators: Issue status
-#: taiga/projects/translations.py:84 taiga/projects/translations.py:102
-#: taiga/projects/translations.py:118
+#: taiga/projects/translations.py:82 taiga/projects/translations.py:100
+#: taiga/projects/translations.py:116
 msgid "Ready for test"
 msgstr "테스트 준비 끝"
 
 #. Translators: User story status
-#: taiga/projects/translations.py:87
+#: taiga/projects/translations.py:85
 msgid "Done"
 msgstr "완료됨"
 
 #. Translators: User story status
-#: taiga/projects/translations.py:90
+#: taiga/projects/translations.py:88
 msgid "Archived"
 msgstr "보관됨"
 
 #. Translators: Task status
 #. Translators: Issue status
-#: taiga/projects/translations.py:104 taiga/projects/translations.py:120
+#: taiga/projects/translations.py:102 taiga/projects/translations.py:118
 msgid "Closed"
 msgstr "완료됨"
 
 #. Translators: Task status
 #. Translators: Issue status
-#: taiga/projects/translations.py:106 taiga/projects/translations.py:122
+#: taiga/projects/translations.py:104 taiga/projects/translations.py:120
 msgid "Needs Info"
 msgstr "정보 필요"
 
 #. Translators: Issue status
-#: taiga/projects/translations.py:124
+#: taiga/projects/translations.py:122
 msgid "Postponed"
 msgstr "지연됨"
 
 #. Translators: Issue status
-#: taiga/projects/translations.py:126
+#: taiga/projects/translations.py:124
 msgid "Rejected"
 msgstr "거부됨"
 
 #. Translators: Issue type
-#: taiga/projects/translations.py:134
+#: taiga/projects/translations.py:132
 msgid "Bug"
 msgstr "버그"
 
 #. Translators: Issue type
-#: taiga/projects/translations.py:136
+#: taiga/projects/translations.py:134
 msgid "Question"
 msgstr "질문"
 
 #. Translators: Issue type
-#: taiga/projects/translations.py:138
+#: taiga/projects/translations.py:136
 msgid "Enhancement"
 msgstr "개선"
 
 #. Translators: Issue priority
-#: taiga/projects/translations.py:146
+#: taiga/projects/translations.py:144
 msgid "Low"
 msgstr "낮음"
 
 #. Translators: Issue priority
 #. Translators: Issue severity
-#: taiga/projects/translations.py:148 taiga/projects/translations.py:161
+#: taiga/projects/translations.py:146 taiga/projects/translations.py:159
 msgid "Normal"
 msgstr "일반"
 
 #. Translators: Issue priority
-#: taiga/projects/translations.py:150
+#: taiga/projects/translations.py:148
 msgid "High"
 msgstr "높음"
 
 #. Translators: Issue severity
-#: taiga/projects/translations.py:157
+#: taiga/projects/translations.py:155
 msgid "Wishlist"
 msgstr "희망사항"
 
 #. Translators: Issue severity
-#: taiga/projects/translations.py:159
+#: taiga/projects/translations.py:157
 msgid "Minor"
 msgstr "부가적"
 
 #. Translators: Issue severity
-#: taiga/projects/translations.py:163
+#: taiga/projects/translations.py:161
 msgid "Important"
 msgstr "중요"
 
 #. Translators: Issue severity
-#: taiga/projects/translations.py:165
+#: taiga/projects/translations.py:163
 msgid "Critical"
 msgstr "치명적"
 
 #. Translators: User role
-#: taiga/projects/translations.py:172
+#: taiga/projects/translations.py:170
 msgid "UX"
 msgstr "UX"
 
 #. Translators: User role
-#: taiga/projects/translations.py:174
+#: taiga/projects/translations.py:172
 msgid "Design"
 msgstr "디자인"
 
 #. Translators: User role
-#: taiga/projects/translations.py:176
+#: taiga/projects/translations.py:174
 msgid "Front"
 msgstr "프론트"
 
 #. Translators: User role
-#: taiga/projects/translations.py:178
+#: taiga/projects/translations.py:176
 msgid "Back"
 msgstr "이전"
 
 #. Translators: User role
-#: taiga/projects/translations.py:180
+#: taiga/projects/translations.py:178
 msgid "Product Owner"
 msgstr "제품 소유자"
 
 #. Translators: User role
-#: taiga/projects/translations.py:182
+#: taiga/projects/translations.py:180
 msgid "Stakeholder"
 msgstr "이해관계자"
 
-#: taiga/projects/userstories/api.py:193
+#: taiga/projects/userstories/api.py:191
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr "이 유저 스토리를 스프린트에 설정할 권한이 없습니다."
 
-#: taiga/projects/userstories/api.py:197
+#: taiga/projects/userstories/api.py:195
 msgid "You don't have permissions to set this status to this user story."
 msgstr "이 유저 스토리의 상태를 설정할 권한이 없습니다."
 
-#: taiga/projects/userstories/api.py:201
+#: taiga/projects/userstories/api.py:199
 msgid "You don't have permissions to set this swimlane to this user story."
 msgstr ""
 
-#: taiga/projects/userstories/api.py:277
+#: taiga/projects/userstories/api.py:275
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
 msgstr "'{role_id}' 역할 아이디는 유효하지 않습니다."
 
-#: taiga/projects/userstories/api.py:284
+#: taiga/projects/userstories/api.py:282
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
 msgstr "'{points_id}' 포인트 아이디는 유효하지 않습니다."
 
-#: taiga/projects/userstories/api.py:303
+#: taiga/projects/userstories/api.py:301
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
 msgstr "유저 스토리 생성 #{ref} - {subject}"
 
-#: taiga/projects/userstories/models.py:50
+#: taiga/projects/userstories/models.py:48
 msgid "role"
 msgstr "역할"
 
-#: taiga/projects/userstories/models.py:106
+#: taiga/projects/userstories/models.py:104
 msgid "backlog order"
 msgstr "백로그 순서"
 
-#: taiga/projects/userstories/models.py:108
+#: taiga/projects/userstories/models.py:106
 msgid "sprint order"
 msgstr "스프린트 순서"
 
-#: taiga/projects/userstories/models.py:110
+#: taiga/projects/userstories/models.py:108
 msgid "kanban order"
 msgstr "칸반 순서"
 
-#: taiga/projects/userstories/models.py:118
+#: taiga/projects/userstories/models.py:116
 msgid "finish date"
 msgstr "종료일"
 
-#: taiga/projects/userstories/models.py:133
+#: taiga/projects/userstories/models.py:131
 msgid "assigned users"
 msgstr ""
 
-#: taiga/projects/userstories/models.py:142
+#: taiga/projects/userstories/models.py:140
 msgid "generated from issue"
 msgstr "이슈로부터 생성됨"
 
-#: taiga/projects/userstories/models.py:146
+#: taiga/projects/userstories/models.py:144
 msgid "generated from task"
 msgstr ""
 
-#: taiga/projects/userstories/models.py:147
+#: taiga/projects/userstories/models.py:145
 msgid "reference from task"
 msgstr ""
 
-#: taiga/projects/userstories/models.py:155
+#: taiga/projects/userstories/models.py:153
 msgid "swimlane"
 msgstr ""
 
-#: taiga/projects/userstories/validators.py:44
+#: taiga/projects/userstories/validators.py:42
 msgid "There's no user story with that id"
 msgstr "아이디를 가진 유저 스토리가 없습니다."
 
-#: taiga/projects/userstories/validators.py:85
-#: taiga/projects/userstories/validators.py:124
-#: taiga/projects/userstories/validators.py:170
+#: taiga/projects/userstories/validators.py:83
+#: taiga/projects/userstories/validators.py:122
+#: taiga/projects/userstories/validators.py:168
 msgid ""
 "Invalid user story status id. The status must belong to the same project."
 msgstr ""
 "유저 스토리 상태 아이디가 유효하지 않습니다. 상태는 반드시 동일한 프로젝트에 "
 "속해야 합니다."
 
-#: taiga/projects/userstories/validators.py:98
-#: taiga/projects/userstories/validators.py:182
+#: taiga/projects/userstories/validators.py:96
+#: taiga/projects/userstories/validators.py:180
 msgid "Invalid swimlane id. The swimlane must belong to the same project."
 msgstr ""
 
-#: taiga/projects/userstories/validators.py:136
+#: taiga/projects/userstories/validators.py:134
 msgid "Invalid milestone id. The milistone must belong to the same project."
 msgstr ""
 "마일스톤 아이디가 유효하지 않습니다. 마일스톤은 반드시 같은 프로젝트에 속해"
 "야 합니다."
 
-#: taiga/projects/userstories/validators.py:149
+#: taiga/projects/userstories/validators.py:147
 msgid ""
 "Invalid user story ids. All stories must belong to the same project and, if "
 "it exists, to the same status and milestone."
@@ -4206,250 +4205,250 @@ msgstr ""
 "유저 스토리 아이디가 유효하지 않습니다. 모든 유저 스토리는 반드시 같은 프로젝"
 "트에 속해야 하고, 존재한다면, 같은 상태와 마일스톤을 가져야 합니다."
 
-#: taiga/projects/userstories/validators.py:201
+#: taiga/projects/userstories/validators.py:199
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
 
-#: taiga/projects/userstories/validators.py:211
+#: taiga/projects/userstories/validators.py:209
 msgid "You can't use after and before at the same time."
 msgstr ""
 
-#: taiga/projects/userstories/validators.py:225
+#: taiga/projects/userstories/validators.py:223
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
 
-#: taiga/projects/userstories/validators.py:237
+#: taiga/projects/userstories/validators.py:235
 msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
 
-#: taiga/projects/validators.py:63
+#: taiga/projects/validators.py:61
 msgid "There's no project with that id"
 msgstr "아이디가 있는 프로젝트가 없습니다."
 
-#: taiga/projects/validators.py:176
+#: taiga/projects/validators.py:174
 msgid "The user yet exists in the project"
 msgstr "이 프로젝트에는 아직 사용자가 없습니다."
 
-#: taiga/projects/validators.py:181
+#: taiga/projects/validators.py:179
 msgid "Invalid operation"
 msgstr ""
 
-#: taiga/projects/validators.py:193
+#: taiga/projects/validators.py:191
 msgid "Invalid role for the project"
 msgstr "프로젝트에 유효하지 않은 역할입니다."
 
-#: taiga/projects/validators.py:208 taiga/projects/validators.py:271
+#: taiga/projects/validators.py:206 taiga/projects/validators.py:269
 msgid "The user must be a valid contact"
 msgstr "사용자는 반드시 유효한 연락처이어야 합니다."
 
-#: taiga/projects/validators.py:229
+#: taiga/projects/validators.py:227
 msgid "The project owner must be admin."
 msgstr "프로젝트 소유자는 반드시 관리자이어야 합니다."
 
-#: taiga/projects/validators.py:233
+#: taiga/projects/validators.py:231
 msgid "At least one user must be an active admin for this project."
 msgstr "이 프로젝트의 최소 한 명의 사용자는 활성된 관리자이어야 합니다."
 
-#: taiga/projects/validators.py:286
+#: taiga/projects/validators.py:284
 msgid "Invalid role ids. All roles must belong to the same project."
 msgstr ""
 "유효하지 않은 역할 아이디입니다. 모든 역할은 반드시 동일한 프로젝트에 속해야 "
 "합니다."
 
-#: taiga/projects/validators.py:310
+#: taiga/projects/validators.py:308
 msgid "Default options"
 msgstr "기본 옵션"
 
-#: taiga/projects/validators.py:311
+#: taiga/projects/validators.py:309
 msgid "User story's statuses"
 msgstr "유저 스토리 상태"
 
-#: taiga/projects/validators.py:312
+#: taiga/projects/validators.py:310
 msgid "Points"
 msgstr "포인트"
 
-#: taiga/projects/validators.py:313
+#: taiga/projects/validators.py:311
 msgid "Task's statuses"
 msgstr "태스크 상태"
 
-#: taiga/projects/validators.py:314
+#: taiga/projects/validators.py:312
 msgid "Issue's statuses"
 msgstr "이슈 상태"
 
-#: taiga/projects/validators.py:315
+#: taiga/projects/validators.py:313
 msgid "Issue's types"
 msgstr "이슈 형태"
 
-#: taiga/projects/validators.py:316
+#: taiga/projects/validators.py:314
 msgid "Priorities"
 msgstr "우선순위"
 
-#: taiga/projects/validators.py:317
+#: taiga/projects/validators.py:315
 msgid "Severities"
 msgstr "심각도"
 
-#: taiga/projects/validators.py:318
+#: taiga/projects/validators.py:316
 msgid "Roles"
 msgstr "역할"
 
-#: taiga/projects/votes/models.py:33 taiga/projects/votes/models.py:34
-#: taiga/projects/votes/models.py:64
+#: taiga/projects/votes/models.py:30 taiga/projects/votes/models.py:31
+#: taiga/projects/votes/models.py:61
 msgid "Votes"
 msgstr "투표"
 
-#: taiga/projects/votes/models.py:63
+#: taiga/projects/votes/models.py:60
 msgid "Vote"
 msgstr "투표"
 
-#: taiga/projects/wiki/api.py:77
+#: taiga/projects/wiki/api.py:75
 msgid "'content' parameter is mandatory"
 msgstr "'content' 매개변수는 필수입니다."
 
-#: taiga/projects/wiki/api.py:80
+#: taiga/projects/wiki/api.py:78
 msgid "'project_id' parameter is mandatory"
 msgstr "'project_id' 매개변수는 필수입니다."
 
-#: taiga/projects/wiki/models.py:58
+#: taiga/projects/wiki/models.py:56
 msgid "last modifier"
 msgstr "마지막 수정자"
 
-#: taiga/projects/wiki/models.py:96
+#: taiga/projects/wiki/models.py:94
 msgid "href"
 msgstr "href"
 
-#: taiga/telemetry/models.py:29
+#: taiga/telemetry/models.py:27
 msgid "instance id"
 msgstr ""
 
-#: taiga/telemetry/models.py:32
+#: taiga/telemetry/models.py:30
 msgid "created at"
 msgstr ""
 
-#: taiga/timeline/signals.py:65
+#: taiga/timeline/signals.py:63
 msgid "Check the history API for the exact diff"
 msgstr "확실한 차이점을 보려면 API 내역을 확인하십시오."
 
-#: taiga/users/admin.py:39
+#: taiga/users/admin.py:37
 msgid "Project Member"
 msgstr "프로젝트 회원"
 
-#: taiga/users/admin.py:40
+#: taiga/users/admin.py:38
 msgid "Project Members"
 msgstr "프로젝트 회원"
 
-#: taiga/users/admin.py:50
+#: taiga/users/admin.py:48
 msgid "id"
 msgstr "아이디"
 
-#: taiga/users/admin.py:81
+#: taiga/users/admin.py:79
 msgid "Project Ownership"
 msgstr "프로젝트 소유권"
 
-#: taiga/users/admin.py:82
+#: taiga/users/admin.py:80
 msgid "Project Ownerships"
 msgstr "프로젝트 소유권"
 
-#: taiga/users/admin.py:119
+#: taiga/users/admin.py:117
 msgid "Personal info"
 msgstr "개인정보"
 
-#: taiga/users/admin.py:122
+#: taiga/users/admin.py:120
 msgid "Permissions"
 msgstr "권한"
 
-#: taiga/users/admin.py:123
+#: taiga/users/admin.py:121
 msgid "Restrictions"
 msgstr "제한 사항"
 
-#: taiga/users/admin.py:125
+#: taiga/users/admin.py:123
 msgid "Important dates"
 msgstr "중요한 날짜"
 
-#: taiga/users/api.py:132
+#: taiga/users/api.py:130
 msgid "Duplicated email"
 msgstr "중복된 이메일"
 
-#: taiga/users/api.py:134
+#: taiga/users/api.py:132
 msgid "Invalid email"
 msgstr ""
 
-#: taiga/users/api.py:172
+#: taiga/users/api.py:170
 msgid "Invalid username or email"
 msgstr "아이디 또는 이메일이 유효하지 않습니다."
 
-#: taiga/users/api.py:181
-msgid "Mail sent successful!"
+#: taiga/users/api.py:179
+msgid "Mail sent successfully!"
 msgstr ""
 
-#: taiga/users/api.py:219
+#: taiga/users/api.py:217
 msgid "Current password parameter needed"
 msgstr "현재 비밀번호 매개변수가 필요합니다."
 
-#: taiga/users/api.py:222
+#: taiga/users/api.py:220
 msgid "New password parameter needed"
 msgstr "새로운 비밀번호 매개변수가 필요합니다."
 
-#: taiga/users/api.py:225
+#: taiga/users/api.py:223
 msgid "Invalid password length at least 6 characters needed"
 msgstr ""
 
-#: taiga/users/api.py:228
+#: taiga/users/api.py:226
 msgid "Invalid current password"
 msgstr "현재 비밀번호는 유효하지 않습니다.Invalid current password"
 
-#: taiga/users/api.py:275 taiga/users/api.py:281
+#: taiga/users/api.py:278
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr "유효하지 않음, 토큰이 정확하고 이전에 사용하지 않았습니까?"
 
-#: taiga/users/api.py:318 taiga/users/api.py:326 taiga/users/api.py:329
+#: taiga/users/api.py:315 taiga/users/api.py:323 taiga/users/api.py:326
 msgid "Invalid, are you sure the token is correct?"
 msgstr "유효하지 않음, 토큰이 정확합니까?are you sure the token is correct?"
 
-#: taiga/users/api.py:351
+#: taiga/users/api.py:348
 msgid "Email address already verified"
 msgstr ""
 
-#: taiga/users/api.py:353
+#: taiga/users/api.py:350
 msgid "Unable to verify this email address"
 msgstr ""
 
-#: taiga/users/api.py:356
+#: taiga/users/api.py:353
 msgid "Mail sended successful!"
 msgstr "성공적으로 메일을 전송했습니다!"
 
-#: taiga/users/models.py:99
+#: taiga/users/models.py:97
 msgid "superuser status"
 msgstr "슈퍼유저 상태"
 
-#: taiga/users/models.py:100
+#: taiga/users/models.py:98
 msgid ""
 "Designates that this user has all permissions without explicitly assigning "
 "them."
 msgstr "이 사용자가 명시적인 할당을 받지 않고 모든 권한을 가지는지 지정합니다."
 
-#: taiga/users/models.py:132
+#: taiga/users/models.py:130
 msgid "username"
 msgstr "아이디"
 
-#: taiga/users/models.py:133
+#: taiga/users/models.py:131
 msgid ""
 "Required. 30 characters or fewer. Letters, numbers and /./-/_ characters"
 msgstr "필수. 30자 이하. 문자, 숫자 그리고 /./-/_ characters"
 
-#: taiga/users/models.py:136
+#: taiga/users/models.py:134
 msgid "Enter a valid username."
 msgstr "올바른 아이디를 입력해주세요."
 
-#: taiga/users/models.py:139
+#: taiga/users/models.py:137
 msgid "active"
 msgstr "활성"
 
-#: taiga/users/models.py:140
+#: taiga/users/models.py:138
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
@@ -4457,79 +4456,79 @@ msgstr ""
 "이 사용자를 활성 상태로 취급할 것인지 지정합니다. 계정을 삭제하는 대신에 선택"
 "을 해제하십시오."
 
-#: taiga/users/models.py:142
+#: taiga/users/models.py:140
 msgid "staff status"
 msgstr ""
 
-#: taiga/users/models.py:143
+#: taiga/users/models.py:141
 msgid "Designates whether the user can log into this admin site."
 msgstr ""
 
-#: taiga/users/models.py:149
+#: taiga/users/models.py:147
 msgid "biography"
 msgstr "바이오그래피"
 
-#: taiga/users/models.py:152
+#: taiga/users/models.py:150
 msgid "photo"
 msgstr "사진"
 
-#: taiga/users/models.py:153
+#: taiga/users/models.py:151
 msgid "date joined"
 msgstr "가입한 날짜"
 
-#: taiga/users/models.py:154
+#: taiga/users/models.py:152
 msgid "accepted terms"
 msgstr ""
 
-#: taiga/users/models.py:155
+#: taiga/users/models.py:153
 msgid "new terms read"
 msgstr ""
 
-#: taiga/users/models.py:157
+#: taiga/users/models.py:155
 msgid "default language"
 msgstr "기본 언어"
 
-#: taiga/users/models.py:159
+#: taiga/users/models.py:157
 msgid "default theme"
 msgstr "기본 테마"
 
-#: taiga/users/models.py:161
+#: taiga/users/models.py:159
 msgid "default timezone"
 msgstr "기본 시간대"
 
-#: taiga/users/models.py:163
+#: taiga/users/models.py:161
 msgid "colorize tags"
 msgstr "태그 색 칠하기"
 
-#: taiga/users/models.py:168
+#: taiga/users/models.py:166
 msgid "email token"
 msgstr "이메일 토큰"
 
-#: taiga/users/models.py:170
+#: taiga/users/models.py:168
 msgid "new email address"
 msgstr "새로운 이메일 주소"
 
-#: taiga/users/models.py:177
+#: taiga/users/models.py:175
 msgid "max number of owned private projects"
 msgstr "소유할 수 있는 비공개 프로젝트의 최대 개수"
 
-#: taiga/users/models.py:180
+#: taiga/users/models.py:178
 msgid "max number of owned public projects"
 msgstr "소유할 수 있는 공공 프로젝트의 최대 개수"
 
-#: taiga/users/models.py:183
+#: taiga/users/models.py:181
 msgid "max number of memberships for each owned private project"
 msgstr "소유한 비공개 프로젝트당 수용할 수 있는 최대 회원수"
 
-#: taiga/users/models.py:187
+#: taiga/users/models.py:185
 msgid "max number of memberships for each owned public project"
 msgstr "소유한 공공 프로젝트당 수용할 수 있는 최대 회원수"
 
-#: taiga/users/models.py:315
+#: taiga/users/models.py:313
 msgid "permissions"
 msgstr "권한"
 
-#: taiga/users/services.py:58 taiga/users/services.py:75
+#: taiga/users/services.py:56 taiga/users/services.py:73
 msgid "Username or password does not matches user."
 msgstr "아이디 또는 비밀번호가 올바르지 않습니다."
 
@@ -4706,60 +4705,60 @@ msgstr ""
 msgid "[Taiga] Verify email"
 msgstr ""
 
-#: taiga/users/validators.py:48
+#: taiga/users/validators.py:46
 msgid "invalid"
 msgstr "유효하지 않음"
 
-#: taiga/users/validators.py:59
+#: taiga/users/validators.py:57
 msgid "Invalid username. Try with a different one."
 msgstr "유효하지 않은 아이디입니다. 다른 것으로 다시 시도해주세요."
 
-#: taiga/users/validators.py:86
+#: taiga/users/validators.py:84
 msgid "Read new terms has to be true'"
 msgstr ""
 
-#: taiga/userstorage/api.py:53
+#: taiga/userstorage/api.py:51
 msgid ""
 "Duplicate key value violates unique constraint. Key '{}' already exists."
 msgstr "키 값이 고유 제한 조건을 위반합니다. '{}'키가 이미 있습니다."
 
-#: taiga/userstorage/models.py:38
+#: taiga/userstorage/models.py:36
 msgid "key"
 msgstr "키"
 
-#: taiga/webhooks/models.py:35 taiga/webhooks/models.py:50
+#: taiga/webhooks/models.py:33 taiga/webhooks/models.py:48
 msgid "URL"
 msgstr "URL"
 
-#: taiga/webhooks/models.py:36
+#: taiga/webhooks/models.py:34
 msgid "secret key"
 msgstr "비밀 키"
 
-#: taiga/webhooks/models.py:51
+#: taiga/webhooks/models.py:49
 msgid "status code"
 msgstr "상태 코드"
 
-#: taiga/webhooks/models.py:52
+#: taiga/webhooks/models.py:50
 msgid "request data"
 msgstr "요청 데이터"
 
-#: taiga/webhooks/models.py:53
+#: taiga/webhooks/models.py:51
 msgid "request headers"
 msgstr "요청 헤더"
 
-#: taiga/webhooks/models.py:54
+#: taiga/webhooks/models.py:52
 msgid "response data"
 msgstr "응답 데이터"
 
-#: taiga/webhooks/models.py:55
+#: taiga/webhooks/models.py:53
 msgid "response headers"
 msgstr "응답 헤더"
 
-#: taiga/webhooks/models.py:56
+#: taiga/webhooks/models.py:54
 msgid "duration"
 msgstr "지속시간"
 
-#: taiga/webhooks/validators.py:42
+#: taiga/webhooks/validators.py:40
 msgid "Not allowed IP Address"
 msgstr ""
 
