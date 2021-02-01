@@ -1,4 +1,4 @@
-taiga-contrib-slack==5.5.1
-git+https://github.com/taigaio/taiga-contrib-github-auth.git@stable#egg=taiga-contrib-github-auth&subdirectory=back
-taiga-contrib-gitlab-auth-official==3.1.1
-git+https://github.com/taigaio/taiga-contrib-protected.git@master#egg=taiga-contrib-protected
+git+https://github.com/taigaio/taiga-contrib-github-auth.git@6.0.0#egg=taiga-contrib-github-auth&subdirectory=back
+git+https://github.com/taigaio/taiga-contrib-gitlab-auth.git@6.0.0#egg=taiga-contrib-gitlab-auth-official&subdirectory=back
+git+https://github.com/taigaio/taiga-contrib-slack.git@6.0.0#egg=taiga-contrib-slack&subdirectory=back
+git+https://github.com/taigaio/taiga-contrib-protected.git@6.0.0#egg=taiga-contrib-protected
