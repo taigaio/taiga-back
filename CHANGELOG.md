@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.1 (2020-02-02)
+
+### Misc
+
+- Fix 'create user' form in django admin panel.
+
 ## 6.0.0 (2020-02-02)
 
 ### Features
