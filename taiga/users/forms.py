@@ -35,7 +35,7 @@ class UserCreationForm(DjangoUserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username',)
+        fields = ('username', 'email')
 
 
 class UserChangeForm(DjangoUserChangeForm):
