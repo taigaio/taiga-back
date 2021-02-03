@@ -76,8 +76,8 @@ class BaseIssueCommentEventHook(BaseEventHook):
 
     def generate_issue_comment_message(self, **kwargs):
         _issue_comment_message = _(
-            "[@{user_name}]({user_url} "
-            "\"See @{user_name}'s {platform} profile\") "
+            "[{user_name}]({user_url} "
+            "\"See {user_name}'s {platform} profile\") "
             "says in [{platform}#{number}]({comment_url} \"Go to comment\"):\n\n"
             "\"{comment_message}\""
         )
@@ -140,8 +140,8 @@ class BaseIssueEventHook(BaseEventHook):
 
     def generate_create_issue_comment(self, **kwargs):
         _new_issue_message = _(
-            "Issue created by [@{user_name}]({user_url} "
-            "\"See @{user_name}'s {platform} profile\") "
+            "Issue created by [{user_name}]({user_url} "
+            "\"See {user_name}'s {platform} profile\") "
             "from [{platform}#{number}]({url} \"Go to issue\")."
         )
         _simple_new_issue_message = _("Issue created from {platform}.")
@@ -152,8 +152,8 @@ class BaseIssueEventHook(BaseEventHook):
 
     def generate_update_issue_comment(self, **kwargs):
         _edit_issue_message = _(
-            "Issue modified by [@{user_name}]({user_url} "
-            "\"See @{user_name}'s {platform} profile\") "
+            "Issue modified by [{user_name}]({user_url} "
+            "\"See {user_name}'s {platform} profile\") "
             "from [{platform}#{number}]({url} \"Go to issue\")."
         )
         _simple_edit_issue_message = _("Issue modified from {platform}.")
@@ -164,8 +164,8 @@ class BaseIssueEventHook(BaseEventHook):
 
     def generate_close_issue_comment(self, **kwargs):
         _edit_issue_message = _(
-            "Issue closed by [@{user_name}]({user_url} "
-            "\"See @{user_name}'s {platform} profile\") "
+            "Issue closed by [{user_name}]({user_url} "
+            "\"See {user_name}'s {platform} profile\") "
             "from [{platform}#{number}]({url} \"Go to issue\")."
         )
         _simple_edit_issue_message = _("Issue closed from {platform}.")
@@ -176,8 +176,8 @@ class BaseIssueEventHook(BaseEventHook):
 
     def generate_reopen_issue_comment(self, **kwargs):
         _edit_issue_message = _(
-            "Issue reopened by [@{user_name}]({user_url} "
-            "\"See @{user_name}'s {platform} profile\") "
+            "Issue reopened by [{user_name}]({user_url} "
+            "\"See {user_name}'s {platform} profile\") "
             "from [{platform}#{number}]({url} \"Go to issue\")."
         )
         _simple_edit_issue_message = _("Issue reopened from {platform}.")
@@ -299,7 +299,7 @@ class BasePushEventHook(BaseEventHook):
         if kwargs.get("user_url", None) is None:
             user_text = kwargs.get("user_name", _("unknown user"))
         else:
-            user_text = "[@{user_name}]({user_url} \"See @{user_name}'s {platform} profile\")".format(
+            user_text = "[{user_name}]({user_url} \"See {user_name}'s {platform} profile\")".format(
                 platform=self.platform,
                 **kwargs
             )
@@ -321,7 +321,7 @@ class BasePushEventHook(BaseEventHook):
         if kwargs.get("user_url", None) is None:
             user_text = kwargs.get("user_name", _("unknown user"))
         else:
-            user_text = "[@{user_name}]({user_url} \"See @{user_name}'s {platform} profile\")".format(
+            user_text = "[{user_name}]({user_url} \"See {user_name}'s {platform} profile\")".format(
                 platform=self.platform,
                 **kwargs
             )
