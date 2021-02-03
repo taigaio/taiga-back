@@ -30,35 +30,35 @@
         "epic_statuses": [
             {
                 "slug": "new",
-                "color": "#999999",
+                "color": "#70728F",
                 "name": "New",
                 "order": 1,
                 "is_closed": false
             },
             {
                 "slug": "ready",
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "name": "Ready",
                 "order": 2,
                 "is_closed": false
             },
             {
                 "slug": "in-progress",
-                "color": "#ff9900",
+                "color": "#E47C40",
                 "name": "In progress",
                 "order": 3,
                 "is_closed": false
             },
             {
                 "slug": "ready-for-test",
-                "color": "#fcc000",
+                "color": "#E4CE40",
                 "name": "Ready for test",
                 "order": 4,
                 "is_closed": false
             },
             {
                 "slug": "done",
-                "color": "#669900",
+                "color": "#A8E440",
                 "name": "Done",
                 "order": 5,
                 "is_closed": true
@@ -70,7 +70,7 @@
                 "name": "New",
                 "order": 1,
                 "is_archived": false,
-                "color": "#999999",
+                "color": "#70728F",
                 "is_closed": false,
                 "wip_limit": null
             },
@@ -79,7 +79,7 @@
                 "name": "Ready",
                 "order": 2,
                 "is_archived": false,
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "is_closed": false,
                 "wip_limit": null
             },
@@ -88,7 +88,7 @@
                 "name": "In progress",
                 "order": 3,
                 "is_archived": false,
-                "color": "#ff9900",
+                "color": "#E47C40",
                 "is_closed": false,
                 "wip_limit": null
             },
@@ -97,7 +97,7 @@
                 "name": "Ready for test",
                 "order": 4,
                 "is_archived": false,
-                "color": "#fcc000",
+                "color": "#E4CE40",
                 "is_closed": false,
                 "wip_limit": null
             },
@@ -106,7 +106,7 @@
                 "name": "Done",
                 "order": 5,
                 "is_archived": false,
-                "color": "#669900",
+                "color": "#A8E440",
                 "is_closed": true,
                 "wip_limit": null
             },
@@ -115,7 +115,7 @@
                 "name": "Archived",
                 "order": 6,
                 "is_archived": true,
-                "color": "#5c3566",
+                "color": "#A9AABC",
                 "is_closed": true,
                 "wip_limit": null
             }
@@ -139,7 +139,7 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "days_to_due": 0
             }
         ],
@@ -208,35 +208,35 @@
         "task_statuses": [
             {
                 "slug": "new",
-                "color": "#999999",
+                "color": "#70728F",
                 "name": "New",
                 "order": 1,
                 "is_closed": false
             },
             {
                 "slug": "in-progress",
-                "color": "#ff9900",
+                "color": "#E47C40",
                 "name": "In progress",
                 "order": 2,
                 "is_closed": false
             },
             {
                 "slug": "ready-for-test",
-                "color": "#ffcc00",
+                "color": "#E4CE40",
                 "name": "Ready for test",
                 "order": 3,
                 "is_closed": false
             },
             {
                 "slug": "closed",
-                "color": "#669900",
+                "color": "#A8E440",
                 "name": "Closed",
                 "order": 4,
                 "is_closed": true
             },
             {
                 "slug": "needs-info",
-                "color": "#999999",
+                "color": "#5178D3",
                 "name": "Needs Info",
                 "order": 5,
                 "is_closed": false
@@ -261,56 +261,56 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "days_to_due": 0
             }
         ],
         "issue_statuses": [
             {
                 "slug": "new",
-                "color": "#8C2318",
+                "color": "#70728F",
                 "name": "New",
                 "order": 1,
                 "is_closed": false
             },
             {
                 "slug": "in-progress",
-                "color": "#5E8C6A",
+                "color": "#40A8E4",
                 "name": "In progress",
                 "order": 2,
                 "is_closed": false
             },
             {
                 "slug": "ready-for-test",
-                "color": "#88A65E",
+                "color": "#E4CE40",
                 "name": "Ready for test",
                 "order": 3,
                 "is_closed": false
             },
             {
                 "slug": "closed",
-                "color": "#BFB35A",
+                "color": "#A8E440",
                 "name": "Closed",
                 "order": 4,
                 "is_closed": true
             },
             {
                 "slug": "needs-info",
-                "color": "#89BAB4",
+                "color": "#E44057",
                 "name": "Needs Info",
                 "order": 5,
                 "is_closed": false
             },
             {
                 "slug": "rejected",
-                "color": "#CC0000",
+                "color": "#A9AABC",
                 "name": "Rejected",
                 "order": 6,
                 "is_closed": true
             },
             {
                 "slug": "posponed",
-                "color": "#666666",
+                "color": "#5178D3",
                 "name": "Postponed",
                 "order": 7,
                 "is_closed": false
@@ -318,17 +318,17 @@
         ],
         "issue_types": [
             {
-                "color": "#89BAB4",
+                "color": "#E44057",
                 "name": "Bug",
                 "order": 1
             },
             {
-                "color": "#ba89a8",
+                "color": "#5178D3",
                 "name": "Question",
                 "order": 2
             },
             {
-                "color": "#89a8ba",
+                "color": "#40E4CE",
                 "name": "Enhancement",
                 "order": 3
             }
@@ -352,50 +352,50 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "days_to_due": 0
             }
         ],
         "priorities": [
             {
-                "color": "#666666",
+                "color": "#A8E440",
                 "name": "Low",
                 "order": 1
             },
             {
-                "color": "#669933",
+                "color": "#E4CE40",
                 "name": "Normal",
                 "order": 3
             },
             {
-                "color": "#CC0000",
+                "color": "#E47C40",
                 "name": "High",
                 "order": 5
             }
         ],
         "severities": [
             {
-                "color": "#666666",
+                "color": "#70728F",
                 "name": "Wishlist",
                 "order": 1
             },
             {
-                "color": "#669933",
+                "color": "#40A8E4",
                 "name": "Minor",
                 "order": 2
             },
             {
-                "color": "#0000FF",
+                "color": "#40E47C",
                 "name": "Normal",
                 "order": 3
             },
             {
-                "color": "#FFA500",
+                "color": "#E4A240",
                 "name": "Important",
                 "order": 4
             },
             {
-                "color": "#CC0000",
+                "color": "#D35450",
                 "name": "Critical",
                 "order": 5
             }
@@ -671,35 +671,35 @@
         "epic_statuses": [
             {
                 "slug": "new",
-                "color": "#999999",
+                "color": "#70728F",
                 "name": "New",
                 "order": 1,
                 "is_closed": false
             },
             {
                 "slug": "ready",
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "name": "Ready",
                 "order": 2,
                 "is_closed": false
             },
             {
                 "slug": "in-progress",
-                "color": "#ff9900",
+                "color": "#E47C40",
                 "name": "In progress",
                 "order": 3,
                 "is_closed": false
             },
             {
                 "slug": "ready-for-test",
-                "color": "#fcc000",
+                "color": "#E4CE40",
                 "name": "Ready for test",
                 "order": 4,
                 "is_closed": false
             },
             {
                 "slug": "done",
-                "color": "#669900",
+                "color": "#A8E440",
                 "name": "Done",
                 "order": 5,
                 "is_closed": true
@@ -711,7 +711,7 @@
                 "name": "New",
                 "order": 1,
                 "is_archived": false,
-                "color": "#999999",
+                "color": "#70728F",
                 "is_closed": false,
                 "wip_limit": null
             },
@@ -720,7 +720,7 @@
                 "name": "Ready",
                 "order": 2,
                 "is_archived": false,
-                "color": "#f57900",
+                "color": "#E44057",
                 "is_closed": false,
                 "wip_limit": null
             },
@@ -729,7 +729,7 @@
                 "name": "In progress",
                 "order": 3,
                 "is_archived": false,
-                "color": "#729fcf",
+                "color": "#E47C40",
                 "is_closed": false,
                 "wip_limit": null
             },
@@ -738,7 +738,7 @@
                 "name": "Ready for test",
                 "order": 4,
                 "is_archived": false,
-                "color": "#4e9a06",
+                "color": "#E4CE40",
                 "is_closed": false,
                 "wip_limit": null
             },
@@ -747,7 +747,7 @@
                 "name": "Done",
                 "order": 5,
                 "is_archived": false,
-                "color": "#cc0000",
+                "color": "#A8E440",
                 "is_closed": true,
                 "wip_limit": null
             },
@@ -756,7 +756,7 @@
                 "name": "Archived",
                 "order": 6,
                 "is_archived": true,
-                "color": "#5c3566",
+                "color": "#A9AABC",
                 "is_closed": true,
                 "wip_limit": null
             }
@@ -780,7 +780,7 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "days_to_due": 0
             }
         ],
@@ -849,35 +849,35 @@
         "task_statuses": [
             {
                 "slug": "new",
-                "color": "#999999",
+                "color": "#70728F",
                 "name": "New",
                 "order": 1,
                 "is_closed": false
             },
             {
                 "slug": "in-progress",
-                "color": "#729fcf",
+                "color": "#E47C40",
                 "name": "In progress",
                 "order": 2,
                 "is_closed": false
             },
             {
                 "slug": "ready-for-test",
-                "color": "#f57900",
+                "color": "#E4CE40",
                 "name": "Ready for test",
                 "order": 3,
                 "is_closed": false
             },
             {
                 "slug": "closed",
-                "color": "#4e9a06",
+                "color": "#A8E440",
                 "name": "Closed",
                 "order": 4,
                 "is_closed": true
             },
             {
                 "slug": "needs-info",
-                "color": "#cc0000",
+                "color": "#5178D3",
                 "name": "Needs Info",
                 "order": 5,
                 "is_closed": false
@@ -902,56 +902,56 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "days_to_due": 0
             }
         ],
         "issue_statuses": [
             {
                 "slug": "new",
-                "color": "#999999",
+                "color": "#70728F",
                 "name": "New",
                 "order": 1,
                 "is_closed": false
             },
             {
                 "slug": "in-progress",
-                "color": "#729fcf",
+                "color": "#40A8E4",
                 "name": "In progress",
                 "order": 2,
                 "is_closed": false
             },
             {
                 "slug": "ready-for-test",
-                "color": "#f57900",
+                "color": "#E47C40",
                 "name": "Ready for test",
                 "order": 3,
                 "is_closed": false
             },
             {
                 "slug": "closed",
-                "color": "#4e9a06",
+                "color": "#A8E440",
                 "name": "Closed",
                 "order": 4,
                 "is_closed": true
             },
             {
                 "slug": "needs-info",
-                "color": "#cc0000",
+                "color": "#E44057",
                 "name": "Needs Info",
                 "order": 5,
                 "is_closed": false
             },
             {
                 "slug": "rejected",
-                "color": "#d3d7cf",
+                "color": "#A9AABC",
                 "name": "Rejected",
                 "order": 6,
                 "is_closed": true
             },
             {
                 "slug": "posponed",
-                "color": "#75507b",
+                "color": "#5178D3",
                 "name": "Postponed",
                 "order": 7,
                 "is_closed": false
@@ -959,17 +959,17 @@
         ],
         "issue_types": [
             {
-                "color": "#cc0000",
+                "color": "#E44057",
                 "name": "Bug",
                 "order": 1
             },
             {
-                "color": "#729fcf",
+                "color": "#5178D3",
                 "name": "Question",
                 "order": 2
             },
             {
-                "color": "#4e9a06",
+                "color": "#40E4CE",
                 "name": "Enhancement",
                 "order": 3
             }
@@ -993,50 +993,50 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#E44057",
                 "days_to_due": 0
             }
         ],
         "priorities": [
             {
-                "color": "#999999",
+                "color": "#A9AABC",
                 "name": "Low",
                 "order": 1
             },
             {
-                "color": "#4e9a06",
+                "color": "#A8E440",
                 "name": "Normal",
                 "order": 3
             },
             {
-                "color": "#CC0000",
+                "color": "#E44057",
                 "name": "High",
                 "order": 5
             }
         ],
         "severities": [
             {
-                "color": "#999999",
+                "color": "#70728F",
                 "name": "Wishlist",
                 "order": 1
             },
             {
-                "color": "#729fcf",
+                "color": "#40E47C",
                 "name": "Minor",
                 "order": 2
             },
             {
-                "color": "#4e9a06",
+                "color": "#A8E440",
                 "name": "Normal",
                 "order": 3
             },
             {
-                "color": "#f57900",
+                "color": "#E4CE40",
                 "name": "Important",
                 "order": 4
             },
             {
-                "color": "#CC0000",
+                "color": "#E47C40",
                 "name": "Critical",
                 "order": 5
             }
