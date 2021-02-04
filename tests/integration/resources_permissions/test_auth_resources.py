@@ -48,7 +48,7 @@ def test_auth_create(client):
     assert result.status_code == 200
 
 
-def test_auth_action_register(client, settings):
+def test_auth_action_register_with_short_password(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = True
     url = reverse('auth-register')
 
@@ -62,4 +62,21 @@ def test_auth_action_register(client, settings):
     })
 
     result = client.post(url, register_data, content_type="application/json")
-    assert result.status_code == 201
+    assert result.status_code == 400, result.json()
+
+
+def test_auth_action_register(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    url = reverse('auth-register')
+
+    register_data = json.dumps({
+        "type": "public",
+        "username": "test",
+        "password": "test123",
+        "full_name": "test123",
+        "email": "test@test.com",
+        "accepted_terms": True,
+    })
+
+    result = client.post(url, register_data, content_type="application/json")
+    assert result.status_code == 201, result.json()
