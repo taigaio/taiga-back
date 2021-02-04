@@ -568,7 +568,22 @@ PROJECT_MODULES_CONFIGURATORS = {
     "gogs": "taiga.hooks.gogs.services.get_or_generate_config",
 }
 
-BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166", "104.192.143.192/28", "104.192.143.208/28"]
+# Odicial BitBucket valid IPs a https://confluence.atlassian.com/cloud/atlassian-cloud-ip-ranges-and-domains-744721662.html#AtlassiancloudIPrangesanddomains-OutgoingConnections
+BITBUCKET_VALID_ORIGIN_IPS = [
+    "13.52.5.96/28",
+    "13.236.8.224/28",
+    "18.184.99.224/28",
+    "18.234.32.224/28",
+    "18.246.31.224/28",
+    "52.215.192.224/28",
+    "104.192.137.240/28",
+    "104.192.138.240/28",
+    "104.192.140.240/28",
+    "104.192.142.240/28",
+    "104.192.143.240/28",
+    "185.166.143.240/28",
+    "185.166.142.240/28"
+]
 
 GITLAB_VALID_ORIGIN_IPS = []
 
