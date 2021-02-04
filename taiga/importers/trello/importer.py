@@ -111,6 +111,8 @@ class TrelloImporter:
             if project['prefs']['permissionLevel'] == "org":
                 if 'organization' not in project:
                     is_private = True
+                elif 'prefs' not in project['organization']:
+                    is_private = True
                 elif project['organization']['prefs']['permissionLevel'] == "private":
                     is_private = True
 
