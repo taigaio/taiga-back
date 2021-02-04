@@ -63,7 +63,15 @@ class JiraImporterViewSet(viewsets.ViewSet):
             raise exc.WrongArguments(_("The url param is needed"))
 
         importer = JiraNormalImporter(request.user, url, token)
-        users = importer.list_users()
+        try:
+            users = importer.list_users()
+        except Exception as e:
+            # common error due to modern Jira versions which are unsupported by Taiga
+            raise exc.BadRequest(_("""
+                There was an error; probably due to an unsupported Jira version.
+                Taiga does not support Jira releases from 8.6."""
+            ))
+
         for user in users:
             user['user'] = None
             if not user['email']:
