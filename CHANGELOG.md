@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.0.2 (2020-02-07)
+
+### Features
+
+- Update colors for default project template fixtures.
+
+### Misc
+
+- Minor fixes related to importers and integrations.
+
 ## 6.0.1 (2020-02-02)
 
 ### Misc
