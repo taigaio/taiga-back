@@ -87,7 +87,7 @@ CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'True') == 'True'
 #########################################
 EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
 EVENTS_PUSH_BACKEND_OPTIONS = {
-    "url": f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@taiga-events-rabbitmq:5672/taiga"
+    "url": f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@{ os.getenv('EVENTS_RABBITMQ_HOST', 'taiga-events-rabbitmq') }:5672/taiga"
 }
 
 
@@ -97,7 +97,7 @@ EVENTS_PUSH_BACKEND_OPTIONS = {
 CELERY_ENABLED = os.getenv('CELERY_ENABLED', 'True') == 'True'
 from kombu import Queue  # noqa
 
-CELERY_BROKER_URL = f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@taiga-async-rabbitmq:5672/taiga"
+CELERY_BROKER_URL = f"amqp://{ os.getenv('RABBITMQ_USER') }:{ os.getenv('RABBITMQ_PASS') }@{ os.getenv('ASYNC_RABBITMQ_HOST', 'taiga-async-rabbitmq') }:5672/taiga"
 CELERY_RESULT_BACKEND = None # for a general installation, we don't need to store the results
 CELERY_ACCEPT_CONTENT = ['pickle', ]  # Values are 'pickle', 'json', 'msgpack' and 'yaml'
 CELERY_TASK_SERIALIZER = "pickle"
