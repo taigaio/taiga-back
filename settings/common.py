@@ -210,7 +210,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # >0 an external process will check the pending notifications and will send them
 # collapsed during that interval
 CHANGE_NOTIFICATIONS_MIN_INTERVAL = 0  # seconds
-
+SEND_BULK_EMAILS_WITH_CELERY = True
 
 DJMAIL_REAL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DJMAIL_SEND_ASYNC = True
