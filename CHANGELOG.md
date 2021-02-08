@@ -1,6 +1,12 @@
 # Changelog
 
-## 6.0.2 (2020-02-07)
+## 6.0.3 (2020-02-08)
+
+### Misc
+
+- Fix: ENABLE_WEBHOOKS for docker images
+
+## 6.0.2 (2020-02-08)
 
 ### Features
 
