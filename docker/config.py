@@ -43,6 +43,7 @@ SITES = {
 
 INSTANCE_TYPE = "D"
 
+WEBHOOKS_ENABLED = True
 
 #########################################
 ## MEDIA
