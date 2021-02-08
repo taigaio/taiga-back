@@ -75,7 +75,8 @@ def test_ok_signature(client):
                            data,
                            content_type="application/json",
                            HTTP_X_EVENT_KEY="repo:push",
-                           REMOTE_ADDR=settings.BITBUCKET_VALID_ORIGIN_IPS[0])
+                           REMOTE_ADDR="13.52.5.96")
+
     assert response.status_code == 204
 
 
@@ -94,7 +95,7 @@ def test_ok_signature_ip_in_network(client):
                            data,
                            content_type="application/json",
                            HTTP_X_EVENT_KEY="repo:push",
-                           REMOTE_ADDR="104.192.143.193")
+                           REMOTE_ADDR="13.52.5.96")
     assert response.status_code == 204
 
 
@@ -135,7 +136,7 @@ def test_blocked_project(client):
                            data,
                            content_type="application/json",
                            HTTP_X_EVENT_KEY="repo:push",
-                           REMOTE_ADDR=settings.BITBUCKET_VALID_ORIGIN_IPS[0])
+                           REMOTE_ADDR="13.52.5.96")
 
     assert response.status_code == 451
 
