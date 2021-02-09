@@ -596,6 +596,8 @@ WEBHOOKS_BLOCK_PRIVATE_ADDRESS = False
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client
 FRONT_SITEMAP_ENABLED = False
 FRONT_SITEMAP_CACHE_TIMEOUT = 24 * 60 * 60  # In second
+FRONT_SITEMAP_PAGE_SIZE = 25000
+
 
 EXTRA_BLOCKING_CODES = []
 
