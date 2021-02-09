@@ -34,9 +34,9 @@ if settings.ENABLE_TELEMETRY:
     rng = random.Random(settings.SECRET_KEY)
     hour = rng.randint(0, 4)
     minute = rng.randint(0, 59)
-    app.conf.beat_schedule['send-telemetry-once-a-weekday'] = {
+    app.conf.beat_schedule['send-telemetry-once-a-day'] = {
         'task': 'taiga.telemetry.tasks.send_telemetry',
-        'schedule': crontab(day_of_week='mon-fri', minute=minute, hour=hour),
+        'schedule': crontab(minute=minute, hour=hour),
         'args': (),
     }
 
