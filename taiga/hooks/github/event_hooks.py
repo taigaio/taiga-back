@@ -17,7 +17,8 @@
 import re
 
 from taiga.hooks.event_hooks import (BaseIssueEventHook, BaseIssueCommentEventHook, BasePushEventHook,
-                                     ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE, ISSUE_ACTION_DELETE)
+                                     ISSUE_ACTION_CREATE, ISSUE_ACTION_UPDATE, ISSUE_ACTION_CLOSE,
+                                     ISSUE_ACTION_REOPEN)
 
 
 class BaseGitHubEventHook():
@@ -33,17 +34,30 @@ class BaseGitHubEventHook():
 
 
 class IssuesEventHook(BaseGitHubEventHook, BaseIssueEventHook):
+    _ISSUE_ACTIONS = {
+      "opened": ISSUE_ACTION_CREATE,
+      "edited": ISSUE_ACTION_UPDATE,
+      "closed": ISSUE_ACTION_CLOSE,
+      "reopened": ISSUE_ACTION_REOPEN,
+    }
+
     @property
     def action_type(self):
-        # NOTE: Only CREATE for now
-        return ISSUE_ACTION_CREATE
+        _action = self.payload.get('action', '')
+        return self._ISSUE_ACTIONS.get(_action, None)
 
     def ignore(self):
-        return self.payload.get('action', None) != "opened"
+        return self.action_type not in [
+            ISSUE_ACTION_CREATE,
+            ISSUE_ACTION_UPDATE,
+            ISSUE_ACTION_CLOSE,
+            ISSUE_ACTION_REOPEN,
+        ]
 
     def get_data(self):
         description = self.payload.get('issue', {}).get('body', None)
         project_url = self.payload.get('repository', {}).get('html_url', None)
+        state = self.payload.get('issue', {}).get('state', 'open')
         return {
             "number": self.payload.get('issue', {}).get('number', None),
             "subject": self.payload.get('issue', {}).get('title', None),
@@ -52,6 +66,7 @@ class IssuesEventHook(BaseGitHubEventHook, BaseIssueEventHook):
             "user_name": self.payload.get('issue', {}).get('user', {}).get('login', None),
             "user_url": self.payload.get('issue', {}).get('user', {}).get('html_url', None),
             "description": self.replace_github_references(project_url, description),
+            "status": self.close_status if state == "closed" else self.open_status,
         }
 
 

@@ -395,6 +395,8 @@ def test_issues_event_opened_issue(client):
 
     mail.outbox = []
 
+    assert Issue.objects.count() == 1
+
     ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
     ev_hook.process_event()
 
@@ -402,13 +404,45 @@ def test_issues_event_opened_issue(client):
     assert len(mail.outbox) == 1
 
 
-def test_issues_event_other_than_opened_issue(client):
-    issue = f.IssueFactory.create()
+def test_issues_event_edited_issue(client):
+    issue = f.IssueFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"])
     issue.project.default_issue_status = issue.status
     issue.project.default_issue_type = issue.type
     issue.project.default_severity = issue.severity
     issue.project.default_priority = issue.priority
     issue.project.save()
+
+    payload = {
+        "action": "edited",
+        "issue": {
+            "title": "test-title",
+            "body": "test-body updated",
+            "html_url": "http://github.com/test/project/issues/11",
+        },
+        "assignee": {},
+        "label": {},
+    }
+
+    ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
+    ev_hook.process_event()
+
+    issue.refresh_from_db()
+
+    assert issue.description == payload["issue"]["body"]
+
+
+def test_issues_event_closed_issue(client):
+    issue = f.IssueFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"])
+    issue.project.default_issue_status = issue.status
+    issue.project.default_issue_type = issue.type
+    issue.project.default_severity = issue.severity
+    issue.project.default_priority = issue.priority
+    issue.project.save()
+
+    close_status = f.IssueStatusFactory(project=issue.project, is_closed=True)
+    f.ProjectModulesConfigFactory(project=issue.project, config={
+        "github": {}
+    })
 
     payload = {
         "action": "closed",
@@ -421,13 +455,47 @@ def test_issues_event_other_than_opened_issue(client):
         "label": {},
     }
 
-    mail.outbox = []
+    ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
+    ev_hook.process_event()
+
+    assert issue.status == issue.project.default_issue_status
+
+    issue.refresh_from_db()
+
+    assert issue.status == close_status
+
+
+def test_issues_event_reopened_issue(client):
+    issue = f.IssueFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"])
+    issue.project.default_issue_status = issue.status
+    issue.project.default_issue_type = issue.type
+    issue.project.default_severity = issue.severity
+    issue.project.default_priority = issue.priority
+    issue.project.save()
+
+    close_status = f.IssueStatusFactory(project=issue.project, is_closed=True)
+    issue.status = close_status
+    issue.save()
+
+    payload = {
+        "action": "reopened",
+        "issue": {
+            "title": "test-title",
+            "body": "test-body",
+            "html_url": "http://github.com/test/project/issues/11",
+        },
+        "assignee": {},
+        "label": {},
+    }
 
     ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
     ev_hook.process_event()
 
-    assert Issue.objects.count() == 1
-    assert len(mail.outbox) == 0
+    assert issue.status == close_status
+
+    issue.refresh_from_db()
+
+    assert issue.status == issue.project.default_issue_status
 
 
 def test_issues_event_bad_issue(client):
