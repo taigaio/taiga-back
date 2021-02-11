@@ -110,32 +110,50 @@ CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
 
 
 #########################################
+##  REGISTRATION
+#########################################
+PUBLIC_REGISTER_ENABLED = os.getenv('PUBLIC_REGISTER_ENABLED', 'False') == 'True'
+
+
+#########################################
 ## CONTRIBS
 #########################################
-INSTALLED_APPS += [
-    "taiga_contrib_slack",
-    "taiga_contrib_github_auth",
-    "taiga_contrib_gitlab_auth"
-]
 
-GITHUB_API_CLIENT_ID = os.getenv('GITHUB_API_CLIENT_ID')
-GITHUB_API_CLIENT_SECRET = os.getenv('GITHUB_API_CLIENT_SECRET')
+# SLACK
+ENABLE_SLACK = os.getenv('ENABLE_SLACK', 'True') == 'True'
+if ENABLE_SLACK:
+    INSTALLED_APPS += [
+        "taiga_contrib_slack"
+    ]
 
-GITLAB_API_CLIENT_ID = os.getenv('GITLAB_API_CLIENT_ID')
-GITLAB_API_CLIENT_SECRET = os.getenv('GITLAB_API_CLIENT_SECRET')
-GITLAB_URL = os.getenv('GITLAB_URL')
+# GITHUB AUTH
+# WARNING: If PUBLIC_REGISTER_ENABLED == False, currently Taiga by default prevents the OAuth
+# buttons to appear for both login and register
+ENABLE_GITHUB_AUTH = os.getenv('ENABLE_GITHUB_AUTH', 'True') == 'True'
+if PUBLIC_REGISTER_ENABLED and ENABLE_GITHUB_AUTH:
+    INSTALLED_APPS += [
+        "taiga_contrib_github_auth"
+    ]
+    GITHUB_API_CLIENT_ID = os.getenv('GITHUB_API_CLIENT_ID')
+    GITHUB_API_CLIENT_SECRET = os.getenv('GITHUB_API_CLIENT_SECRET')
+
+# GITLAB AUTH
+# WARNING: If PUBLIC_REGISTER_ENABLED == False, currently Taiga by default prevents the OAuth
+# buttons to appear for both login and register
+ENABLE_GITLAB_AUTH = os.getenv('ENABLE_GITLAB_AUTH', 'True') == 'True'
+if PUBLIC_REGISTER_ENABLED and ENABLE_GITLAB_AUTH:
+    INSTALLED_APPS += [
+        "taiga_contrib_gitlab_auth"
+    ]
+    GITLAB_API_CLIENT_ID = os.getenv('GITLAB_API_CLIENT_ID')
+    GITLAB_API_CLIENT_SECRET = os.getenv('GITLAB_API_CLIENT_SECRET')
+    GITLAB_URL = os.getenv('GITLAB_URL')
 
 
 #########################################
 ## TELEMETRY
 #########################################
 ENABLE_TELEMETRY = os.getenv('ENABLE_TELEMETRY', 'True') == 'True'
-
-
-#########################################
-##  REGISTRATION
-#########################################
-PUBLIC_REGISTER_ENABLED = os.getenv('PUBLIC_REGISTER_ENABLED', 'False') == 'True'
 
 
 #########################################
