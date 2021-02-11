@@ -486,7 +486,14 @@ def store_epic(project, data):
     if "status" not in data and project.default_epic_status:
         data["status"] = project.default_epic_status.name
 
+    # Ignore external related user stories
+    data["related_user_stories"] = filter(
+       lambda x: x.get("source_project_slug", None) is None,
+       data.get("related_user_stories", [])
+    )
+
     validator = validators.EpicExportValidator(data=data, context={"project": project})
+
     if validator.is_valid():
         validator.object.project = project
         if validator.object.owner is None:
@@ -762,8 +769,15 @@ def _store_timeline_entry(project, timeline):
 
 
 def store_timeline_entries(project, data):
+    # Exclude epic.related_userstories entries if they are not from this project
+    timeline_items = filter(
+        lambda t: not(
+            (t.get("event_type", None) in ["epics.relateduserstory.create", "epics.relateduserstory.delete"]) and
+            (t.get("data", {}).get("userstory", {}).get("project", {}).get("slug", None) != project.slug)
+        ), data.get("timeline", []))
+
     results = []
-    for timeline in data.get("timeline", []):
+    for timeline in timeline_items:
         tl = _store_timeline_entry(project, timeline)
         results.append(tl)
     return results
