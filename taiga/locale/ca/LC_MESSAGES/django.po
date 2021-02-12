@@ -6,14 +6,14 @@
 # Translators:
 # Xaviju <xaviju@gmail.com>, 2015
 # Taiga Dev Team <support@taiga.io>, 2015
-# Xaviju <xaviju@gmail.com>, 2015
+# Xaviju <xaviju@gmail.com>, 2015,2021
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-28 14:37+0100\n"
-"PO-Revision-Date: 2021-01-28 13:44+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2021-02-12 13:12+0100\n"
+"PO-Revision-Date: 2021-02-12 12:14+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -25,15 +25,15 @@ msgstr ""
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "El registre públic està deshabilitat"
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
-msgstr ""
+msgstr "Has d'acceptar els nostres termes de servei i política de privacitat"
 
 #: taiga/auth/api.py:100
 msgid "invalid registration type"
-msgstr ""
+msgstr "Sistema de registre invàlid"
 
 #: taiga/auth/api.py:116
 msgid "invalid login type"
@@ -49,7 +49,7 @@ msgstr "Aquest e-mail ja està en ús."
 
 #: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "El token no s'ajusta a cap invitació vàlida"
 
 #: taiga/auth/services.py:126
 msgid "User is already registered."
@@ -57,11 +57,11 @@ msgstr "Aquest usuari ja està registrat"
 
 #: taiga/auth/services.py:143
 msgid "This user is already a member of the project."
-msgstr ""
+msgstr "L'usuari ja és membre del projecte"
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
-msgstr ""
+msgstr "Error creant un nou usuari."
 
 #: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
 #: taiga/external_apps/services.py:32 taiga/projects/api.py:432
@@ -81,7 +81,7 @@ msgstr "Requerit. 255 caràcters o menys. Lletres, nombres i caràcters /./-/_"
 #: taiga/auth/validators.py:48 taiga/auth/validators.py:51
 #: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
-msgstr ""
+msgstr "Nom complet invàlid"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
@@ -108,7 +108,7 @@ msgstr "Selecciona una opció vàlida. %(value)s no es una opció vàlida."
 
 #: taiga/base/api/fields.py:636
 msgid "You email domain is not allowed"
-msgstr ""
+msgstr "El domini d'aquest correu no està permés"
 
 #: taiga/base/api/fields.py:645
 msgid "Enter a valid email address."
@@ -208,7 +208,7 @@ msgstr ""
 #: taiga/projects/userstories/api.py:446 taiga/projects/userstories/api.py:476
 #: taiga/webhooks/api.py:69
 msgid "Blocked element"
-msgstr ""
+msgstr "Element bloquejat"
 
 #: taiga/base/api/pagination.py:226
 msgid "Page is not 'last', nor can it be converted to an int."
@@ -221,22 +221,22 @@ msgstr "Pàgina invàlida (%(page_number)s): %(message)s"
 
 #: taiga/base/api/permissions.py:63
 msgid "Invalid permission definition."
-msgstr ""
+msgstr "Definició de permís invàlida"
 
 #: taiga/base/api/relations.py:245
 #, python-format
 msgid "Invalid pk '%s' - object does not exist."
-msgstr ""
+msgstr "Invàlid pk '1%s' - l'objecte no existeix"
 
 #: taiga/base/api/relations.py:246
 #, python-format
 msgid "Incorrect type. Expected pk value, received %s."
-msgstr ""
+msgstr "Tipus incorrecte. S'espera valor pk, rebut '1%s'"
 
 #: taiga/base/api/relations.py:334
 #, python-format
 msgid "Object with %s=%s does not exist."
-msgstr ""
+msgstr "Objecte amb '1%s' = '1%s' no existeix"
 
 #: taiga/base/api/relations.py:370
 msgid "Invalid hyperlink - No URL match"
@@ -544,68 +544,68 @@ msgstr "Es necessita arxiu dump."
 msgid "Invalid dump format"
 msgstr "Format d'arxiu dump invàlid"
 
-#: taiga/export_import/services/store.py:801
-#: taiga/export_import/services/store.py:823
+#: taiga/export_import/services/store.py:815
+#: taiga/export_import/services/store.py:837
 msgid "error importing project data"
 msgstr ""
 
-#: taiga/export_import/services/store.py:830
+#: taiga/export_import/services/store.py:844
 msgid "error importing roles"
 msgstr ""
 
-#: taiga/export_import/services/store.py:835
+#: taiga/export_import/services/store.py:849
 msgid "error importing memberships"
 msgstr ""
 
-#: taiga/export_import/services/store.py:850
+#: taiga/export_import/services/store.py:864
 msgid "error importing lists of project attributes"
 msgstr ""
 
-#: taiga/export_import/services/store.py:854
+#: taiga/export_import/services/store.py:868
 msgid "error importing default project attribute values"
 msgstr ""
 
-#: taiga/export_import/services/store.py:865
+#: taiga/export_import/services/store.py:879
 msgid "error importing custom attributes"
 msgstr ""
 
-#: taiga/export_import/services/store.py:868
+#: taiga/export_import/services/store.py:882
 msgid "error importing sprints"
 msgstr ""
 
-#: taiga/export_import/services/store.py:872
+#: taiga/export_import/services/store.py:886
 msgid "error importing issues"
 msgstr ""
 
-#: taiga/export_import/services/store.py:876
+#: taiga/export_import/services/store.py:890
 msgid "error importing user stories"
 msgstr ""
 
-#: taiga/export_import/services/store.py:880
+#: taiga/export_import/services/store.py:894
 msgid "error importing epics"
 msgstr ""
 
-#: taiga/export_import/services/store.py:884
+#: taiga/export_import/services/store.py:898
 msgid "error importing tasks"
 msgstr ""
 
-#: taiga/export_import/services/store.py:891
+#: taiga/export_import/services/store.py:905
 msgid "error importing wiki pages"
 msgstr ""
 
-#: taiga/export_import/services/store.py:895
+#: taiga/export_import/services/store.py:909
 msgid "error importing wiki links"
 msgstr ""
 
-#: taiga/export_import/services/store.py:899
+#: taiga/export_import/services/store.py:913
 msgid "error importing tags"
 msgstr ""
 
-#: taiga/export_import/services/store.py:903
+#: taiga/export_import/services/store.py:917
 msgid "error importing timelines"
 msgstr ""
 
-#: taiga/export_import/services/store.py:926
+#: taiga/export_import/services/store.py:940
 msgid "unexpected error importing project"
 msgstr ""
 
@@ -999,7 +999,7 @@ msgstr "Firma no vàlida."
 #: taiga/hooks/event_hooks.py:79
 #, python-brace-format
 msgid ""
-"[@{user_name}]({user_url} \"See @{user_name}'s {platform} profile\") says in "
+"[{user_name}]({user_url} \"See {user_name}'s {platform} profile\") says in "
 "[{platform}#{number}]({comment_url} \"Go to comment\"):\n"
 "\n"
 "\"{comment_message}\""
@@ -1020,7 +1020,7 @@ msgstr "Informació del comentari a l'incidència no vàlid."
 #: taiga/hooks/event_hooks.py:143
 #, python-brace-format
 msgid ""
-"Issue created by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
@@ -1032,7 +1032,7 @@ msgstr ""
 #: taiga/hooks/event_hooks.py:155
 #, python-brace-format
 msgid ""
-"Issue modified by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
@@ -1044,7 +1044,7 @@ msgstr ""
 #: taiga/hooks/event_hooks.py:167
 #, python-brace-format
 msgid ""
-"Issue closed by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
@@ -1056,7 +1056,7 @@ msgstr ""
 #: taiga/hooks/event_hooks.py:179
 #, python-brace-format
 msgid ""
-"Issue reopened by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
@@ -1114,7 +1114,7 @@ msgstr "L'estatus no existeix."
 
 #: taiga/importers/asana/api.py:44 taiga/importers/asana/api.py:86
 #: taiga/importers/github/api.py:45 taiga/importers/github/api.py:75
-#: taiga/importers/jira/api.py:61 taiga/importers/jira/api.py:107
+#: taiga/importers/jira/api.py:61 taiga/importers/jira/api.py:115
 #: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
 #: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
 msgid "The project param is needed"
@@ -1150,20 +1150,28 @@ msgstr ""
 msgid "Error importing GitHub project"
 msgstr ""
 
-#: taiga/importers/jira/api.py:63 taiga/importers/jira/api.py:90
-#: taiga/importers/jira/api.py:110 taiga/importers/jira/api.py:183
+#: taiga/importers/jira/api.py:63 taiga/importers/jira/api.py:98
+#: taiga/importers/jira/api.py:118 taiga/importers/jira/api.py:191
 msgid "The url param is needed"
 msgstr ""
 
-#: taiga/importers/jira/api.py:159
+#: taiga/importers/jira/api.py:70
+msgid ""
+"\n"
+"                There was an error; probably due to an unsupported Jira "
+"version.\n"
+"                Taiga does not support Jira releases from 8.6."
+msgstr ""
+
+#: taiga/importers/jira/api.py:167
 msgid "Invalid project_type {}"
 msgstr ""
 
-#: taiga/importers/jira/api.py:193
+#: taiga/importers/jira/api.py:201
 msgid "Invalid Jira server configuration."
 msgstr ""
 
-#: taiga/importers/jira/api.py:234 taiga/importers/pivotal/api.py:139
+#: taiga/importers/jira/api.py:242 taiga/importers/pivotal/api.py:139
 #: taiga/importers/trello/api.py:144
 msgid "Invalid or expired auth token"
 msgstr ""

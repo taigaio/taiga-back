@@ -20,11 +20,12 @@
 # Igor Bezukladnikov <corrector@at.pstu.ru>, 2016
 # Ilya Rogov, 2016
 # Ilya Rogov, 2016
-# Inga Krinkina <i.krinkina@sigma-it.ru>, 2020
+# Inga Krinkina <i.krinkina@sigma-it.ru>, 2020-2021
 # cea814b856b6795fed4e76155a00b372_ed44071 <2499c539bc4bd61b3076c2cb6bfa3653_399195>, 2016
 # Miguel Gonzalez <migonzalvar@gmail.com>, 2018
 # Nikolay Grinin <n.grinin@sigma-it.ru>, 2020
 # Sergey Kustov <ripesunflower@gmail.com>, 2016
+# Sergey Kuznetsov <oldgamesrevival@gmail.com>, 2021
 # soci0pat <trapeznikov.ap@gmail.com>, 2020
 # soci0pat <trapeznikov.ap@gmail.com>, 2020
 # Yegor Lapshin <ylapshin@gmail.com>, 2020
@@ -36,9 +37,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-28 14:37+0100\n"
-"PO-Revision-Date: 2021-01-28 13:44+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2021-02-12 13:12+0100\n"
+"PO-Revision-Date: 2021-02-12 12:14+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -401,7 +402,7 @@ msgstr "Не осталось места для проектов"
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s не является списком"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
@@ -598,68 +599,68 @@ msgstr "Необходим дамп"
 msgid "Invalid dump format"
 msgstr "Неправильный формат дампа"
 
-#: taiga/export_import/services/store.py:801
-#: taiga/export_import/services/store.py:823
+#: taiga/export_import/services/store.py:815
+#: taiga/export_import/services/store.py:837
 msgid "error importing project data"
 msgstr "ошибка при импорте данных проекта"
 
-#: taiga/export_import/services/store.py:830
+#: taiga/export_import/services/store.py:844
 msgid "error importing roles"
 msgstr "ошибка при импорте ролей"
 
-#: taiga/export_import/services/store.py:835
+#: taiga/export_import/services/store.py:849
 msgid "error importing memberships"
 msgstr "ошибка при импорте членства"
 
-#: taiga/export_import/services/store.py:850
+#: taiga/export_import/services/store.py:864
 msgid "error importing lists of project attributes"
 msgstr "ошибка при импорте списков свойств проекта"
 
-#: taiga/export_import/services/store.py:854
+#: taiga/export_import/services/store.py:868
 msgid "error importing default project attribute values"
 msgstr "ошибка при импорте значений по умолчанию свойств проекта"
 
-#: taiga/export_import/services/store.py:865
+#: taiga/export_import/services/store.py:879
 msgid "error importing custom attributes"
 msgstr "ошибка при импорте пользовательских свойств"
 
-#: taiga/export_import/services/store.py:868
+#: taiga/export_import/services/store.py:882
 msgid "error importing sprints"
 msgstr "ошибка при импорте спринтов"
 
-#: taiga/export_import/services/store.py:872
+#: taiga/export_import/services/store.py:886
 msgid "error importing issues"
 msgstr "ошибка при импорте запросов"
 
-#: taiga/export_import/services/store.py:876
+#: taiga/export_import/services/store.py:890
 msgid "error importing user stories"
 msgstr "ошибка импорта историй от пользователей"
 
-#: taiga/export_import/services/store.py:880
+#: taiga/export_import/services/store.py:894
 msgid "error importing epics"
 msgstr "ошибка импорта эпиков"
 
-#: taiga/export_import/services/store.py:884
+#: taiga/export_import/services/store.py:898
 msgid "error importing tasks"
 msgstr "ошибка импорта задач"
 
-#: taiga/export_import/services/store.py:891
+#: taiga/export_import/services/store.py:905
 msgid "error importing wiki pages"
 msgstr "ошибка при импорте вики-страниц"
 
-#: taiga/export_import/services/store.py:895
+#: taiga/export_import/services/store.py:909
 msgid "error importing wiki links"
 msgstr "ошибка при импорте вики-ссылок"
 
-#: taiga/export_import/services/store.py:899
+#: taiga/export_import/services/store.py:913
 msgid "error importing tags"
 msgstr "ошибка импорта тэгов"
 
-#: taiga/export_import/services/store.py:903
+#: taiga/export_import/services/store.py:917
 msgid "error importing timelines"
 msgstr "ошибка импорта хронологии проекта"
 
-#: taiga/export_import/services/store.py:926
+#: taiga/export_import/services/store.py:940
 msgid "unexpected error importing project"
 msgstr "неожиданная ошибка импортирования проекта"
 
@@ -788,6 +789,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>%(error_message)s</h1>\n"
+"<p> Здравствуйте, %(user)s,</p>\n"
+"<p>Экспорт вашего проекта %(project)s был выполнен некорректно. </p>\n"
+"<p>Системные администраторы Taiga были проинформированы об этом.<br/> "
+"Пожалуйста, попробуйте ещё раз или свяжитесь со службой поддержки:\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Support email\" style=\"color: "
+"#83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>"
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:1
 #, python-format
@@ -840,6 +850,17 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"</h1>%(error_message)s</h1>\n"
+"<p> Здравствуйте, %(user)s,</p>\n"
+"<p>Импорт вашего проекта был выполнен некорректно. </p>\n"
+"<p>Системные администраторы %(product_name)s были проинформированы об этом."
+"<br/> Пожалуйста, попробуйте ещё раз или свяжитесь со службой поддержки:\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Support email\" style=\"color: "
+"#83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"<h2>Детали ошибки </h2>\n"
+"<pre>%(details)s</pre>"
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:1
@@ -1142,16 +1163,11 @@ msgstr "Плохая подпись"
 #: taiga/hooks/event_hooks.py:79
 #, python-brace-format
 msgid ""
-"[@{user_name}]({user_url} \"See @{user_name}'s {platform} profile\") says in "
+"[{user_name}]({user_url} \"See {user_name}'s {platform} profile\") says in "
 "[{platform}#{number}]({comment_url} \"Go to comment\"):\n"
 "\n"
 "\"{comment_message}\""
 msgstr ""
-"[@{user_name}] ({user_url} \"Просмотреть профиль @{user_name}'s {platform} "
-"\") сказал в [{platform}#{number}] ({comment_url} \"Перейти к комментарию"
-"\"):\n"
-"\n"
-"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:84
 #, python-brace-format
@@ -1171,11 +1187,9 @@ msgstr "Неправильная информация в комментарии 
 #: taiga/hooks/event_hooks.py:143
 #, python-brace-format
 msgid ""
-"Issue created by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
-"Вопрос задал [@{user_name}] ({user_url} \"Просмотреть профиль @{user_name}'s "
-"{platform}\") от [{platform}#{number}] ({url} \"Перейти к вопросу\")."
 
 #: taiga/hooks/event_hooks.py:147
 #, python-brace-format
@@ -1185,38 +1199,38 @@ msgstr "Запрос создан из {platform}."
 #: taiga/hooks/event_hooks.py:155
 #, python-brace-format
 msgid ""
-"Issue modified by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
 #: taiga/hooks/event_hooks.py:159
 #, python-brace-format
 msgid "Issue modified from {platform}."
-msgstr ""
+msgstr "Запрос изменен из {platform}."
 
 #: taiga/hooks/event_hooks.py:167
 #, python-brace-format
 msgid ""
-"Issue closed by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
 #: taiga/hooks/event_hooks.py:171
 #, python-brace-format
 msgid "Issue closed from {platform}."
-msgstr ""
+msgstr "Запрос закрыт из {platform}."
 
 #: taiga/hooks/event_hooks.py:179
 #, python-brace-format
 msgid ""
-"Issue reopened by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
 #: taiga/hooks/event_hooks.py:183
 #, python-brace-format
 msgid "Issue reopened from {platform}."
-msgstr ""
+msgstr "Запрос повторно открыт из {platform}."
 
 #: taiga/hooks/event_hooks.py:278
 msgid "Invalid issue information"
@@ -1277,7 +1291,7 @@ msgstr "Статус не существует"
 
 #: taiga/importers/asana/api.py:44 taiga/importers/asana/api.py:86
 #: taiga/importers/github/api.py:45 taiga/importers/github/api.py:75
-#: taiga/importers/jira/api.py:61 taiga/importers/jira/api.py:107
+#: taiga/importers/jira/api.py:61 taiga/importers/jira/api.py:115
 #: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
 #: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
 msgid "The project param is needed"
@@ -1313,20 +1327,28 @@ msgstr "Отказ сторонних служб"
 msgid "Error importing GitHub project"
 msgstr "Ошибка импорта проекта GitHub"
 
-#: taiga/importers/jira/api.py:63 taiga/importers/jira/api.py:90
-#: taiga/importers/jira/api.py:110 taiga/importers/jira/api.py:183
+#: taiga/importers/jira/api.py:63 taiga/importers/jira/api.py:98
+#: taiga/importers/jira/api.py:118 taiga/importers/jira/api.py:191
 msgid "The url param is needed"
 msgstr "Требуется параметр url"
 
-#: taiga/importers/jira/api.py:159
+#: taiga/importers/jira/api.py:70
+msgid ""
+"\n"
+"                There was an error; probably due to an unsupported Jira "
+"version.\n"
+"                Taiga does not support Jira releases from 8.6."
+msgstr ""
+
+#: taiga/importers/jira/api.py:167
 msgid "Invalid project_type {}"
 msgstr "Неверный project_type {}"
 
-#: taiga/importers/jira/api.py:193
+#: taiga/importers/jira/api.py:201
 msgid "Invalid Jira server configuration."
 msgstr "Неправильная настройка Jira-сервера."
 
-#: taiga/importers/jira/api.py:234 taiga/importers/pivotal/api.py:139
+#: taiga/importers/jira/api.py:242 taiga/importers/pivotal/api.py:139
 #: taiga/importers/trello/api.py:144
 msgid "Invalid or expired auth token"
 msgstr "Неверный или истекший token аутентификации "
@@ -1458,6 +1480,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>%(error_message)s</h1>\n"
+"<p> Здравствуйте, %(user)s,</p>\n"
+"<p>Импорт вашего проекта был выполнен некорректно. </p>\n"
+"<p>Системные администраторы %(product_name)s были проинформированы об этом."
+"<br/> Пожалуйста, попробуйте ещё раз или свяжитесь со службой поддержки:\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Support email\" style=\"color: "
+"#83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>"
 
 #: taiga/importers/templates/emails/jira_import_success-body-html.jinja:4
 #, python-format
@@ -1823,7 +1854,7 @@ msgstr "Пользователь должен быть участником пр
 
 #: taiga/projects/api.py:684
 msgid "The default swimlane cannot be deleted."
-msgstr ""
+msgstr "Дорожка по умолчанию не может быть удалена."
 
 #: taiga/projects/api.py:714
 msgid "You can't delete the default due date status of a user story"
@@ -1876,7 +1907,7 @@ msgstr ""
 
 #: taiga/projects/api.py:1149
 msgid "You don't have permissions to see that."
-msgstr ""
+msgstr "У вас нет прав для просмотра."
 
 #: taiga/projects/attachments/api.py:52
 msgid "Partial updates are not supported"
@@ -2454,11 +2485,13 @@ msgstr "требуется параметр project или project__slug"
 
 #: taiga/projects/mixins/on_destroy.py:42
 msgid "Query param 'moveTo' is required"
-msgstr ""
+msgstr "Требуется параметр запроса 'moveTo'"
 
 #: taiga/projects/mixins/on_destroy.py:94
 msgid "Cannot set swimlane to None if there are available swimlanes"
 msgstr ""
+"Невозможно установить для дорожки значение \"Нет\", если есть доступные "
+"дорожки"
 
 #: taiga/projects/mixins/ordering.py:46
 #, python-brace-format
@@ -2531,7 +2564,7 @@ msgstr "тип запроса по умолчанию"
 
 #: taiga/projects/models.py:165
 msgid "default swimlane"
-msgstr ""
+msgstr "Дорожка по умолчанию"
 
 #: taiga/projects/models.py:181
 msgid "logo"
@@ -2678,7 +2711,7 @@ msgstr "дней до"
 
 #: taiga/projects/models.py:953
 msgid "user story status"
-msgstr ""
+msgstr "Статус пользовательской истории"
 
 #: taiga/projects/models.py:1005
 msgid "default owner's role"
@@ -3433,7 +3466,7 @@ msgid ""
 msgstr ""
 "\n"
 "<h1>Пользовательская история в %(project)s была изменена </h1>\n"
-"<p>Здравствуйте, %(user)s.<br>%(changer)sобновил пользовательскую историю:</"
+"<p>Здравствуйте, %(user)s.<br>%(changer)s обновил пользовательскую историю:</"
 "p>\n"
 "<p><strong>#%(ref)s%(subject)s</strong></p>\n"
 "<a class=\"button\" href=\"%(url)s\" title=\"See User Story #%(ref)s: "
@@ -4666,6 +4699,8 @@ msgstr ""
 #: taiga/projects/userstories/api.py:199
 msgid "You don't have permissions to set this swimlane to this user story."
 msgstr ""
+"У вас нет прав чтобы установить эту дорожку для этой пользовательской "
+"истории."
 
 #: taiga/projects/userstories/api.py:275
 #, python-brace-format
@@ -4720,7 +4755,7 @@ msgstr "связано с задачей"
 
 #: taiga/projects/userstories/models.py:153
 msgid "swimlane"
-msgstr ""
+msgstr "дорожка"
 
 #: taiga/projects/userstories/validators.py:42
 msgid "There's no user story with that id"
@@ -4739,6 +4774,7 @@ msgstr ""
 #: taiga/projects/userstories/validators.py:180
 msgid "Invalid swimlane id. The swimlane must belong to the same project."
 msgstr ""
+"Неверный идентификатор дорожки. Дорожка должна принадлежать тому же проекту."
 
 #: taiga/projects/userstories/validators.py:134
 msgid "Invalid milestone id. The milistone must belong to the same project."
@@ -4757,20 +4793,28 @@ msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"Неверный идентификатор пользовательской истории для перемещения \"после\". "
+"Пользовательская история должна принадлежать тому же проекту, статусу и "
+"дорожке."
 
 #: taiga/projects/userstories/validators.py:209
 msgid "You can't use after and before at the same time."
-msgstr ""
+msgstr "Вы не можете использовать значения \"после\" и \"до\" одновременно."
 
 #: taiga/projects/userstories/validators.py:223
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"Неверный идентификатор пользовательской истории для перемещения \"после\". "
+"Пользовательская история должна принадлежать тому же проекту, статусу и "
+"дорожке."
 
 #: taiga/projects/userstories/validators.py:235
 msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
+"Неверные идентификаторы пользовательских историй. Все пользовательские "
+"истории должны принадлежать тому же проекту."
 
 #: taiga/projects/validators.py:61
 msgid "There's no project with that id"
@@ -4869,11 +4913,11 @@ msgstr "href"
 
 #: taiga/telemetry/models.py:27
 msgid "instance id"
-msgstr ""
+msgstr "идентификатор экземпляра"
 
 #: taiga/telemetry/models.py:30
 msgid "created at"
-msgstr ""
+msgstr "создано"
 
 #: taiga/timeline/signals.py:63
 msgid "Check the history API for the exact diff"
@@ -4929,7 +4973,7 @@ msgstr "Неверное имя пользователя или e-mail"
 
 #: taiga/users/api.py:179
 msgid "Mail sent successfully!"
-msgstr ""
+msgstr "Письмо успешно отправлено!"
 
 #: taiga/users/api.py:217
 msgid "Current password parameter needed"
@@ -4941,7 +4985,7 @@ msgstr "Поле \"новый пароль\" является обязатель
 
 #: taiga/users/api.py:223
 msgid "Invalid password length at least 6 characters needed"
-msgstr ""
+msgstr "Некорректная длина пароля, требуется как минимум 6 символов"
 
 #: taiga/users/api.py:226
 msgid "Invalid current password"
@@ -5003,11 +5047,11 @@ msgstr "Выбранный пользователь активен. Отмени
 
 #: taiga/users/models.py:140
 msgid "staff status"
-msgstr ""
+msgstr "статус персонала"
 
 #: taiga/users/models.py:141
 msgid "Designates whether the user can log into this admin site."
-msgstr ""
+msgstr "Определяет, может ли пользователь войти на данный сайт администратора."
 
 #: taiga/users/models.py:147
 msgid "biography"

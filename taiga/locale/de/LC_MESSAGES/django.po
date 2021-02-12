@@ -32,9 +32,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-28 14:37+0100\n"
-"PO-Revision-Date: 2021-01-28 13:44+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2021-02-12 13:12+0100\n"
+"PO-Revision-Date: 2021-02-12 12:14+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -594,68 +594,68 @@ msgstr "Exportdatei erforderlich"
 msgid "Invalid dump format"
 msgstr "Ungültiges Exportdatei Format"
 
-#: taiga/export_import/services/store.py:801
-#: taiga/export_import/services/store.py:823
+#: taiga/export_import/services/store.py:815
+#: taiga/export_import/services/store.py:837
 msgid "error importing project data"
 msgstr "Fehler beim Importieren der Projektdaten"
 
-#: taiga/export_import/services/store.py:830
+#: taiga/export_import/services/store.py:844
 msgid "error importing roles"
 msgstr "Fehler beim Importieren der Rollen"
 
-#: taiga/export_import/services/store.py:835
+#: taiga/export_import/services/store.py:849
 msgid "error importing memberships"
 msgstr "Fehler beim Importieren der Mitgliedschaften"
 
-#: taiga/export_import/services/store.py:850
+#: taiga/export_import/services/store.py:864
 msgid "error importing lists of project attributes"
 msgstr "Fehler beim Importieren der Listen von Projektattributen"
 
-#: taiga/export_import/services/store.py:854
+#: taiga/export_import/services/store.py:868
 msgid "error importing default project attribute values"
 msgstr ""
 
-#: taiga/export_import/services/store.py:865
+#: taiga/export_import/services/store.py:879
 msgid "error importing custom attributes"
 msgstr "Fehler beim Importieren der Kundenattribute"
 
-#: taiga/export_import/services/store.py:868
+#: taiga/export_import/services/store.py:882
 msgid "error importing sprints"
 msgstr "Fehler beim Import der Sprints"
 
-#: taiga/export_import/services/store.py:872
+#: taiga/export_import/services/store.py:886
 msgid "error importing issues"
 msgstr "Fehler beim Importieren der Tickets"
 
-#: taiga/export_import/services/store.py:876
+#: taiga/export_import/services/store.py:890
 msgid "error importing user stories"
 msgstr "Fehler beim Importieren der User-Stories"
 
-#: taiga/export_import/services/store.py:880
+#: taiga/export_import/services/store.py:894
 msgid "error importing epics"
 msgstr "Fehler beim Importieren der Epics"
 
-#: taiga/export_import/services/store.py:884
+#: taiga/export_import/services/store.py:898
 msgid "error importing tasks"
 msgstr "Fehler beim Importieren der Aufgaben"
 
-#: taiga/export_import/services/store.py:891
+#: taiga/export_import/services/store.py:905
 msgid "error importing wiki pages"
 msgstr "Fehler beim Importieren von Wiki Seiten"
 
-#: taiga/export_import/services/store.py:895
+#: taiga/export_import/services/store.py:909
 msgid "error importing wiki links"
 msgstr "Fehler beim Importieren von Wiki Links"
 
-#: taiga/export_import/services/store.py:899
+#: taiga/export_import/services/store.py:913
 msgid "error importing tags"
 msgstr "Fehler beim Importieren der Schlagworte"
 
-#: taiga/export_import/services/store.py:903
+#: taiga/export_import/services/store.py:917
 msgid "error importing timelines"
 msgstr "Fehler beim Importieren der Chroniken"
 
-#: taiga/export_import/services/store.py:926
+#: taiga/export_import/services/store.py:940
 msgid "unexpected error importing project"
 msgstr "unerwarteter Fehler beim Projekt-Import"
 
@@ -1064,15 +1064,11 @@ msgstr "Falsche Signatur"
 #: taiga/hooks/event_hooks.py:79
 #, python-brace-format
 msgid ""
-"[@{user_name}]({user_url} \"See @{user_name}'s {platform} profile\") says in "
+"[{user_name}]({user_url} \"See {user_name}'s {platform} profile\") says in "
 "[{platform}#{number}]({comment_url} \"Go to comment\"):\n"
 "\n"
 "\"{comment_message}\""
 msgstr ""
-"[@{user_name}]({user_url} \"See @{user_name}'s {platform} profile\") "
-"schreibt [{platform}#{number}]({comment_url} \"Zum Kommentar\"):\n"
-"\n"
-"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:84
 #, python-brace-format
@@ -1092,11 +1088,9 @@ msgstr "Ungültige Ticket-Kommentar Information"
 #: taiga/hooks/event_hooks.py:143
 #, python-brace-format
 msgid ""
-"Issue created by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
-"Ticket erstellt von [@{user_name}]({user_url} \"Siehe @{user_name}'s "
-"{platform} Profil\") aus [{platform}#{number}]({url} \"Gehe zum Ticket\")."
 
 #: taiga/hooks/event_hooks.py:147
 #, python-brace-format
@@ -1106,7 +1100,7 @@ msgstr "Ticket erstellt durch {platform}."
 #: taiga/hooks/event_hooks.py:155
 #, python-brace-format
 msgid ""
-"Issue modified by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
@@ -1118,7 +1112,7 @@ msgstr ""
 #: taiga/hooks/event_hooks.py:167
 #, python-brace-format
 msgid ""
-"Issue closed by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
@@ -1130,7 +1124,7 @@ msgstr ""
 #: taiga/hooks/event_hooks.py:179
 #, python-brace-format
 msgid ""
-"Issue reopened by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
+"Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
 
@@ -1189,7 +1183,7 @@ msgstr "Der Status existiert nicht"
 
 #: taiga/importers/asana/api.py:44 taiga/importers/asana/api.py:86
 #: taiga/importers/github/api.py:45 taiga/importers/github/api.py:75
-#: taiga/importers/jira/api.py:61 taiga/importers/jira/api.py:107
+#: taiga/importers/jira/api.py:61 taiga/importers/jira/api.py:115
 #: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
 #: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
 msgid "The project param is needed"
@@ -1225,20 +1219,28 @@ msgstr "Ausfall des Dienstes eines Drittanbieters"
 msgid "Error importing GitHub project"
 msgstr "Fehler beim Importieren des GitHub Projektes"
 
-#: taiga/importers/jira/api.py:63 taiga/importers/jira/api.py:90
-#: taiga/importers/jira/api.py:110 taiga/importers/jira/api.py:183
+#: taiga/importers/jira/api.py:63 taiga/importers/jira/api.py:98
+#: taiga/importers/jira/api.py:118 taiga/importers/jira/api.py:191
 msgid "The url param is needed"
 msgstr "Der URL-Parameter wird benötigt"
 
-#: taiga/importers/jira/api.py:159
+#: taiga/importers/jira/api.py:70
+msgid ""
+"\n"
+"                There was an error; probably due to an unsupported Jira "
+"version.\n"
+"                Taiga does not support Jira releases from 8.6."
+msgstr ""
+
+#: taiga/importers/jira/api.py:167
 msgid "Invalid project_type {}"
 msgstr "Ungülter Projekttyp!"
 
-#: taiga/importers/jira/api.py:193
+#: taiga/importers/jira/api.py:201
 msgid "Invalid Jira server configuration."
 msgstr "Ungültige Jira Server Konfiguration."
 
-#: taiga/importers/jira/api.py:234 taiga/importers/pivotal/api.py:139
+#: taiga/importers/jira/api.py:242 taiga/importers/pivotal/api.py:139
 #: taiga/importers/trello/api.py:144
 msgid "Invalid or expired auth token"
 msgstr "Ungültiger oder abgelaufener Auth Token"

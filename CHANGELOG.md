@@ -1,8 +1,17 @@
 # Changelog
 
-## 6.0.4 (unreleased)
+## 6.0.5 (unreleased)
 
-- improve docker configuration
+- ...
+
+
+## 6.0.4 (2021-02-15)
+
+### Misc
+
+- Fix importer: ignore epic related user stories from another project
+- Change default sitemap page size
+- Improve docker configuration
 
 ## 6.0.3 (2020-02-08)
 
