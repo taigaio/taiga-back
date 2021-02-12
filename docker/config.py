@@ -47,7 +47,7 @@ WEBHOOKS_ENABLED = True
 
 # Setting DEFAULT_PROJECT_SLUG_PREFIX to false
 # removes the username from project slug
-DEFAULT_PROJECT_SLUG_PREFIX = False
+DEFAULT_PROJECT_SLUG_PREFIX = os.getenv('DEFAULT_PROJECT_SLUG_PREFIX', 'False') == 'True'
 
 #########################################
 ## MEDIA
