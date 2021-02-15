@@ -31,6 +31,7 @@ from taiga.projects.milestones.models import Milestone
 from taiga.projects.models import Project
 from taiga.projects.notifications.models import Watched
 from taiga.projects.userstories.models import UserStory
+from taiga.projects.tasks.models import Task
 from taiga.telemetry.models import InstanceTelemetry
 from taiga.users.models import User
 
@@ -164,6 +165,31 @@ def generate_platform_data():
     pd['tt_avg_uss_project'] = userstories['avg_uss_project']
     pd['tt_median_userstories_project'] = userstories['median_userstories_project']
 
+    # average and median of tasks in projects with module scrum or kanban active
+    tasks = Project.objects.filter(
+            Q(is_kanban_activated=True) | Q(is_backlog_activated=True)
+        ).annotate(
+            total_tasks=Count('tasks')
+        ).aggregate(
+            avg_tasks_project=Avg('total_tasks'),
+            median_tasks_project=Median('total_tasks')
+        )
+    pd['tt_avg_tasks_project'] = tasks['avg_tasks_project']
+    pd['tt_median_tasks_project'] = tasks['median_tasks_project']
+
+    # average and median of wiki pages in projects with wiki active
+    wiki_pages = Project.objects.filter(
+            is_wiki_activated=True
+        ).annotate(
+            total_wiki_pages=Count('wiki_pages')
+        ).aggregate(
+            avg_wiki_pages_project=Avg('total_wiki_pages'),
+            median_wiki_pages_project=Median('total_wiki_pages')
+        )
+
+    pd['tt_avg_wiki_pages_project'] = wiki_pages['avg_wiki_pages_project']
+    pd['tt_median_wiki_pages_project'] = wiki_pages['median_wiki_pages_project']
+
     # average and of issues in projects with module issues active
     issues = Project.objects.filter(
             is_issues_activated=True
@@ -284,6 +310,16 @@ def generate_platform_data():
     # number of closed US
     pd['tt_finished_user_stories_today'] = UserStory.objects.filter(
             finish_date__day=datetime.datetime.today().day
+        ).count()
+
+    # number of new tasks
+    pd['tt_new_tasks_today'] = Task.objects.filter(
+            created_date__day=datetime.datetime.today().day
+        ).count()
+
+    # number of closed tasks
+    pd['tt_finished_tasks_today'] = Task.objects.filter(
+            finished_date__day=datetime.datetime.today().day
         ).count()
 
     return pd
