@@ -2,7 +2,9 @@
 
 ## 6.0.5 (unreleased)
 
-- ...
+- Added translation to Dansk
+- Added translation to Serbian
+- Added translation to Vietnamese
 
 
 ## 6.0.4 (2021-02-15)

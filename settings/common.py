@@ -106,7 +106,7 @@ LANGUAGES = [
     ("ca", "Català"),  # Catalan
     # ("cs", "Čeština"),  # Czech
     # ("cy", "Cymraeg"),  # Welsh
-    # ("da", "Dansk"),  # Danish
+    ("da", "Dansk"),  # Danish
     ("de", "Deutsch"),  # German
     # ("el", "Ελληνικά"),  # Greek
     ("en", "English (US)"),  # English
@@ -163,7 +163,7 @@ LANGUAGES = [
     # ("sk", "Slovenčina"),  # Slovak
     # ("sl", "Slovenščina"),  # Slovenian
     # ("sq", "Shqip"),  # Albanian
-    # ("sr", "Српски"),  # Serbian
+    ("sr", "Српски"),  # Serbian
     # ("sr-latn", "srpski"),  # Serbian Latin
     ("sv", "Svenska"),  # Swedish
     # ("sw", "Kiswahili"),  # Swahili
@@ -175,7 +175,7 @@ LANGUAGES = [
     # ("udm", "удмурт кыл"),  # Udmurt
     ("uk", "Українська"),  # Ukrainian
     # ("ur", "اردو‏"),  # Urdu
-    # ("vi", "Tiếng Việt"),  # Vietnamese
+    ("vi", "Tiếng Việt"),  # Vietnamese
     ("zh-hans", "中文(简体)"),  # Simplified Chinese
     ("zh-hant", "中文(香港)"),  # Traditional Chinese
 ]
