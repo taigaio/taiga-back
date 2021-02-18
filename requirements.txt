@@ -8,7 +8,7 @@ aggdraw==1.3.12
     # via psd-tools
 amqp==2.6.1
     # via kombu
-asana==0.6.7
+asana==0.10.3
     # via -r requirements.in
 attrs==20.3.0
     # via psd-tools
