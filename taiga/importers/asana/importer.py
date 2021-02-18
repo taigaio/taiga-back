@@ -52,10 +52,10 @@ class AsanaImporter:
     def list_projects(self):
         projects = []
         for ws in self._client.workspaces.find_all():
-            for project in self._client.projects.find_all(workspace=ws['id']):
-                project = self._client.projects.find_by_id(project['id'])
+            for project in self._client.projects.find_all(workspace=ws['gid']):
+                project = self._client.projects.find_by_id(project['gid'])
                 projects.append({
-                    "id": project['id'],
+                    "id": project['gid'],
                     "name": "{}/{}".format(ws['name'], project['name']),
                     "description": project['notes'],
                     "is_private": True,
@@ -65,9 +65,9 @@ class AsanaImporter:
     def list_users(self, project_id):
         users = []
         for ws in self._client.workspaces.find_all():
-            for user in self._client.users.find_by_workspace(ws['id'], fields=["id", "name", "email", "photo"]):
+            for user in self._client.users.find_by_workspace(ws['gid'], fields=["gid", "name", "email", "photo"]):
                 users.append({
-                    "id": user["id"],
+                    "id": user["gid"],
                     "full_name": user['name'],
                     "detected_user": self._get_user(user),
                     "avatar": user.get('photo', None) and user['photo'].get('image_60x60', None)
@@ -94,7 +94,9 @@ class AsanaImporter:
         return taiga_project
 
     def _import_project_data(self, project, options):
-        users_bindings = options.get('users_bindings', {})
+        users_bindings = {
+            str(gid): user for gid, user in options.get('users_bindings', {}).items()
+        }
         project_template = ProjectTemplate.objects.get(slug=options.get('template', 'scrum'))
 
         project_template.us_statuses = []
@@ -144,7 +146,7 @@ class AsanaImporter:
         })
 
         tags_colors = []
-        for tag in self._client.tags.find_by_workspace(project['workspace']['id'], fields=["name", "color"]):
+        for tag in self._client.tags.find_by_workspace(project['workspace']['gid'], fields=["name", "color"]):
             name = tag['name'].lower()
             color = tag['color']
             tags_colors.append([name, color])
@@ -179,9 +181,11 @@ class AsanaImporter:
         return taiga_project
 
     def _import_user_stories_data(self, taiga_project, project, options):
-        users_bindings = options.get('users_bindings', {})
+        users_bindings = {
+            str(gid): user for gid, user in options.get('users_bindings', {}).items()
+        }
         tasks = self._client.tasks.find_by_project(
-            project['id'],
+            project['gid'],
             fields=["parent", "tags", "name", "notes", "tags.name",
                     "completed", "followers", "modified_at", "created_at",
                     "project", "due_on", "assignee"]
@@ -199,13 +203,13 @@ class AsanaImporter:
             assigned_to = None
             assignee = task.get('assignee', {})
             if assignee:
-                assigned_to = users_bindings.get(assignee.get('id', None))
+                assigned_to = users_bindings.get(assignee.get('gid', None))
 
             external_reference = None
             if options.get('keep_external_reference', False):
                 external_url = "https://app.asana.com/0/{}/{}".format(
-                    project['id'],
-                    task['id'],
+                    project['gid'],
+                    task['gid'],
                 )
                 external_reference = ["asana", external_url]
 
@@ -214,9 +218,9 @@ class AsanaImporter:
                 owner=self._user,
                 assigned_to=assigned_to,
                 status=taiga_project.us_statuses.get(slug="closed" if task['completed'] else "open"),
-                kanban_order=task['id'],
-                sprint_order=task['id'],
-                backlog_order=task['id'],
+                kanban_order=task['gid'],
+                sprint_order=task['gid'],
+                backlog_order=task['gid'],
                 subject=task['name'],
                 description=task.get('notes', ""),
                 tags=tags,
@@ -228,7 +232,7 @@ class AsanaImporter:
                 us.custom_attributes_values.save()
 
             for follower in task['followers']:
-                follower_user = users_bindings.get(follower['id'], None)
+                follower_user = users_bindings.get(follower['gid'], None)
                 if follower_user is not None:
                     us.add_watcher(follower_user)
 
@@ -238,7 +242,7 @@ class AsanaImporter:
             )
 
             subtasks = self._client.tasks.subtasks(
-                task['id'],
+                task['gid'],
                 fields=["parent", "tags", "name", "notes", "tags.name",
                         "completed", "followers", "modified_at", "created_at",
                         "due_on"]
@@ -251,19 +255,21 @@ class AsanaImporter:
             self._import_attachments(us, task, options)
 
     def _import_task_data(self, taiga_project, us, assana_project, task, options):
-        users_bindings = options.get('users_bindings', {})
+        users_bindings = {
+            str(gid): user for gid, user in options.get('users_bindings', {}).items()
+        }
         tags = []
         for tag in task['tags']:
             tags.append(tag['name'].lower())
         due_date_field = taiga_project.taskcustomattributes.first()
 
-        assigned_to = users_bindings.get(task.get('assignee', {}).get('id', None)) or None
+        assigned_to = users_bindings.get(task.get('assignee', {}).get('gid', None)) or None
 
         external_reference = None
         if options.get('keep_external_reference', False):
             external_url = "https://app.asana.com/0/{}/{}".format(
-                assana_project['id'],
-                task['id'],
+                assana_project['gid'],
+                task['gid'],
             )
             external_reference = ["asana", external_url]
 
@@ -273,8 +279,8 @@ class AsanaImporter:
             owner=self._user,
             assigned_to=assigned_to,
             status=taiga_project.task_statuses.get(slug="closed" if task['completed'] else "open"),
-            us_order=task['id'],
-            taskboard_order=task['id'],
+            us_order=task['gid'],
+            taskboard_order=task['gid'],
             subject=task['name'],
             description=task.get('notes', ""),
             tags=tags,
@@ -286,7 +292,7 @@ class AsanaImporter:
             taiga_task.custom_attributes_values.save()
 
         for follower in task['followers']:
-            follower_user = users_bindings.get(follower['id'], None)
+            follower_user = users_bindings.get(follower['gid'], None)
             if follower_user is not None:
                 taiga_task.add_watcher(follower_user)
 
@@ -296,7 +302,7 @@ class AsanaImporter:
         )
 
         subtasks = self._client.tasks.subtasks(
-            task['id'],
+            task['gid'],
             fields=["parent", "tags", "name", "notes", "tags.name",
                     "completed", "followers", "modified_at", "created_at",
                     "due_on"]
@@ -309,21 +315,23 @@ class AsanaImporter:
         self._import_attachments(taiga_task, task, options)
 
     def _import_history(self, obj, task, options):
-        users_bindings = options.get('users_bindings', {})
-        stories = self._client.stories.find_by_task(task['id'])
+        users_bindings = {
+            str(gid): user for gid, user in options.get('users_bindings', {}).items()
+        }
+        stories = self._client.stories.find_by_task(task['gid'])
         for story in stories:
             if story['type'] == "comment":
                 snapshot = take_snapshot(
                     obj,
                     comment=story['text'],
-                    user=users_bindings.get(story['created_by']['id'], User(full_name=story['created_by']['name'])),
+                    user=users_bindings.get(story['created_by']['gid'], User(full_name=story['created_by']['name'])),
                     delete=False
                 )
                 HistoryEntry.objects.filter(id=snapshot.id).update(created_at=story['created_at'])
 
     def _import_attachments(self, obj, task, options):
         attachments = self._client.attachments.find_by_task(
-            task['id'],
+            task['gid'],
             fields=['name', 'download_url', 'created_at']
         )
         for attachment in attachments:
