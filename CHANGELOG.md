@@ -6,6 +6,7 @@
 - Added translation to Serbian
 - Added translation to Vietnamese
 - Simplify and improve docker configuration
+- Fix Asana importer
 
 ## 6.0.4 (2021-02-15)
 
@@ -84,7 +85,6 @@
 ### i18n
 
 - Update catalog.
-
 - Update fa.
 
 ## 5.5.4 (2020-09-08)
@@ -102,7 +102,6 @@
 ### Misc
 
 - Parametrize mdrender cache options.
-
 - Minor bug fix.
 
 ## 5.5.2 (2020-08-26)
@@ -122,14 +121,12 @@
 ### Features
 
 - Verify user email.
-
 - Task promotion creates user story and deletes original task.
 
 ### Misc
 
 - Upgraded Django version to 2.2. This is a BREAKING CHANGE. Contributed
   modules should be upgraded.
-
 - Several minor bugfixes.
 
 ## 5.0.15 (2020-06-17)
@@ -149,13 +146,11 @@
 ### Features
 
 - Resolved Django deprecation warnings to prepare for an upgrade.
-
 - Added option to disallow anonymous access to user profiles.
 
 ### Misc
 
 - Updated requirements.
-
 - Use pip-tools to manage dependencies.
 
 ### i18n
@@ -174,7 +169,6 @@
 ### Misc
 
 - Fixed several minor bugs.
-
 - Updated requirements.
 
 ### i18n
@@ -190,7 +184,6 @@
 ### Misc
 
 - Fixed several minor bugs.
-
 - Updated requirements.
 
 ### i18n
@@ -212,7 +205,6 @@
 ### Feature
 
 - Add reduce notifications configuration option.
-
 - Sanitize full name input.
 
 ### i18n
@@ -242,9 +234,7 @@
 ## 5.0.0 (2019-11-13)
 
 - Refresh attachment URL on markdown fields to support protected backend.
-
 - Update requirements.
-
 - Update translations: Persian (Iran), French, Portuguese (Brazil).
 
 ## 4.2.14 (2019-10-01)
@@ -252,7 +242,6 @@
 - Update requirements to support python3.7. This is a potentially BREAKING
   CHANGE. Several libraries were updated to minor and patch releases.
   Contributed modules should be tested thoroughly.
-
 - Minor bug fixes.
 
 ## 4.2.12 (2019-08-06)
@@ -463,7 +452,6 @@
 ### Misc
 
 - Minor bug fix related with project import.
-
 - Pin requirements to solve incompatible versions detected by pip 10.
 
 ## 3.3.4 (2018-05-24)
