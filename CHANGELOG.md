@@ -5,7 +5,7 @@
 - Added translation to Dansk
 - Added translation to Serbian
 - Added translation to Vietnamese
-
+- Simplify and improve docker configuration
 
 ## 6.0.4 (2021-02-15)
 
