@@ -5,14 +5,15 @@
 # Translators:
 # Translators:
 # Xaviju <xaviju@gmail.com>, 2015
+# Kelp <natachamenjibar@gmail.com>, 2021
 # Taiga Dev Team <support@taiga.io>, 2015
 # Xaviju <xaviju@gmail.com>, 2015,2021
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-12 13:12+0100\n"
-"PO-Revision-Date: 2021-02-12 12:14+0000\n"
+"POT-Creation-Date: 2021-02-19 13:55+0100\n"
+"PO-Revision-Date: 2021-02-19 12:55+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ca/)\n"
@@ -811,8 +812,7 @@ msgid "It contains invalid custom fields."
 msgstr ""
 
 #: taiga/export_import/validators/validators.py:277
-#: taiga/projects/validators.py:52
-msgid "Name duplicated for the project"
+msgid "Milestone name duplicated for the project"
 msgstr ""
 
 #: taiga/export_import/validators/validators.py:312
@@ -1412,7 +1412,7 @@ msgstr ""
 
 #: taiga/permissions/choices.py:42
 msgid "Delete epic"
-msgstr ""
+msgstr "Esborrar èpica"
 
 #: taiga/permissions/choices.py:44
 msgid "View user story"
@@ -1720,7 +1720,7 @@ msgstr "Ordre"
 
 #: taiga/projects/choices.py:21
 msgid "Whereby.com"
-msgstr ""
+msgstr "Whereby.com"
 
 #: taiga/projects/choices.py:22
 msgid "Jitsi"
@@ -1808,7 +1808,7 @@ msgstr ""
 
 #: taiga/projects/custom_attributes/choices.py:32
 msgid "Rich text"
-msgstr ""
+msgstr "Text ric"
 
 #: taiga/projects/custom_attributes/choices.py:33
 msgid "Date"
@@ -1816,19 +1816,19 @@ msgstr ""
 
 #: taiga/projects/custom_attributes/choices.py:34
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
 #: taiga/projects/custom_attributes/choices.py:35
 msgid "Dropdown"
-msgstr ""
+msgstr "Menú desplegable "
 
 #: taiga/projects/custom_attributes/choices.py:36
 msgid "Checkbox"
-msgstr ""
+msgstr "Checkbox"
 
 #: taiga/projects/custom_attributes/choices.py:37
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 #: taiga/projects/custom_attributes/models.py:38
 #: taiga/projects/issues/models.py:73
@@ -1862,7 +1862,7 @@ msgstr "Ja existix altre amb el matex nom."
 
 #: taiga/projects/due_dates/models.py:22
 msgid "due date"
-msgstr ""
+msgstr "Data de venciment "
 
 #: taiga/projects/due_dates/models.py:25
 msgid "reason for the due date"
@@ -3835,12 +3835,12 @@ msgstr ""
 #. Translators: User story status
 #: taiga/projects/translations.py:85
 msgid "Done"
-msgstr ""
+msgstr "Fet"
 
 #. Translators: User story status
 #: taiga/projects/translations.py:88
 msgid "Archived"
-msgstr ""
+msgstr "Arxivades"
 
 #. Translators: Task status
 #. Translators: Issue status
@@ -3994,7 +3994,7 @@ msgstr "data de finalització"
 
 #: taiga/projects/userstories/models.py:131
 msgid "assigned users"
-msgstr ""
+msgstr "Usuaris assignats"
 
 #: taiga/projects/userstories/models.py:140
 msgid "generated from issue"
@@ -4056,6 +4056,10 @@ msgstr ""
 
 #: taiga/projects/userstories/validators.py:235
 msgid "Invalid user story ids. All stories must belong to the same project."
+msgstr ""
+
+#: taiga/projects/validators.py:52
+msgid "Name duplicated for the project"
 msgstr ""
 
 #: taiga/projects/validators.py:61
@@ -4169,7 +4173,7 @@ msgstr ""
 
 #: taiga/users/admin.py:38
 msgid "Project Members"
-msgstr ""
+msgstr "Membres del projecte"
 
 #: taiga/users/admin.py:48
 msgid "id"
