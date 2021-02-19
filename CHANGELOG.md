@@ -1,11 +1,16 @@
 # Changelog
 
-## 6.0.5 (unreleased)
+## 6.0.6 (unreleased)
+
+- ...
+
+## 6.0.5 (2021-02-22)
 
 - Added translation to Dansk
 - Added translation to Serbian
 - Added translation to Vietnamese
 - Simplify and improve docker configuration
+- Improve Github integration (edit, close and reopen issue events)
 - Fix Asana importer
 
 ## 6.0.4 (2021-02-15)
@@ -45,6 +50,7 @@
 - Swimlanes
 - Generate docker image
 - Revamp email design
+- Improve Gitlab integration (edit, close and reopen issue events)
 
 ### Misc
 
