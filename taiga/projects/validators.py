@@ -49,7 +49,7 @@ class DuplicatedNameInProjectValidator:
             qs = model.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-            raise ValidationError(_("Name duplicated for the project"))
+            raise ValidationError(_("Duplicated name"))
 
         return attrs
 

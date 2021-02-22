@@ -426,7 +426,7 @@ def test_milestone_import_duplicated_milestone(client):
     response = client.json.post(url, json.dumps(data))
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    assert response.data["milestones"][0]["name"][0] == "Milestone name duplicated for the project"
+    assert response.data["milestones"][0]["name"][0] == "Duplicated name"
 
 
 

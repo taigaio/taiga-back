@@ -366,7 +366,7 @@ def test_points_name_duplicated(client):
     data = {"name": point_1.name}
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
-    assert response.data["name"][0] == "Name duplicated for the project"
+    assert response.data["name"][0] == "Duplicated name"
 
 
 def test_update_points_when_not_null_values_for_points(client):

@@ -274,7 +274,7 @@ class MilestoneExportValidator(WatcheableObjectModelValidatorMixin):
         name = attrs[source]
         qs = self.project.milestones.filter(name=name)
         if qs.exists():
-            raise ValidationError(_("Milestone name duplicated for the project"))
+            raise ValidationError(_("Duplicated name"))
 
         return attrs
 
