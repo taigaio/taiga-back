@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-19 13:55+0100\n"
-"PO-Revision-Date: 2021-02-19 12:55+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"POT-Creation-Date: 2021-02-26 12:31+0100\n"
+"PO-Revision-Date: 2021-02-26 11:31+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Japanese (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ja/)\n"
 "MIME-Version: 1.0\n"
@@ -846,7 +846,8 @@ msgid "It contains invalid custom fields."
 msgstr ""
 
 #: taiga/export_import/validators/validators.py:277
-msgid "Milestone name duplicated for the project"
+#: taiga/projects/validators.py:52
+msgid "Duplicated name"
 msgstr ""
 
 #: taiga/export_import/validators/validators.py:312
@@ -4081,10 +4082,6 @@ msgstr ""
 #: taiga/projects/userstories/validators.py:235
 msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
-
-#: taiga/projects/validators.py:52
-msgid "Name duplicated for the project"
-msgstr "同じプロジェクト名があります。"
 
 #: taiga/projects/validators.py:61
 msgid "There's no project with that id"

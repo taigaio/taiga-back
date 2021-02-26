@@ -37,9 +37,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-19 13:55+0100\n"
-"PO-Revision-Date: 2021-02-12 12:14+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"POT-Creation-Date: 2021-02-26 12:31+0100\n"
+"PO-Revision-Date: 2021-02-26 11:31+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -968,7 +968,8 @@ msgid "It contains invalid custom fields."
 msgstr "Содержит неверные специальные поля."
 
 #: taiga/export_import/validators/validators.py:277
-msgid "Milestone name duplicated for the project"
+#: taiga/projects/validators.py:52
+msgid "Duplicated name"
 msgstr ""
 
 #: taiga/export_import/validators/validators.py:312
@@ -1167,6 +1168,11 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}] ({user_url} \"Просмотреть профиль пользователя {user_name}'s "
+"{platform} \") оставившего комментарий в [{platform}#{number}] "
+"({comment_url} \"Перейти к комментарию\"):\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:84
 #, python-brace-format
@@ -1189,6 +1195,8 @@ msgid ""
 "Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Запрос создан  [{user_name}]({user_url} \"Просмотреть профиль {user_name} "
+"{platform}\") из [{platform}#{number}]({url} \"Перейти к запросу\")."
 
 #: taiga/hooks/event_hooks.py:147
 #, python-brace-format
@@ -1201,6 +1209,8 @@ msgid ""
 "Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Запрос изменен  [{user_name}]({user_url} \"Просмотреть профиль {user_name} "
+"{platform}\") из [{platform}#{number}]({url} \"Перейти к запросу\")."
 
 #: taiga/hooks/event_hooks.py:159
 #, python-brace-format
@@ -1213,6 +1223,8 @@ msgid ""
 "Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Запрос закрыт  [{user_name}]({user_url} \"Просмотреть профиль {user_name} "
+"{platform}\") из [{platform}#{number}]({url} \"Перейти к запросу\")."
 
 #: taiga/hooks/event_hooks.py:171
 #, python-brace-format
@@ -1225,6 +1237,9 @@ msgid ""
 "Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Запрос повторно открыт  [{user_name}]({user_url} \"Просмотреть профиль "
+"{user_name} {platform}\") из [{platform}#{number}]({url} \"Перейти к запросу"
+"\")."
 
 #: taiga/hooks/event_hooks.py:183
 #, python-brace-format
@@ -1338,6 +1353,9 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"Произошла ошибка; вероятно, из-за неподдерживаемой версии Jira.\n"
+"Taiga не поддерживает релизы Jira с версии 8.6."
 
 #: taiga/importers/jira/api.py:167
 msgid "Invalid project_type {}"
@@ -4814,10 +4832,6 @@ msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
 "Неверные идентификаторы пользовательских историй. Все пользовательские "
 "истории должны принадлежать тому же проекту."
-
-#: taiga/projects/validators.py:52
-msgid "Name duplicated for the project"
-msgstr "Уже есть такое имя для проекта"
 
 #: taiga/projects/validators.py:61
 msgid "There's no project with that id"

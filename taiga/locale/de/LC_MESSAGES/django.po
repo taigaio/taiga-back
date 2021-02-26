@@ -17,6 +17,7 @@
 # Henning Matthaei, 2015
 # Horst Maier <andreashuppert+transifex@googlemail.com>, 2018
 # Jonas Zürcher <info@jonaszuercher.ch>, 2018
+# keplusplus, 2021
 # M S, 2015
 # Niklas Kopyciok <niklas.kopyciok@googlemail.com>, 2018
 # Niklas Kopyciok <niklas.kopyciok@googlemail.com>, 2018
@@ -32,9 +33,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-19 13:55+0100\n"
-"PO-Revision-Date: 2021-02-19 12:55+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"POT-Creation-Date: 2021-02-26 12:31+0100\n"
+"PO-Revision-Date: 2021-02-26 11:31+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: German (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -46,7 +47,7 @@ msgstr ""
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "Die Registrierung ist für die Öffentlichkeit gesperrrt."
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
@@ -55,7 +56,7 @@ msgstr ""
 
 #: taiga/auth/api.py:100
 msgid "invalid registration type"
-msgstr ""
+msgstr "Ungültige Registrierungsart"
 
 #: taiga/auth/api.py:116
 msgid "invalid login type"
@@ -71,7 +72,7 @@ msgstr "Diese E-Mail Adresse wird schon verwendet."
 
 #: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "Das Token kann keiner gültigen Einladung zugeordnet werden."
 
 #: taiga/auth/services.py:126
 msgid "User is already registered."
@@ -83,7 +84,7 @@ msgstr "Dieser Benutzer ist schon ein Mitglied des Projektes."
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
-msgstr ""
+msgstr "Fehler bei der Erstellung des neuen Benutzers."
 
 #: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
 #: taiga/external_apps/services.py:32 taiga/projects/api.py:432
@@ -105,7 +106,7 @@ msgstr ""
 #: taiga/auth/validators.py:48 taiga/auth/validators.py:51
 #: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
-msgstr ""
+msgstr "Ungültiger Name"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
@@ -411,7 +412,7 @@ msgstr "Kein Raum für weitere Projekte."
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s ist keine Liste"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
@@ -438,6 +439,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>Wilkommen bei "
+"%(product_name)s, einem Open Source, Agile Project Management Tool</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:7
 #, python-format
@@ -451,6 +456,15 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">E-Mail-Benachrichtigungen "
+"verwalten oder abbestellen</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">Taiga Support</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >Kontaktieren Sie uns</"
+"a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:18
 msgid "Follow us on Twitter"
@@ -516,7 +530,7 @@ msgstr "User story gelöscht"
 
 #: taiga/events/events.py:127
 msgid "US #{} - {}"
-msgstr ""
+msgstr "Story #{} - {}"
 
 #: taiga/events/events.py:130
 msgid "Task created"
@@ -613,7 +627,7 @@ msgstr "Fehler beim Importieren der Listen von Projektattributen"
 
 #: taiga/export_import/services/store.py:868
 msgid "error importing default project attribute values"
-msgstr ""
+msgstr "Fehler beim Importieren der Standard-Projektattribute"
 
 #: taiga/export_import/services/store.py:879
 msgid "error importing custom attributes"
@@ -725,6 +739,17 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Projekt-Export erstellt</h1>\n"
+"    <p>Hallo %(user)s,</p>\n"
+"    <h3>die Export-Datei des Projekts %(project)s wurde erfolgreich erstellt."
+"</h3>\n"
+"    <p>Du kannst sie hier herunterladen:</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Download the dump file"
+"\">Export-Datei herunterladen</a>\n"
+"    <p>Die Datei wird am %(deletion_date)s gelöscht.</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/dump_project-body-text.jinja:1
 #, python-format
@@ -742,6 +767,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"die Export-Datei des Projekts %(project)swurde erfolgreich erstellt. Du "
+"kannst sie hier herunterladen:\n"
+"\n"
+"%(url)s\n"
+"Die Datei wird am %(deletion_date)s gelöscht.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:1
 #, python-format
@@ -762,6 +798,17 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Hallo %(user)s,</p>\n"
+"    <p>Dein Projekt %(project)s konnte nicht erfolgreich exportiert werden.</"
+"p>\n"
+"    <p>Die Taiga-Systemadministration wurde informiert.<br/> Bitte versuchen "
+"Sie es erneut oder kontaktieren Sie das Support-Team unter\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:1
 #, python-format
@@ -779,6 +826,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"Dein Projekt %(project)s konnte nicht erfolgreich exportiert werden.\n"
+"\n"
+"Die Taiga-Systemadministration wurde informiert.\n"
+"\n"
+"Bitte versuchen Sie es erneut oder kontaktieren Sie das Support-Team unter "
+"%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:1
 #, python-format
@@ -801,6 +861,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Hallo %(user)s,</p>\n"
+"    <p>Dein Projekt konnte nicht erfolgreich importiert werden.</p>\n"
+"    <p>Die %(product_name)s System-Administration wurde informiert.<br/> "
+"Bitte versuchen Sie es erneut oder kontaktieren Sie das Support-Team unter\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>Weitere Informationen zum Fehler:</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:1
@@ -820,6 +892,20 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"\n"
+"Dein Projekt konnte nicht erfolgreich importiert werden.\n"
+"\n"
+"Die %(product_name)s Systemadministration wurde informiert.\n"
+"\n"
+"Bitte versuchen Sie es erneut oder kontaktieren Sie das Support-Team unter "
+"%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:1
@@ -876,7 +962,8 @@ msgid "It contains invalid custom fields."
 msgstr ""
 
 #: taiga/export_import/validators/validators.py:277
-msgid "Milestone name duplicated for the project"
+#: taiga/projects/validators.py:52
+msgid "Duplicated name"
 msgstr ""
 
 #: taiga/export_import/validators/validators.py:312
@@ -1790,7 +1877,7 @@ msgstr "Reihenfolge"
 
 #: taiga/projects/choices.py:21
 msgid "Whereby.com"
-msgstr ""
+msgstr "Whereby.com"
 
 #: taiga/projects/choices.py:22
 msgid "Jitsi"
@@ -1890,15 +1977,15 @@ msgstr "Url"
 
 #: taiga/projects/custom_attributes/choices.py:35
 msgid "Dropdown"
-msgstr ""
+msgstr "Dropdown"
 
 #: taiga/projects/custom_attributes/choices.py:36
 msgid "Checkbox"
-msgstr ""
+msgstr "Checkbox"
 
 #: taiga/projects/custom_attributes/choices.py:37
 msgid "Number"
-msgstr ""
+msgstr "Zahl"
 
 #: taiga/projects/custom_attributes/models.py:38
 #: taiga/projects/issues/models.py:73
@@ -4204,10 +4291,6 @@ msgstr ""
 #: taiga/projects/userstories/validators.py:235
 msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
-
-#: taiga/projects/validators.py:52
-msgid "Name duplicated for the project"
-msgstr "Der Name für das Projekt ist doppelt vergeben"
 
 #: taiga/projects/validators.py:61
 msgid "There's no project with that id"
