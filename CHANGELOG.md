@@ -2,8 +2,7 @@
 
 ## 6.0.7 (unreleased)
 
-- ...
-
+- fix(email): catch smtp errors to prevent app crashes
 
 ## 6.0.6 (2021-03-01)
 

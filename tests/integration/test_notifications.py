@@ -22,8 +22,9 @@ import hashlib
 import binascii
 import struct
 import pytz
+import smtplib
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import Mock, MagicMock, patch
 
 from django.urls import reverse
 from django.utils import timezone
@@ -1455,3 +1456,68 @@ def test_new_member_generates_web_notifications(client):
     assert notifications[1].user == other
     assert notifications[1].event_type == WebNotificationType.added_as_member
     assert notifications[1].read is None
+
+
+def test_smtp_error_sending_notifications(settings, mail):
+    settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
+
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=['view_issues', 'view_us', 'view_tasks', 'view_wiki_pages'])
+    member1 = f.MembershipFactory.create(project=project, role=role)
+    member2 = f.MembershipFactory.create(project=project, role=role)
+
+    task = f.TaskFactory.create(project=project, owner=member2.user)
+    history_change = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": member1.user.id},
+        comment="test:change",
+        type=HistoryType.change,
+        key="tasks.task:{}".format(task.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_create = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.create,
+        key="tasks.task:{}".format(task.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_delete = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": member1.user.id},
+        comment="test:delete",
+        type=HistoryType.delete,
+        key="tasks.task:{}".format(task.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    take_snapshot(task, user=task.owner)
+    services.send_notifications(task,
+                                history=history_create)
+
+    services.send_notifications(task,
+                                history=history_change)
+
+    services.send_notifications(task,
+                                history=history_delete)
+
+
+    with (patch("taiga.projects.notifications.services._make_template_mail") as make_template_email_mock,
+          patch("taiga.projects.notifications.services.logger") as logger_mock):
+        email_mock = Mock()
+        email_mock.send.side_effect = smtplib.SMTPDataError(msg="error smtp", code=123)
+        make_template_email_mock.return_value = email_mock
+
+        assert models.HistoryChangeNotification.objects.count() == 3
+        assert len(mail.outbox) == 0
+        time.sleep(1)
+        services.process_sync_notifications()
+        assert len(mail.outbox) == 0
+
+        assert logger_mock.exception.call_count == 3

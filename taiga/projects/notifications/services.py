@@ -17,6 +17,7 @@
 import datetime
 
 from functools import partial
+import logging
 
 from django.apps import apps
 from django.db import IntegrityError, transaction
@@ -45,6 +46,7 @@ from django_pglocks import advisory_lock
 from .models import HistoryChangeNotification, Watched
 from .squashing import squash_history_entries
 
+logger = logging.getLogger(__name__)
 
 def remove_lr_cr(s):
     return s.replace("\n", "").replace("\r", "")
@@ -375,7 +377,21 @@ def send_sync_notifications(notification_id):
     for user in notification.notify_users.distinct():
         context["user"] = user
         context["lang"] = user.lang or settings.LANGUAGE_CODE
-        email.send(user.email, context, headers=headers)
+        try:
+            email.send(user.email, context, headers=headers)
+        except Exception:
+            """
+            Catch all smtp exceptions:
+
+              - smtplib.SMTPDataError
+              - smtplib.SMTPException
+              - smtplib.SMTPServerDisconnected
+              - ssl.SSLError
+              - OSError
+              - ValueError
+              - ...
+            """
+            logger.exception("Error sending email notifications")
 
     notification_id = notification.id
     notification.delete()
