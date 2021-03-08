@@ -2,7 +2,7 @@
 
 ## 6.0.8 (unreleased)
 
-- ...
+- Improve docker configuration
 
 ## 6.0.7 (2021-03-09)
 
