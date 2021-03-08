@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# namjae <airdh@icloud.com>, 2021
 # jae kwon park <insainty21@gmail.com>, 2017
 # Jonghyuk Baik <aprfirst@naver.com>, 2017
 # 안민규 <luas.envy@gmail.com>, 2017
@@ -16,9 +17,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-26 12:31+0100\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2021-03-08 12:37+0100\n"
+"PO-Revision-Date: 2021-03-07 16:22+0000\n"
+"Last-Translator: namjae <airdh@icloud.com>\n"
 "Language-Team: Korean (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -30,15 +31,15 @@ msgstr ""
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "공개 사용자 가입이 비활성화되었습니다."
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
-msgstr ""
+msgstr "서비스 약관 및 개인 정보 보호 정책에 동의해야합니다"
 
 #: taiga/auth/api.py:100
 msgid "invalid registration type"
-msgstr ""
+msgstr "유효하지 않은 회원가입 형태"
 
 #: taiga/auth/api.py:116
 msgid "invalid login type"
@@ -54,7 +55,7 @@ msgstr "이미 사용중인 이메일입니다. "
 
 #: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "토큰이 어떤 유효한 초대와도 일치하지 않습니다."
 
 #: taiga/auth/services.py:126
 msgid "User is already registered."
@@ -66,7 +67,7 @@ msgstr "이 사용자는 이미 프로젝트의 회원입니다."
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
-msgstr ""
+msgstr "새 사용자 생성시 오류."
 
 #: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
 #: taiga/external_apps/services.py:32 taiga/projects/api.py:432
@@ -86,7 +87,7 @@ msgstr "필수. 255자 이하. 문자, 숫자 그리고 /./-/_ 만 사용 가능
 #: taiga/auth/validators.py:48 taiga/auth/validators.py:51
 #: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
-msgstr ""
+msgstr "유효하지 않은 성명"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
@@ -143,7 +144,7 @@ msgstr ""
 
 #: taiga/base/api/fields.py:878
 msgid "Enter a whole number."
-msgstr "번호 전체를 입력하세요"
+msgstr "번호 전체를 입력하세요."
 
 #: taiga/base/api/fields.py:879 taiga/base/api/fields.py:932
 #, python-format
@@ -160,7 +161,7 @@ msgstr ""
 #: taiga/base/api/fields.py:910
 #, python-format
 msgid "\"%s\" value must be a float."
-msgstr "\"%s\""
+msgstr "\"%s\" 값은 부동 소수점이어야합니다."
 
 #: taiga/base/api/fields.py:931
 msgid "Enter a number."
@@ -183,15 +184,15 @@ msgstr "소수점 앞이 %s 자리 이하인지 확인하십시오."
 
 #: taiga/base/api/fields.py:1003
 msgid "No file was submitted. Check the encoding type on the form."
-msgstr "제출된 파일이 없습니다. "
+msgstr "제출된 파일이 없습니다. 폼에서 인코딩 형식을 확인하세요."
 
 #: taiga/base/api/fields.py:1004
 msgid "No file was submitted."
-msgstr "제출한 파일이 없습니다."
+msgstr "제출된 파일이 없습니다."
 
 #: taiga/base/api/fields.py:1005
 msgid "The submitted file is empty."
-msgstr "전송된 파일이 비어있습니다."
+msgstr "제출된 파일이 비어있습니다."
 
 #: taiga/base/api/fields.py:1006
 #, python-format
@@ -208,8 +209,8 @@ msgid ""
 "Upload a valid image. The file you uploaded was either not an image or a "
 "corrupted image."
 msgstr ""
-"유효한 이미지를 업로드하십시오. 업로드 한 파일이 이미지도 아니며 손상된 이미"
-"지 또한 아닙니다."
+"유효한 이미지를 업로드하십시오. 업로드 한 파일이 이미지가 아니거나 손상된 이"
+"미지입니다."
 
 #: taiga/base/api/mixins.py:279 taiga/base/exceptions.py:209
 #: taiga/hooks/api.py:67 taiga/projects/api.py:467 taiga/projects/api.py:500
@@ -377,7 +378,7 @@ msgstr "더 많은 프로젝트를 위한 공간이 남지 않았습니다."
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s 리스트가 아님"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
@@ -404,6 +405,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>오픈 소스 애자일 프로젝트 "
+"관리 도구 %(product_name)s에 오신 것을 환영합니다.</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:7
 #, python-format
@@ -417,6 +422,14 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">이메일 알람 설정 또는 구독 취"
+"소</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">타이가 지원</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >문의하기</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:18
 msgid "Follow us on Twitter"
@@ -464,91 +477,91 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:65
 msgid "Host access error"
-msgstr ""
+msgstr "호스트 액세스 오류"
 
 #: taiga/base/utils/urls.py:71
 msgid "IP Address error"
-msgstr ""
+msgstr "IP 액세스 오류"
 
 #: taiga/events/events.py:119
 msgid "User story created"
-msgstr ""
+msgstr "유저 스토리가 생성되었습니다"
 
 #: taiga/events/events.py:122
 msgid "User story changed"
-msgstr ""
+msgstr "유저 스토리가 변경되었습니다"
 
 #: taiga/events/events.py:125
 msgid "User story deleted"
-msgstr ""
+msgstr "유저 스토리가 삭제되었습니다"
 
 #: taiga/events/events.py:127
 msgid "US #{} - {}"
-msgstr ""
+msgstr "유저스토리 #{} - {}"
 
 #: taiga/events/events.py:130
 msgid "Task created"
-msgstr ""
+msgstr "태스크가 생성되었습니다"
 
 #: taiga/events/events.py:133
 msgid "Task changed"
-msgstr ""
+msgstr "태스크가 변경되었습니다"
 
 #: taiga/events/events.py:136
 msgid "Task deleted"
-msgstr ""
+msgstr "태스크가 삭제되었습니다"
 
 #: taiga/events/events.py:138
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "태스크 #{} - {}"
 
 #: taiga/events/events.py:141
 msgid "Issue created"
-msgstr ""
+msgstr "이슈가 생성되었습니다"
 
 #: taiga/events/events.py:144
 msgid "Issue changed"
-msgstr ""
+msgstr "이슈가 변경되었습니다"
 
 #: taiga/events/events.py:147
 msgid "Issue deleted"
-msgstr ""
+msgstr "이슈가 삭제되었습니다"
 
 #: taiga/events/events.py:149
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "이슈: #{} - {}"
 
 #: taiga/events/events.py:152
 msgid "Wiki Page created"
-msgstr ""
+msgstr "위키 페이지가 생성되었습니다"
 
 #: taiga/events/events.py:155
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "위키 페이지가 변경되었습니다"
 
 #: taiga/events/events.py:158
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "위키 페이지가 삭제되었습니다"
 
 #: taiga/events/events.py:160
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "위키 페이지: {}"
 
 #: taiga/events/events.py:163
 msgid "Sprint created"
-msgstr ""
+msgstr "스프린트가 생성되었습니다"
 
 #: taiga/events/events.py:166
 msgid "Sprint changed"
-msgstr ""
+msgstr "스프린트가 변경되었습니다"
 
 #: taiga/events/events.py:169
 msgid "Sprint deleted"
-msgstr ""
+msgstr "스프린트가 삭제되었습니다"
 
 #: taiga/events/events.py:171
 msgid "Sprint: {}"
-msgstr ""
+msgstr "스프린트: {}"
 
 #: taiga/export_import/api.py:125
 msgid "We needed at least one role"
@@ -581,7 +594,7 @@ msgstr "프로젝트 속성 목록을 가져오는 중 오류가 발생하였습
 
 #: taiga/export_import/services/store.py:868
 msgid "error importing default project attribute values"
-msgstr ""
+msgstr "기본 프로젝트 속성값들 가져오기 오류"
 
 #: taiga/export_import/services/store.py:879
 msgid "error importing custom attributes"
@@ -841,12 +854,12 @@ msgstr "잘못된 컨텐츠. 반드시 {\"key\": \"value\",...} 형태이어야 
 #: taiga/export_import/validators/validators.py:197
 #: taiga/projects/custom_attributes/validators.py:122
 msgid "It contains invalid custom fields."
-msgstr ""
+msgstr "유효하지 않은 사용자 지정 필드를 가지고 있습니다."
 
 #: taiga/export_import/validators/validators.py:277
 #: taiga/projects/validators.py:52
 msgid "Duplicated name"
-msgstr ""
+msgstr "중복된 이름"
 
 #: taiga/export_import/validators/validators.py:312
 #, python-format
@@ -970,6 +983,9 @@ msgid ""
 "        <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:1
 #, python-format
@@ -1005,6 +1021,9 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/feedback/templates/emails/feedback_notification-subject.jinja:1
 #, python-format
@@ -1017,7 +1036,7 @@ msgstr ""
 
 #: taiga/hooks/api.py:52
 msgid "The payload is not valid json"
-msgstr ""
+msgstr "페이로드가 유효한 json이 아닙니다."
 
 #: taiga/hooks/api.py:61 taiga/projects/epics/api.py:152
 #: taiga/projects/issues/api.py:146 taiga/projects/tasks/api.py:214
@@ -1923,7 +1942,7 @@ msgstr "이미 동일한 이름이 존재합니다."
 
 #: taiga/projects/due_dates/models.py:22
 msgid "due date"
-msgstr ""
+msgstr "완료 기한"
 
 #: taiga/projects/due_dates/models.py:25
 msgid "reason for the due date"
@@ -2162,7 +2181,7 @@ msgstr "이 우선 순위의 형태를 설정할 권한이 없습니다."
 
 #: taiga/projects/issues/api.py:184
 msgid "You don't have permissions to set this type to this issue."
-msgstr "이 이슈에 형태를 설정할 권한이 없습니다."
+msgstr "이 이슈를 이 유형으로 설정할 권한이 없습니다."
 
 #: taiga/projects/issues/models.py:57
 msgid "severity"
@@ -2325,7 +2344,7 @@ msgstr "기본 이슈 상태"
 
 #: taiga/projects/models.py:161
 msgid "default issue type"
-msgstr "기본 이슈 형태"
+msgstr "기본 이슈 유형"
 
 #: taiga/projects/models.py:165
 msgid "default swimlane"
@@ -2369,7 +2388,7 @@ msgstr "위키 활성"
 
 #: taiga/projects/models.py:214 taiga/projects/models.py:1017
 msgid "active issues panel"
-msgstr "이슈 활성"
+msgstr "활성 이슈 패널"
 
 #: taiga/projects/models.py:217 taiga/projects/models.py:1024
 msgid "videoconference system"
@@ -2472,7 +2491,7 @@ msgstr ""
 #: taiga/projects/models.py:681 taiga/projects/models.py:750
 #: taiga/projects/models.py:898
 msgid "days to due"
-msgstr ""
+msgstr "기한까지 일수"
 
 #: taiga/projects/models.py:953
 msgid "user story status"
@@ -2509,7 +2528,7 @@ msgstr "태스크 상태"
 
 #: taiga/projects/models.py:1034
 msgid "task duedates"
-msgstr ""
+msgstr "태스크 완료기한"
 
 #: taiga/projects/models.py:1035
 msgid "issue statuses"
@@ -2517,11 +2536,11 @@ msgstr "이슈 상태"
 
 #: taiga/projects/models.py:1036
 msgid "issue types"
-msgstr "이슈 형태"
+msgstr "이슈 유형"
 
 #: taiga/projects/models.py:1037
 msgid "issue duedates"
-msgstr ""
+msgstr "이슈 완료기한"
 
 #: taiga/projects/models.py:1038
 msgid "priorities"
@@ -2604,14 +2623,14 @@ msgstr "사용자 알림"
 msgid "Watched"
 msgstr "구독됨"
 
-#: taiga/projects/notifications/services.py:77
-#: taiga/projects/notifications/services.py:101
+#: taiga/projects/notifications/services.py:79
+#: taiga/projects/notifications/services.py:103
 #: taiga/projects/settings/services.py:47
 #: taiga/projects/settings/services.py:65
 msgid "Notify exists for specified user and project"
 msgstr "지정된 사용자 및 프로젝트에 대한 알림이 있습니다."
 
-#: taiga/projects/notifications/services.py:524
+#: taiga/projects/notifications/services.py:540
 msgid "Invalid value for notify level"
 msgstr "알림 수준의 값이 유효하지 않습니다."
 
@@ -3316,7 +3335,7 @@ msgstr "이 프로젝트는 당신의 공공 프로젝트 최대 수용 인원�
 #: taiga/projects/services/promote.py:47
 #, python-format
 msgid "Task #%(ref)s"
-msgstr ""
+msgstr "태스크 #%(ref)s"
 
 #: taiga/projects/services/stats.py:195
 msgid "Future sprint"
@@ -3338,15 +3357,15 @@ msgstr "토큰이 만료되었습니다."
 
 #: taiga/projects/settings/choices.py:31
 msgid "Timeline"
-msgstr ""
+msgstr "타임라인"
 
 #: taiga/projects/settings/choices.py:32
 msgid "Epics"
-msgstr ""
+msgstr "에픽"
 
 #: taiga/projects/settings/choices.py:33
 msgid "Backlog"
-msgstr ""
+msgstr "백로그"
 
 #. Translators: Name of kanban project template.
 #: taiga/projects/settings/choices.py:34 taiga/projects/translations.py:33
@@ -3355,15 +3374,15 @@ msgstr "칸반"
 
 #: taiga/projects/settings/choices.py:35
 msgid "Issues"
-msgstr ""
+msgstr "이슈"
 
 #: taiga/projects/settings/choices.py:36
 msgid "TeamWiki"
-msgstr ""
+msgstr "팀위키"
 
 #: taiga/projects/settings/validators.py:34
 msgid "You don't have access to this section"
-msgstr ""
+msgstr "이 영역에 접근할 수 없습니다"
 
 #: taiga/projects/tagging/fields.py:50
 #, python-brace-format
@@ -3476,7 +3495,7 @@ msgstr ""
 
 #: taiga/projects/tasks/validators.py:184
 msgid "All the tasks must be from the same project"
-msgstr ""
+msgstr "모든 태스크는 동일 프로젝트에서 와야합니다"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:6
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:4
@@ -4282,7 +4301,7 @@ msgstr "이슈 상태"
 
 #: taiga/projects/validators.py:313
 msgid "Issue's types"
-msgstr "이슈 형태"
+msgstr "이슈 유형"
 
 #: taiga/projects/validators.py:314
 msgid "Priorities"

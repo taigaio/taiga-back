@@ -37,9 +37,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-26 12:31+0100\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2021-03-08 12:37+0100\n"
+"PO-Revision-Date: 2021-03-01 10:23+0000\n"
+"Last-Translator: Inga Krinkina <i.krinkina@sigma-it.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -970,7 +970,7 @@ msgstr "Содержит неверные специальные поля."
 #: taiga/export_import/validators/validators.py:277
 #: taiga/projects/validators.py:52
 msgid "Duplicated name"
-msgstr ""
+msgstr "Дублированное имя"
 
 #: taiga/export_import/validators/validators.py:312
 #, python-format
@@ -2856,14 +2856,14 @@ msgstr "уведомить пользователей"
 msgid "Watched"
 msgstr "Просмотренные"
 
-#: taiga/projects/notifications/services.py:77
-#: taiga/projects/notifications/services.py:101
+#: taiga/projects/notifications/services.py:79
+#: taiga/projects/notifications/services.py:103
 #: taiga/projects/settings/services.py:47
 #: taiga/projects/settings/services.py:65
 msgid "Notify exists for specified user and project"
 msgstr "Уведомление существует для данных пользователя и проекта"
 
-#: taiga/projects/notifications/services.py:524
+#: taiga/projects/notifications/services.py:540
 msgid "Invalid value for notify level"
 msgstr "Неверное значение для уровня уведомлений"
 

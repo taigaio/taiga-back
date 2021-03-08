@@ -38,7 +38,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-26 12:31+0100\n"
+"POT-Creation-Date: 2021-03-08 12:37+0100\n"
 "PO-Revision-Date: 2021-02-26 11:31+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: French (http://www.transifex.com/taiga-agile-llc/taiga-back/"
@@ -2660,14 +2660,14 @@ msgstr "notifier les utilisateurs"
 msgid "Watched"
 msgstr "Suivre"
 
-#: taiga/projects/notifications/services.py:77
-#: taiga/projects/notifications/services.py:101
+#: taiga/projects/notifications/services.py:79
+#: taiga/projects/notifications/services.py:103
 #: taiga/projects/settings/services.py:47
 #: taiga/projects/settings/services.py:65
 msgid "Notify exists for specified user and project"
 msgstr "La notification existe pour l'utilisateur et le projet spécifiés"
 
-#: taiga/projects/notifications/services.py:524
+#: taiga/projects/notifications/services.py:540
 msgid "Invalid value for notify level"
 msgstr "Valeur non valide pour le niveau de notification"
 
