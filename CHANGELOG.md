@@ -3,6 +3,7 @@
 ## 6.0.8 (unreleased)
 
 - Improve docker configuration
+- fix(userstories): close or open userstories afte they are moved in bulk in kanban
 
 ## 6.0.7 (2021-03-09)
 

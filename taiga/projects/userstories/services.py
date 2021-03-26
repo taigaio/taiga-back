@@ -22,6 +22,7 @@ from collections import OrderedDict
 from operator import itemgetter
 from contextlib import closing
 
+from django.conf import settings
 from django.db import connection
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -29,6 +30,7 @@ from django.utils.translation import ugettext as _
 from psycopg2.extras import execute_values
 
 from taiga.base.utils import db, text
+from taiga.celery import app
 from taiga.events import events
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.models import Project, UserStoryStatus, Swimlane
@@ -217,6 +219,12 @@ def update_userstories_kanban_order_in_bulk(project: Project,
     with connection.cursor() as cursor:
         execute_values(cursor, sql, data)
 
+    # Update is_closed attr for UserStories adn related milestones
+    if settings.CELERY_ENABLED:
+        update_open_or_close_conditions_if_status_has_been_changed.delay(bulk_userstories)
+    else:
+        update_open_or_close_conditions_if_status_has_been_changed(bulk_userstories)
+
     # Sent events of updated stories
     events.emit_event_for_ids(ids=user_story_ids,
                               content_type="userstories.userstory",
@@ -301,6 +309,8 @@ def close_userstory(us):
         us.is_closed = True
         us.finish_date = timezone.now()
         us.save(update_fields=["is_closed", "finish_date"])
+        return True
+    return False
 
 
 def open_userstory(us):
@@ -308,6 +318,38 @@ def open_userstory(us):
         us.is_closed = False
         us.finish_date = None
         us.save(update_fields=["is_closed", "finish_date"])
+        return True
+    return False
+
+
+
+def _update_open_or_close_conditions_if_status_has_been_changed(userstory):
+    """
+    Check and update the open or closed condition for the userstory and its milestone.
+
+    NOTE: [1] This method is useful if the userstory update operation has been done without
+              using the ORM (pre_save/post_save model signals).
+          [2] Do not use it if the milestone has been previously updated.
+    """
+    has_changed = False
+    if calculate_userstory_is_closed(userstory):
+        has_changed = close_userstory(userstory)
+    else:
+        has_changed = open_userstory(userstory)
+
+    if has_changed and userstory.milestone_id:
+        from taiga.projects.milestones import services as milestone_service
+
+        if milestone_service.calculate_milestone_is_closed(userstory.milestone):
+            milestone_service.close_milestone(userstory.milestone)
+        else:
+            milestone_service.open_milestone(userstory.milestone)
+
+
+@app.task
+def update_open_or_close_conditions_if_status_has_been_changed(userstories_ids):
+    for userstory in  models.UserStory.objects.filter(id__in=userstories_ids):
+        _update_open_or_close_conditions_if_status_has_been_changed(userstory)
 
 
 #####################################################

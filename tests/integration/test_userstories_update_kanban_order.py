@@ -932,3 +932,92 @@ def test_api_delete_userstory_status(client):
     uss_qs = (models.UserStory.objects.values_list("id", flat=True)
                                       .order_by("status__order", "swimlane__order", "kanban_order"))
     assert list(uss_qs) == [us111.id, us112.id, us121.id, us122.id, us211.id, us221.id]
+
+
+##############################
+## Close and Open USs after they are moved
+##############################
+
+
+def test_userstories_are_closed_after_moving_in_bulk_to_a_closed_status(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status_opened = f.UserStoryStatusFactory.create(project=project, order=1, is_closed=False)
+    status_closed = f.UserStoryStatusFactory.create(project=project, order=2, is_closed=True)
+    us1 = f.create_userstory(project=project, status=status_closed, is_closed=True, kanban_order=3)
+    us2 = f.create_userstory(project=project, status=status_opened, is_closed=False, kanban_order=2)
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": status_closed.id,
+        "after_userstory_id": None,
+        "bulk_userstories": [us1.id,
+                             us2.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    updated_ids = [
+        us1.id,
+        us2.id,
+    ]
+    res = (project.user_stories.filter(id__in=updated_ids)
+                               .values("id", "swimlane", "kanban_order", "status")
+                               .order_by("kanban_order", "id"))
+    assert response.json() == list(res)
+
+
+    assert us1.is_closed and us1.status == status_closed
+    assert not us2.is_closed and us2.status == status_opened
+    us1.refresh_from_db()
+    us2.refresh_from_db()
+    assert us1.is_closed and us1.status == status_closed
+    assert us2.is_closed and us2.status == status_closed
+
+
+def test_userstories_are_opened_after_moving_in_bulk_to_a_opened_status(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    status_opened = f.UserStoryStatusFactory.create(project=project, order=1, is_closed=False)
+    status_closed = f.UserStoryStatusFactory.create(project=project, order=2, is_closed=True)
+    us1 = f.create_userstory(project=project, status=status_closed, is_closed=True, kanban_order=3)
+    us2 = f.create_userstory(project=project, status=status_opened, is_closed=False, kanban_order=2)
+
+    url = reverse("userstories-bulk-update-kanban-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": status_opened.id,
+        "after_userstory_id": None,
+        "bulk_userstories": [us1.id,
+                             us2.id]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    updated_ids = [
+        us1.id,
+        us2.id,
+    ]
+    res = (project.user_stories.filter(id__in=updated_ids)
+                               .values("id", "swimlane", "kanban_order", "status")
+                               .order_by("kanban_order", "id"))
+    assert response.json() == list(res)
+
+
+    assert us1.is_closed and us1.status == status_closed
+    assert not us2.is_closed and us2.status == status_opened
+    us1.refresh_from_db()
+    us2.refresh_from_db()
+    assert not us1.is_closed and us1.status == status_opened
+    assert not us2.is_closed and us2.status == status_opened
+
+
