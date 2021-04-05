@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-08 12:37+0100\n"
-"PO-Revision-Date: 2021-03-07 16:22+0000\n"
+"POT-Creation-Date: 2021-04-05 10:55+0200\n"
+"PO-Revision-Date: 2021-03-12 02:35+0000\n"
 "Last-Translator: namjae <airdh@icloud.com>\n"
 "Language-Team: Korean (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ko/)\n"
@@ -117,7 +117,7 @@ msgstr ""
 
 #: taiga/base/api/fields.py:636
 msgid "You email domain is not allowed"
-msgstr "당신의 이메일 도메인은 허용되지 않았"
+msgstr "당신의 이메일 도메인은 허용되지 않았습니다"
 
 #: taiga/base/api/fields.py:645
 msgid "Enter a valid email address."
@@ -154,9 +154,7 @@ msgstr "이 값은 %(limit_value)s 보다 작거나 같아야 합니다."
 #: taiga/base/api/fields.py:880 taiga/base/api/fields.py:933
 #, python-format
 msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr ""
-"이 값은 %(limit_value)s 보다 크거나 같아야 합니다.Ensure this value is "
-"greater than or equal to "
+msgstr "이 값은 %(limit_value)s 보다 크거나 같아야 합니다."
 
 #: taiga/base/api/fields.py:910
 #, python-format
@@ -606,7 +604,7 @@ msgstr "스프린트를 가져오는 중 오류가 발생하였습니다."
 
 #: taiga/export_import/services/store.py:886
 msgid "error importing issues"
-msgstr "이슈를 가져오는 중 오류가 발생하였습니다."
+msgstr "이슈를 가져오는 중 오류가 발생하였습니다"
 
 #: taiga/export_import/services/store.py:890
 msgid "error importing user stories"
@@ -706,6 +704,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>프로젝트 덤프가 생성되었습니다.</h1>\n"
+"    <p>안녕하세요 %(user)s 님,</p>\n"
+"    <h3>%(project)s 프로젝트의 덤프가 생성되었습니다.</h3>\n"
+"    <p>여기서 다운로드 하실 수 있습니다.:</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Download the dump file\">덤"
+"프 파일 다운로드</a>\n"
+"    <p>이 파일은 %(deletion_date)s 에 삭제됩니다.</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/dump_project-body-text.jinja:1
 #, python-format
@@ -723,6 +731,18 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"안녕하세요 %(user)s 님,\n"
+"\n"
+"%(project)s 프로젝트의 덤프가 생성되었습니다. 여기서 다운로드 하실 수 있습니"
+"다.:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"이 파일은 %(deletion_date)s 에 삭제됩니다.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:1
 #, python-format
@@ -743,6 +763,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>안녕하세요 %(user)s 님,</p>\n"
+"    <p>%(project)s 프로젝트를 내보낼 수 없었습니다.</p>\n"
+"    <p>타이가 시스템 관리자에게 알렸습니다.<br/> 다시 시도하거나 지원팀에게 "
+"문의해주세요.\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:1
 #, python-format
@@ -760,6 +790,18 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"안녕하세요 %(user)s 님,\n"
+"\n"
+"%(error_message)s\n"
+"%(project)s 프로젝트를 내보낼 수 없었습니다.\n"
+"\n"
+"타이가 시스템 관리자에게 알렸습니다.\n"
+"\n"
+"다시 시도하거나 지원팀에게 문의해주세요. %(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:1
 #, python-format
@@ -782,6 +824,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>안녕하세요 %(user)s 님,</p>\n"
+"    <p>프로젝트를 가져올 수 없었습니다.</p>\n"
+"    <p>%(product_name)s 시스템 관리자에게 알렸습니다.<br/> 다시 시도하거나 지"
+"원팀에 문의바랍니다.\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>에러 상세</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:1
@@ -801,6 +855,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"안녕하세요 %(user)s님,\n"
+"\n"
+"%(error_message)s\n"
+"\n"
+"프로젝트를 가져올 수 없었습니다.\n"
+"\n"
+"%(product_name)s 시스템 관리자에게 통보되었습니다.\n"
+"\n"
+"다시 시도하거나 지원팀에게 문의해주세요. %(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:1
@@ -820,6 +887,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>프로젝트 덤프 가져오기 완료</h1>\n"
+"    <p>안녕하세요 %(user)s 님,</p>\n"
+"    <h3>프로젝트 덤프를 가져오기 완료하였습니다.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">%(project)s 프로젝트로 가기</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/load_dump-body-text.jinja:1
 #, python-format
@@ -836,11 +911,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"안녕하세요 %(user)s 님,\n"
+"\n"
+"프로젝트 덤프를 가져오기 완료하였습니다.\n"
+"\n"
+"여기에서 %(project)s 프로젝트를 확인할 수 있습니다:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your project dump has been imported"
-msgstr "[%(project)s] 프로젝트 덤프를 가져오기 하였습니다."
+msgstr "[%(project)s] 프로젝트 덤프를 가져왔습니다"
 
 #: taiga/export_import/validators/fields.py:142
 msgid "{}=\"{}\" not found in this project"
@@ -867,6 +953,8 @@ msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
+"어떤 에픽이 외부 프로젝트(%(project)s)에 관련된 스토리를 가지고 있고 가져오기"
+"를 수행할 수 없습니다"
 
 #: taiga/external_apps/api.py:41 taiga/external_apps/api.py:68
 #: taiga/external_apps/api.py:80
@@ -1056,6 +1144,10 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}]({user_url} \"{user_name}의 {platform} 프로필 보기\")님의 "
+"[{platform}#{number}]({comment_url} \"댓글로 가기\")에 남긴 말:\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:84
 #, python-brace-format
@@ -1070,7 +1162,7 @@ msgstr ""
 
 #: taiga/hooks/event_hooks.py:97
 msgid "Invalid issue comment information"
-msgstr "이슈 댓글 정보가 유효하지 않습니다."
+msgstr "이슈 댓글 정보가 유효하지 않습니다"
 
 #: taiga/hooks/event_hooks.py:143
 #, python-brace-format
@@ -1078,11 +1170,13 @@ msgid ""
 "Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"[{user_name}]({user_url} \"{user_name}의 {platform} 프로필 보기\")님에 의해 "
+"[{platform}#{number}]({url} \"이슈로 가기\")에서 생성된 이슈."
 
 #: taiga/hooks/event_hooks.py:147
 #, python-brace-format
 msgid "Issue created from {platform}."
-msgstr "{platform} 플랫폼으로부터 이슈가 생성되었습니다."
+msgstr "{platform}에서 이슈가 생성되었습니다."
 
 #: taiga/hooks/event_hooks.py:155
 #, python-brace-format
@@ -1090,11 +1184,13 @@ msgid ""
 "Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"[{user_name}]({user_url} \"{user_name}의 {platform} 프로필 보기\")님에 의해 "
+"[{platform}#{number}]({url} \"이슈로 가기\")에서 변경된 이슈."
 
 #: taiga/hooks/event_hooks.py:159
 #, python-brace-format
 msgid "Issue modified from {platform}."
-msgstr ""
+msgstr "{platform}에서 변경된 이슈."
 
 #: taiga/hooks/event_hooks.py:167
 #, python-brace-format
@@ -1102,11 +1198,13 @@ msgid ""
 "Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"[{user_name}]({user_url} \"{user_name}의 {platform} 프로필 보기\")님에 의해 "
+"[{platform}#{number}]({url} \"이슈로 가기\")에서 완료된 이슈."
 
 #: taiga/hooks/event_hooks.py:171
 #, python-brace-format
 msgid "Issue closed from {platform}."
-msgstr ""
+msgstr "{platform}에서 이슈 완료됨."
 
 #: taiga/hooks/event_hooks.py:179
 #, python-brace-format
@@ -1114,15 +1212,17 @@ msgid ""
 "Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"[{user_name}]({user_url} \"{user_name}의 {platform} 프로필 보기\")님에 의해 "
+"[{platform}#{number}]({url} \"이슈로 가기\")에서 재개된 이슈."
 
 #: taiga/hooks/event_hooks.py:183
 #, python-brace-format
 msgid "Issue reopened from {platform}."
-msgstr ""
+msgstr "{platform}에서 재개됨."
 
 #: taiga/hooks/event_hooks.py:278
 msgid "Invalid issue information"
-msgstr "이슈 정보가 유효하지 않습니다."
+msgstr "유효하지 않은 이슈 정보"
 
 #: taiga/hooks/event_hooks.py:300 taiga/hooks/event_hooks.py:322
 msgid "unknown user"
@@ -1220,6 +1320,10 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"                에러가 발생했습니다; 아마도 지원되지 않는 Jira 버전 때문인 "
+"것 같습니다.\n"
+"                타이가는 Jira 8.6 릴리즈부터 지원하지 않습니다."
 
 #: taiga/importers/jira/api.py:167
 msgid "Invalid project_type {}"
@@ -1274,7 +1378,7 @@ msgstr ""
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Asana project has been imported"
-msgstr "[%(project)s]선생님의 Asana 프로젝트가 이관되었습니다."
+msgstr "[%(project)s] Asana 프로젝트를 가져왔습니다"
 
 #: taiga/importers/templates/emails/github_import_success-body-html.jinja:4
 #, python-format
@@ -1308,7 +1412,7 @@ msgstr ""
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your GitHub project has been imported"
-msgstr "[%(project)s]선생님의 GitHub 프로젝트가 제대로 이관되었습니다."
+msgstr "[%(project)s] GitHub 프로젝트를 가져왔습니다"
 
 #: taiga/importers/templates/emails/importer_import_error-body-html.jinja:4
 #, python-format
@@ -1357,7 +1461,7 @@ msgstr ""
 #: taiga/importers/templates/emails/jira_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Jira project has been imported"
-msgstr "[%(project)s] 당신의 지라 프로젝트를 가져 왔습니다."
+msgstr "[%(project)s] Jira 프로젝트를 가져왔습니다"
 
 #: taiga/importers/templates/emails/trello_import_success-body-html.jinja:4
 #, python-format
@@ -1391,7 +1495,7 @@ msgstr ""
 #: taiga/importers/templates/emails/trello_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Trello project has been imported"
-msgstr "[%(project)s] 당신의 Trello project 를 성공적으로 가져왔습니다."
+msgstr "[%(project)s] Trello 프로젝트를 가져왔습니다"
 
 #: taiga/importers/trello/importer.py:76
 #, python-format
@@ -1649,7 +1753,7 @@ msgstr "사용자가 존재하지 않습니다."
 
 #: taiga/projects/api.py:422
 msgid "The user must already be a project member"
-msgstr ""
+msgstr "프로젝트 회원이어야 합니다."
 
 #: taiga/projects/api.py:684
 msgid "The default swimlane cannot be deleted."
@@ -1657,27 +1761,27 @@ msgstr ""
 
 #: taiga/projects/api.py:714
 msgid "You can't delete the default due date status of a user story"
-msgstr ""
+msgstr "유저 스토리의 기본 완료 기한 상태를 삭제할 수 없습니다"
 
 #: taiga/projects/api.py:730
 msgid "Project does already have due dates"
-msgstr ""
+msgstr "프로젝트가 이미 완료 기한을 가지고 있습니다"
 
 #: taiga/projects/api.py:790
 msgid "You can't delete the default due date status of a task"
-msgstr ""
+msgstr "태스크의 기본 완료 기한 상태를 삭제할 수 없습니다"
 
 #: taiga/projects/api.py:806
 msgid "Project does already have task due dates"
-msgstr ""
+msgstr "프로젝트가 이미 태스크 완료 기한을 가지고 있습니다"
 
 #: taiga/projects/api.py:931
 msgid "You can't delete the default due date status of an issue"
-msgstr ""
+msgstr "이슈의 기본 완료 기한 상태를 삭제할 수 없습니다"
 
 #: taiga/projects/api.py:947
 msgid "Project does already have issue due dates"
-msgstr ""
+msgstr "프로젝트가 이미 이슈 완료 기한을 가지고 있습니다"
 
 #: taiga/projects/api.py:1047 taiga/projects/validators.py:239
 msgid ""
@@ -2515,7 +2619,7 @@ msgstr "유저 스토리 상태"
 
 #: taiga/projects/models.py:1031
 msgid "us duedates"
-msgstr ""
+msgstr "유저스토리 완료기한"
 
 #: taiga/projects/models.py:1032 taiga/projects/userstories/models.py:56
 #: taiga/projects/userstories/models.py:101
@@ -3303,7 +3407,7 @@ msgstr "당신의 현재 비공개 프로젝트 최대 수용 인원수에 도�
 
 #: taiga/projects/services/members.py:140
 msgid "You have reached your current limit of memberships for public projects"
-msgstr "당신의 현재 공공 프로젝트 최대 수용 인원수에 도달하였습니다."
+msgstr "당신의 현재 공개 프로젝트 최대 수용 인원수에 도달하였습니다."
 
 #: taiga/projects/services/members.py:146
 msgid "You have reached the current limit of pending memberships"
@@ -3324,13 +3428,13 @@ msgstr ""
 #: taiga/projects/services/projects.py:107
 #: taiga/projects/services/projects.py:147 taiga/users/services.py:605
 msgid "You can't have more public projects"
-msgstr "더 이상의 공공 프로젝트를 소유하실 수 없습니다."
+msgstr "더 이상의 공개 프로젝트를 소유하실 수 없습니다."
 
 #: taiga/projects/services/projects.py:111
 #: taiga/projects/services/projects.py:151 taiga/users/services.py:608
 msgid ""
 "This project reaches your current limit of memberships for public projects"
-msgstr "이 프로젝트는 당신의 공공 프로젝트 최대 수용 인원수에 도달하였습니다."
+msgstr "이 프로젝트는 당신의 공개 프로젝트 최대 수용 인원수에 도달하였습니다."
 
 #: taiga/projects/services/promote.py:47
 #, python-format
@@ -4534,7 +4638,7 @@ msgstr "소유할 수 있는 비공개 프로젝트의 최대 개수"
 
 #: taiga/users/models.py:178
 msgid "max number of owned public projects"
-msgstr "소유할 수 있는 공공 프로젝트의 최대 개수"
+msgstr "소유할 수 있는 공개 프로젝트의 최대 개수"
 
 #: taiga/users/models.py:181
 msgid "max number of memberships for each owned private project"
@@ -4542,7 +4646,7 @@ msgstr "소유한 비공개 프로젝트당 수용할 수 있는 최대 회원�
 
 #: taiga/users/models.py:185
 msgid "max number of memberships for each owned public project"
-msgstr "소유한 공공 프로젝트당 수용할 수 있는 최대 회원수"
+msgstr "소유한 공개 프로젝트당 수용할 수 있는 최대 회원수"
 
 #: taiga/users/models.py:313
 msgid "permissions"
