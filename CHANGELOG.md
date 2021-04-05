@@ -1,6 +1,10 @@
 # Changelog
 
-## 6.0.8 (unreleased)
+## 6.0.9 (unreleased)
+
+- ...
+
+## 6.0.8 (2021-04-06)
 
 - Improve docker configuration
 - fix(userstories): close or open userstories afte they are moved in bulk in kanban
