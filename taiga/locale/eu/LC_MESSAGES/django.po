@@ -12,20 +12,20 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Basque (http://www.transifex.com/taiga-agile-llc/taiga-back/"
-"language/eu/)\n"
+"PO-Revision-Date: 2021-04-08 15:26+0000\n"
+"Last-Translator: David Barragán <david.barragan@kaleidos.net>\n"
+"Language-Team: Basque <https://hosted.weblate.org/projects/taiga/taiga-back/"
+"eu/>\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: eu\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.6-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr "Izen-emate publikoa desgaituta dago"
+msgstr "Izen-emate publikoa desgaituta dago."
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
@@ -229,12 +229,12 @@ msgstr "Orri hau (%(page_number)s) baliogabea da: %(message)s"
 
 #: taiga/base/api/permissions.py:63
 msgid "Invalid permission definition."
-msgstr "Baimen definizio baliogabea"
+msgstr "Baimen definizio baliogabea."
 
 #: taiga/base/api/relations.py:245
 #, python-format
 msgid "Invalid pk '%s' - object does not exist."
-msgstr "'%s'  giltza nagusia ez da baliozkoa, ez dago halako objekturik."
+msgstr "'%s' giltza nagusia ez da baliozkoa, ez dago halako objekturik."
 
 #: taiga/base/api/relations.py:246
 #, python-format
@@ -337,11 +337,11 @@ msgstr "Eskaera itota gelditu da."
 #: taiga/base/exceptions.py:123
 #, python-format
 msgid "Expected available in %d second%s."
-msgstr "Expected available in second %d second %s."
+msgstr "Expected available in %d second%s."
 
 #: taiga/base/exceptions.py:137
 msgid "Unexpected error"
-msgstr "Ustekabeko akatsa "
+msgstr "Ustekabeko akatsa"
 
 #: taiga/base/exceptions.py:149
 msgid "Not found."
