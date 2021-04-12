@@ -1,10 +1,15 @@
 # Changelog
 
-## 6.0.9 (unreleased)
+## 6.0.10 (unreleased)
 
 - ...
 
-## 6.0.8 (2021-04-06)
+## 6.0.9 (2021-04-13)
+
+- Migrated to weblate and new translations
+- Update dependencies
+
+## 6.0.8 (2021-04-13)
 
 - Improve docker configuration
 - fix(userstories): close or open userstories afte they are moved in bulk in kanban
