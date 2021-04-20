@@ -24,7 +24,7 @@ class Command(BaseCommand):
                             help='Server address (default: https://jira.atlassian.com)',
                             default="https://jira.atlassian.com")
         parser.add_argument('--project-id', dest="project_id", type=str,
-                            help='Project ID or full name (ex: taigaio/taiga-back)')
+                            help='Project ID or full name (ex: kaleidos-ventures/taiga-back)')
         parser.add_argument('--project-type', dest="project_type", type=str,
                             help='Project type in jira: project or board')
         parser.add_argument('--template', dest='template', default="scrum",

@@ -1,6 +1,5 @@
 ## Taiga Backend
 
-[![Kaleidos Project](https://kaleidos.net/static/img/badge.png)](https://github.com/kaleidos "Kaleidos Project")
 [![Managed with Taiga.io](https://img.shields.io/badge/managed%20with-TAIGA.io-709f14.svg)](https://tree.taiga.io/project/taiga/ "Managed with Taiga.io")
 [![Tests Status](https://github.com/taigaio/taiga-back/workflows/Taiga%20Back%20-%20Test%20and%20Coverage/badge.svg?branch=master)](https://github.com/taigaio/taiga-back/actions?query=workflow%3A%22Taiga+Back+-+Test+and+Coverage%22 "Tests Status")
 [![Coverage Status](https://img.shields.io/coveralls/taigaio/taiga-back/master.svg)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coverage Status")
@@ -18,7 +17,7 @@ Currently, we have authored three main documentation hubs:
 If you **find a bug** in Taiga you can always report it:
 
 - in [Taiga issues](https://tree.taiga.io/project/taiga/issues). **This is the preferred way**
-- in [Github issues](https://github.com/taigaio/taiga-back/issues)
+- in [Github issues](https://github.com/kaleidos-ventures/taiga-back/issues)
 - send us a mail to support@taiga.io if is a bug related to [tree.taiga.io](https://tree.taiga.io)
 - send us a mail to security@taiga.io if is a **security bug**
 
@@ -44,4 +43,4 @@ Help us keep the Taiga Community open and inclusive. Please read and follow our 
 
 Every code patch accepted in Taiga codebase is licensed under [MPL 2.0](LICENSE). You must be careful to not include any code that can not be licensed under this license.
 
-Please read carefully [our license](LICENSE) and ask us if you have any questions as well as the [Contribution policy](https://github.com/taigaio/taiga-back/blob/master/CONTRIBUTING.md).
+Please read carefully [our license](LICENSE) and ask us if you have any questions as well as the [Contribution policy](https://github.com/kaleidos-ventures/taiga-back/blob/main/CONTRIBUTING.md).

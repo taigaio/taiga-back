@@ -604,7 +604,7 @@ SR = {
     "taigaio_url": "https://taiga.io",
     "social": {
         "twitter_url": "https://twitter.com/taigaio",
-        "github_url": "https://github.com/taigaio",
+        "github_url": "https://github.com/kaleidos-ventures",
     },
     "support": {
         "url": "https://tree.taiga.io/support/",
