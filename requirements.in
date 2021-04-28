@@ -13,6 +13,7 @@ djmail==1.0.1
 easy-thumbnails==2.7.0
 fn==0.4.3
 gunicorn==19.9.0
+markdown-checklist==0.4.3
 netaddr==0.7.19
 premailer==3.0.1
 psd-tools>=1.8.27,<1.9

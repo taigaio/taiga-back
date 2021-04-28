@@ -48,17 +48,19 @@ from .extensions.refresh_attachment import RefreshAttachmentExtension
 bleach.ALLOWED_TAGS += ["p", "table", "thead", "tbody", "th", "tr", "td", "h1",
                         "h2", "h3", "h4", "h5", "h6", "div", "pre", "span",
                         "hr", "dl", "dt", "dd", "sup", "img", "del", "br",
-                        "ins"]
+                        "ins", "input"]
 
 bleach.ALLOWED_STYLES.append("background")
 
 bleach.ALLOWED_ATTRIBUTES["a"] = ["href", "title", "alt", "target"]
 bleach.ALLOWED_ATTRIBUTES["img"] = ["alt", "src"]
+bleach.ALLOWED_ATTRIBUTES["input"] = ["type", "checked"]
 bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style", "id"]
 
 
 def _make_extensions_list(project=None):
-    return [AutolinkExtension(),
+    return ["markdown_checklist.extension",
+            AutolinkExtension(),
             AutomailExtension(),
             SemiSaneListExtension(),
             StrikethroughExtension(),

@@ -78,10 +78,6 @@ html5lib==1.1
     # via -r requirements.in
 idna==2.8
     # via requests
-importlib-metadata==3.10.0
-    # via
-    #   cssutils
-    #   kombu
 jinja2==2.11.3
     # via django-jinja
 kombu==4.6.11
@@ -90,8 +86,12 @@ lxml==4.6.3
     # via
     #   cairosvg
     #   premailer
-markdown==3.1.1
+markdown-checklist==0.4.3
     # via -r requirements.in
+markdown==3.1.1
+    # via
+    #   -r requirements.in
+    #   markdown-checklist
 markupsafe==1.1.1
     # via jinja2
 monotonic==1.5
@@ -172,8 +172,6 @@ sqlparse==0.4.1
     # via django
 tinycss==0.4
     # via cairosvg
-typing-extensions==3.7.4.3
-    # via importlib-metadata
 unidecode==0.4.20
     # via -r requirements.in
 urllib3==1.24.3
@@ -189,9 +187,7 @@ webencodings==0.5.1
     #   bleach
     #   html5lib
 zipp==1.2.0
-    # via
-    #   -r requirements.in
-    #   importlib-metadata
+    # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
