@@ -311,3 +311,7 @@ def test_render_attachment_file(settings):
     assert result == expected_result
     assert mock.called is True
     mock.assert_called_with(dummy_project.id, 42)
+
+
+def test_render_markdown_to_html():
+    assert render(dummy_project, "- [x] test") == "<ul class=\"checklist\">\n<li><input checked type=\"checkbox\"> test</li>\n</ul>"

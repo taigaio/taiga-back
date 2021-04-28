@@ -2,7 +2,7 @@
 
 ## 6.0.10 (unreleased)
 
-- ...
+- Render markdown to html for checkbox
 
 ## 6.0.9 (2021-04-13)
 
