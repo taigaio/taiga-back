@@ -4,11 +4,11 @@
 #
 #    pip-compile requirements-contribs.in
 #
-git+https://github.com/kaleidos-ventures/taiga-contrib-github-auth.git@6.0.0#egg=taiga-contrib-github-auth&subdirectory=back
+git+https://github.com/kaleidos-ventures/taiga-contrib-github-auth.git@6.1.0#egg=taiga-contrib-github-auth&subdirectory=back
     # via -r requirements-contribs.in
-git+https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth.git@6.0.0#egg=taiga-contrib-gitlab-auth-official&subdirectory=back
+git+https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth.git@6.1.0#egg=taiga-contrib-gitlab-auth-official&subdirectory=back
     # via -r requirements-contribs.in
-git+https://github.com/kaleidos-ventures/taiga-contrib-protected.git@6.0.0#egg=taiga-contrib-protected
+git+https://github.com/kaleidos-ventures/taiga-contrib-protected.git@6.1.0#egg=taiga-contrib-protected
     # via -r requirements-contribs.in
-git+https://github.com/kaleidos-ventures/taiga-contrib-slack.git@6.0.0#egg=taiga-contrib-slack&subdirectory=back
+git+https://github.com/kaleidos-ventures/taiga-contrib-slack.git@6.1.0#egg=taiga-contrib-slack&subdirectory=back
     # via -r requirements-contribs.in

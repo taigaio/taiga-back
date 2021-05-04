@@ -1,6 +1,10 @@
 # Changelog
 
-## 6.1.0 (unreleased)
+## 6.1.1 (unreleased)
+
+- ...
+
+## 6.1.0 (2021-05-04)
 
 - Render markdown to html for checkbox
 - Update github templates
