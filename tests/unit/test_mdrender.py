@@ -314,4 +314,4 @@ def test_render_attachment_file(settings):
 
 
 def test_render_markdown_to_html():
-    assert render(dummy_project, "- [x] test") == "<ul class=\"checklist\">\n<li><input checked type=\"checkbox\"> test</li>\n</ul>"
+    assert render(dummy_project, "- [x] test") == "<ul class=\"task-list\">\n<li class=\"task-list-item\"><label class=\"task-list-control\"><input checked type=\"checkbox\"><span class=\"task-list-indicator\"></span></label> test</li>\n</ul>"

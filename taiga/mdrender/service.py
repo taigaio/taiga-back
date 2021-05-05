@@ -48,7 +48,7 @@ from .extensions.refresh_attachment import RefreshAttachmentExtension
 bleach.ALLOWED_TAGS += ["p", "table", "thead", "tbody", "th", "tr", "td", "h1",
                         "h2", "h3", "h4", "h5", "h6", "div", "pre", "span",
                         "hr", "dl", "dt", "dd", "sup", "img", "del", "br",
-                        "ins", "input"]
+                        "ins", "input", "label"]
 
 bleach.ALLOWED_STYLES.append("background")
 
@@ -59,7 +59,7 @@ bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style", "id"]
 
 
 def _make_extensions_list(project=None):
-    return ["markdown_checklist.extension",
+    return ["pymdownx.tasklist",
             AutolinkExtension(),
             AutomailExtension(),
             SemiSaneListExtension(),
@@ -75,6 +75,16 @@ def _make_extensions_list(project=None):
             "markdown.extensions.sane_lists",
             "markdown.extensions.toc",
             "markdown.extensions.nl2br"]
+
+def _make_extension_configs():
+    return {
+        "pymdownx.tasklist": {
+            "custom_checkbox": [
+                True,
+                "Add an empty label tag after the input tag to allow for custom styling"
+            ]
+        }
+    }
 
 
 import diff_match_patch
@@ -107,7 +117,8 @@ def cache_by_sha(func):
 
 def _get_markdown(project):
     extensions = _make_extensions_list(project=project)
-    md = Markdown(extensions=extensions)
+    extension_configs = _make_extension_configs()
+    md = Markdown(extensions=extensions, extension_configs=extension_configs)
     md.extracted_data = {"mentions": [], "references": []}
     return md
 

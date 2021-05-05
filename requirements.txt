@@ -86,12 +86,10 @@ lxml==4.6.3
     # via
     #   cairosvg
     #   premailer
-markdown-checklist==0.4.3
-    # via -r requirements.in
-markdown==3.1.1
+markdown==3.3.4
     # via
     #   -r requirements.in
-    #   markdown-checklist
+    #   pymdown-extensions
 markupsafe==1.1.1
     # via jinja2
 monotonic==1.5
@@ -122,6 +120,8 @@ pygments==2.2.0
     # via -r requirements.in
 pyjwt==2.0.1
     # via oauthlib
+pymdown-extensions==8.1.1
+    # via -r requirements.in
 pyparsing==2.4.7
     # via packaging
 python-dateutil==2.7.5
@@ -188,6 +188,3 @@ webencodings==0.5.1
     #   html5lib
 zipp==1.2.0
     # via -r requirements.in
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
