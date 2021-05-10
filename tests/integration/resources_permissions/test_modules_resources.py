@@ -128,9 +128,9 @@ def test_modules_retrieve(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [401, 403, 403, 403, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
-    assert results == [404, 404, 404, 403, 200]
+    assert results == [401, 404, 404, 403, 200]
     results = helper_test_http_method(client, 'get', blocked_url, None, users)
-    assert results == [404, 404, 404, 403, 200]
+    assert results == [401, 404, 404, 403, 200]
 
 
 def test_modules_update(client, data):
@@ -209,8 +209,8 @@ def test_modules_patch(client, data):
 
         patch_data = json.dumps({"att": "test"})
         results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
-        assert results == [404, 404, 404, 403, 204]
+        assert results == [401, 404, 404, 403, 204]
 
         patch_data = json.dumps({"att": "test"})
         results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
-        assert results == [404, 404, 404, 403, 451]
+        assert results == [401, 404, 404, 403, 451]

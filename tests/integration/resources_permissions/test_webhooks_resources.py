@@ -232,19 +232,19 @@ def test_webhook_action_test(client, data):
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
         _send_request_mock.return_value = data.webhooklog1
         results = helper_test_http_method(client, 'post', url1, None, users)
-        assert results == [404, 404, 200]
+        assert results == [401, 404, 200]
         assert _send_request_mock.called is True
 
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
         _send_request_mock.return_value = data.webhooklog1
         results = helper_test_http_method(client, 'post', url2, None, users)
-        assert results == [404, 404, 404]
+        assert results == [401, 404, 404]
         assert _send_request_mock.called is False
 
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
         _send_request_mock.return_value = data.webhooklog1
         results = helper_test_http_method(client, 'post', blocked_url, None, users)
-        assert results == [404, 404, 451]
+        assert results == [401, 404, 451]
         assert _send_request_mock.called is False
 
 
@@ -376,10 +376,10 @@ def test_webhooklogs_action_resend(client, data):
     ]
 
     results = helper_test_http_method(client, 'post', url1, None, users)
-    assert results == [404, 404, 200]
+    assert results == [401, 404, 200]
 
     results = helper_test_http_method(client, 'post', url2, None, users)
-    assert results == [404, 404, 404]
+    assert results == [401, 404, 404]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 451]
+    assert results == [401, 404, 451]

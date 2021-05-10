@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from taiga.base import response
 from taiga.base.api import viewsets
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 from taiga.base.decorators import detail_route
 
 from taiga.projects.likes import serializers
@@ -50,7 +50,7 @@ class FansViewSetMixin:
     def retrieve(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)
         resource_id = kwargs.get("resource_id", None)
-        resource = get_object_or_404(self.resource_model, pk=resource_id)
+        resource = get_object_or_error(self.resource_model, request.user, pk=resource_id)
 
         self.check_permissions(request, 'retrieve', resource)
 
@@ -64,7 +64,7 @@ class FansViewSetMixin:
 
     def list(self, request, *args, **kwargs):
         resource_id = kwargs.get("resource_id", None)
-        resource = get_object_or_404(self.resource_model, pk=resource_id)
+        resource = get_object_or_error(self.resource_model, request.user, pk=resource_id)
 
         self.check_permissions(request, 'list', resource)
 

@@ -2,6 +2,7 @@
 
 ## 6.2.0 (unreleased)
 
+- Change api response from 404 to 401 when not logged in (issues #tg-4415, #tg-4301)
 - Allows to order issues by 'ref' field (issue #tg-4503)
 - Generate history entries, timeline entries and webhook requests after kanban order is updated (issues #tg-4311, #tg-4340)
 

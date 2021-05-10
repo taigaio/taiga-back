@@ -39,7 +39,7 @@ from . import services
 from . import tasks
 from . import throttling
 
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 
 
 class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet):
@@ -52,7 +52,7 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
         if not throttle.allow_request(request, self):
             self.throttled(request, throttle.wait())
 
-        project = get_object_or_404(self.get_queryset(), pk=pk)
+        project = get_object_or_error(self.get_queryset(), request.user, pk=pk)
         self.check_permissions(request, 'export_project', project)
 
         dump_format = request.QUERY_PARAMS.get("dump_format", "plain")

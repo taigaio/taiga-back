@@ -16,7 +16,7 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
@@ -45,7 +45,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
     def get_content_type(self):
         app_name, model = self.content_type.split(".", 1)
-        return get_object_or_404(ContentType, app_label=app_name, model=model)
+        return get_object_or_error(ContentType, self.request.user, app_label=app_name, model=model)
 
     def pre_save(self, obj):
         if not obj.id:

@@ -10,7 +10,7 @@ from django.apps import apps
 from taiga.base.api import viewsets
 
 from taiga.base import response
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 from taiga.permissions.services import user_has_perm
 
 from . import services
@@ -64,7 +64,7 @@ class SearchViewSet(viewsets.ViewSet):
 
     def _get_project(self, project_id):
         project_model = apps.get_model("projects", "Project")
-        return get_object_or_404(project_model, pk=project_id)
+        return get_object_or_error(project_model, self.request.user, pk=project_id)
 
     def _search_epics(self, project, text):
         queryset = services.search_epics(project, text)

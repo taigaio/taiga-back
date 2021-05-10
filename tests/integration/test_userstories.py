@@ -1259,7 +1259,9 @@ def test_api_filters_data_roles_with_assigned_users(client):
 
 def test_get_invalid_csv(client):
     url = reverse("userstories-csv")
+    project = f.ProjectFactory.create()
 
+    client.login(project.owner)
     response = client.get(url)
     assert response.status_code == 404
 

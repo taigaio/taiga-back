@@ -615,6 +615,8 @@ def test_api_filters_data(client):
 
 def test_get_invalid_csv(client):
     url = reverse("issues-csv")
+    project = f.ProjectFactory.create(issues_csv_uuid=uuid.uuid4().hex)
+    client.login(project.owner)
 
     response = client.get(url)
     assert response.status_code == 404

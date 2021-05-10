@@ -2487,10 +2487,10 @@ def test_membership_action_resend_invitation(client, data):
     assert results == [401, 403, 403, 403, 204]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 404, 403, 204]
+    assert results == [401, 404, 404, 403, 204]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 404, 403, 451]
+    assert results == [401, 404, 404, 403, 451]
 
 
 #####################################################
@@ -2601,11 +2601,11 @@ def test_create_tag(client, data):
 
     url = reverse('projects-create-tag', kwargs={"pk": data.private_project2.pk})
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [404, 404, 404, 403, 200]
+    assert results == [401, 404, 404, 403, 200]
 
     url = reverse('projects-create-tag', kwargs={"pk": data.blocked_project.pk})
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [404, 404, 404, 403, 451]
+    assert results == [401, 404, 404, 403, 451]
 
 
 def test_edit_tag(client, data):
@@ -2633,11 +2633,11 @@ def test_edit_tag(client, data):
 
     url = reverse('projects-edit-tag', kwargs={"pk": data.private_project2.pk})
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [404, 404, 404, 403, 200]
+    assert results == [401, 404, 404, 403, 200]
 
     url = reverse('projects-edit-tag', kwargs={"pk": data.blocked_project.pk})
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [404, 404, 404, 403, 451]
+    assert results == [401, 404, 404, 403, 451]
 
 
 def test_delete_tag(client, data):
@@ -2663,11 +2663,11 @@ def test_delete_tag(client, data):
 
     url = reverse('projects-delete-tag', kwargs={"pk": data.private_project2.pk})
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [404, 404, 404, 403, 200]
+    assert results == [401, 404, 404, 403, 200]
 
     url = reverse('projects-delete-tag', kwargs={"pk": data.blocked_project.pk})
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [404, 404, 404, 403, 451]
+    assert results == [401, 404, 404, 403, 451]
 
 
 def test_mix_tags(client, data):
@@ -2694,8 +2694,8 @@ def test_mix_tags(client, data):
 
     url = reverse('projects-mix-tags', kwargs={"pk": data.private_project2.pk})
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [404, 404, 404, 403, 200]
+    assert results == [401, 404, 404, 403, 200]
 
     url = reverse('projects-mix-tags', kwargs={"pk": data.blocked_project.pk})
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [404, 404, 404, 403, 451]
+    assert results == [401, 404, 404, 403, 451]

@@ -20,7 +20,7 @@ from taiga.base.decorators import list_route
 from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 from taiga.base.utils import json
 from taiga.base.utils.db import get_object_or_none
 
@@ -334,7 +334,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
     @list_route(methods=["GET"])
     def filters_data(self, request, *args, **kwargs):
         project_id = request.QUERY_PARAMS.get("project", None)
-        project = get_object_or_404(Project, id=project_id)
+        project = get_object_or_error(Project, request.user, id=project_id)
 
         filter_backends = self.get_filter_backends()
         statuses_filter_backends = (f for f in filter_backends if f != base_filters.UserStoryStatusesFilter)
@@ -366,7 +366,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         if uuid is None:
             return response.NotFound()
 
-        project = get_object_or_404(Project, userstories_csv_uuid=uuid)
+        project = get_object_or_error(Project, request.user, userstories_csv_uuid=uuid)
         queryset = project.user_stories.all().order_by('ref')
         data = services.userstories_to_csv(project, queryset)
         csv_response = HttpResponse(data.getvalue(), content_type='application/csv; charset=utf-8')
@@ -405,8 +405,8 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             return response.BadRequest(validator.errors)
 
         data = validator.data
-        project = get_object_or_404(Project, pk=data["project_id"])
-        milestone = get_object_or_404(Milestone, pk=data["milestone_id"])
+        project = get_object_or_error(Project, request.user, pk=data["project_id"])
+        milestone = get_object_or_error(Milestone, request.user, pk=data["milestone_id"])
 
         self.check_permissions(request, "bulk_update_milestone", project)
 
@@ -421,16 +421,16 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             return response.BadRequest(validator.errors)
 
         data = validator.data
-        project = get_object_or_404(Project, pk=data["project_id"])
+        project = get_object_or_error(Project, request.user, pk=data["project_id"])
         status = None
         status_id = data.get("status_id", None)
         if status_id is not None:
-            status = get_object_or_404(UserStoryStatus, pk=status_id)
+            status = get_object_or_error(UserStoryStatus, request.user, pk=status_id)
 
         milestone = None
         milestone_id = data.get("milestone_id", None)
         if milestone_id is not None:
-            milestone = get_object_or_404(Milestone, pk=milestone_id)
+            milestone = get_object_or_error(Milestone, request.user, pk=milestone_id)
 
         self.check_permissions(request, "bulk_update_order", project)
         if project.blocked_code is not None:
@@ -461,32 +461,32 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
 
         # Get and validate project permissions
         project_id = data["project_id"]
-        project = get_object_or_404(Project, pk=project_id)
+        project = get_object_or_error(Project, request.user, pk=project_id)
         self.check_permissions(request, "bulk_update_order", project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
         # Get status
         status_id = data["status_id"]
-        status = get_object_or_404(UserStoryStatus, pk=status_id, project=project)
+        status = get_object_or_error(UserStoryStatus, request.user, pk=status_id, project=project)
 
         # Get swimlane
         swimlane = None
         swimlane_id = data.get("swimlane_id", None)
         if swimlane_id is not None:
-            swimlane = get_object_or_404(Swimlane, pk=swimlane_id, project=project)
+            swimlane = get_object_or_error(Swimlane, request.user, pk=swimlane_id, project=project)
 
         # Get after_userstory
         after_userstory = None
         after_userstory_id = data.get("after_userstory_id", None)
         if after_userstory_id is not None:
-            after_userstory = get_object_or_404(models.UserStory, pk=after_userstory_id, project=project)
+            after_userstory = get_object_or_error(models.UserStory, request.user, pk=after_userstory_id, project=project)
 
         # Get before_userstory
         before_userstory = None
         before_userstory_id = data.get("before_userstory_id", None)
         if before_userstory_id is not None:
-            before_userstory = get_object_or_404(models.UserStory, pk=before_userstory_id, project=project)
+            before_userstory = get_object_or_error(models.UserStory, request.user, pk=before_userstory_id, project=project)
 
         ret = services.update_userstories_kanban_order_in_bulk(user=request.user,
                                                                project=project,

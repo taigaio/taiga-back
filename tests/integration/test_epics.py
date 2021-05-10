@@ -27,6 +27,10 @@ pytestmark = pytest.mark.django_db
 def test_get_invalid_csv(client):
     url = reverse("epics-csv")
 
+    project = f.ProjectFactory.create(epics_csv_uuid=uuid.uuid4().hex)
+    f.EpicFactory.create(project=project, epics_order=1, status=project.default_us_status)
+
+    client.login(project.owner)
     response = client.get(url)
     assert response.status_code == 404
 
