@@ -741,9 +741,9 @@ def test_issue_action_upvote(client, data):
     results = helper_test_http_method(client, 'post', private_url1, "", users)
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
-    assert results == [404, 404, 404, 200, 200]
+    assert results == [401, 404, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, "", users)
-    assert results == [404, 404, 404, 451, 451]
+    assert results == [401, 404, 404, 451, 451]
 
 
 def test_issue_action_downvote(client, data):
@@ -765,9 +765,9 @@ def test_issue_action_downvote(client, data):
     results = helper_test_http_method(client, 'post', private_url1, "", users)
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
-    assert results == [404, 404, 404, 200, 200]
+    assert results == [401, 404, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, "", users)
-    assert results == [404, 404, 404, 451, 451]
+    assert results == [401, 404, 404, 451, 451]
 
 
 def test_issue_voters_list(client, data):
@@ -845,9 +845,9 @@ def test_issue_action_watch(client, data):
     results = helper_test_http_method(client, 'post', private_url1, "", users)
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
-    assert results == [404, 404, 404, 200, 200]
+    assert results == [401, 404, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, "", users)
-    assert results == [404, 404, 404, 451, 451]
+    assert results == [401, 404, 404, 451, 451]
 
 
 def test_issue_action_unwatch(client, data):
@@ -869,9 +869,9 @@ def test_issue_action_unwatch(client, data):
     results = helper_test_http_method(client, 'post', private_url1, "", users)
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
-    assert results == [404, 404, 404, 200, 200]
+    assert results == [401, 404, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, "", users)
-    assert results == [404, 404, 404, 451, 451]
+    assert results == [401, 404, 404, 451, 451]
 
 
 def test_issue_watchers_list(client, data):

@@ -15,7 +15,7 @@ from taiga.base import response
 from taiga.base.decorators import detail_route, list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.milestones.models import Milestone
@@ -182,7 +182,7 @@ class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
     @list_route(methods=["GET"])
     def filters_data(self, request, *args, **kwargs):
         project_id = request.QUERY_PARAMS.get("project", None)
-        project = get_object_or_404(Project, id=project_id)
+        project = get_object_or_error(Project, request.user, id=project_id)
 
         filter_backends = self.get_filter_backends()
         types_filter_backends = (f for f in filter_backends if f != filters.IssueTypesFilter)
@@ -213,7 +213,7 @@ class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
         if uuid is None:
             return response.NotFound()
 
-        project = get_object_or_404(Project, issues_csv_uuid=uuid)
+        project = get_object_or_error(Project, request.user, issues_csv_uuid=uuid)
         queryset = project.issues.all().order_by('ref')
         data = services.issues_to_csv(project, queryset)
         csv_response = HttpResponse(data.getvalue(), content_type='application/csv; charset=utf-8')
@@ -253,14 +253,15 @@ class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
             return response.BadRequest(validator.errors)
 
         data = validator.data
-        project = get_object_or_404(Project, pk=data["project_id"])
-        milestone = get_object_or_404(Milestone, pk=data["milestone_id"])
+        project = get_object_or_error(Project, request.user, pk=data["project_id"])
+        milestone = get_object_or_error(Milestone, request.user, pk=data["milestone_id"])
 
         self.check_permissions(request, "bulk_update_milestone", project)
 
         ret = services.update_issues_milestone_in_bulk(data["bulk_issues"], milestone)
 
         return response.Ok(ret)
+
 
 class IssueVotersViewSet(VotersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.IssueVotersPermission,)

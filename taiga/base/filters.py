@@ -16,7 +16,7 @@ from django.db.models import Q, OuterRef, Subquery
 from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 from taiga.base.utils.db import to_tsquery
 
 logger = logging.getLogger(__name__)
@@ -287,7 +287,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
 
         if project_id:
             Project = apps.get_model('projects', 'Project')
-            project = get_object_or_404(Project, pk=project_id)
+            project = get_object_or_error(Project, request.user, pk=project_id)
 
         if request.user.is_authenticated and request.user.is_superuser:
             qs = qs

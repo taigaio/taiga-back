@@ -652,6 +652,8 @@ def test_api_update_milestone_in_bulk_invalid_milestone(client):
 
 def test_get_invalid_csv(client):
     url = reverse("tasks-csv")
+    project = f.ProjectFactory.create(tasks_csv_uuid=uuid.uuid4().hex)
+    client.login(project.owner)
 
     response = client.get(url)
     assert response.status_code == 404

@@ -51,12 +51,25 @@ class ExpiredSigner(signing.TimestampSigner):
         return baseconv.base62.encode(time_in_the_far_past)
 
 
-def test_get_project_by_slug(client):
-    project = f.create_project()
+def test_get_project_detail(client):
+    # api/v1/projects/2
+    project = f.create_project(is_private=False,
+                               anon_permissions=['view_project'],
+                               public_permissions=['view_project'])
+    url = reverse("projects-detail", kwargs={"pk": project.id})
+
+    # anonymous access but public project
+    response = client.json.get(url)
+    assert response.status_code == 200
+
+
+def test_get_wrong_project_detail_using_slug_instead_pk(client):
+    # api/v1/projects/project-2 (bad pk)
+    project = f.create_project(is_private=True)
     url = reverse("projects-detail", kwargs={"pk": project.slug})
 
     response = client.json.get(url)
-    assert response.status_code == 404
+    assert response.status_code == 401
 
     client.login(project.owner)
     response = client.json.get(url)
@@ -64,6 +77,7 @@ def test_get_project_by_slug(client):
 
 
 def test_get_private_project_by_slug(client):
+    # api/v1/projects/by_slug?slug=project-2
     project = f.create_project(is_private=True)
     f.MembershipFactory(user=project.owner, project=project, is_admin=True)
 
@@ -71,7 +85,7 @@ def test_get_private_project_by_slug(client):
 
     response = client.json.get(url, {"slug": project.slug})
 
-    assert response.status_code == 404
+    assert response.status_code == 401
 
     client.login(project.owner)
     response = client.json.get(url, {"slug": project.slug})

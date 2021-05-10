@@ -10,7 +10,7 @@ from django.apps import apps
 from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base.api import viewsets
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 from taiga.permissions.services import user_has_perm
 
 from .validators import ResolverValidator
@@ -28,30 +28,30 @@ class ResolverViewSet(viewsets.ViewSet):
         data = validator.data
 
         project_model = apps.get_model("projects", "Project")
-        project = get_object_or_404(project_model, slug=data["project"])
+        project = get_object_or_error(project_model, request.user,  slug=data["project"])
 
         self.check_permissions(request, "list", project)
 
         result = {"project": project.pk}
 
         if data["epic"] and user_has_perm(request.user, "view_epics", project):
-            result["epic"] = get_object_or_404(project.epics.all(),
-                                               ref=data["epic"]).pk
+            result["epic"] = get_object_or_error(project.epics.all(), request.user,
+                                                 ref=data["epic"]).pk
         if data["us"] and user_has_perm(request.user, "view_us", project):
-            result["us"] = get_object_or_404(project.user_stories.all(),
-                                             ref=data["us"]).pk
+            result["us"] = get_object_or_error(project.user_stories.all(), request.user,
+                                               ref=data["us"]).pk
         if data["task"] and user_has_perm(request.user, "view_tasks", project):
-            result["task"] = get_object_or_404(project.tasks.all(),
-                                               ref=data["task"]).pk
+            result["task"] = get_object_or_error(project.tasks.all(), request.user,
+                                                 ref=data["task"]).pk
         if data["issue"] and user_has_perm(request.user, "view_issues", project):
-            result["issue"] = get_object_or_404(project.issues.all(),
-                                                ref=data["issue"]).pk
+            result["issue"] = get_object_or_error(project.issues.all(), request.user,
+                                                  ref=data["issue"]).pk
         if data["milestone"] and user_has_perm(request.user, "view_milestones", project):
-            result["milestone"] = get_object_or_404(project.milestones.all(),
-                                                    slug=data["milestone"]).pk
+            result["milestone"] = get_object_or_error(project.milestones.all(), request.user,
+                                                      slug=data["milestone"]).pk
         if data["wikipage"] and user_has_perm(request.user, "view_wiki_pages", project):
-            result["wikipage"] = get_object_or_404(project.wiki_pages.all(),
-                                                   slug=data["wikipage"]).pk
+            result["wikipage"] = get_object_or_error(project.wiki_pages.all(), request.user,
+                                                     slug=data["wikipage"]).pk
 
         if data["ref"]:
             ref_found = False  # No need to continue once one ref is found

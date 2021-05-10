@@ -23,7 +23,7 @@ from taiga.base import response
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet, ModelUpdateRetrieveViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin, BlockeableSaveMixin, BlockeableDeleteMixin
 from taiga.base.api.permissions import AllowAnyPermission
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 from taiga.base.api.viewsets import ViewSet
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
@@ -59,6 +59,7 @@ from . import throttling
 ######################################################
 # Project
 ######################################################
+from ..base.exceptions import NotAuthenticated
 
 
 class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
@@ -136,12 +137,11 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             self.lookup_field = "slug"
             # If we retrieve the project by slug we want to filter by user the
             # permissions and return 404 in case the user don't have access
-            flt = filters.get_filter_expression_can_view_projects(
-                self.request.user)
+            flt = filters.get_filter_expression_can_view_projects(request.user)
 
             qs = qs.filter(flt)
 
-        self.object = get_object_or_404(qs, **kwargs)
+        self.object = get_object_or_error(qs, request.user, **kwargs)
 
         self.check_permissions(request, 'retrieve', self.object)
 
@@ -164,7 +164,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         """
         Change logo to this project.
         """
-        self.object = get_object_or_404(self.get_queryset(), **kwargs)
+        self.object = get_object_or_error(self.get_queryset(), request.user, **kwargs)
         self.check_permissions(request, "change_logo", self.object)
 
         logo = request.FILES.get('logo', None)
@@ -188,7 +188,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         """
         Remove the logo of a project.
         """
-        self.object = get_object_or_404(self.get_queryset(), **kwargs)
+        self.object = get_object_or_error(self.get_queryset(), request.user, **kwargs)
         self.check_permissions(request, "remove_logo", self.object)
         self.pre_conditions_on_save(self.object)
         self.object.logo = None
@@ -343,6 +343,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
     @list_route(methods=["GET"])
     def by_slug(self, request, *args, **kwargs):
         slug = request.QUERY_PARAMS.get("slug", None)
+
         return self.retrieve(request, slug=slug)
 
     @detail_route(methods=["GET", "PATCH"])
@@ -482,7 +483,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             is_private=data["is_private"],
             users=data["users"]
         )
-        new_project = get_object_or_404(self.get_queryset(), id=new_project.id)
+        new_project = get_object_or_error(self.get_queryset(), request.user, id=new_project.id)
         serializer = self.get_serializer(new_project)
         return response.Created(serializer.data)
 
@@ -996,7 +997,7 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
         project_id = self.request.QUERY_PARAMS.get("project", None)
         if self.action == "list" and project_id is not None:
-            project = get_object_or_404(models.Project, pk=project_id)
+            project = get_object_or_error(models.Project, self.request.user, pk=project_id)
             use_admin_serializer = permissions_services.is_project_admin(self.request.user, project)
 
         if use_admin_serializer:

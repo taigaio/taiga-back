@@ -38,7 +38,7 @@ from . import views
 from . import mixins
 from . import pagination
 from .settings import api_settings
-from .utils import get_object_or_404
+from .utils import get_object_or_error
 
 
 class GenericAPIView(pagination.PaginationMixin,
@@ -233,7 +233,7 @@ class GenericAPIView(pagination.PaginationMixin,
                                         'attribute on the view correctly.' %
                                         (self.__class__.__name__, self.lookup_field)))
 
-        obj = get_object_or_404(queryset, **filter_kwargs)
+        obj = get_object_or_error(queryset, self.request.user, **filter_kwargs)
         return obj
 
     def get_object_or_none(self):

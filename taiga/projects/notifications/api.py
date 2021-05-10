@@ -11,7 +11,7 @@ from django.utils import timezone
 from taiga.base import response
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import GenericViewSet
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.models import Project
@@ -80,7 +80,7 @@ class WebNotificationsViewSet(GenericViewSet):
         self.check_permissions(request)
 
         resource_id = kwargs.get("resource_id", None)
-        resource = get_object_or_404(self.resource_model, pk=resource_id)
+        resource = get_object_or_error(self.resource_model, request.user, pk=resource_id)
         resource.read = timezone.now()
         resource.save()
 

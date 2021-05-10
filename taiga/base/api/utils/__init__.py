@@ -34,6 +34,8 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404 as _get_object_or_404
 
+from taiga.base.exceptions import NotAuthenticated
+
 
 def get_object_or_404(queryset, *filter_args, **filter_kwargs):
     """
@@ -45,3 +47,17 @@ def get_object_or_404(queryset, *filter_args, **filter_kwargs):
     except (TypeError, ValueError):
         raise Http404
 
+
+def get_object_or_error(queryset, user, *filter_args, **filter_kwargs):
+    """
+    Same as Django's standard shortcut, but make sure to raise 404
+    (if the filter_kwargs don't match the required types), or 401
+    (if the user is not logged in).
+
+    """
+    try:
+        return _get_object_or_404(queryset, *filter_args, **filter_kwargs)
+    except (Http404, TypeError, ValueError):
+        if not user.is_authenticated:
+            raise NotAuthenticated
+        raise Http404

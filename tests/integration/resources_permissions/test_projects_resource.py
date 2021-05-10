@@ -254,9 +254,9 @@ def test_project_action_stats(client, data):
     results = helper_test_http_method(client, 'get', private1_url, None, users)
     assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private2_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 404, 200, 200]
     results = helper_test_http_method(client, 'get', blocked_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 404, 200, 200]
 
 
 def test_project_action_issues_stats(client, data):
@@ -276,9 +276,9 @@ def test_project_action_issues_stats(client, data):
     results = helper_test_http_method(client, 'get', private1_url, None, users)
     assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private2_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 404, 200, 200]
     results = helper_test_http_method(client, 'get', blocked_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 404, 200, 200]
 
 
 def test_project_action_like(client, data):
@@ -298,9 +298,9 @@ def test_project_action_like(client, data):
     results = helper_test_http_method(client, 'post', private1_url, None, users)
     assert results == [401, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 451, 451]
+    assert results == [401, 404, 451, 451]
 
 
 def test_project_action_unlike(client, data):
@@ -320,9 +320,9 @@ def test_project_action_unlike(client, data):
     results = helper_test_http_method(client, 'post', private1_url, None, users)
     assert results == [401, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 451, 451]
+    assert results == [401, 404, 451, 451]
 
 
 def test_project_fans_list(client, data):
@@ -453,7 +453,7 @@ def test_project_action_create_template(client, data):
     results = helper_test_http_method(client, 'post', private1_url, template_data, users)
     assert results == [401, 403, 403, 403, 403, 201]
     results = helper_test_http_method(client, 'post', private2_url, template_data, users)
-    assert results == [404, 404, 404, 403, 403, 201]
+    assert results == [401, 404, 404, 403, 403, 201]
 
 
 def test_invitations_list(client, data):
@@ -503,10 +503,10 @@ def test_regenerate_epics_csv_uuid(client, data):
     assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 404, 403, 200]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 403, 451]
+    assert results == [401, 404, 403, 451]
 
 
 def test_delete_epics_csv_uuid(client, data):
@@ -528,10 +528,10 @@ def test_delete_epics_csv_uuid(client, data):
     assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 404, 403, 200]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 403, 451]
+    assert results == [401, 404, 403, 451]
 
 
 def test_regenerate_userstories_csv_uuid(client, data):
@@ -553,10 +553,10 @@ def test_regenerate_userstories_csv_uuid(client, data):
     assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 404, 403, 200]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 403, 451]
+    assert results == [401, 404, 403, 451]
 
 
 def test_delete_userstories_csv_uuid(client, data):
@@ -578,10 +578,10 @@ def test_delete_userstories_csv_uuid(client, data):
     assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 404, 403, 200]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 403, 451]
+    assert results == [401, 404, 403, 451]
 
 
 def test_regenerate_tasks_csv_uuid(client, data):
@@ -603,10 +603,10 @@ def test_regenerate_tasks_csv_uuid(client, data):
     assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 404, 403, 200]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 403, 451]
+    assert results == [401, 404, 403, 451]
 
 
 def test_delete_tasks_csv_uuid(client, data):
@@ -628,10 +628,10 @@ def test_delete_tasks_csv_uuid(client, data):
     assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 404, 403, 200]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 403, 451]
+    assert results == [401, 404, 403, 451]
 
 
 def test_regenerate_issues_csv_uuid(client, data):
@@ -653,10 +653,10 @@ def test_regenerate_issues_csv_uuid(client, data):
     assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 404, 403, 200]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 403, 451]
+    assert results == [401, 404, 403, 451]
 
 
 def test_delete_issues_csv_uuid(client, data):
@@ -678,10 +678,10 @@ def test_delete_issues_csv_uuid(client, data):
     assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 404, 403, 200]
 
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 403, 451]
+    assert results == [401, 404, 403, 451]
 
 
 def test_project_action_watch(client, data):
@@ -701,9 +701,9 @@ def test_project_action_watch(client, data):
     results = helper_test_http_method(client, 'post', private1_url, None, users)
     assert results == [401, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 451, 451]
+    assert results == [401, 404, 451, 451]
 
 
 def test_project_action_unwatch(client, data):
@@ -723,9 +723,9 @@ def test_project_action_unwatch(client, data):
     results = helper_test_http_method(client, 'post', private1_url, None, users)
     assert results == [401, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
-    assert results == [404, 404, 451, 451]
+    assert results == [401, 404, 451, 451]
 
 
 def test_project_list_with_discover_mode_enabled(client, data):
@@ -783,6 +783,6 @@ def test_project_duplicate(client, data):
     results = helper_test_http_method(client, 'post', private1_url, data, users)
     assert results == [401, 201, 201, 201]
     results = helper_test_http_method(client, 'post', private2_url, data, users)
-    assert results == [404, 404, 201, 201]
+    assert results == [401, 404, 201, 201]
     results = helper_test_http_method(client, 'post', blocked_url, data, users)
-    assert results == [404, 404, 451, 451]
+    assert results == [401, 404, 451, 451]

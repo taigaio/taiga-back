@@ -8,7 +8,7 @@
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_error
 from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
@@ -147,7 +147,7 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
     @list_route(methods=["GET"])
     def filters_data(self, request, *args, **kwargs):
         project_id = request.QUERY_PARAMS.get("project", None)
-        project = get_object_or_404(Project, id=project_id)
+        project = get_object_or_error(Project, request.user, id=project_id)
 
         filter_backends = self.get_filter_backends()
         statuses_filter_backends = (f for f in filter_backends if f != filters.StatusesFilter)
@@ -169,7 +169,7 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
         if uuid is None:
             return response.NotFound()
 
-        project = get_object_or_404(Project, epics_csv_uuid=uuid)
+        project = get_object_or_error(Project, request.user, epics_csv_uuid=uuid)
         queryset = project.epics.all().order_by('ref')
         data = services.epics_to_csv(project, queryset)
         csv_response = HttpResponse(data.getvalue(), content_type='application/csv; charset=utf-8')
@@ -265,7 +265,7 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
 
         data = validator.data
 
-        epic = get_object_or_404(models.Epic, id=kwargs["epic"])
+        epic = get_object_or_error(models.Epic, request.user, id=kwargs["epic"])
         project = Project.objects.get(pk=data.get('project_id'))
 
         self.check_permissions(request, 'bulk_create', project)
