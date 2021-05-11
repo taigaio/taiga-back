@@ -240,6 +240,24 @@ def test_validate_requested_email_change_with_invalid_token(client):
     assert response.status_code == 400
 
 
+def test_validate_requested_email_change_for_anonymous_user_and_reset_onpremise_newsletter_form_subscriptions(client):
+    user = f.UserFactory.create(email="old@email.com", email_token="change_email_token", new_email="new@email.com")
+    user.storage_entries.create(key="dont_ask_premise_newsletter", value=True)
+
+    assert user.storage_entries.count() == 1
+
+    url = reverse('users-change-email')
+    data = {"email_token": "change_email_token"}
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 204
+    user.refresh_from_db()
+    assert user.email_token is None
+    assert user.new_email is None
+    assert user.email == "new@email.com"
+    assert user.storage_entries.count() == 0
+
 ##############################
 ## Delete user
 ##############################
