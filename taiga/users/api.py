@@ -285,6 +285,10 @@ class UsersViewSet(ModelCrudViewSet):
                                       old_email=old_email,
                                       new_email=new_email)
 
+        # If the user changes their email, the application will ask again if they
+        # want to subscribe to the Taiga newsletter.
+        user.storage_entries.filter(key="dont_ask_premise_newsletter").delete()
+
         return response.NoContent()
 
     @list_route(methods=["GET"])
