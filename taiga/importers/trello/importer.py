@@ -124,12 +124,12 @@ class TrelloImporter:
                 if user['avatarSource'] == "gravatar" and user['gravatarHash']:
                     avatar = 'https://www.gravatar.com/avatar/' + user['gravatarHash'] + '.jpg?s=50'
                 elif user['avatarHash'] is not None:
-                    avatar = 'https://trello-avatars.s3.amazonaws.com/' + user['avatarHash'] + '/50.png'
+                    avatar = 'https://trello-members.s3.amazonaws.com/' +  user['id'] +  '/' + user['avatarHash'] + '/50.png'
             except:
                 # NOTE: Sometimes this piece of code return this exception:
                 #
                 # File "/home/taiga/taiga-back/taiga/importers/trello/importer.py" in list_users
-                #  135.   avatar = 'https://trello-avatars.s3.amazonaws.com/' + user['avatarHash'] + '/50.png'
+                #  135.   avatar = 'https://trello-members.s3.amazonaws.com/' + user['id'] +  '/' + user['avatarHash'] + '/50.png'
                 #
                 # Exception Type: TypeError at /api/v1/importers/trello/list_users
                 # Exception Value: Can't convert 'NoneType' object to str implicitly
