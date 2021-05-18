@@ -297,6 +297,8 @@ class ProjectSerializer(serializers.LightSerializer):
     default_issue_status = Field(attr="default_issue_status_id")
     default_issue_type = Field(attr="default_issue_type_id")
     default_swimlane = Field(attr="default_swimlane_id")
+    default_backlog_order_scrum = Field(attr="default_backlog_order_scrum")
+    default_backlog_order_kanban = Field(attr="default_backlog_order_kanban")
 
     my_permissions = MethodField()
 

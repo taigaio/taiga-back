@@ -281,6 +281,12 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
     total_activity_last_year = models.PositiveIntegerField(null=False, blank=False, default=0,
                                                            verbose_name=_("activity last year"),
                                                            db_index=True)
+    default_backlog_order_scrum = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                                              verbose_name=_("Default backlog ordering for new stories in scrum workflow"),
+                                                              db_index=True)
+    default_backlog_order_kanban = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                                              verbose_name=_("Default backlog ordering for new stories in kanban workflow"),
+                                                              db_index=True)
 
     _importing = None
 
