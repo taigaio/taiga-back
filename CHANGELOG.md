@@ -2,7 +2,7 @@
 
 ## 6.2.0 (unreleased)
 
-- ...
+- issue #4503: it allows to order issues by 'ref' field
 
 ## 6.1.1 (2021-05-18)
 
