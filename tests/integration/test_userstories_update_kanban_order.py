@@ -606,7 +606,7 @@ def test_api_update_orders_in_bulk_invalid_swimlane(client):
     assert "swimlane_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_affter_us_because_project(client):
+def test_api_update_orders_in_bulk_invalid_after_us_because_project(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status = f.UserStoryStatusFactory.create(project=project)
@@ -636,7 +636,7 @@ def test_api_update_orders_in_bulk_invalid_affter_us_because_project(client):
     assert "after_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_affter_us_because_status(client):
+def test_api_update_orders_in_bulk_invalid_after_us_because_status(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status = f.UserStoryStatusFactory.create(project=project)
@@ -667,7 +667,7 @@ def test_api_update_orders_in_bulk_invalid_affter_us_because_status(client):
     assert "after_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_affter_us_because_swimlane(client):
+def test_api_update_orders_in_bulk_invalid_after_us_because_swimlane(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status = f.UserStoryStatusFactory.create(project=project)
@@ -698,7 +698,7 @@ def test_api_update_orders_in_bulk_invalid_affter_us_because_swimlane(client):
     assert "after_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_affter_us_because_no_swimlane(client):
+def test_api_update_orders_in_bulk_invalid_after_us_because_no_swimlane(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status = f.UserStoryStatusFactory.create(project=project)
@@ -728,7 +728,7 @@ def test_api_update_orders_in_bulk_invalid_affter_us_because_no_swimlane(client)
     assert "after_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_affter_us_because_project(client):
+def test_api_update_orders_in_bulk_invalid_before_us_because_project(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status = f.UserStoryStatusFactory.create(project=project)
@@ -758,7 +758,7 @@ def test_api_update_orders_in_bulk_invalid_affter_us_because_project(client):
     assert "before_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_affter_us_because_status(client):
+def test_api_update_orders_in_bulk_invalid_before_us_because_status(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status = f.UserStoryStatusFactory.create(project=project)
@@ -789,7 +789,7 @@ def test_api_update_orders_in_bulk_invalid_affter_us_because_status(client):
     assert "before_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_affter_us_because_swimlane(client):
+def test_api_update_orders_in_bulk_invalid_before_us_because_swimlane(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status = f.UserStoryStatusFactory.create(project=project)
@@ -820,7 +820,7 @@ def test_api_update_orders_in_bulk_invalid_affter_us_because_swimlane(client):
     assert "before_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_affter_us_because_no_swimlane(client):
+def test_api_update_orders_in_bulk_invalid_before_us_because_no_swimlane(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status = f.UserStoryStatusFactory.create(project=project)
