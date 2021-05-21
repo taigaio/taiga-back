@@ -31,6 +31,7 @@ from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.apps import connect_userstories_signals
 from taiga.projects.userstories.apps import disconnect_userstories_signals
 from taiga.projects.votes.utils import attach_total_voters_to_queryset
+from taiga.users.models import User
 from taiga.users.gravatar import get_gravatar_id
 from taiga.users.services import get_big_photo_url, get_photo_url
 
@@ -134,7 +135,8 @@ def reset_userstories_kanban_order_in_bulk(project: Project,
                               projectid=project.id)
 
 
-def update_userstories_kanban_order_in_bulk(project: Project,
+def update_userstories_kanban_order_in_bulk(user: User,
+                                            project: Project,
                                             status: UserStoryStatus,
                                             bulk_userstories: List[int],
                                             before_userstory: Optional[models.UserStory] = None,
@@ -150,6 +152,8 @@ def update_userstories_kanban_order_in_bulk(project: Project,
 
      - `bulk_userstories` should be a list of user stories IDs
     """
+
+
     # filter user stories from status and swimlane
     user_stories = project.user_stories.filter(status=status)
     if swimlane is not None:
@@ -188,33 +192,30 @@ def update_userstories_kanban_order_in_bulk(project: Project,
 
     # prepare rest of data
     total_user_stories = len(user_story_ids)
-
-    user_story_swimlane_ids = (swimlane.id if swimlane else None,) * total_user_stories
-    user_story_status_ids = (status.id,) * total_user_stories
     user_story_kanban_orders = range(start_order, start_order + total_user_stories)
 
     data = tuple(zip(user_story_ids,
-                     user_story_swimlane_ids,
-                     user_story_status_ids,
                      user_story_kanban_orders))
 
-    # execute query for update status, swimlane and kanban_order
+    # execute query for update kanban_order
     sql = """
     UPDATE userstories_userstory
-       SET swimlane_id = tmp.new_swimlane_id::BIGINT,
-           status_id = tmp.new_status_id::BIGINT,
-           kanban_order = tmp.new_kanban_order::BIGINT
-      FROM (VALUES %s) AS tmp (id, new_swimlane_id, new_status_id, new_kanban_order)
+       SET kanban_order = tmp.new_kanban_order::BIGINT
+      FROM (VALUES %s) AS tmp (id, new_kanban_order)
      WHERE tmp.id = userstories_userstory.id
     """
     with connection.cursor() as cursor:
         execute_values(cursor, sql, data)
 
-    # Update is_closed attr for UserStories adn related milestones
+    # execute query for update status, swimlane and kanban_order
+    bulk_userstories_objects = project.user_stories.filter(id__in=bulk_userstories)
+    bulk_userstories_objects.update(status=status, swimlane=swimlane)
+
+    # Update is_closed attr for user stories and related milestones
     if settings.CELERY_ENABLED:
-        update_open_or_close_conditions_if_status_has_been_changed.delay(bulk_userstories)
+        _recalculate_is_closed_condition_and_take_snapshot.delay(bulk_userstories, user.id)
     else:
-        update_open_or_close_conditions_if_status_has_been_changed(bulk_userstories)
+        _recalculate_is_closed_condition_and_take_snapshot(bulk_userstories, user.id)
 
     # Sent events of updated stories
     events.emit_event_for_ids(ids=user_story_ids,
@@ -224,11 +225,24 @@ def update_userstories_kanban_order_in_bulk(project: Project,
     # Generate response with modified info
     res = ({
         "id": id,
-        "swimlane": swimlane,
-        "status": status,
+        "swimlane": swimlane.id if swimlane else None,
+        "status": status.id,
         "kanban_order": kanban_order
-    } for (id, swimlane, status, kanban_order) in data)
+    } for (id, kanban_order) in data)
     return res
+
+
+@app.task
+def _recalculate_is_closed_condition_and_take_snapshot(userstories_ids, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        user = None
+
+    for userstory in  models.UserStory.objects.filter(id__in=userstories_ids):
+        recalculate_is_closed_for_userstory_and_its_milestone(userstory)
+        # Generate the history entity
+        take_snapshot(userstory, user=user)
 
 
 def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
@@ -314,7 +328,7 @@ def open_userstory(us):
 
 
 
-def _update_open_or_close_conditions_if_status_has_been_changed(userstory):
+def recalculate_is_closed_for_userstory_and_its_milestone(userstory):
     """
     Check and update the open or closed condition for the userstory and its milestone.
 
@@ -323,6 +337,7 @@ def _update_open_or_close_conditions_if_status_has_been_changed(userstory):
           [2] Do not use it if the milestone has been previously updated.
     """
     has_changed = False
+    # Update is_close attr for the user story
     if calculate_userstory_is_closed(userstory):
         has_changed = close_userstory(userstory)
     else:
@@ -331,16 +346,12 @@ def _update_open_or_close_conditions_if_status_has_been_changed(userstory):
     if has_changed and userstory.milestone_id:
         from taiga.projects.milestones import services as milestone_service
 
+        # Update is_close attr for the milestone
         if milestone_service.calculate_milestone_is_closed(userstory.milestone):
             milestone_service.close_milestone(userstory.milestone)
         else:
             milestone_service.open_milestone(userstory.milestone)
 
-
-@app.task
-def update_open_or_close_conditions_if_status_has_been_changed(userstories_ids):
-    for userstory in  models.UserStory.objects.filter(id__in=userstories_ids):
-        _update_open_or_close_conditions_if_status_has_been_changed(userstory)
 
 
 #####################################################

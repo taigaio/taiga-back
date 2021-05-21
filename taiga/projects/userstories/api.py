@@ -488,7 +488,8 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         if before_userstory_id is not None:
             before_userstory = get_object_or_404(models.UserStory, pk=before_userstory_id, project=project)
 
-        ret = services.update_userstories_kanban_order_in_bulk(project=project,
+        ret = services.update_userstories_kanban_order_in_bulk(user=request.user,
+                                                               project=project,
                                                                status=status,
                                                                swimlane=swimlane,
                                                                after_userstory=after_userstory,

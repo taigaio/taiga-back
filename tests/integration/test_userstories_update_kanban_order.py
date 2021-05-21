@@ -17,8 +17,11 @@ from django.urls import reverse
 
 from taiga.base.utils import json
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from taiga.projects.history.models import HistoryEntry
+from taiga.projects.history.choices import HistoryType
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.userstories import services, models
+
 
 from .. import factories as f
 
@@ -29,7 +32,6 @@ pytestmark = pytest.mark.django_db(transaction=True)
 ##############################
 ## Move to no swimlane
 ##############################
-
 
 def test_api_update_orders_in_bulk_succeeds_moved_to_no_swimlane_and_to_the_begining(client):
     #
@@ -926,17 +928,22 @@ def test_api_delete_userstory_status(client):
 
 
 ##############################
-## Close and Open USs after they are moved
+## Close and Open USs after they are moved, history entries and webhooks should be created too
 ##############################
 
-
-def test_userstories_are_closed_after_moving_in_bulk_to_a_closed_status(client):
-    project = f.create_project()
+@mock.patch('taiga.webhooks.tasks._send_request')
+def test_userstories_are_closed_after_moving_in_bulk_to_a_closed_status(send_request_mock, client, settings):
+    settings.WEBHOOKS_ENABLED = True
+    project = f.ProjectFactory()
+    f.WebhookFactory.create(project=project)
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status_opened = f.UserStoryStatusFactory.create(project=project, order=1, is_closed=False)
     status_closed = f.UserStoryStatusFactory.create(project=project, order=2, is_closed=True)
     us1 = f.create_userstory(project=project, status=status_closed, is_closed=True, kanban_order=3)
     us2 = f.create_userstory(project=project, status=status_opened, is_closed=False, kanban_order=2)
+
+    assert HistoryEntry.objects.all().count() == 0
+    assert send_request_mock.call_count == 0
 
     url = reverse("userstories-bulk-update-kanban-order")
 
@@ -969,15 +976,23 @@ def test_userstories_are_closed_after_moving_in_bulk_to_a_closed_status(client):
     us2.refresh_from_db()
     assert us1.is_closed and us1.status == status_closed
     assert us2.is_closed and us2.status == status_closed
+    assert HistoryEntry.objects.all().count() == 2
+    assert send_request_mock.call_count == 2
 
 
-def test_userstories_are_opened_after_moving_in_bulk_to_a_opened_status(client):
-    project = f.create_project()
+@mock.patch('taiga.webhooks.tasks._send_request')
+def test_userstories_are_opened_after_moving_in_bulk_to_a_opened_status(send_request_mock, client, settings):
+    settings.WEBHOOKS_ENABLED = True
+    project = f.ProjectFactory()
+    f.WebhookFactory.create(project=project)
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     status_opened = f.UserStoryStatusFactory.create(project=project, order=1, is_closed=False)
     status_closed = f.UserStoryStatusFactory.create(project=project, order=2, is_closed=True)
     us1 = f.create_userstory(project=project, status=status_closed, is_closed=True, kanban_order=3)
     us2 = f.create_userstory(project=project, status=status_opened, is_closed=False, kanban_order=2)
+
+    assert HistoryEntry.objects.all().count() == 0
+    assert send_request_mock.call_count == 0
 
     url = reverse("userstories-bulk-update-kanban-order")
 
@@ -1010,5 +1025,5 @@ def test_userstories_are_opened_after_moving_in_bulk_to_a_opened_status(client):
     us2.refresh_from_db()
     assert not us1.is_closed and us1.status == status_opened
     assert not us2.is_closed and us2.status == status_opened
-
-
+    assert HistoryEntry.objects.all().count() == 2
+    assert send_request_mock.call_count == 2

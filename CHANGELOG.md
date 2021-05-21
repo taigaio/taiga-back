@@ -2,7 +2,8 @@
 
 ## 6.2.0 (unreleased)
 
-- issue #4503: it allows to order issues by 'ref' field
+- Allows to order issues by 'ref' field (issue #tg-4503)
+- Generate history entries, timeline entries and webhook requests after kanban order is updated (issues #tg-4311, #tg-4340)
 
 ## 6.1.1 (2021-05-18)
 
