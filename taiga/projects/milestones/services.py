@@ -15,17 +15,19 @@ from taiga.projects.userstories.models import UserStory
 
 
 def calculate_milestone_is_closed(milestone):
-    all_us_closed = all([user_story.is_closed for user_story in milestone.user_stories.all()])
+    all_us_closed = all([user_story.is_closed for user_story in
+                         milestone.user_stories.all()])
     all_tasks_closed = all([task.status is not None and task.status.is_closed for task in
-                            milestone.tasks.all()])
-    all_issues_closed = all([issue.is_closed for issue in milestone.issues.all()])
+                            milestone.tasks.filter(user_story__isnull=True)])
+    all_issues_closed = all([issue.is_closed for issue in
+                             milestone.issues.all()])
 
-    uss_check = milestone.user_stories.all().count() > 0 \
-        and all_tasks_closed and all_us_closed and all_issues_closed
-    issues_check = milestone.issues.all().count() > 0 and all_issues_closed \
-        and all_tasks_closed and all_us_closed
-    tasks_check = milestone.tasks.all().count() > 0 and all_tasks_closed \
-        and all_issues_closed and all_us_closed
+    uss_check = (milestone.user_stories.all().count() > 0
+        and all_tasks_closed and all_us_closed and all_issues_closed)
+    tasks_check = (milestone.tasks.filter(user_story__isnull=True).count() > 0
+        and all_tasks_closed and all_issues_closed and all_us_closed)
+    issues_check = (milestone.issues.all().count() > 0
+        and all_issues_closed and all_tasks_closed and all_us_closed)
 
     return uss_check or issues_check or tasks_check
 
@@ -34,7 +36,6 @@ def close_milestone(milestone):
     if not milestone.closed:
         milestone.closed = True
         milestone.save(update_fields=["closed",])
-
 
 def open_milestone(milestone):
     if milestone.closed:

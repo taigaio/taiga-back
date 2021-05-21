@@ -406,12 +406,22 @@ LOGGING = {
     "loggers": {
         "django": {
             "handlers": ["null"],
-            "propagate": True,
             "level": "INFO",
+            "propagate": True,
         },
         "django.request": {
             "handlers": ["mail_admins", "console"],
             "level": "ERROR",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["django.server"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "MARKDOWN": {
+            "handlers": ["null"],
+            "level": "INFO",
             "propagate": False,
         },
         "taiga.export_import": {
@@ -424,11 +434,6 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
-        "django.server": {
-            "handlers": ["django.server"],
-            "level": "INFO",
-            "propagate": False,
-        }
     }
 }
 

@@ -415,41 +415,45 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
 
         return response.NoContent()
 
-    def _bulk_update_order(self, order_field, request, **kwargs):
-        validator = validators.UpdateUserStoriesOrderBulkValidator(data=request.DATA)
+    @list_route(methods=["POST"])
+    def bulk_update_backlog_order(self, request, **kwargs):
+        # Validate data
+        validator = validators.UpdateUserStoriesBacklogOrderBulkValidator(data=request.DATA)
         if not validator.is_valid():
             return response.BadRequest(validator.errors)
-
         data = validator.data
+
+        # Get and validate project permissions
         project = get_object_or_error(Project, request.user, pk=data["project_id"])
-        status = None
-        status_id = data.get("status_id", None)
-        if status_id is not None:
-            status = get_object_or_error(UserStoryStatus, request.user, pk=status_id)
-
-        milestone = None
-        milestone_id = data.get("milestone_id", None)
-        if milestone_id is not None:
-            milestone = get_object_or_error(Milestone, request.user, pk=milestone_id)
-
         self.check_permissions(request, "bulk_update_order", project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
-        ret = services.update_userstories_order_in_bulk(data["bulk_stories"],
-                                                        order_field,
-                                                        project,
-                                                        status=status,
-                                                        milestone=milestone)
+        # Get milestone
+        milestone = None
+        milestone_id = data.get("milestone_id", None)
+        if milestone_id is not None:
+            milestone = get_object_or_error(Milestone, request.user, pk=milestone_id, project=project)
+
+        # Get after_userstory
+        after_userstory = None
+        after_userstory_id = data.get("after_userstory_id", None)
+        if after_userstory_id is not None:
+            after_userstory = get_object_or_error(models.UserStory, request.user, pk=after_userstory_id, project=project)
+
+        # Get before_userstory
+        before_userstory = None
+        before_userstory_id = data.get("before_userstory_id", None)
+        if before_userstory_id is not None:
+            before_userstory = get_object_or_error(models.UserStory, request.user, pk=before_userstory_id, project=project)
+
+        ret = services.update_userstories_backlog_or_sprint_order_in_bulk(user=request.user,
+                                                                          project=project,
+                                                                          milestone=milestone,
+                                                                          after_userstory=after_userstory,
+                                                                          before_userstory=before_userstory,
+                                                                          bulk_userstories=data["bulk_userstories"])
         return response.Ok(ret)
-
-    @list_route(methods=["POST"])
-    def bulk_update_backlog_order(self, request, **kwargs):
-        return self._bulk_update_order("backlog_order", request, **kwargs)
-
-    @list_route(methods=["POST"])
-    def bulk_update_sprint_order(self, request, **kwargs):
-        return self._bulk_update_order("sprint_order", request, **kwargs)
 
     @list_route(methods=["POST"])
     def bulk_update_kanban_order(self, request, **kwargs):
@@ -460,15 +464,13 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         data = validator.data
 
         # Get and validate project permissions
-        project_id = data["project_id"]
-        project = get_object_or_error(Project, request.user, pk=project_id)
+        project = get_object_or_error(Project, request.user, pk=data["project_id"])
         self.check_permissions(request, "bulk_update_order", project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
         # Get status
-        status_id = data["status_id"]
-        status = get_object_or_error(UserStoryStatus, request.user, pk=status_id, project=project)
+        status = get_object_or_error(UserStoryStatus, request.user, pk=data["status_id"], project=project)
 
         # Get swimlane
         swimlane = None
