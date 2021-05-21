@@ -7,6 +7,7 @@
 - Generate history entries, timeline entries and webhook requests after kanban order is updated (issues #tg-4311, #tg-4340)
 - Fix showing epic-related private uss on a public timeline (issue #tg-4291)
 - Fix filter userstories by assignation for registered no-member users (issue #tg-2533)
+- New algorithm to reorder user stories in the backlog (issue #tg-62)
 
 ## 6.1.1 (2021-05-18)
 

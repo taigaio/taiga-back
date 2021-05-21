@@ -660,29 +660,37 @@ def test_user_story_action_bulk_update_order(client, data):
     ]
 
     post_data = json.dumps({
-        "bulk_stories": [{"us_id": data.public_user_story.id, "order": 2}],
-        "project_id": data.public_project.pk
+        "bulk_userstories": [data.public_user_story.id],
+        "project_id": data.public_project.pk,
+        "after_userstory_id": None,
+        "milestone_id": None,
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     post_data = json.dumps({
-        "bulk_stories": [{"us_id": data.private_user_story1.id, "order": 2}],
-        "project_id": data.private_project1.pk
+        "bulk_userstories": [data.private_user_story1.id],
+        "project_id": data.private_project1.pk,
+        "after_userstory_id": None,
+        "milestone_id": None,
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     post_data = json.dumps({
-        "bulk_stories": [{"us_id": data.private_user_story2.id, "order": 2}],
-        "project_id": data.private_project2.pk
+        "bulk_userstories": [data.private_user_story2.id],
+        "project_id": data.private_project2.pk,
+        "after_userstory_id": None,
+        "milestone_id": None,
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     post_data = json.dumps({
-        "bulk_stories": [{"us_id": data.blocked_user_story.id, "order": 2}],
-        "project_id": data.blocked_project.pk
+        "bulk_userstories": [data.blocked_user_story.id],
+        "project_id": data.blocked_project.pk,
+        "after_userstory_id": None,
+        "milestone_id": None,
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 451, 451]
