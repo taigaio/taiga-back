@@ -60,7 +60,7 @@ jobs:
 
     - name: Test with pytest and calculate coverage
       run: |
-        coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m pytest -v --tb=native --pythonwarnings=default
+        coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m pytest -v --tb=native --pythonwarnings=default -n auto
 
     - name: Publish in Coveralls
       uses: AndreMiras/coveralls-python-action@develop

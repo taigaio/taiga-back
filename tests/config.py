@@ -53,6 +53,10 @@ DATABASES = {
 
 # This is only for GitHubActions
 if os.getenv('GITHUB_WORKFLOW'):
+    DEBUG = False
+
+    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
+
     DATABASES = {
         'default': {
             "ENGINE": "django.db.backends.postgresql",
