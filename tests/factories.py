@@ -131,6 +131,7 @@ class EpicAttachmentFactory(Factory):
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.EpicFactory")
     attached_file = factory.django.FileField(data=b"File contents")
+    name = factory.Sequence(lambda n: "Epic Attachment {}".format(n))
 
     class Meta:
         model = "attachments.Attachment"
@@ -142,6 +143,7 @@ class UserStoryAttachmentFactory(Factory):
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.UserStoryFactory")
     attached_file = factory.django.FileField(data=b"File contents")
+    name = factory.Sequence(lambda n: "User Story Attachment {}".format(n))
 
     class Meta:
         model = "attachments.Attachment"
@@ -153,6 +155,7 @@ class TaskAttachmentFactory(Factory):
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.TaskFactory")
     attached_file = factory.django.FileField(data=b"File contents")
+    name = factory.Sequence(lambda n: "Task Attachment {}".format(n))
 
     class Meta:
         model = "attachments.Attachment"
@@ -164,6 +167,7 @@ class IssueAttachmentFactory(Factory):
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.IssueFactory")
     attached_file = factory.django.FileField(data=b"File contents")
+    name = factory.Sequence(lambda n: "Issue Attachment {}".format(n))
 
     class Meta:
         model = "attachments.Attachment"
@@ -175,6 +179,7 @@ class WikiAttachmentFactory(Factory):
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.WikiPageFactory")
     attached_file = factory.django.FileField(data=b"File contents")
+    name = factory.Sequence(lambda n: "Wiki Attachment {}".format(n))
 
     class Meta:
         model = "attachments.Attachment"
@@ -576,6 +581,7 @@ class AttachmentFactory(Factory):
     content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
     object_id = factory.Sequence(lambda n: n)
     attached_file = factory.django.FileField(data=b"File contents")
+    name = factory.Sequence(lambda n: "Attachment {}".format(n))
 
 
 class HistoryEntryFactory(Factory):

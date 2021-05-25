@@ -130,7 +130,7 @@ def _import_attachments(source_obj, target_obj, content_type):
             description=attachment.description,
         )
         attached_file = attachment.attached_file
-        att.attached_file.save(attachment.name, ContentFile(attached_file.read()), save=True)
+        att.attached_file.save(attached_file.name, ContentFile(attached_file.read()), save=True)
 
 
 def _import_votes(source_obj, target_obj):
