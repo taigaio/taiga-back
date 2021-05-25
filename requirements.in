@@ -15,7 +15,7 @@ fn==0.4.3
 gunicorn==19.9.0
 netaddr==0.7.19
 premailer==3.0.1
-psd-tools>=1.8.27,<1.9
+psd-tools>=1.9.4
 psycopg2-binary==2.8.5
 pymdown-extensions==8.1.1
 python-dateutil==2.7.5
@@ -28,12 +28,12 @@ requests_oauthlib
 rudder-sdk-python==1.0.0b1
 serpy==0.1.1
 webcolors==1.9.1
-CairoSVG==2.0.3
+CairoSVG>=2.5.1
 Django>=2.2,<3
 Markdown==3.3.4
 Pillow
 Unidecode==0.4.20
-Pygments==2.2.0
+Pygments>=2.7.4
 oauthlib[signedtoken]
 html5lib
 zipp<2
