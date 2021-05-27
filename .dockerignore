@@ -41,3 +41,5 @@ tests
 thankyou.md
 tox.ini
 venv
+.direnv
+.envrc
