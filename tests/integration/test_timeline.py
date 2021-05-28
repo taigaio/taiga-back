@@ -11,7 +11,8 @@ from datetime import datetime, timedelta
 import pytest
 
 from .. import factories
-
+from django.contrib.auth.models import AnonymousUser
+from taiga.timeline.service import build_project_namespace
 from taiga.projects.history import services as history_services
 from taiga.timeline import service
 from taiga.timeline.models import Timeline
@@ -561,3 +562,63 @@ def test_timeline_error_use_member_ids_instead_of_memberships_ids():
     external_user_timeline = service.get_profile_timeline(external_user)
     assert len(external_user_timeline) == 1
     assert external_user_timeline[0].event_type == "users.user.create"
+
+
+def test_epic_related_uss():
+    print(Timeline.objects.all().delete())
+    Timeline.objects.all().delete()
+
+    # Different privileged users to test
+    not_private_project_member = factories.UserFactory.create()
+    not_qualified_private_project_member = factories.UserFactory.create()
+    qualified_private_project_member = factories.UserFactory.create()
+    users = [AnonymousUser(),
+             not_private_project_member,
+             not_qualified_private_project_member,
+             qualified_private_project_member]
+
+    # Public project containing a public epic, which contains a private us from a private project
+    public_project = factories.ProjectFactory.create(is_private=False,
+                                                     owner=not_private_project_member,
+                                                     anon_permissions=[],
+                                                     public_permissions=["view_us"])
+    factories.MembershipFactory.create(project=public_project, user=public_project.owner, is_admin=True)
+    public_epic = factories.EpicFactory.create(project=public_project, owner=not_private_project_member)
+    public_us = factories.UserStoryFactory.create(project=public_project)
+    related_public_us = factories.RelatedUserStory.create(epic=public_epic, user_story=public_us)
+
+    # Private project containing the private user story, which is related to the public epic from the public project
+    private_project = factories.ProjectFactory.create(is_private=True,
+                                                      owner=qualified_private_project_member,
+                                                      anon_permissions=[],
+                                                      public_permissions=[])
+    # Private project roles
+    not_qualified_role = factories.RoleFactory(project=private_project, permissions=[])
+    qualified_role = factories.RoleFactory(project=private_project, permissions=["view_us"])
+    factories.MembershipFactory.create(project=private_project,
+                                       user=not_qualified_private_project_member,
+                                       role=not_qualified_role)
+    factories.MembershipFactory.create(project=private_project,
+                                       user=qualified_private_project_member,
+                                       role=qualified_role)
+    private_us = factories.UserStoryFactory.create(project=private_project, owner=qualified_private_project_member)
+    related_private_us = factories.RelatedUserStory.create(epic=public_epic, user_story=private_us)
+
+    # Timeline objects creation
+    service.register_timeline_implementation("epics.relateduserstory", "test", lambda x, extra_data=None: id(x))
+    project_namespace = build_project_namespace(public_project)
+    service._add_to_object_timeline(public_project, related_public_us, "create", datetime.now(), project_namespace)
+    service._add_to_object_timeline(public_project, related_private_us, "create", datetime.now(), project_namespace)
+
+    timeline_counts = _helper_get_timelines_for_users(public_project, users)
+    assert timeline_counts == [0, 1, 1, 2]
+
+
+def _helper_get_timelines_for_users(public_project, users):
+    timeline_counts = []
+    for user in users:
+        timeline = service.get_project_timeline(public_project, user)
+        timeline = timeline.exclude(event_type__in=["projects.membership.create"])
+        timeline_counts.append(timeline.count())
+
+    return timeline_counts
