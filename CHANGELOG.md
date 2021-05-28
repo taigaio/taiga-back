@@ -5,6 +5,7 @@
 - Change api response from 404 to 401 when not logged in (issues #tg-4415, #tg-4301)
 - Allows to order issues by 'ref' field (issue #tg-4503)
 - Generate history entries, timeline entries and webhook requests after kanban order is updated (issues #tg-4311, #tg-4340)
+- Fix showing epic-related private uss on a public timeline (issue #tg-4291)
 
 ## 6.1.1 (2021-05-18)
 

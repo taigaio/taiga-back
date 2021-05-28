@@ -9,8 +9,10 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model
+from django.db.models.expressions import RawSQL
 from django.db.models import Q
 from django.db.models.query import QuerySet
+from django.db import connection
 
 from functools import partial, wraps
 
@@ -142,7 +144,7 @@ def get_timeline(obj, namespace=None):
     return timeline
 
 
-def filter_timeline_for_user(timeline, user):
+def filter_timeline_for_user(timeline, user, project=None):
     # Superusers can see everything
     if user.is_superuser:
         return timeline
@@ -186,7 +188,43 @@ def filter_timeline_for_user(timeline, user):
                 tl_filter |= Q(project=membership.project, data_content_type__in=data_content_types)
 
     timeline = timeline.filter(tl_filter)
+
+    if project:
+        timeline = timeline.exclude(id__in=_get_not_allowed_epic_related_query(user, project))
+
     return timeline
+
+
+def _get_not_allowed_epic_related_query(accessing_user, project):
+    sql = """
+    select tt.id
+    from timeline_timeline tt
+    inner join projects_project pp
+    -- project of the epic's related user story
+    on cast (data -> 'userstory' -> 'project' ->> 'id' as INTEGER) = pp.id
+    where 
+       not (
+            -- Allowed for anonymous users
+            'view_us' = ANY(pp.anon_permissions)
+            or
+            -- Allowed for registered users
+            ('view_us' = ANY(pp.public_permissions) and {user_id} <> -1)
+            or
+            -- Allowed for a project member with a privileged role
+            exists (select * from users_role ur
+            inner join projects_membership pm
+            ON ur.id = pm.role_id
+            where pm.user_id = {user_id}
+            and pm.project_id = pp.id
+            and 'view_us' = ANY(ur.permissions))
+        )
+        and tt.project_id = {project_id}
+        and tt.event_type = 'epics.relateduserstory.create'
+    """
+    accessing_user_id = accessing_user.id or -1  # -1 just in case of anonymous user
+    sql = sql.format(project_id=project.id, user_id=accessing_user_id)
+
+    return RawSQL(sql, ())
 
 
 def get_profile_timeline(user, accessing_user=None):
@@ -208,7 +246,8 @@ def get_project_timeline(project, accessing_user=None):
     namespace = build_project_namespace(project)
     timeline = get_timeline(project, namespace)
     if accessing_user is not None:
-        timeline = filter_timeline_for_user(timeline, accessing_user)
+        timeline = filter_timeline_for_user(timeline, accessing_user, project)
+
     return timeline
 
 
