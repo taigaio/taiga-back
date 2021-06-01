@@ -805,6 +805,62 @@ def test_api_filter_by_assigned_users(client):
     assert number_of_userstories == 2
 
 
+def test_regresion_api_filter_by_assigned_users_for_no_members(client):
+    user = f.UserFactory()
+    user2 = f.UserFactory()
+    user3 = f.UserFactory()
+    project = f.create_project(is_private=False,
+                               anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+                               public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)) + ["comment_us"],
+                               owner=user)
+
+    f.MembershipFactory(project=project,
+                        user=user,
+                        role__project=project,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+
+    f.MembershipFactory(project=project,
+                        user=user2,
+                        role__project=project,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+
+    f.create_userstory(project=project, subject="test 1", assigned_to=user,
+                       assigned_users=[user.id, user2.id])
+    f.create_userstory(project=project, subject="test 2", assigned_to=user,
+                       assigned_users=[user.id])
+    f.create_userstory(project=project, subject="test 3")
+
+    url = reverse("userstories-list") + "?assigned_users=%s" % (user.id)
+
+    # Project owner
+    client.login(user)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data)  == 2
+
+    # Member
+    client.login(user2)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data)  == 2
+
+    # No member
+    client.login(user3)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data)  == 2
+
+    # Anonymous user
+    client.logout()
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data)  == 2
+
+
 def test_api_filter_by_role(client):
     project = f.ProjectFactory.create()
     role1 = f.RoleFactory.create()
