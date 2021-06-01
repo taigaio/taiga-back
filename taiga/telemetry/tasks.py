@@ -20,13 +20,15 @@ def send_telemetry():
     rudder_analytics.data_plane_url = settings.DATA_PLANE_URL
 
     instance = services.get_or_create_instance_info()
+    instance_host = f'{ settings.SITES["front"]["scheme"] }://{ settings.SITES["front"]["domain"] }'
     event = 'Daily telemetry'
 
     properties = {
         **services.generate_platform_data(),
         'version': taiga.__version__,
         'running_since': instance.created_at,
-        'instance_src': settings.INSTANCE_TYPE
+        'instance_src': settings.INSTANCE_TYPE,
+        'instance_host': instance_host
     }
 
     rudder_analytics.track(
