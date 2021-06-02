@@ -144,7 +144,7 @@ def get_timeline(obj, namespace=None):
     return timeline
 
 
-def filter_timeline_for_user(timeline, user, project=None):
+def filter_timeline_for_user(timeline, user, namespace=None):
     # Superusers can see everything
     if user.is_superuser:
         return timeline
@@ -189,13 +189,13 @@ def filter_timeline_for_user(timeline, user, project=None):
 
     timeline = timeline.filter(tl_filter)
 
-    if project:
-        timeline = timeline.exclude(id__in=_get_not_allowed_epic_related_query(user, project))
+    if namespace:
+        timeline = timeline.exclude(id__in=_get_not_allowed_epic_related_query(user, namespace))
 
     return timeline
 
 
-def _get_not_allowed_epic_related_query(accessing_user, project):
+def _get_not_allowed_epic_related_query(accessing_user, namespace):
     sql = """
     select tt.id
     from timeline_timeline tt
@@ -218,11 +218,11 @@ def _get_not_allowed_epic_related_query(accessing_user, project):
             and pm.project_id = pp.id
             and 'view_us' = ANY(ur.permissions))
         )
-        and tt.project_id = {project_id}
+        and tt.namespace = '{namespace}'
         and tt.event_type = 'epics.relateduserstory.create'
     """
     accessing_user_id = accessing_user.id or -1  # -1 just in case of anonymous user
-    sql = sql.format(project_id=project.id, user_id=accessing_user_id)
+    sql = sql.format(user_id=accessing_user_id, namespace=namespace)
 
     return RawSQL(sql, ())
 
@@ -238,7 +238,7 @@ def get_user_timeline(user, accessing_user=None):
     namespace = build_user_namespace(user)
     timeline = get_timeline(user, namespace)
     if accessing_user is not None:
-        timeline = filter_timeline_for_user(timeline, accessing_user)
+        timeline = filter_timeline_for_user(timeline, accessing_user, namespace)
     return timeline
 
 
@@ -246,7 +246,7 @@ def get_project_timeline(project, accessing_user=None):
     namespace = build_project_namespace(project)
     timeline = get_timeline(project, namespace)
     if accessing_user is not None:
-        timeline = filter_timeline_for_user(timeline, accessing_user, project)
+        timeline = filter_timeline_for_user(timeline, accessing_user, namespace)
 
     return timeline
 
