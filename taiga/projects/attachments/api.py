@@ -14,15 +14,18 @@ from django.contrib.contenttypes.models import ContentType
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base import response
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
-from taiga.base.api.utils import get_object_or_error
+from taiga.base.api.utils import get_object_or_404, get_object_or_error
+from taiga.base.decorators import list_route
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
 from . import permissions
 from . import serializers
+from . import services
 from . import validators
 from . import models
 
@@ -45,7 +48,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
     def get_content_type(self):
         app_name, model = self.content_type.split(".", 1)
-        return get_object_or_error(ContentType, self.request.user, app_label=app_name, model=model)
+        return get_object_or_404(ContentType, app_label=app_name, model=model)
 
     def pre_save(self, obj):
         if not obj.id:
@@ -70,6 +73,34 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
     def get_object_for_snapshot(self, obj):
         return obj.content_object
+
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        contenttype = self.get_content_type()
+        # Validate data
+        data = request.DATA.copy()
+        data["content_type_id"] = contenttype.id
+
+        validator = validators.UpdateAttachmentsOrderBulkValidator(data=data)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        # Get and validate permissions
+        item = contenttype.get_object_for_this_type(pk=data["object_id"])
+        self.check_permissions(request, "bulk_update_order", item.project)
+        if item.project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
+
+        # Get after_attachment
+        after_attachment = None
+        after_attachment_id = data.get("after_attachment_id", None)
+        if after_attachment_id is not None:
+            after_attachment = get_object_or_error(item.attachments, request.user, pk=after_attachment_id)
+
+        ret = services.update_order_in_bulk(item=item,
+                                            after_attachment=after_attachment,
+                                            bulk_attachments=data["bulk_attachments"])
+        return response.Ok(ret)
 
 
 class EpicAttachmentViewSet(BaseAttachmentViewSet):
