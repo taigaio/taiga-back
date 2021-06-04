@@ -41,7 +41,10 @@ def get_user_for_token(token, scope, max_age=None):
     model_cls = get_user_model()
 
     try:
-        user = model_cls.objects.get(pk=data["user_%s_id" % (scope)])
+        user = model_cls.objects.get(
+            pk=data[f"user_{scope}_id"],
+            is_active=True
+        )
     except (model_cls.DoesNotExist, KeyError):
         raise exc.NotAuthenticated(_("Invalid token"))
     else:

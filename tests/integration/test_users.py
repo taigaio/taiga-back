@@ -301,6 +301,22 @@ def test_delete_self_user_remove_membership_projects(client):
     assert project.memberships.all().count() == 0
 
 
+def test_deleted_user_can_not_use_its_token(client):
+    user = f.UserFactory.create()
+    token = get_token_for_user(user, "authentication")
+
+    headers = {'HTTP_AUTHORIZATION': f'Bearer {token}'}
+    url = reverse('users-me')
+
+    response = client.get(url, **headers)
+    assert response.status_code == 200, response.data
+
+    user.cancel()
+
+    response = client.get(url, **headers)
+    assert response.status_code == 401, response.data
+
+
 ##############################
 ## Cancel account
 ##############################
