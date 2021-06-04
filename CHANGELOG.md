@@ -1,8 +1,8 @@
 # Changelog
 
-## 6.3.0 (unreleased)
+## 6.2.1 (unreleased)
 
-- ...
+- Add new bulk_order_update endpoint to reorder attachments in bulk (issue #tgg-218)
 
 ## 6.2.0 (2021-06-09)
 

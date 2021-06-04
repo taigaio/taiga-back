@@ -27,6 +27,7 @@ class EpicAttachmentPermission(TaigaResourcePermission):
     create_perms = HasProjectPerm('modify_epic') | (CommentAttachmentPerm() & HasProjectPerm('comment_epic'))
     update_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
+    bulk_update_order_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 
@@ -36,6 +37,7 @@ class UserStoryAttachmentPermission(TaigaResourcePermission):
     create_perms = HasProjectPerm('modify_us') | (CommentAttachmentPerm() & HasProjectPerm('comment_us'))
     update_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
+    bulk_update_order_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 
@@ -45,6 +47,7 @@ class TaskAttachmentPermission(TaigaResourcePermission):
     create_perms = HasProjectPerm('modify_task') | (CommentAttachmentPerm() & HasProjectPerm('comment_task'))
     update_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
+    bulk_update_order_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 
@@ -54,6 +57,7 @@ class IssueAttachmentPermission(TaigaResourcePermission):
     create_perms = HasProjectPerm('modify_issue') | (CommentAttachmentPerm() & HasProjectPerm('comment_issue'))
     update_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
+    bulk_update_order_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 
@@ -63,6 +67,7 @@ class WikiAttachmentPermission(TaigaResourcePermission):
     create_perms = HasProjectPerm('modify_wiki_page') | (CommentAttachmentPerm() & HasProjectPerm('comment_wiki_page'))
     update_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
+    bulk_update_order_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 
