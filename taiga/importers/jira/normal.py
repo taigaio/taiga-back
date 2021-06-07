@@ -148,7 +148,6 @@ class JiraNormalImporter(JiraImporterCommon):
         if issue_statuses:
             project_template.default_options["issue_status"] = list(issue_statuses.values())[0]['name']
 
-
         main_permissions = project_template.roles[0]['permissions']
         project_template.roles = [{
             "name": "Main",
@@ -189,8 +188,8 @@ class JiraNormalImporter(JiraImporterCommon):
 
                 for issue in issues['issues']:
                     issue['fields']['issuelinks'] += self._client.get("/issue/{}/remotelink".format(issue['key']))
-                    assigned_to = users_bindings.get(issue['fields']['assignee']['key'] if issue['fields']['assignee'] else None, None)
-                    owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
+                    assigned_to = users_bindings.get(issue['fields']['assignee']['accountId'] if issue['fields']['assignee'] else None, None)
+                    owner = users_bindings.get(issue['fields']['creator']['accountId'] if issue['fields']['creator'] else None, self._user)
 
                     external_reference = None
                     if options.get('keep_external_reference', False) and 'url' in issue['fields']:
@@ -263,8 +262,8 @@ class JiraNormalImporter(JiraImporterCommon):
 
             for issue in issues['issues']:
                 issue['fields']['issuelinks'] += self._client.get("/issue/{}/remotelink".format(issue['key']))
-                assigned_to = users_bindings.get(issue['fields']['assignee']['key'] if issue['fields']['assignee'] else None, None)
-                owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
+                assigned_to = users_bindings.get(issue['fields']['assignee']['accountId'] if issue['fields']['assignee'] else None, None)
+                owner = users_bindings.get(issue['fields']['creator']['accountId'] if issue['fields']['creator'] else None, self._user)
 
                 external_reference = None
                 if options.get('keep_external_reference', False) and 'url' in issue['fields']:
@@ -318,8 +317,8 @@ class JiraNormalImporter(JiraImporterCommon):
 
                 for issue in issues['issues']:
                     issue['fields']['issuelinks'] += self._client.get("/issue/{}/remotelink".format(issue['key']))
-                    assigned_to = users_bindings.get(issue['fields']['assignee']['key'] if issue['fields']['assignee'] else None, None)
-                    owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
+                    assigned_to = users_bindings.get(issue['fields']['assignee']['accountId'] if issue['fields']['assignee'] else None, None)
+                    owner = users_bindings.get(issue['fields']['creator']['accountId'] if issue['fields']['creator'] else None, self._user)
 
                     external_reference = None
                     if options.get('keep_external_reference', False) and 'url' in issue['fields']:
@@ -373,8 +372,8 @@ class JiraNormalImporter(JiraImporterCommon):
 
                 for issue in issues['issues']:
                     issue['fields']['issuelinks'] += self._client.get("/issue/{}/remotelink".format(issue['key']))
-                    assigned_to = users_bindings.get(issue['fields']['assignee']['key'] if issue['fields']['assignee'] else None, None)
-                    owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
+                    assigned_to = users_bindings.get(issue['fields']['assignee']['accountId'] if issue['fields']['assignee'] else None, None)
+                    owner = users_bindings.get(issue['fields']['creator']['accountId'] if issue['fields']['creator'] else None, self._user)
 
                     external_reference = None
                     if options.get('keep_external_reference', False) and 'url' in issue['fields']:

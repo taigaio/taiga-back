@@ -180,8 +180,8 @@ class JiraAgileImporter(JiraImporterCommon):
 
             for issue in issues['issues']:
                 issue['fields']['issuelinks'] += self._client.get("/issue/{}/remotelink".format(issue['key']))
-                assigned_to = users_bindings.get(issue['fields']['assignee']['key'] if issue['fields']['assignee'] else None, None)
-                owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
+                assigned_to = users_bindings.get(issue['fields']['assignee']['accountId'] if issue['fields']['assignee'] else None, None)
+                owner = users_bindings.get(issue['fields']['creator']['accountId'] if issue['fields']['creator'] else None, self._user)
 
                 external_reference = None
                 if options.get('keep_external_reference', False):
@@ -207,15 +207,18 @@ class JiraAgileImporter(JiraImporterCommon):
                     milestone=milestone,
                 )
 
-                try:
-                    epic = project.epics.get(ref=int(issue['fields'].get("epic", {}).get("key", "FAKE-0").split("-")[1]))
-                    RelatedUserStory.objects.create(
-                        user_story=us,
-                        epic=epic,
-                        order=1
-                    )
-                except Epic.DoesNotExist:
-                    pass
+                issue_epic = issue['fields'].get("epic", {})
+                if issue_epic:
+                    try:
+                        epic = project.epics.get(ref=int(issue_epic.get("key", "FAKE-0").split("-")[1]))
+                        RelatedUserStory.objects.create(
+                            user_story=us,
+                            epic=epic,
+                            order=1
+                        )
+                    except Exception as e:
+                        print(e.__str__())
+                        pass
 
                 if options['type'] == "scrum":
                     estimation = None
@@ -268,8 +271,8 @@ class JiraAgileImporter(JiraImporterCommon):
 
             for issue in issues['issues']:
                 issue['fields']['issuelinks'] += self._client.get("/issue/{}/remotelink".format(issue['key']))
-                assigned_to = users_bindings.get(issue['fields']['assignee']['key'] if issue['fields']['assignee'] else None, None)
-                owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
+                assigned_to = users_bindings.get(issue['fields']['assignee']['accountId'] if issue['fields']['assignee'] else None, None)
+                owner = users_bindings.get(issue['fields']['creator']['accountId'] if issue['fields']['creator'] else None, self._user)
 
                 external_reference = None
                 if options.get('keep_external_reference', False):
@@ -320,8 +323,8 @@ class JiraAgileImporter(JiraImporterCommon):
             for epic in issues['values']:
                 issue = self._client.get_agile("/issue/{}".format(epic['key']))
                 issue['fields']['issuelinks'] += self._client.get("/issue/{}/remotelink".format(issue['key']))
-                assigned_to = users_bindings.get(issue['fields']['assignee']['key'] if issue['fields']['assignee'] else None, None)
-                owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
+                assigned_to = users_bindings.get(issue['fields']['assignee']['accountId'] if issue['fields']['assignee'] else None, None)
+                owner = users_bindings.get(issue['fields']['creator']['accountId'] if issue['fields']['creator'] else None, self._user)
 
                 external_reference = None
                 if options.get('keep_external_reference', False):

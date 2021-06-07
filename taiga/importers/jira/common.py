@@ -185,14 +185,11 @@ class JiraImporterCommon:
             "maxResults": 1000,
         })
         for user in users:
-            user_data = self._client.get("/user", {
-                "key": user['key']
-            })
             result.append({
-                "id": user_data['key'],
-                "full_name": user_data['displayName'],
-                "email": user_data['emailAddress'],
-                "avatar": user_data.get('avatarUrls', None) and user_data['avatarUrls'].get('48x48', None),
+                "id": user['accountId'],
+                "full_name": user['displayName'],
+                "email": user['emailAddress'],
+                "avatar": user.get('avatarUrls', None) and user['avatarUrls'].get('48x48', None),
             })
         return result
 
@@ -206,7 +203,7 @@ class JiraImporterCommon:
                     obj,
                     comment=comment['body'],
                     user=users_bindings.get(
-                        comment['author']['name'],
+                        comment['author']['accountId'],
                         User(full_name=comment['author']['displayName'])
                     ),
                     delete=False
@@ -425,7 +422,7 @@ class JiraImporterCommon:
             try:
                 data = self._client.raw_get(attachment['content'])
                 att = Attachment(
-                    owner=users_bindings.get(attachment['author']['name'], self._user),
+                    owner=users_bindings.get(attachment['author']['accountId'], self._user),
                     project=obj.project,
                     content_type=ContentType.objects.get_for_model(obj),
                     object_id=obj.id,

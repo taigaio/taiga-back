@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.1 (unreleased)
+
+- Fix importing projects from Jira (issue #tg-169)
+
 ## 6.2.0 (unreleased)
 
 - Change api response from 404 to 401 when not logged in (issues #tg-4415, #tg-4301)

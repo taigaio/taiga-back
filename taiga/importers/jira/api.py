@@ -181,6 +181,7 @@ class JiraImporterViewSet(viewsets.ViewSet):
         if not jira_url:
             raise exc.WrongArguments(_("The url param is needed"))
 
+        jira_url = jira_url.strip("/")
         try:
             (oauth_token, oauth_secret, url) = JiraNormalImporter.get_auth_url(
                 jira_url,
