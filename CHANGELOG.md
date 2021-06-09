@@ -1,6 +1,10 @@
 # Changelog
 
-## 6.2.0 (unreleased)
+## 6.3.0 (unreleased)
+
+- ...
+
+## 6.2.0 (2021-06-09)
 
 - Change api response from 404 to 401 when not logged in (issues #tg-4415, #tg-4301)
 - Allows to order issues by 'ref' field (issue #tg-4503)
@@ -8,7 +12,7 @@
 - Fix showing epic-related private uss on a public timeline (issue #tg-4291)
 - Fix filter userstories by assignation for registered no-member users (issue #tg-2533)
 - New algorithm to reorder user stories in the backlog (issue #tg-62)
-- Fix wrong behaivor, deleted (inactive) users can still perform API calls (issue #tgg-732)
+- Fix wrong behaviour, deleted (inactive) users can still perform API calls (issue #tg-732)
 
 ## 6.1.1 (2021-05-18)
 
