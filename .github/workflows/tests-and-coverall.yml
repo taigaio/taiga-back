@@ -42,7 +42,7 @@ jobs:
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
-        python-versions: ${{ matrix.python-version }}
+        python-version: ${{ matrix.python-version }}
 
     - name: Enable cache
       uses: actions/cache@v1
