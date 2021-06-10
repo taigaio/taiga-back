@@ -1499,8 +1499,8 @@ def test_smtp_error_sending_notifications(settings, mail):
                                 history=history_delete)
 
 
-    with (patch("taiga.projects.notifications.services._make_template_mail") as make_template_email_mock,
-          patch("taiga.projects.notifications.services.logger") as logger_mock):
+    with patch("taiga.projects.notifications.services._make_template_mail") as make_template_email_mock, \
+         patch("taiga.projects.notifications.services.logger") as logger_mock:
         email_mock = Mock()
         email_mock.send.side_effect = smtplib.SMTPDataError(msg="error smtp", code=123)
         make_template_email_mock.return_value = email_mock
