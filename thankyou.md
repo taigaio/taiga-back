@@ -23,3 +23,9 @@ big, to improve Taiga's overall security rating.
 - Anton Perekopni
 
 - Ather Iqbal ( Alpha Inferno Smc Pvt Ltd )
+
+### 2021
+
+- Petar Kosic ( Sec-Research GmbH )
+
+- Kunal Mhaske
