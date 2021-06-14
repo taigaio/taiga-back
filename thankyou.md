@@ -8,9 +8,6 @@ contributed to the product development in some way.
 We would like to thank everyone listed here for their help, whether small or
 big, to improve Taiga's overall security rating.
 
-### 2020
-
-- Qazi Abdullah
 
 ### 2019
 
@@ -23,6 +20,8 @@ big, to improve Taiga's overall security rating.
 - Anton Perekopni
 
 - Ather Iqbal ( Alpha Inferno Smc Pvt Ltd )
+
+- Qazi Abdullah
 
 ### 2021
 
