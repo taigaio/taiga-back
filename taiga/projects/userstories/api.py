@@ -54,14 +54,15 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
     filter_backends = (base_filters.CanViewUsFilterBackend,
+                       filters.DashboardFilter,
                        filters.EpicFilter,
-                       base_filters.UserStoriesRoleFilter,
+                       filters.SwimlanesFilter,
+                       filters.UserStoryStatusesFilter,
+                       filters.UserStoriesRoleFilter,
+                       filters.AssignedUsersFilter,
                        base_filters.OwnersFilter,
                        base_filters.AssignedToFilter,
-                       base_filters.AssignedUsersFilter,
-                       base_filters.UserStoryStatusesFilter,
                        base_filters.TagsFilter,
-                       base_filters.SwimlanesFilter,
                        base_filters.WatchersFilter,
                        base_filters.QFilter,
                        base_filters.CreatedDateFilter,
@@ -337,9 +338,9 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         project = get_object_or_error(Project, request.user, id=project_id)
 
         filter_backends = self.get_filter_backends()
-        statuses_filter_backends = (f for f in filter_backends if f != base_filters.UserStoryStatusesFilter)
+        statuses_filter_backends = (f for f in filter_backends if f != filters.UserStoryStatusesFilter)
         assigned_to_filter_backends = (f for f in filter_backends if f != base_filters.AssignedToFilter)
-        assigned_users_filter_backends = (f for f in filter_backends if f != base_filters.AssignedUsersFilter)
+        assigned_users_filter_backends = (f for f in filter_backends if f != filters.AssignedUsersFilter)
         owners_filter_backends = (f for f in filter_backends if f != base_filters.OwnersFilter)
         epics_filter_backends = (f for f in filter_backends if f != filters.EpicFilter)
         roles_filter_backends = (f for f in filter_backends if f != base_filters.RoleFilter)

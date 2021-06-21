@@ -3,6 +3,7 @@
 ## 6.2.1 (unreleased)
 
 - Add new bulk_order_update endpoint to reorder attachments in bulk (issue #tgg-218)
+- [Performance] User stories endpoint is too slow for dashboard queries (issue #tg-4600)
 
 ## 6.2.0 (2021-06-09)
 
