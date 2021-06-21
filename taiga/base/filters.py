@@ -10,9 +10,8 @@ import logging
 from dateutil.parser import parse as parse_date
 
 from django.apps import apps
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q, OuterRef, Subquery
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
@@ -128,17 +127,6 @@ class FilterBackend(OrderByFilterMixin):
     Default filter backend.
     """
     pass
-
-
-class FilterModelAssignedUsers:
-    def get_assigned_users_filter(self, model, value):
-        assigned_users_ids = model.objects.order_by().filter(
-            assigned_users__in=value, id=OuterRef('pk')).values('pk')
-
-        assigned_user_filter = Q(pk__in=Subquery(assigned_users_ids))
-        assigned_to_filter = Q(assigned_to__in=value)
-
-        return Q(assigned_user_filter | assigned_to_filter)
 
 
 #####################################################################
@@ -455,55 +443,9 @@ class AssignedToFilter(BaseRelatedFieldsFilter):
     exclude_param_name = 'exclude_assigned_to'
 
 
-class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
-    filter_name = 'assigned_users'
-    exclude_param_name = 'exclude_assigned_users'
-
-    def _get_queryparams(self, params, mode=''):
-        param_name = self.exclude_param_name if mode == 'exclude' else self.param_name or \
-                                                                       self.filter_name
-        raw_value = params.get(param_name, None)
-        if raw_value:
-            value = self._prepare_filter_data(raw_value)
-            UserStoryModel = apps.get_model("userstories", "UserStory")
-
-            if None in value:
-                value.remove(None)
-                assigned_users_ids = UserStoryModel.objects.order_by().filter(
-                    assigned_users__isnull=True,
-                    id=OuterRef('pk')).values('pk')
-
-                assigned_user_filter_none = Q(pk__in=Subquery(assigned_users_ids))
-                assigned_to_filter_none = Q(assigned_to__isnull=True)
-
-                return (self.get_assigned_users_filter(UserStoryModel, value)
-                        | Q(assigned_user_filter_none, assigned_to_filter_none))
-            else:
-                return self.get_assigned_users_filter(UserStoryModel, value)
-
-        return None
-
-
 class StatusesFilter(BaseRelatedFieldsFilter):
     filter_name = 'status'
     exclude_param_name = 'exclude_status'
-
-
-class UserStoryStatusesFilter(StatusesFilter):
-    def filter_queryset(self, request, queryset, view):
-        project_id = None
-        if "project" in request.QUERY_PARAMS:
-            try:
-                project_id = int(request.QUERY_PARAMS["project"])
-            except ValueError:
-                logger.error("Filtering project different value tpphan an integer: {}".format(
-                    request.QUERY_PARAMS["project"]))
-                raise exc.BadRequest(_("'project' must be an integer value."))
-
-        if project_id:
-            queryset = queryset.filter(status__project_id=project_id)
-
-        return super().filter_queryset(request, queryset, view)
 
 
 class IssueTypesFilter(BaseRelatedFieldsFilter):
@@ -520,11 +462,6 @@ class PrioritiesFilter(BaseRelatedFieldsFilter):
 class SeveritiesFilter(BaseRelatedFieldsFilter):
     filter_name = 'severity'
     exclude_param_name = 'exclude_severity'
-
-
-class SwimlanesFilter(BaseRelatedFieldsFilter):
-    filter_name = 'swimlane'
-    exclude_param_name = 'exclude_swimlane'
 
 
 class TagsFilter(FilterBackend):
@@ -685,28 +622,6 @@ class MilestoneEstimatedFinishFilter(BaseDateFilter):
     filter_name_base = "milestone__estimated_finish"
 
 
-#####################################################################
-# Text search filters
-#####################################################################
-
-class QFilter(FilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        q = request.QUERY_PARAMS.get('q', None)
-        if q:
-            table = queryset.model._meta.db_table
-            where_clause = ("""
-                to_tsvector('simple',
-                            coalesce({table}.subject, '') || ' ' ||
-                            coalesce(array_to_string({table}.tags, ' '), '') || ' ' ||
-                            coalesce({table}.ref) || ' ' ||
-                            coalesce({table}.description, '')) @@ to_tsquery('simple', %s)
-            """.format(table=table))
-
-            queryset = queryset.extra(where=[where_clause], params=[to_tsquery(q)])
-
-        return queryset
-
-
 class RoleFilter(BaseRelatedFieldsFilter):
     filter_name = "role_id"
     param_name = "role"
@@ -730,29 +645,25 @@ class RoleFilter(BaseRelatedFieldsFilter):
 
         return FilterBackend.filter_queryset(self, request, queryset, view)
 
+#####################################################################
+# Text search filters
+#####################################################################
 
-class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
-    filter_name = "role_id"
-    param_name = "role"
-    exclude_param_name = 'exclude_role'
-
+class QFilter(FilterBackend):
     def filter_queryset(self, request, queryset, view):
-        Membership = apps.get_model('projects', 'Membership')
+        q = request.QUERY_PARAMS.get('q', None)
+        if q:
+            table = queryset.model._meta.db_table
+            where_clause = ("""
+                to_tsvector('simple',
+                            coalesce({table}.subject, '') || ' ' ||
+                            coalesce(array_to_string({table}.tags, ' '), '') || ' ' ||
+                            coalesce({table}.ref) || ' ' ||
+                            coalesce({table}.description, '')) @@ to_tsquery('simple', %s)
+            """.format(table=table))
 
-        operations = {
-            "filter": self._prepare_filter_query,
-            "exclude": self._prepare_exclude_query,
-        }
+            queryset = queryset.extra(where=[where_clause], params=[to_tsquery(q)])
 
-        for mode, qs_method in operations.items():
-            query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
-            if query:
-                memberships = Membership.objects.filter(query).exclude(user__isnull=True). \
-                    values_list("user_id", flat=True)
-                if memberships:
-                    user_story_model = apps.get_model("userstories", "UserStory")
-                    queryset = queryset.filter(
-                        qs_method(Q(self.get_assigned_users_filter(user_story_model, memberships)))
-                    )
+        return queryset
 
-        return FilterBackend.filter_queryset(self, request, queryset, view)
+
