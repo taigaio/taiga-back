@@ -19,16 +19,16 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Italian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
-"language/it/)\n"
+"PO-Revision-Date: 2021-06-23 13:34+0000\n"
+"Last-Translator: random r <epsilin@yopmail.com>\n"
+"Language-Team: Italian <https://hosted.weblate.org/projects/taiga/taiga-back/"
+"it/>\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: it\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.7.1-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
@@ -231,7 +231,7 @@ msgstr "La pagina non è 'last', né può essere convertita come int."
 #: taiga/base/api/pagination.py:230
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr "Pagina  (%(page_number)s) invalida: %(message)s"
+msgstr "Pagina (%(page_number)s) non valida: %(message)s"
 
 #: taiga/base/api/permissions.py:63
 msgid "Invalid permission definition."
@@ -680,7 +680,7 @@ msgstr "Errore nel caricamento del dump di progetto"
 
 #: taiga/export_import/tasks.py:134
 msgid "  -- no detail info --"
-msgstr "-- non ci sono informazioni dettagliate --"
+msgstr "  -- nessuna informazione --"
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:4
 #, python-format
@@ -1865,7 +1865,7 @@ msgstr ""
 "Ricevi questo messaggio perché sei indicato come amministratore del progetto "
 "dal titolo %(project_name)s. Se non vuoi che membri della comunità di Taiga "
 "possano contattarti in merito al progetto, per favore aggiorna le "
-"impostazioni del tuo progetto a  %(project_settings_url)s per evitare queste "
+"impostazioni del tuo progetto a %(project_settings_url)s per evitare queste "
 "richieste di contatto. Le regolari comunicazioni tra i membri del progetto "
 "non saranno modificate.\n"
 
@@ -3769,7 +3769,7 @@ msgstr ""
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:15
 msgid "Request transfer to a different person:"
-msgstr "Richiedi trasferimento ad un'altra persona"
+msgstr "Richiedi il trasferimento ad un'altra persona:"
 
 #: taiga/projects/templates/emails/transfer_reject-subject.jinja:1
 #, python-format
