@@ -219,7 +219,7 @@ class HistoryEntry(models.Model):
                 for aid in set(tuple(oldattachs.keys()) + tuple(newattachs.keys())):
                     if aid in oldattachs and aid in newattachs:
                         changes = make_diff_from_dicts(oldattachs[aid], newattachs[aid],
-                                                       excluded_keys=("filename", "url", "thumb_url"))
+                                                       excluded_keys=("filename", "url", "thumb_url", "order"))
 
                         if changes:
                             change = {
