@@ -10,6 +10,7 @@ from importlib import import_module
 import random
 import uuid
 import re
+import datetime
 
 from django.apps import apps
 from django.apps.config import MODELS_MODULE_NAME
@@ -140,6 +141,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                              max_length=500, null=True, blank=True,
                              verbose_name=_("photo"))
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    date_cancelled = models.DateTimeField(_("date cancelled"), null=True, blank=True, default=None)
     accepted_terms = models.BooleanField(_("accepted terms"), default=True)
     read_new_terms = models.BooleanField(_("new terms read"), default=False)
     lang = models.CharField(max_length=20, null=True, blank=True, default="",
@@ -285,6 +287,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.token = None
             self.set_unusable_password()
             self.photo = None
+            self.date_cancelled = datetime.datetime.now()
             self.save()
         self.auth_data.all().delete()
 

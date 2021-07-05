@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
+import datetime
 from tempfile import NamedTemporaryFile
 
 from django.conf import settings
@@ -274,6 +275,22 @@ def test_delete_self_user(client):
     assert user.full_name == "Deleted user"
 
 
+def test_delete_self_user_with_date_cancelled(client):
+    user = f.UserFactory.create()
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+
+    client.login(user)
+    response = client.delete(url)
+
+    assert response.status_code == 204
+    user = models.User.objects.get(pk=user.id)
+    assert user.full_name == "Deleted user"
+
+    date_cancelled = datetime.date(user.date_cancelled.year, user.date_cancelled.month, user.date_cancelled.day)
+    date_now = datetime.date.today()
+    assert date_cancelled == date_now
+
+
 def test_delete_self_user_blocking_projects(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
@@ -342,6 +359,23 @@ def test_cancel_self_user_with_invalid_token(client):
     response = client.post(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 400
+
+
+def test_cancel_self_user_with_date_cancelled(client):
+    user = f.UserFactory.create()
+    url = reverse('users-cancel')
+    cancel_token = get_token_for_user(user, "cancel_account")
+    data = {"cancel_token": cancel_token}
+    client.login(user)
+    response = client.post(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 204
+    user = models.User.objects.get(pk=user.id)
+    assert user.full_name == "Deleted user"
+
+    date_cancelled = datetime.date(user.date_cancelled.year, user.date_cancelled.month, user.date_cancelled.day)
+    date_now = datetime.date.today()
+    assert date_cancelled == date_now
 
 
 ##############################

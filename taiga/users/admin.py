@@ -111,7 +111,7 @@ class UserAdmin(DjangoUserAdmin):
         (_("Permissions"), {"fields": ("is_active", "is_superuser")}),
         (_("Restrictions"), {"fields": (("max_private_projects", "max_memberships_private_projects"),
                                         ("max_public_projects", "max_memberships_public_projects"))}),
-        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+        (_("Important dates"), {"fields": ("last_login", "date_joined", "date_cancelled")}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
