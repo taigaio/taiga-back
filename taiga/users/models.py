@@ -288,6 +288,8 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.set_unusable_password()
             self.photo = None
             self.date_cancelled = datetime.datetime.now()
+            self.new_email = "{}@taiga.io".format(self.username)
+            self.email_token = None
             self.save()
         self.auth_data.all().delete()
 
