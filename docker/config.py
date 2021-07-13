@@ -24,12 +24,16 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_PORT','5432'),
     }
 }
-
 SECRET_KEY = os.getenv('TAIGA_SECRET_KEY')
-TAIGA_URL = f"{ os.getenv('TAIGA_SITES_SCHEME') }://{ os.getenv('TAIGA_SITES_DOMAIN') }"
+
+TAIGA_SITES_SCHEME = os.getenv('TAIGA_SITES_SCHEME')
+TAIGA_SITES_DOMAIN = os.getenv('TAIGA_SITES_DOMAIN')
+FORCE_SCRIPT_NAME = os.getenv('TAIGA_SUBPATH', '')
+
+TAIGA_URL = f"{ TAIGA_SITES_SCHEME }://{ TAIGA_SITES_DOMAIN }{ FORCE_SCRIPT_NAME }"
 SITES = {
-    "api": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "api"},
-    "front": {"domain": f"{ os.getenv('TAIGA_SITES_DOMAIN') }", "scheme": f"{ os.getenv('TAIGA_SITES_SCHEME') }", "name": "front"}
+        "api": { "name": "api", "scheme": TAIGA_SITES_SCHEME, "domain": TAIGA_SITES_DOMAIN },
+        "front": { "name": "front", "scheme": TAIGA_SITES_SCHEME, "domain": f"{ TAIGA_SITES_DOMAIN }{ FORCE_SCRIPT_NAME }" }
 }
 
 INSTANCE_TYPE = "D"

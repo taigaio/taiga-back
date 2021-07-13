@@ -8,6 +8,7 @@
 
 - New Auth module, based on djangorestframework-simplejwt (history #tg-4625, issue #tgg-626))
 - Fix the user when closing an issue from Github (issue #tg-4563)
+- Serve Taiga in subpath
 
 ## 6.2.2 (2021-07-15)
 
