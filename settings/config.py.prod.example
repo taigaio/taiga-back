@@ -25,10 +25,15 @@ DATABASES = {
 }
 
 SECRET_KEY = "changeme"
-TAIGA_URL = "https://example.com"
+
+TAIGA_SITES_SCHEME = "https"
+TAIGA_SITES_DOMAIN = "example.com"
+FORCE_SCRIPT_NAME = ""
+
+TAIGA_URL = f"{ TAIGA_SITES_SCHEME }://{ TAIGA_SITES_DOMAIN }{ FORCE_SCRIPT_NAME }"
 SITES = {
-    "api": {"domain": "example.com", "scheme": "https", "name": "api"},
-    "front": {"domain": "example.com", "scheme": "https", "name": "front"}
+        "api": { "name": "api", "scheme": TAIGA_SITES_SCHEME, "domain": TAIGA_SITES_DOMAIN },
+        "front": { "name": "front", "scheme": TAIGA_SITES_SCHEME, "domain": f"{ TAIGA_SITES_DOMAIN }{ FORCE_SCRIPT_NAME }" }
 }
 
 # Setting DEFAULT_PROJECT_SLUG_PREFIX to false
