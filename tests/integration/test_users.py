@@ -23,7 +23,7 @@ from taiga.base.utils.thumbnails import get_thumbnail_url
 from taiga.base.utils.dicts import into_namedtuple
 from taiga.users import models
 from taiga.users.serializers import LikedObjectSerializer, VotedObjectSerializer
-from taiga.auth.tokens import get_token_for_user
+from taiga.auth.tokens import AccessToken, CancelToken
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects import choices as project_choices
 from taiga.users.services import get_watched_list, get_voted_list, get_liked_list
@@ -320,7 +320,7 @@ def test_delete_self_user_remove_membership_projects(client):
 
 def test_deleted_user_can_not_use_its_token(client):
     user = f.UserFactory.create()
-    token = get_token_for_user(user, "authentication")
+    token = AccessToken.for_user(user)
 
     headers = {'HTTP_AUTHORIZATION': f'Bearer {token}'}
     url = reverse('users-me')
@@ -341,8 +341,8 @@ def test_deleted_user_can_not_use_its_token(client):
 def test_cancel_self_user_with_valid_token(client):
     user = f.UserFactory.create()
     url = reverse('users-cancel')
-    cancel_token = get_token_for_user(user, "cancel_account")
-    data = {"cancel_token": cancel_token}
+    cancel_token = CancelToken.for_user(user)
+    data = {"cancel_token": str(cancel_token)}
     client.login(user)
     response = client.post(url, json.dumps(data), content_type="application/json")
 
@@ -351,10 +351,26 @@ def test_cancel_self_user_with_valid_token(client):
     assert user.full_name == "Deleted user"
 
 
+def test_cancel_self_user_with_valid_token_but_inactive(client):
+    user = f.UserFactory.create(is_active=False)
+    url = reverse('users-cancel')
+    cancel_token = CancelToken.for_user(user)
+    data = {"cancel_token": str(cancel_token)}
+    client.login(user)
+    response = client.post(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 400
+
 def test_cancel_self_user_with_invalid_token(client):
     user = f.UserFactory.create()
     url = reverse('users-cancel')
-    data = {"cancel_token": "invalid_cancel_token"}
+    data = {"cancel_token": str(CancelToken())}
+    client.login(user)
+    response = client.post(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 400
+
+    data = {"cancel_token": "__invalid_token__"}
     client.login(user)
     response = client.post(url, json.dumps(data), content_type="application/json")
 
@@ -363,9 +379,9 @@ def test_cancel_self_user_with_invalid_token(client):
 
 def test_cancel_self_user_with_date_cancelled(client):
     user = f.UserFactory.create()
+    cancel_token = CancelToken.for_user(user)
     url = reverse('users-cancel')
-    cancel_token = get_token_for_user(user, "cancel_account")
-    data = {"cancel_token": cancel_token}
+    data = {"cancel_token": str(cancel_token)}
     client.login(user)
     response = client.post(url, json.dumps(data), content_type="application/json")
 

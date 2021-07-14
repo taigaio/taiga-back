@@ -10,13 +10,13 @@ from taiga.base import throttling
 
 class LoginFailRateThrottle(throttling.GlobalThrottlingMixin, throttling.ThrottleByActionMixin, throttling.SimpleRateThrottle):
     scope = "login-fail"
-    throttled_actions = ["create"]
+    throttled_actions = ["create", "refresh", "validate"]
 
     def throttle_success(self, request, view):
         return True
 
     def finalize(self, request, response, view):
-        if response.status_code == 400:
+        if response.status_code in [400, 401]:
             self.history.insert(0, self.now)
             self.cache.set(self.key, self.history, self.duration)
 

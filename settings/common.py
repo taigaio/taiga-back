@@ -8,6 +8,8 @@
 import os
 import os.path
 import sys
+from datetime import timedelta
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -319,6 +321,7 @@ INSTALLED_APPS = [
     "taiga.front",
     "taiga.users",
     "taiga.userstorage",
+    "taiga.auth.token_denylist",
     "taiga.external_apps",
     "taiga.projects",
     "taiga.projects.references",
@@ -439,6 +442,15 @@ LOGGING = {
 
 
 AUTH_USER_MODEL = "users.User"
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
+    'CANCEL_TOKEN_LIFETIME': timedelta(days=100),
+}
+
+FLUSH_REFRESHED_TOKENS_PERIODICITY = 3 * 24 * 3600 # seconds
+
 FORMAT_MODULE_PATH = "taiga.base.formats"
 
 DATE_INPUT_FORMATS = (
@@ -452,13 +464,10 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",  # default
 )
 
-MAX_AGE_AUTH_TOKEN = None
-MAX_AGE_CANCEL_ACCOUNT = 30 * 24 * 60 * 60  # 30 days in seconds
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # Mainly used by taiga-front
-        "taiga.auth.backends.Token",
+        'taiga.auth.authentication.JWTAuthentication',
 
         # Mainly used for api debug.
         "taiga.auth.backends.Session",

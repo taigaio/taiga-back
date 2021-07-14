@@ -2,7 +2,7 @@
 
 ## 6.3.0 (unreleased)
 
-- ...
+- New Auth module, based on djangorestframework-simplejwt (history #tg-4625, issue #tgg-626))
 
 ## 6.2.2 (2021-07-15)
 

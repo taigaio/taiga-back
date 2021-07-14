@@ -5,8 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from ..utils import disconnect_signals
+
+from django.core.management import call_command
+
+from taiga.celery import app
 
 
-def pytest_runtest_setup(item):
-    disconnect_signals()
+@app.task
+def flush_expired_tokens():
+    """Flushes any expired tokens in the outstanding token list."""
+    call_command('flushexpiredtokens')

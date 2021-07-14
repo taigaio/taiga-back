@@ -28,3 +28,16 @@
 #   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
+
+from django.core.management.base import BaseCommand
+
+from taiga.auth.utils import aware_utcnow
+
+from ...models import OutstandingToken
+
+
+class Command(BaseCommand):
+    help = 'Flushes any expired tokens in the outstanding token list'
+
+    def handle(self, *args, **kwargs):
+        OutstandingToken.objects.filter(expires_at__lte=aware_utcnow()).delete()

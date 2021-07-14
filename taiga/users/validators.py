@@ -88,7 +88,7 @@ class ChangeEmailValidator(validators.Validator):
 
 
 class CancelAccountValidator(validators.Validator):
-    cancel_token = serializers.CharField(max_length=200)
+    cancel_token = serializers.CharField()
 
 
 ######################################################

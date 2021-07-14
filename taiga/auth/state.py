@@ -28,3 +28,9 @@
 #   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
+
+from .backends import TokenBackend
+from .settings import api_settings
+
+token_backend = TokenBackend(api_settings.ALGORITHM, api_settings.SIGNING_KEY,
+                             api_settings.VERIFYING_KEY, api_settings.AUDIENCE, api_settings.ISSUER)

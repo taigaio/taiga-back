@@ -60,7 +60,7 @@ def get_and_validate_user(*, username: str, password: str) -> bool:
     """
 
     user = get_user_by_username_or_email(username)
-    if not user.check_password(password):
+    if not user.check_password(password) or not user.is_active or user.is_system:
         raise exc.WrongArguments(_("Username or password does not matches user."))
 
     return user

@@ -5,11 +5,3 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.api.permissions import TaigaResourcePermission, AllowAny
-
-
-class AuthPermission(TaigaResourcePermission):
-    get_token_perms = AllowAny()
-    refresh_token_perms = AllowAny()
-    verify_token_perms = AllowAny()
-    register_perms = AllowAny()
