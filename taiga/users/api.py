@@ -13,16 +13,18 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
+from taiga.auth.exceptions import TokenError
+from taiga.auth.tokens import CancelToken
+from taiga.auth.settings import api_settings as auth_settings
 from taiga.base import exceptions as exc
 from taiga.base import filters
 from taiga.base import response
 from taiga.base.utils.dicts import into_namedtuple
-from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
-from taiga.base.api import ModelCrudViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.fields import validate_user_email_allowed_domains
+from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.viewsets import ModelCrudViewSet
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
 from taiga.base.mails import mail_builder
@@ -310,11 +312,10 @@ class UsersViewSet(ModelCrudViewSet):
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
 
         try:
-            max_age_cancel_account = getattr(settings, "MAX_AGE_CANCEL_ACCOUNT", None)
-            user = get_user_for_token(validator.data["cancel_token"], "cancel_account",
-                                      max_age=max_age_cancel_account)
-
-        except exc.NotAuthenticated:
+            validated_token = CancelToken(token=validator.data["cancel_token"])
+            user_id_value = validated_token[auth_settings.USER_ID_CLAIM]
+            user = models.User.objects.get(**{auth_settings.USER_ID_FIELD: user_id_value})
+        except (exc.NotAuthenticated, models.User.DoesNotExist, TokenError, KeyError):
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
 
         if not user.is_active:

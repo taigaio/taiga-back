@@ -39,6 +39,30 @@ def test_auth_create(client):
     assert result.status_code == 200
 
 
+def test_auth_refresh(client):
+    url = reverse('auth-list')
+
+    user = f.UserFactory.create()
+
+    login_data = json.dumps({
+        "type": "normal",
+        "username": user.username,
+        "password": user.username,
+    })
+
+    result = client.post(url, login_data, content_type="application/json")
+    assert result.status_code == 200
+
+    url = reverse('auth-refresh')
+
+    refresh_data = json.dumps({
+        "refresh": result.data["refresh"],
+    })
+
+    result = client.post(url, refresh_data, content_type="application/json")
+    assert result.status_code == 200
+
+
 def test_auth_action_register_with_short_password(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = True
     url = reverse('auth-register')

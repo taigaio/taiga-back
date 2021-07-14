@@ -7,12 +7,24 @@
 
 import pytest
 import io
-from .. import factories as f
 
 from taiga.base.utils import json
 from taiga.export_import.services import render_project
 
+from tests.utils import disconnect_signals, reconnect_signals
+
+from .. import factories as f
+
+
 pytestmark = pytest.mark.django_db(transaction=True)
+
+
+def setup_module():
+    disconnect_signals()
+
+
+def teardown_module():
+    reconnect_signals()
 
 
 def test_export_issue_finish_date(client):

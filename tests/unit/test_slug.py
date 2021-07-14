@@ -5,13 +5,22 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import pytest
+
 from django.contrib.auth import get_user_model
 
 from taiga.projects.models import Project
 from taiga.base.utils.slug import slugify
 
-import pytest
-pytestmark = pytest.mark.django_db(transaction=True)
+from tests.utils import disconnect_signals, reconnect_signals
+
+
+def setup_module():
+    disconnect_signals()
+
+
+def teardown_module():
+    reconnect_signals()
 
 
 def test_slugify_1():
@@ -26,6 +35,7 @@ def test_slugify_3():
     assert slugify(None) == ""
 
 
+@pytest.mark.django_db
 def test_project_slug_with_special_chars():
     user = get_user_model().objects.create(username="test")
     project = Project.objects.create(name="漢字", description="漢字", owner=user)
@@ -34,6 +44,7 @@ def test_project_slug_with_special_chars():
     assert project.slug == "test-han-zi"
 
 
+@pytest.mark.django_db
 def test_project_with_existing_name_slug_with_special_chars():
     user = get_user_model().objects.create(username="test")
     Project.objects.create(name="漢字", description="漢字", owner=user)

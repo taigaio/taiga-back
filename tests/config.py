@@ -9,6 +9,8 @@ from settings.common import * # noqa, pylint: disable=unused-wildcard-import
 
 DEBUG = True
 
+SECRET_KEY = "not very secret in tests"
+
 TEMPLATES[0]["OPTIONS"]['context_processors'] += "django.template.context_processors.debug"
 
 CELERY_ENABLED = False

@@ -37,3 +37,11 @@ if settings.SEND_BULK_EMAILS_WITH_CELERY and settings.CHANGE_NOTIFICATIONS_MIN_I
         'schedule': settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL,
         'args': (),
     }
+
+if ('taiga.auth.token_denylist' in settings.INSTALLED_APPS and
+        getattr(settings, "FLUSH_REFRESHED_TOKENS_PERIODICITY", None)):
+    app.conf.beat_schedule['auth-flush-expired-tokens'] = {
+        'task': 'taiga.auth.token_denylist.tasks.flush_expired_tokens',
+        'schedule': settings.FLUSH_REFRESHED_TOKENS_PERIODICITY,
+        'args': (),
+    }

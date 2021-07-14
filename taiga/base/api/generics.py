@@ -145,7 +145,7 @@ class GenericAPIView(pagination.PaginationMixin,
     ###########################################################
 
     def get_serializer_class(self):
-        if self.action == "list" and hasattr(self, "list_serializer_class"):
+        if hasattr(self, "action") and self.action == "list" and hasattr(self, "list_serializer_class"):
             return self.list_serializer_class
 
         serializer_class = self.serializer_class

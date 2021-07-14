@@ -36,7 +36,7 @@ import pytest
 from unittest import mock
 
 
-pytestmark = pytest.mark.django_db(transaction=True)
+pytestmark = pytest.mark.django_db
 
 
 class ExpiredSigner(signing.TimestampSigner):
@@ -270,13 +270,13 @@ def test_us_status_is_closed_changed_recalc_us_is_closed(client):
     us_status.is_closed = True
     us_status.save()
 
-    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    user_story.refresh_from_db()
     assert user_story.is_closed is True
 
     us_status.is_closed = False
     us_status.save()
 
-    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    user_story.refresh_from_db()
     assert user_story.is_closed is False
 
 
@@ -581,6 +581,7 @@ def test_destroy_point_and_reassign(client):
     assert project.default_points.id == p2.id
 
 
+@pytest.mark.django_db(transaction=True)
 def test_update_projects_order_in_bulk(client):
     user = f.create_user()
     client.login(user)

@@ -18,7 +18,7 @@ urls = {
     "change-password": "/change-password/{0}", # user.token
     "change-email": "/change-email/{0}", # user.email_token
     "verify-email": "/verify-email/{0}", # user.email_token
-    "cancel-account": "/cancel-account/{0}", # auth.token.get_token_for_user(user)
+    "cancel-account": "/cancel-account/{0}", # auth.tokens.CancelToken.for_user(user)
     "invitation": "/invitation/{0}", # membership.token
 
     "user": "/profile/{0}", # user.username

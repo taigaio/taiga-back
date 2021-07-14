@@ -28,3 +28,48 @@
 #   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
+
+"""
+Denylist app
+=============
+
+This app provides token denylist functionality.
+
+If the denylist app is detected in ``INSTALLED_APPS``, Taiga Auth will add any
+generated refresh token to a list of outstanding tokens.  It will also check
+that any refresh token does not appear in a denylist of tokens before it
+considers it as valid.
+
+The denylist app implements its outstanding and denylisted token lists using
+two models: ``OutstandingToken`` and ``DenylistedToken``.  Model admins are
+defined for both of these models.  To add a token to the denylist, find its
+corresponding ``OutstandingToken`` record in the admin and use the admin again
+to create a ``DenylistedToken`` record that points to the ``OutstandingToken``
+record.
+
+Alternatively, you can denylist a token by creating a ``DenylistMixin``
+subclass instance and calling the instance's ``denylist`` method:
+
+.. code-block:: python
+
+  from rest_framework_simplejwt.tokens import RefreshToken
+
+  token = RefreshToken(base64_encoded_token_string)
+  token.denylist()
+
+This will create unique outstanding token and denylist records for the token's
+"jti" claim or whichever claim is specified by the ``JTI_CLAIM`` setting.
+
+The denylist app also provides a management command, ``flushexpiredtokens``,
+which will delete any tokens from the outstanding list and denylist that have
+expired.
+"""
+
+from django.apps import AppConfig
+from django.utils.translation import gettext_lazy as _
+
+
+class TokenDenylistConfig(AppConfig):
+    name = 'taiga.auth.token_denylist'
+    verbose_name = _('Token Denylist')
+    default_auto_field = 'django.db.models.BigAutoField'
