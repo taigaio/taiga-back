@@ -2,6 +2,10 @@
 
 ## 6.3.0 (unreleased)
 
+- ...
+
+## 6.2.2 (2021-07-15)
+
 - Add date_cancelled to User
 - Avoid logging in the history changes in the attachment's urls or its order (issue #tg-4247)
 - Username and email are case insensitive for new registrations.
