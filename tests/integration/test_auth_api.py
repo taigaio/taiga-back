@@ -122,6 +122,7 @@ def test_auth_uppercase_ignore(client, settings):
                      "accepted_terms": True,
                      "type": "public"}
     response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 201
 
     #Only exists one user with the same lowercase version of username/password
     login_form = {"type": "normal",
@@ -138,15 +139,33 @@ def test_auth_uppercase_ignore(client, settings):
     response = client.post(reverse("auth-list"), login_form)
     assert response.status_code == 200
 
-    #Now we have two users with the same lowercase version of username/password
-    # 1.- The capitalized version works
-    register_form = {"username": "username",
+    # Email is case insensitive in the register process
+    register_form = {"username": "username2",
                      "password": "password",
                      "full_name": "fname",
                      "email": "user@email.com",
                      "accepted_terms": True,
                      "type": "public"}
     response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 400
+
+    # Username is case insensitive in the register process too
+    register_form = {"username": "username",
+                     "password": "password",
+                     "full_name": "fname",
+                     "email": "user2@email.com",
+                     "accepted_terms": True,
+                     "type": "public"}
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 400
+
+    #Now we create a legacy user so we have two users with the same lowercase version of username/email
+    legacy_user = factories.UserFactory(
+            username="username",
+            full_name="fname",
+            email="user@email.com")
+    legacy_user.set_password("password")
+
 
     login_form = {"type": "normal",
                   "username": "Username",
@@ -162,7 +181,7 @@ def test_auth_uppercase_ignore(client, settings):
     response = client.post(reverse("auth-list"), login_form)
     assert response.status_code == 200
 
-    # 2.- If we capitalize a new version it doesn't
+    # 2.- If we capitalize a new version it doesn't work with username
     login_form = {"type": "normal",
                   "username": "uSername",
                   "password": "password"}
@@ -170,6 +189,7 @@ def test_auth_uppercase_ignore(client, settings):
     response = client.post(reverse("auth-list"), login_form)
     assert response.status_code == 400
 
+    # neither with the email
     login_form = {"type": "normal",
                   "username": "uSer@email.com",
                   "password": "password"}

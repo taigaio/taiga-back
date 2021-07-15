@@ -4,6 +4,7 @@
 
 - Add date_cancelled to User
 - Avoid logging in the history changes in the attachment's urls or its order (issue #tg-4247)
+- Username and email are case insensitive for new registrations.
 
 ## 6.2.1 (2021-06-22)
 

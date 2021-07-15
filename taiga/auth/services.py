@@ -62,10 +62,10 @@ def is_user_already_registered(*, username:str, email:str) -> (bool, str):
     """
 
     user_model = get_user_model()
-    if user_model.objects.filter(username=username):
+    if user_model.objects.filter(username__iexact=username):
         return (True, _("Username is already in use."))
 
-    if user_model.objects.filter(email=email):
+    if user_model.objects.filter(email__iexact=email):
         return (True, _("Email is already in use."))
 
     return (False, None)
