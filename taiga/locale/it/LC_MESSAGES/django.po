@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-06-29 15:33+0000\n"
+"PO-Revision-Date: 2021-07-29 10:33+0000\n"
 "Last-Translator: random r <epsilin@yopmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "it/>\n"
@@ -28,19 +28,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.7.1-dev\n"
+"X-Generator: Weblate 4.7.2-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "Le registrazioni pubbliche sono disattivate."
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
 msgstr ""
+"Devi accettare i nostri termini di servizio e l'informativa sulla privacy"
 
 #: taiga/auth/api.py:100
 msgid "invalid registration type"
-msgstr ""
+msgstr "tipo di registrazione non valido"
 
 #: taiga/auth/api.py:116
 msgid "invalid login type"
@@ -56,7 +57,7 @@ msgstr "L'email inserita è già utilizzata."
 
 #: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "Il token non corrisponde ad un invito valido."
 
 #: taiga/auth/services.py:126
 msgid "User is already registered."
@@ -68,7 +69,7 @@ msgstr "Questo utente fa già parte del progetto."
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
-msgstr ""
+msgstr "Errore di creazione del nuovo utente."
 
 #: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
 #: taiga/external_apps/services.py:32 taiga/projects/api.py:432
@@ -89,7 +90,7 @@ msgstr ""
 #: taiga/auth/validators.py:48 taiga/auth/validators.py:51
 #: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
-msgstr ""
+msgstr "Nome completo non valido"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
@@ -380,7 +381,7 @@ msgstr "Non c'e' piu' spazio per altri progetti."
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s non è una lista"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
@@ -407,6 +408,11 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>Benvenuti in "
+"%(product_name)s, uno strumento Open Source e Agile di gestione progetti</p>"
+"\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:7
 #, python-format
@@ -420,6 +426,14 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">Configura le notifiche email "
+"o disiscriviti</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">Supporto di Taiga</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >Contattaci</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:18
 msgid "Follow us on Twitter"
@@ -467,11 +481,11 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:65
 msgid "Host access error"
-msgstr ""
+msgstr "Errore accesso host"
 
 #: taiga/base/utils/urls.py:71
 msgid "IP Address error"
-msgstr ""
+msgstr "Errore indirizzo IP"
 
 #: taiga/events/events.py:119
 msgid "User story created"
