@@ -49,13 +49,14 @@ class IssuesEventHook(BaseGitHubEventHook, BaseIssueEventHook):
         description = self.payload.get('issue', {}).get('body', None)
         project_url = self.payload.get('repository', {}).get('html_url', None)
         state = self.payload.get('issue', {}).get('state', 'open')
+
         return {
             "number": self.payload.get('issue', {}).get('number', None),
             "subject": self.payload.get('issue', {}).get('title', None),
             "url": self.payload.get('issue', {}).get('html_url', None),
-            "user_id": self.payload.get('issue', {}).get('user', {}).get('id', None),
-            "user_name": self.payload.get('issue', {}).get('user', {}).get('login', None),
-            "user_url": self.payload.get('issue', {}).get('user', {}).get('html_url', None),
+            "user_id": self.payload.get('sender', {}).get('id', None),
+            "user_name": self.payload.get('sender', {}).get('login', None),
+            "user_url": self.payload.get('sender', {}).get('html_url', None),
             "description": self.replace_github_references(project_url, description),
             "status": self.close_status if state == "closed" else self.open_status,
         }
