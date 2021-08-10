@@ -1,6 +1,10 @@
 # Changelog
 
-## 6.3.0 (unreleased)
+## 6.3.1 (unreleased)
+
+- ...
+
+## 6.3.0 (2021-08-10)
 
 - New Auth module, based on djangorestframework-simplejwt (history #tg-4625, issue #tgg-626))
 - Fix the user when closing an issue from Github (issue #tg-4563)
