@@ -6,14 +6,15 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from __future__ import unicode_literals
-
-from django.db import migrations
-from django.core.files import File
-
+import os.path
 import uuid
 
+from django.conf import settings
+from django.core.files import File
+from django.db import migrations
 
-def create_github_system_user(apps, schema_editor):
+
+def create_gitlab_system_user(apps, schema_editor):
     # We get the model from the versioned app registry;
     # if we directly import it, it'll be the wrong version
     User = apps.get_model("users", "User")
@@ -27,7 +28,7 @@ def create_github_system_user(apps, schema_editor):
         is_system=True,
         bio="",
     )
-    f = open("taiga/hooks/gitlab/migrations/logo.png", "rb")
+    f = open(os.path.join(settings.BASE_DIR, "taiga/hooks/gitlab/migrations/logo.png"), "rb")
     user.photo.save("logo.png", File(f))
     user.save()
     f.close()
@@ -40,5 +41,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_github_system_user),
+        migrations.RunPython(create_gitlab_system_user),
     ]

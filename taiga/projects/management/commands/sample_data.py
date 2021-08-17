@@ -42,7 +42,7 @@ from taiga.projects.services.stats import get_stats_for_project
 
 
 ATTACHMENT_SAMPLE_DATA = [
-    "taiga/projects/management/commands/sample_data",
+    path.join(settings.BASE_DIR, "taiga/projects/management/commands/sample_data"),
     [".txt", ]
 ]
 

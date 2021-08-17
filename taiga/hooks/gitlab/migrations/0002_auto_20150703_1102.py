@@ -6,9 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from __future__ import unicode_literals
+import os.path
 
+from django.conf import settings
 from django.db import models, migrations
 from django.core.files import File
+
 
 def update_gitlab_system_user_photo_to_v2(apps, schema_editor):
     # We get the model from the versioned app registry;
@@ -20,7 +23,7 @@ def update_gitlab_system_user_photo_to_v2(apps, schema_editor):
         user = User.objects.using(db_alias).get(username__startswith="gitlab-",
                                                 is_active=False,
                                                 is_system=True)
-        f = open("taiga/hooks/gitlab/migrations/logo-v2.png", "rb")
+        f = open(os.path.join(settings.BASE_DIR, "taiga/hooks/gitlab/migrations/logo-v2.png"), "rb")
         user.photo.save("logo.png", File(f))
         user.save()
         f.close()
@@ -37,7 +40,7 @@ def update_gitlab_system_user_photo_to_v1(apps, schema_editor):
         user = User.objects.using(db_alias).get(username__startswith="gitlab-",
                                                 is_active=False,
                                                 is_system=True)
-        f = open("taiga/hooks/gitlab/migrations/logo.png", "rb")
+        f = open(os.path.join(settings.BASE_DIR, "taiga/hooks/gitlab/migrations/logo.png"), "rb")
         user.photo.save("logo.png", File(f))
         user.save()
         f.close()
