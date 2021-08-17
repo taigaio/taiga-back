@@ -10,7 +10,7 @@ from taiga.base import throttling
 
 class LoginFailRateThrottle(throttling.GlobalThrottlingMixin, throttling.ThrottleByActionMixin, throttling.SimpleRateThrottle):
     scope = "login-fail"
-    throttled_actions = ["create", "refresh", "validate"]
+    throttled_actions = ["create", "refresh", "verify"]
 
     def throttle_success(self, request, view):
         return True
