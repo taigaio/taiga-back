@@ -20,7 +20,7 @@ def send_telemetry():
     rudder_analytics.data_plane_url = settings.DATA_PLANE_URL
 
     instance = services.get_or_create_instance_info()
-    instance_host = f'{ settings.SITES["front"]["scheme"] }://{ settings.SITES["front"]["domain"] }'
+    instance_host = f'{ settings.SITES["front"]["scheme"] }://{ settings.SITES["front"]["domain"] }{ settings.FORCE_SCRIPT_NAME }'
     event = 'Daily telemetry'
 
     properties = {
