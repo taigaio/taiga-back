@@ -1,5 +1,8 @@
 ## Taiga Backend
 
+&gt; **READ THIS FIRST!**: We recently announced Taiga plans for the future and they greatly affect how we manage this repository and the current Taiga 6 release. Check it [here](https://blog.taiga.io/announcing_taiganext.html).
+
+
 [![Managed with Taiga.io](https://img.shields.io/badge/managed%20with-TAIGA.io-709f14.svg)](https://tree.taiga.io/project/taiga/ "Managed with Taiga.io")
 [![Tests Status](https://github.com/kaleidos-ventures/taiga-back/workflows/Taiga%20Back%20-%20Test%20and%20Coverage/badge.svg?branch=main)](https://github.com/kaleidos-ventures/taiga-back/actions?query=workflow%3A%22Taiga+Back+-+Test+and+Coverage%22 "Tests Status")
 [![Coverage Status](https://img.shields.io/coveralls/kaleidos-ventures/taiga-back/main.svg)](https://coveralls.io/r/kaleidos-ventures/taiga-back?branch=main "Coverage Status")
