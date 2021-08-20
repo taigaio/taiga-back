@@ -1,10 +1,12 @@
 ---
 name: "\U0001F41E Bug report"
 about: Create a report to help us improve
-title: '[BUG] '
+title: "[BUG] "
 labels: bug
 assignees: ''
+
 ---
+
 <!--
   Please, make sure to look through existing issues(https://tree.taiga.io/project/taiga/issues) to see whether your bug has already been submitted.
   Describe the bug with as much detail as possible to make it easier for us to fix it. If you share any configuration, please, ensure you redact all your credentials.
