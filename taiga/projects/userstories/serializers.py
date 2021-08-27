@@ -184,6 +184,11 @@ class UserStoryLightSerializer(ProjectExtraInfoSerializerMixin,
     blocked_note = Field()
 
 
+class UserStoryOnlyRefSerializer(serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+
+
 class UserStoryNestedSerializer(ProjectExtraInfoSerializerMixin,
                                 StatusExtraInfoSerializerMixin,
                                 AssignedToExtraInfoSerializerMixin,

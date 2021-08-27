@@ -95,41 +95,48 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         if self.action in ["retrieve", "by_ref"]:
             return serializers.UserStoryNeighborsSerializer
 
-        if self.action == "list" and self.request.QUERY_PARAMS.get('dashboard', False):
-            return serializers.UserStoryLightSerializer
-
         if self.action == "list":
+            if self.request.QUERY_PARAMS.get('dashboard', False):
+                return serializers.UserStoryLightSerializer
+            elif self.request.QUERY_PARAMS.get('only_ref', False):
+                return serializers.UserStoryOnlyRefSerializer
             return serializers.UserStoryListSerializer
 
         return serializers.UserStorySerializer
 
     def get_queryset(self):
         qs = super().get_queryset()
+
+        if self.request.QUERY_PARAMS.get('only_ref', False):
+            return qs
+
         qs = qs.select_related("project",
                                "status",
                                "assigned_to")
 
-        if not self.request.QUERY_PARAMS.get('dashboard', False):
-            qs = qs.select_related("milestone",
-                                   "owner",
-                                   "generated_from_issue",
-                                   "generated_from_task")
+        if self.request.QUERY_PARAMS.get('dashboard', False):
+            return qs
 
-            qs = qs.prefetch_related("assigned_users")
-            include_attachments = "include_attachments" in self.request.QUERY_PARAMS
-            include_tasks = "include_tasks" in self.request.QUERY_PARAMS
+        qs = qs.select_related("milestone",
+                               "owner",
+                               "generated_from_issue",
+                               "generated_from_task")
 
-            epic_id = self.request.QUERY_PARAMS.get("epic", None)
-            # We can be filtering by more than one epic so epic_id can consist
-            # of different ids separated by comma. In that situation we will use
-            # only the first
-            if epic_id is not None:
-                epic_id = epic_id.split(",")[0]
+        qs = qs.prefetch_related("assigned_users")
+        include_attachments = "include_attachments" in self.request.QUERY_PARAMS
+        include_tasks = "include_tasks" in self.request.QUERY_PARAMS
 
-            qs = attach_extra_info(qs, user=self.request.user,
-                                   include_attachments=include_attachments,
-                                   include_tasks=include_tasks,
-                                   epic_id=epic_id)
+        epic_id = self.request.QUERY_PARAMS.get("epic", None)
+        # We can be filtering by more than one epic so epic_id can consist
+        # of different ids separated by comma. In that situation we will use
+        # only the first
+        if epic_id is not None:
+            epic_id = epic_id.split(",")[0]
+
+        qs = attach_extra_info(qs, user=self.request.user,
+                               include_attachments=include_attachments,
+                               include_tasks=include_tasks,
+                               epic_id=epic_id)
         return qs
 
     # Updating some attributes of the userstory can affect the ordering in the backlog, kanban or taskboard
