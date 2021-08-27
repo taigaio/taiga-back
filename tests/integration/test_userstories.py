@@ -1654,3 +1654,18 @@ def test_api_headers_userstories_without_swimlane_not_send(client):
     assert response.status_code == 200, response.data
     assert "taiga-info-userstories-without-swimlane" in response["access-control-expose-headers"]
     assert response.has_header("Taiga-Info-Userstories-Without-Swimlane") == False
+
+
+def test_api_list_userstory_using_onlyref_serializer(client):
+    project = f.create_project(owner=f.UserFactory.create() )
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    us3 = f.create_userstory(project=project)
+
+    url = f"{reverse('userstories-list')}?only_ref=true"
+
+    client.login(project.owner)
+    response = client.json.get(url)
+    assert response.status_code == 200, response.data
+    assert set(response.data[0].keys()) == set(["id", "ref"])

@@ -1,14 +1,14 @@
 # Changelog
 
-## 6.3.1 (unreleased)
+## 6.4.0 (unreleased)
 
-- ...
+- Serve Taiga in subpath
+- Add new serializer to userstories endpoint witn minimal info (id, ref) (issue #tg-4739)
 
 ## 6.3.0 (2021-08-10)
 
 - New Auth module, based on djangorestframework-simplejwt (history #tg-4625, issue #tgg-626))
 - Fix the user when closing an issue from Github (issue #tg-4563)
-- Serve Taiga in subpath
 
 ## 6.2.2 (2021-07-15)
 
