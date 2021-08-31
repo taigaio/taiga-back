@@ -13,16 +13,16 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Turkish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
-"language/tr/)\n"
+"PO-Revision-Date: 2021-09-01 10:53+0000\n"
+"Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
+"Language-Team: Turkish <https://hosted.weblate.org/projects/taiga/taiga-back/"
+"tr/>\n"
+"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: tr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.8.1-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
@@ -179,15 +179,15 @@ msgstr ""
 
 #: taiga/base/api/fields.py:1003
 msgid "No file was submitted. Check the encoding type on the form."
-msgstr "Dosya ibraz edilmedi. Formdan kodlama tipini kontrol edin."
+msgstr "Dosya gönderilmedi. Formdaki kodlama türünü gözden geçirin."
 
 #: taiga/base/api/fields.py:1004
 msgid "No file was submitted."
-msgstr "Dosya ibraz edilmedi."
+msgstr "Dosya gönderilmedi."
 
 #: taiga/base/api/fields.py:1005
 msgid "The submitted file is empty."
-msgstr "İbraz edilen dosya boş"
+msgstr "Gönderilen dosya boş."
 
 #: taiga/base/api/fields.py:1006
 #, python-format
@@ -195,13 +195,13 @@ msgid ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr ""
 "Bu dosya adının en fazla %(max)d karakterden oluştuğundan (uzunluğunun "
-"%(length)d olduğundan) emin olun"
+"%(length)d olduğundan) emin olun."
 
 #: taiga/base/api/fields.py:1007
 msgid "Please either submit a file or check the clear checkbox, not both."
 msgstr ""
-"Lütfen bir dosya ibraz edin ya da onay kutusunu seçmeyin, ikisini birden  "
-"olmaz."
+"Lütfen ya bir dosya gönderin ya da onay kutusunu işaretleyin, her ikisini "
+"birden yapmayın."
 
 #: taiga/base/api/fields.py:1047
 msgid ""
@@ -331,7 +331,7 @@ msgstr ""
 #: taiga/base/exceptions.py:114
 #, python-format
 msgid "Unsupported media type '%s' in request."
-msgstr "'%s' talebinde desteklenmeyen ortam tipi mevcut"
+msgstr "'%s' talebinde desteklenmeyen ortam türü var."
 
 #: taiga/base/exceptions.py:122
 msgid "Request was throttled."
@@ -364,7 +364,7 @@ msgstr "Veri doğrulama hatası"
 
 #: taiga/base/exceptions.py:186
 msgid "Integrity Error for wrong or invalid arguments"
-msgstr "Hatalı ya da geçersiz parametreler için Bütünlük Hatası "
+msgstr "Yanlış veya geçersiz parametreler için Bütünlük Hatası"
 
 #: taiga/base/exceptions.py:193
 msgid "Precondition error"
@@ -445,8 +445,11 @@ msgid ""
 "                                                                    "
 msgstr ""
 "\n"
+"                                                                    "
 "<h3>yorum:</h3>\n"
-"<p>%(comment)s</p>"
+"                                                                    "
+"<p>%(comment)s</p>\n"
+"                                                                    "
 
 #: taiga/base/templates/emails/updates-body-text.jinja:6
 #, python-format
@@ -456,7 +459,8 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"Yorumlar: %(comment)s"
+"    Yorum: %(comment)s\n"
+"        "
 
 #: taiga/base/utils/urls.py:65
 msgid "Host access error"
@@ -808,7 +812,7 @@ msgstr ""
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your project dump has been imported"
-msgstr "[%(project)s]  Projenizin döküm dosyası içe aktarıldı"
+msgstr "[%(project)s] Projenizin döküm dosyası içe aktarıldı"
 
 #: taiga/export_import/validators/fields.py:142
 msgid "{}=\"{}\" not found in this project"
@@ -920,8 +924,10 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<h1>Geri Bildirim</h1>\n"
-"<p>Taiga %(full_name)s <%(email)s> kullanıcısından geri bildirim aldı</p>"
+"    <h1>Geri Bildirim</h1>\n"
+"    <p>Taiga, %(full_name)s <%(email)s> kullanıcısından geri bildirim "
+"aldı</p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:9
 #, python-format
@@ -932,8 +938,9 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<h3>Yorum</h3>\n"
-"<p>%(comment)s</p>"
+"    <h3>Yorum</h3>\n"
+"    <p>%(comment)s</p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:18
 #: taiga/projects/admin.py:104 taiga/users/admin.py:118
@@ -992,7 +999,7 @@ msgid ""
 "[Taiga] Feedback from %(full_name)s <%(email)s>\n"
 msgstr ""
 "\n"
-"[Taiga]  %(full_name)s <%(email)s> den geri bildirim\n"
+"[Taiga] %(full_name)s <%(email)s> kullanıcısından geri bildirim\n"
 
 #: taiga/hooks/api.py:52
 msgid "The payload is not valid json"
@@ -1002,7 +1009,7 @@ msgstr ""
 #: taiga/projects/issues/api.py:146 taiga/projects/tasks/api.py:214
 #: taiga/projects/userstories/api.py:339
 msgid "The project doesn't exist"
-msgstr "Proje mevcut değil."
+msgstr "Proje mevcut değil"
 
 #: taiga/hooks/api.py:64
 msgid "Bad signature"
@@ -2178,7 +2185,7 @@ msgstr "taşınabilirlik"
 
 #: taiga/projects/milestones/models.py:86
 msgid "The estimated start must be previous to the estimated finish."
-msgstr "Tahmini başlangıç, tahmini bitişten önce olmalı"
+msgstr "Tahmini başlangıç, tahmini bitişten önce olmalı."
 
 #: taiga/projects/milestones/validators.py:33
 msgid "There's no milestone with that id"
@@ -4385,7 +4392,7 @@ msgstr "izinler"
 
 #: taiga/users/services.py:56 taiga/users/services.py:73
 msgid "Username or password does not matches user."
-msgstr "Kullanıcı adı veya parola kullanıcıyla uyuşmuyor"
+msgstr "Kullanıcı adı veya parola kullanıcıyla eşleşmiyor."
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4
 #, python-format
