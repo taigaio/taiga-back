@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-09-01 10:53+0000\n"
+"PO-Revision-Date: 2021-09-06 18:32+0000\n"
 "Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "tr/>\n"
@@ -26,15 +26,15 @@ msgstr ""
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "Herkese açık kayıt devre dışı bırakıldı."
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
-msgstr ""
+msgstr "Hizmet şartlarımızı ve gizlilik politikamızı kabul etmelisiniz"
 
 #: taiga/auth/api.py:100
 msgid "invalid registration type"
-msgstr ""
+msgstr "geçersiz kayıt türü"
 
 #: taiga/auth/api.py:116
 msgid "invalid login type"
@@ -50,7 +50,7 @@ msgstr "E-posta zaten kullanımda."
 
 #: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "Kupon, herhangi bir geçerli davetle eşleşmiyor."
 
 #: taiga/auth/services.py:126
 msgid "User is already registered."
@@ -62,7 +62,7 @@ msgstr "Bu kullanızı halihazırda zaten projenin bir üyesi."
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
-msgstr ""
+msgstr "Yeni kullanıcı oluşturulurken hata oluştu."
 
 #: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
 #: taiga/external_apps/services.py:32 taiga/projects/api.py:432
@@ -83,7 +83,7 @@ msgstr ""
 #: taiga/auth/validators.py:48 taiga/auth/validators.py:51
 #: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
-msgstr ""
+msgstr "Geçersiz tam ad"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
@@ -114,7 +114,7 @@ msgstr ""
 
 #: taiga/base/api/fields.py:636
 msgid "You email domain is not allowed"
-msgstr ""
+msgstr "E-posta etki alanı adınıza izin verilmiyor"
 
 #: taiga/base/api/fields.py:645
 msgid "Enter a valid email address."
@@ -326,7 +326,7 @@ msgstr "'%s' yöntemine izin verilmiyor."
 
 #: taiga/base/exceptions.py:105
 msgid "Could not satisfy the request's Accept header"
-msgstr ""
+msgstr "İsteğin Kabul Et başlığı karşılanamadı"
 
 #: taiga/base/exceptions.py:114
 #, python-format
@@ -335,12 +335,12 @@ msgstr "'%s' talebinde desteklenmeyen ortam türü var."
 
 #: taiga/base/exceptions.py:122
 msgid "Request was throttled."
-msgstr ""
+msgstr "İstek kısıtlandı."
 
 #: taiga/base/exceptions.py:123
 #, python-format
 msgid "Expected available in %d second%s."
-msgstr ""
+msgstr "%d saniye(%s) içinde kullanılabilir olması bekleniyor."
 
 #: taiga/base/exceptions.py:137
 msgid "Unexpected error"
@@ -352,7 +352,7 @@ msgstr "Bulunamadı."
 
 #: taiga/base/exceptions.py:154
 msgid "Method not supported for this endpoint."
-msgstr ""
+msgstr "Bu uç nokta için yöntem desteklenmiyor."
 
 #: taiga/base/exceptions.py:162 taiga/base/exceptions.py:170
 msgid "Wrong arguments."
@@ -377,7 +377,7 @@ msgstr "Daha fazla proje için yer kalmadı."
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s bir liste değil"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
@@ -404,6 +404,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>Açık Kaynaklı, Çevik "
+"Proje Yönetimi Aracı Olan %(product_name)s'ya Hoş Geldiniz</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:7
 #, python-format
@@ -417,6 +421,15 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">E-posta bildirimlerini "
+"yapılandırın veya abonelikten çıkın</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">Taiga Destek</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >Bizimle iletişime "
+"geçin</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:18
 msgid "Follow us on Twitter"
@@ -464,91 +477,91 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:65
 msgid "Host access error"
-msgstr ""
+msgstr "Ana makine erişim hatası"
 
 #: taiga/base/utils/urls.py:71
 msgid "IP Address error"
-msgstr ""
+msgstr "IP adresi hatası"
 
 #: taiga/events/events.py:119
 msgid "User story created"
-msgstr ""
+msgstr "Kullanıcı hikayesi oluşturuldu"
 
 #: taiga/events/events.py:122
 msgid "User story changed"
-msgstr ""
+msgstr "Kullanıcı hikayesi değiştirildi"
 
 #: taiga/events/events.py:125
 msgid "User story deleted"
-msgstr ""
+msgstr "Kullanıcı hikayesi silindi"
 
 #: taiga/events/events.py:127
 msgid "US #{} - {}"
-msgstr ""
+msgstr "Kullanıcı hikayesi #{} - {}"
 
 #: taiga/events/events.py:130
 msgid "Task created"
-msgstr ""
+msgstr "Görev oluşturuldu"
 
 #: taiga/events/events.py:133
 msgid "Task changed"
-msgstr ""
+msgstr "Görev değiştirildi"
 
 #: taiga/events/events.py:136
 msgid "Task deleted"
-msgstr ""
+msgstr "Görev silindi"
 
 #: taiga/events/events.py:138
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "Görev #{} - {}"
 
 #: taiga/events/events.py:141
 msgid "Issue created"
-msgstr ""
+msgstr "Talep oluşturuldu"
 
 #: taiga/events/events.py:144
 msgid "Issue changed"
-msgstr ""
+msgstr "Talep değiştirildi"
 
 #: taiga/events/events.py:147
 msgid "Issue deleted"
-msgstr ""
+msgstr "Talep silindi"
 
 #: taiga/events/events.py:149
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "Talep: #{} - {}"
 
 #: taiga/events/events.py:152
 msgid "Wiki Page created"
-msgstr ""
+msgstr "Wiki sayfası oluşturuldu"
 
 #: taiga/events/events.py:155
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "Wiki sayfası değiştirildi"
 
 #: taiga/events/events.py:158
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "Wiki sayfası silindi"
 
 #: taiga/events/events.py:160
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "Wiki sayfası: {}"
 
 #: taiga/events/events.py:163
 msgid "Sprint created"
-msgstr ""
+msgstr "Koşu oluşturuldu"
 
 #: taiga/events/events.py:166
 msgid "Sprint changed"
-msgstr ""
+msgstr "Koşu değiştirildi"
 
 #: taiga/events/events.py:169
 msgid "Sprint deleted"
-msgstr ""
+msgstr "Koşu silindi"
 
 #: taiga/events/events.py:171
 msgid "Sprint: {}"
-msgstr ""
+msgstr "Koşu: {}"
 
 #: taiga/export_import/api.py:125
 msgid "We needed at least one role"
@@ -577,15 +590,15 @@ msgstr "İçeri aktarılan üyeliklerde hata"
 
 #: taiga/export_import/services/store.py:864
 msgid "error importing lists of project attributes"
-msgstr "proje öznitelikleri listesi içeriye aktarılırken hata oluştu"
+msgstr "proje öznitelikleri listesi içeri aktarılırken hata oluştu"
 
 #: taiga/export_import/services/store.py:868
 msgid "error importing default project attribute values"
-msgstr ""
+msgstr "öntanımlı proje öznitelik değerleri içeri aktarılırken hata oluştu"
 
 #: taiga/export_import/services/store.py:879
 msgid "error importing custom attributes"
-msgstr "özel öznitelikler içeri aktarılırken hata"
+msgstr "özel öznitelikler içeri aktarılırken hata oluştu"
 
 #: taiga/export_import/services/store.py:882
 msgid "error importing sprints"
@@ -601,7 +614,7 @@ msgstr "İçeri aktarılan kullanıcı hikayelerinde hata"
 
 #: taiga/export_import/services/store.py:894
 msgid "error importing epics"
-msgstr ""
+msgstr "destanlar içeri aktarılırken hata oluştu"
 
 #: taiga/export_import/services/store.py:898
 msgid "error importing tasks"
@@ -625,7 +638,7 @@ msgstr "zaman çizelgesi içeri aktarılırken hata"
 
 #: taiga/export_import/services/store.py:940
 msgid "unexpected error importing project"
-msgstr ""
+msgstr "proje içeri aktarılırken beklenmeyen bir hata oluştu"
 
 #: taiga/export_import/tasks.py:60 taiga/export_import/tasks.py:61
 msgid "Error generating project dump"
@@ -650,6 +663,22 @@ msgid ""
 "TRACE ERROR:\n"
 "------------"
 msgstr ""
+"\n"
+"\n"
+"{user_full_name} <{user_email}> tarafından oluşturulan döküm yüklenirken "
+"hata oluştu:\"\n"
+"\n"
+"\n"
+"NEDEN:\n"
+"-------\n"
+"{reason}\n"
+"\n"
+"AYRINTILAR:\n"
+"--------\n"
+"{details}\n"
+"\n"
+"HATA İZLEMESİ:\n"
+"------------"
 
 #: taiga/export_import/tasks.py:118
 msgid "Error loading project dump"
@@ -657,11 +686,11 @@ msgstr "Proje dökümü yükleniyorken hata"
 
 #: taiga/export_import/tasks.py:119
 msgid "Error loading your project dump file"
-msgstr ""
+msgstr "Proje döküm dosyanız yüklenirken hata oluştu"
 
 #: taiga/export_import/tasks.py:134
 msgid "  -- no detail info --"
-msgstr ""
+msgstr "  -- ayrıntı bilgisi yok --"
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:4
 #, python-format
@@ -678,6 +707,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Proje dökümü oluşturuldu</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <h3>%(project)s projesindeki dökümünüz doğru şekilde oluşturuldu.</h3>\n"
+"    <p>Buradan indirebilirsiniz:</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Download the dump file\""
+">Döküm dosyasını indir</a>\n"
+"    <p>Bu dosya %(deletion_date)s tarihinde silinecek.</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/dump_project-body-text.jinja:1
 #, python-format
@@ -695,6 +734,18 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Merhaba %(user)s,\n"
+"\n"
+"%(project)s projesindeki dökümünüz doğru şekilde oluşturuldu. Buradan "
+"indirebilirsiniz:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Bu dosya %(deletion_date)s tarihinde silinecek.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:1
 #, python-format
@@ -715,6 +766,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <p>%(project)s projeniz doğru şekilde dışa aktarılmadı.</p>\n"
+"    <p>Taiga sistem yöneticilerine bilgi verildi.<br/> Lütfen tekrar deneyin "
+"veya aşağıdaki adresten destek ekibiyle iletişime geçin:\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:1
 #, python-format
@@ -732,6 +793,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Merhaba %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"%(project)s projeniz doğru şekilde dışa aktarılmadı.\n"
+"\n"
+"Taiga sistem yöneticilerine bilgi verildi.\n"
+"\n"
+"Lütfen tekrar deneyin veya %(support_email)s adresinden destek ekibiyle "
+"iletişime geçin.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:1
 #, python-format
@@ -754,6 +828,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <p>Projeniz doğru şekilde içe aktarılmadı.</p>\n"
+"    <p>%(product_name)s sistem yöneticilerine bilgi verildi.<br/> Lütfen "
+"tekrar deneyin veya aşağıdaki adresten destek ekibiyle iletişime geçin:\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>Hata ayrıntıları</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:1
@@ -773,6 +859,20 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Merhaba %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"\n"
+"Projeniz doğru şekilde içe aktarılmadı.\n"
+"\n"
+"%(product_name)s sistem yöneticilerine bilgi verildi.\n"
+"\n"
+"Lütfen tekrar deneyin veya %(support_email)s adresinden destek ekibiyle "
+"iletişime geçin.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:1
@@ -792,6 +892,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Proje dökümü içe aktarıldı</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <h3>Proje dökümünüz doğru şekilde içe aktarıldı.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">%(project)s'e git</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/load_dump-body-text.jinja:1
 #, python-format
@@ -808,6 +916,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Merhaba %(user)s,\n"
+"\n"
+"Proje dökümünüz doğru şekilde içe aktarıldı\n"
+"\n"
+"%(project)s projesini buradan görebilirsiniz:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:1
 #, python-format
@@ -826,12 +945,12 @@ msgstr "Geçersiz içerik. {\"key\": \"value\",...} şeklinde olması zorunlu"
 #: taiga/export_import/validators/validators.py:197
 #: taiga/projects/custom_attributes/validators.py:122
 msgid "It contains invalid custom fields."
-msgstr ""
+msgstr "Geçersiz özel alanlar içeriyor."
 
 #: taiga/export_import/validators/validators.py:277
 #: taiga/projects/validators.py:52
 msgid "Duplicated name"
-msgstr ""
+msgstr "Yinelenen ad"
 
 #: taiga/export_import/validators/validators.py:312
 #, python-format
@@ -839,6 +958,8 @@ msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
+"Bir destanın harici bir projeden (%(project)s) ilgili bir hikayesi var ve "
+"içe aktarılamıyor"
 
 #: taiga/external_apps/api.py:41 taiga/external_apps/api.py:68
 #: taiga/external_apps/api.py:80
@@ -956,6 +1077,9 @@ msgid ""
 "        <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:1
 #, python-format
@@ -991,6 +1115,9 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/feedback/templates/emails/feedback_notification-subject.jinja:1
 #, python-format
@@ -1003,7 +1130,7 @@ msgstr ""
 
 #: taiga/hooks/api.py:52
 msgid "The payload is not valid json"
-msgstr ""
+msgstr "Paket geçerli bir json değil"
 
 #: taiga/hooks/api.py:61 taiga/projects/epics/api.py:152
 #: taiga/projects/issues/api.py:146 taiga/projects/tasks/api.py:214
@@ -1023,6 +1150,10 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}]({user_url} \"{user_name}'in {platform} profiline bak\") diyor "
+"ki [{platform}#{number}]({comment_url} \"Yoruma git\"):\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:84
 #, python-brace-format
@@ -1031,6 +1162,9 @@ msgid ""
 "\n"
 "> {comment_message}"
 msgstr ""
+"{platform} yorumu:\n"
+"\n"
+"> {comment_message}"
 
 #: taiga/hooks/event_hooks.py:97
 msgid "Invalid issue comment information"
@@ -1090,7 +1224,7 @@ msgstr "Geçersiz talep bilgisi"
 
 #: taiga/hooks/event_hooks.py:300 taiga/hooks/event_hooks.py:322
 msgid "unknown user"
-msgstr ""
+msgstr "bilinmeyen kullanıcı"
 
 #: taiga/hooks/event_hooks.py:307
 #, python-brace-format
@@ -1137,42 +1271,42 @@ msgstr "Durum mevcut değil"
 #: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
 #: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
 msgid "The project param is needed"
-msgstr ""
+msgstr "Proje parametresi gerekli"
 
 #: taiga/importers/asana/api.py:51 taiga/importers/asana/api.py:74
 #: taiga/importers/asana/api.py:140
 msgid "Invalid Asana API request"
-msgstr ""
+msgstr "Geçersiz Asana API isteği"
 
 #: taiga/importers/asana/api.py:53 taiga/importers/asana/api.py:76
 #: taiga/importers/asana/api.py:142
 msgid "Failed to make the request to Asana API"
-msgstr ""
+msgstr "Asana API'sine istekte bulunulamadı"
 
 #: taiga/importers/asana/api.py:130 taiga/importers/github/api.py:124
 msgid "Code param needed"
-msgstr ""
+msgstr "Kod parametresi gerekli"
 
 #: taiga/importers/asana/tasks.py:40 taiga/importers/asana/tasks.py:41
 msgid "Error importing Asana project"
-msgstr ""
+msgstr "Asana projesi içe aktarılırken hata oluştu"
 
 #: taiga/importers/github/api.py:136
 msgid "Invalid auth data"
-msgstr ""
+msgstr "Geçersiz kimlik doğrulama verileri"
 
 #: taiga/importers/github/api.py:138
 msgid "Third party service failing"
-msgstr ""
+msgstr "Üçüncü taraf hizmeti başarısız"
 
 #: taiga/importers/github/tasks.py:40 taiga/importers/github/tasks.py:41
 msgid "Error importing GitHub project"
-msgstr ""
+msgstr "GitHub projesi içe aktarılırken hata oluştu"
 
 #: taiga/importers/jira/api.py:63 taiga/importers/jira/api.py:98
 #: taiga/importers/jira/api.py:118 taiga/importers/jira/api.py:191
 msgid "The url param is needed"
-msgstr ""
+msgstr "url parametresi gerekli"
 
 #: taiga/importers/jira/api.py:70
 msgid ""
@@ -1181,27 +1315,31 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"                Muhtemelen desteklenmeyen bir Jira sürümü nedeniyle bir hata "
+"oluştu.\n"
+"                Taiga, 8.6'dan sonraki Jira sürümlerini desteklemez."
 
 #: taiga/importers/jira/api.py:167
 msgid "Invalid project_type {}"
-msgstr ""
+msgstr "Geçersiz project_type {}"
 
 #: taiga/importers/jira/api.py:201
 msgid "Invalid Jira server configuration."
-msgstr ""
+msgstr "Geçersiz Jira sunucu yapılandırması."
 
 #: taiga/importers/jira/api.py:242 taiga/importers/pivotal/api.py:139
 #: taiga/importers/trello/api.py:144
 msgid "Invalid or expired auth token"
-msgstr ""
+msgstr "Geçersiz veya süresi dolmuş kimlik doğrulama kuponu"
 
 #: taiga/importers/jira/tasks.py:46 taiga/importers/jira/tasks.py:47
 msgid "Error importing Jira project"
-msgstr ""
+msgstr "Jira projesi içe aktarılırken hata oluştu"
 
 #: taiga/importers/pivotal/tasks.py:40 taiga/importers/pivotal/tasks.py:41
 msgid "Error importing PivotalTracker project"
-msgstr ""
+msgstr "PivotalTracker projesi içe aktarılırken hata oluştu"
 
 #: taiga/importers/templates/emails/asana_import_success-body-html.jinja:4
 #, python-format
@@ -1215,6 +1353,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Asana Projesi içe aktarıldı</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <h3>Asana projeniz doğru şekilde içe aktarıldı.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">%(project)s'e git</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:1
 #, python-format
@@ -1231,11 +1377,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Merhaba %(user)s,\n"
+"\n"
+"Asana projeniz doğru şekilde içe aktarıldı.\n"
+"\n"
+"%(project)s projesini buradan göebilirsiniz:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Asana project has been imported"
-msgstr ""
+msgstr "[%(project)s] Asana projeniz içe aktarıldı"
 
 #: taiga/importers/templates/emails/github_import_success-body-html.jinja:4
 #, python-format
@@ -1249,6 +1406,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>GitHub Projesi içe aktarıldı</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <h3>GitHub projeniz doğru şekilde içe aktarıldı.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">%(project)s'e git</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/github_import_success-body-text.jinja:1
 #, python-format
@@ -1265,11 +1430,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Merhaba %(user)s,\n"
+"\n"
+"GitHub projeniz doğru şekilde içe aktarıldı.\n"
+"\n"
+"%(project)s projesini buradan göebilirsiniz:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your GitHub project has been imported"
-msgstr ""
+msgstr "[%(project)s] GitHub projeniz içe aktarıldı"
 
 #: taiga/importers/templates/emails/importer_import_error-body-html.jinja:4
 #, python-format
@@ -1285,6 +1461,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <p>Projeniz doğru şekilde içe aktarılmadı.</p>\n"
+"    <p>%(product_name)s sistem yöneticilerine bilgi verildi.<br/> Lütfen "
+"tekrar deneyin veya aşağıdaki adresten destek ekibiyle iletişime geçin:\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-html.jinja:4
 #, python-format
@@ -1298,6 +1484,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Jira Projesi içe aktarıldı</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <h3>Jira projeniz doğru şekilde içe aktarıldı.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">%(project)s'e git</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-text.jinja:1
 #, python-format
@@ -1314,11 +1508,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Merhaba %(user)s,\n"
+"\n"
+"Jira projeniz doğru şekilde içe aktarıldı.\n"
+"\n"
+"%(project)s projesini buradan göebilirsiniz:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/jira_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Jira project has been imported"
-msgstr ""
+msgstr "[%(project)s] Jira projeniz içe aktarıldı"
 
 #: taiga/importers/templates/emails/trello_import_success-body-html.jinja:4
 #, python-format
@@ -1332,6 +1537,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Trello Projesi içe aktarıldı</h1>\n"
+"    <p>Merhaba %(user)s,</p>\n"
+"    <h3>Trello projeniz doğru şekilde içe aktarıldı.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">%(project)s'e git</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/trello_import_success-body-text.jinja:1
 #, python-format
@@ -1348,30 +1561,41 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Merhaba %(user)s,\n"
+"\n"
+"Trello projeniz doğru şekilde içe aktarıldı.\n"
+"\n"
+"%(project)s projesini buradan göebilirsiniz:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/trello_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Trello project has been imported"
-msgstr ""
+msgstr "[%(project)s] Trello projeniz içe aktarıldı"
 
 #: taiga/importers/trello/importer.py:76
 #, python-format
 msgid "Invalid Request: %s at %s"
-msgstr ""
+msgstr "Geçersiz İstek: %s, %s"
 
 #: taiga/importers/trello/importer.py:78 taiga/importers/trello/importer.py:80
 #, python-format
 msgid "Unauthorized: %s at %s"
-msgstr ""
+msgstr "Yetkisiz: %s, %s"
 
 #: taiga/importers/trello/importer.py:82 taiga/importers/trello/importer.py:84
 #, python-format
 msgid "Resource Unavailable: %s at %s"
-msgstr ""
+msgstr "Kaynak Kullanılamıyor: %s, %s"
 
 #: taiga/importers/trello/tasks.py:40 taiga/importers/trello/tasks.py:41
 msgid "Error importing Trello project"
-msgstr ""
+msgstr "Trello projesi içe aktarılırken hata oluştu"
 
 #: taiga/permissions/choices.py:20 taiga/permissions/choices.py:31
 msgid "View project"
@@ -1419,19 +1643,19 @@ msgstr "Aşama sil"
 
 #: taiga/permissions/choices.py:39
 msgid "Add epic"
-msgstr ""
+msgstr "Destan ekle"
 
 #: taiga/permissions/choices.py:40
 msgid "Modify epic"
-msgstr ""
+msgstr "Destanı değiştir"
 
 #: taiga/permissions/choices.py:41
 msgid "Comment epic"
-msgstr ""
+msgstr "Destana yorum ekle"
 
 #: taiga/permissions/choices.py:42
 msgid "Delete epic"
-msgstr ""
+msgstr "Destan sil"
 
 #: taiga/permissions/choices.py:44
 msgid "View user story"
@@ -1447,7 +1671,7 @@ msgstr "Kullanıcı hikayesi düzenle"
 
 #: taiga/permissions/choices.py:47
 msgid "Comment user story"
-msgstr ""
+msgstr "Kullanıcı hikayesine yorum ekle"
 
 #: taiga/permissions/choices.py:48
 msgid "Delete user story"
@@ -1463,7 +1687,7 @@ msgstr "Görev düzenle"
 
 #: taiga/permissions/choices.py:53
 msgid "Comment task"
-msgstr ""
+msgstr "Göreve yorum ekle"
 
 #: taiga/permissions/choices.py:54
 msgid "Delete task"
@@ -1479,7 +1703,7 @@ msgstr "Talep düzenle"
 
 #: taiga/permissions/choices.py:59
 msgid "Comment issue"
-msgstr ""
+msgstr "Talebe yorum ekle"
 
 #: taiga/permissions/choices.py:60
 msgid "Delete issue"
@@ -1495,7 +1719,7 @@ msgstr "Wiki sayfası düzenle"
 
 #: taiga/permissions/choices.py:65
 msgid "Comment wiki page"
-msgstr ""
+msgstr "Wiki sayfasına yorum ekle"
 
 #: taiga/permissions/choices.py:66
 msgid "Delete wiki page"
@@ -1539,23 +1763,23 @@ msgstr "Yönetici rolleri"
 
 #: taiga/projects/admin.py:98
 msgid "Privacy"
-msgstr ""
+msgstr "Gizlilik"
 
 #: taiga/projects/admin.py:109
 msgid "Modules"
-msgstr ""
+msgstr "Modüller"
 
 #: taiga/projects/admin.py:117
 msgid "Default values"
-msgstr ""
+msgstr "Öntanımlı değerler"
 
 #: taiga/projects/admin.py:124
 msgid "Activity"
-msgstr ""
+msgstr "Etkinlik"
 
 #: taiga/projects/admin.py:129
 msgid "Fans"
-msgstr ""
+msgstr "Hayranlar"
 
 #: taiga/projects/admin.py:143 taiga/projects/attachments/models.py:40
 #: taiga/projects/epics/models.py:48 taiga/projects/issues/models.py:41
@@ -1569,20 +1793,20 @@ msgstr "sahip"
 #: taiga/projects/admin.py:189
 #, python-brace-format
 msgid "{count} successfully made public."
-msgstr ""
+msgstr "{count} tane başarıyla herkese açık yapıldı."
 
 #: taiga/projects/admin.py:190
 msgid "Make public"
-msgstr ""
+msgstr "Herkese açık yap"
 
 #: taiga/projects/admin.py:204
 #, python-brace-format
 msgid "{count} successfully made private."
-msgstr ""
+msgstr "{count} tane başarıyla gizli hale getirildi."
 
 #: taiga/projects/admin.py:205
 msgid "Make private"
-msgstr ""
+msgstr "Gizli hale getir"
 
 #: taiga/projects/api.py:181 taiga/users/api.py:242
 msgid "Incomplete arguments"
@@ -1594,11 +1818,11 @@ msgstr "Geçersiz resim biçemi"
 
 #: taiga/projects/api.py:246
 msgid "Invalid template name"
-msgstr ""
+msgstr "Geçersiz şablon adı"
 
 #: taiga/projects/api.py:249
 msgid "Invalid template description"
-msgstr ""
+msgstr "Geçersiz şablon açıklaması"
 
 #: taiga/projects/api.py:412 taiga/projects/api.py:1087
 msgid "Invalid user id"
@@ -1610,7 +1834,7 @@ msgstr "Kullanıcı mevcut değil"
 
 #: taiga/projects/api.py:422
 msgid "The user must already be a project member"
-msgstr ""
+msgstr "Kullanıcı halihazırda bir proje üyesi olmalıdır"
 
 #: taiga/projects/api.py:684
 msgid "The default swimlane cannot be deleted."
@@ -1644,22 +1868,27 @@ msgstr ""
 msgid ""
 "To add members to a project, first you have to verify your email address"
 msgstr ""
+"Bir projeye üye eklemek için önce e-posta adresinizi doğrulamanız gerekir"
 
 #: taiga/projects/api.py:1105
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
 msgstr ""
+"Bu kullanıcı, herhangi bir etkin yönetici kalmayacağı için şu projelerden "
+"çıkarılamıyor: {}."
 
 #: taiga/projects/api.py:1115
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
+"Projenin bir sahibi olmalı ve kullanıcılardan en az biri etkin bir yönetici "
+"olmalıdır"
 
 #: taiga/projects/api.py:1149
 msgid "You don't have permissions to see that."
-msgstr ""
+msgstr "Bunu görme izniniz yok."
 
 #: taiga/projects/attachments/api.py:52
 msgid "Partial updates are not supported"
@@ -1671,7 +1900,7 @@ msgstr ""
 
 #: taiga/projects/attachments/api.py:70
 msgid "Project ID does not match between object and project"
-msgstr ""
+msgstr "Proje kimliği, nesne ve proje arasında eşleşmiyor"
 
 #: taiga/projects/attachments/models.py:48 taiga/projects/contact/models.py:35
 #: taiga/projects/custom_attributes/models.py:45
@@ -1722,7 +1951,7 @@ msgstr "kaldırıldı"
 
 #: taiga/projects/attachments/models.py:75
 msgid "from comment"
-msgstr ""
+msgstr "yorumdan"
 
 #: taiga/projects/attachments/models.py:77
 #: taiga/projects/custom_attributes/models.py:39
@@ -1739,7 +1968,7 @@ msgstr "sıra"
 
 #: taiga/projects/choices.py:21
 msgid "Whereby.com"
-msgstr ""
+msgstr "Whereby.com"
 
 #: taiga/projects/choices.py:22
 msgid "Jitsi"
@@ -1755,11 +1984,11 @@ msgstr "Talky"
 
 #: taiga/projects/choices.py:33
 msgid "This project is blocked due to payment failure"
-msgstr ""
+msgstr "Bu proje, ödeme hatası nedeniyle engellendi"
 
 #: taiga/projects/choices.py:34
 msgid "This project is blocked by admin staff"
-msgstr ""
+msgstr "Bu proje, yönetici personel tarafından engellendi"
 
 #: taiga/projects/choices.py:35
 msgid "This project is blocked because the owner left"
@@ -1767,7 +1996,7 @@ msgstr "Yetkili kalmadığı için proje bloklandı"
 
 #: taiga/projects/choices.py:36
 msgid "This project is blocked while it's deleted"
-msgstr ""
+msgstr "Bu proje, silinirken engellendi"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:10
 #, python-format
@@ -1778,6 +2007,11 @@ msgid ""
 "written to %(project_name)s\n"
 "    "
 msgstr ""
+"\n"
+"        <a style=\"font-weight: bold;text-decoration:none;color:#222;\" href="
+"\"%(user_profile_url)s\" title=\"%(full_name)s\">%(full_name)s</a>, "
+"%(project_name)s projesine yazdı\n"
+"    "
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:20
 #, python-format
@@ -1791,6 +2025,13 @@ msgid ""
 "not be affected.\n"
 "    "
 msgstr ""
+"\n"
+"        %(project_name)s adlı projenin yöneticisi olarak listelendiğiniz "
+"için bu mesajı alıyorsunuz. Taiga topluluğu üyelerinin projenizle iletişim "
+"kurmasını istemiyorsanız, lütfen bunu önlemek için <a href=\""
+"%(project_settings_url)s\">proje ayarlarınızı güncelleyin</a>. Proje üyeleri "
+"arasındaki normal iletişim bundan etkilenmeyecektir.\n"
+"    "
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:1
 #, python-format
@@ -1798,6 +2039,8 @@ msgid ""
 "\n"
 "%(full_name)s has written to %(project_name)s\n"
 msgstr ""
+"\n"
+"%(full_name)s, %(project_name)s projesine yazdı\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:7
 #, python-format
@@ -1809,6 +2052,12 @@ msgid ""
 "%(project_settings_url)s to prevent such contacts. Regular communications "
 "amongst members of the project will not be affected.\n"
 msgstr ""
+"\n"
+"%(project_name)s adlı projenin yöneticisi olarak listelendiğiniz için bu "
+"mesajı alıyorsunuz. Taiga topluluğu üyelerinin projenizle iletişim kurmasını "
+"istemiyorsanız, lütfen bunu önlemek için %(project_settings_url)s sayfasında "
+"proje ayarlarınızı güncelleyin. Proje üyeleri arasındaki normal iletişim "
+"bundan etkilenmeyecektir.\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-subject.jinja:1
 #, python-format
@@ -1816,6 +2065,8 @@ msgid ""
 "\n"
 "[Taiga] %(full_name)s has sent a message to the project %(project_name)s\n"
 msgstr ""
+"\n"
+"[Taiga] %(full_name)s, %(project_name)s projesine bir mesaj gönderdi\n"
 
 #: taiga/projects/custom_attributes/choices.py:30
 msgid "Text"
@@ -1827,7 +2078,7 @@ msgstr "Çoklu-satır metin"
 
 #: taiga/projects/custom_attributes/choices.py:32
 msgid "Rich text"
-msgstr ""
+msgstr "Zengin metin"
 
 #: taiga/projects/custom_attributes/choices.py:33
 msgid "Date"
@@ -1839,15 +2090,15 @@ msgstr "Url"
 
 #: taiga/projects/custom_attributes/choices.py:35
 msgid "Dropdown"
-msgstr ""
+msgstr "Açılır menü"
 
 #: taiga/projects/custom_attributes/choices.py:36
 msgid "Checkbox"
-msgstr ""
+msgstr "Onay kutusu"
 
 #: taiga/projects/custom_attributes/choices.py:37
 msgid "Number"
-msgstr ""
+msgstr "Sayı"
 
 #: taiga/projects/custom_attributes/models.py:38
 #: taiga/projects/issues/models.py:73
@@ -1860,7 +2111,7 @@ msgstr "değerler"
 
 #: taiga/projects/custom_attributes/models.py:112
 msgid "epic"
-msgstr ""
+msgstr "destan"
 
 #: taiga/projects/custom_attributes/models.py:133
 #: taiga/projects/tasks/models.py:38 taiga/projects/userstories/models.py:40
@@ -1881,15 +2132,15 @@ msgstr "Aynı isimler bir tane daha mevcut."
 
 #: taiga/projects/due_dates/models.py:22
 msgid "due date"
-msgstr ""
+msgstr "bitim tarihi"
 
 #: taiga/projects/due_dates/models.py:25
 msgid "reason for the due date"
-msgstr ""
+msgstr "bitim tarihi nedeni"
 
 #: taiga/projects/epics/api.py:92
 msgid "You don't have permissions to set this status to this epic."
-msgstr ""
+msgstr "Bu destan için bu durumu ayarlama izniniz yok."
 
 #: taiga/projects/epics/models.py:34 taiga/projects/issues/models.py:34
 #: taiga/projects/tasks/models.py:42 taiga/projects/userstories/models.py:80
@@ -1904,7 +2155,7 @@ msgstr "durum"
 
 #: taiga/projects/epics/models.py:55
 msgid "epics order"
-msgstr ""
+msgstr "destanların sırası"
 
 #: taiga/projects/epics/models.py:64 taiga/projects/issues/models.py:101
 #: taiga/projects/tasks/models.py:85 taiga/projects/userstories/models.py:118
@@ -1927,7 +2178,7 @@ msgstr "atanmış"
 
 #: taiga/projects/epics/models.py:79 taiga/projects/userstories/models.py:133
 msgid "is client requirement"
-msgstr "istemci gereksinimi"
+msgstr "müşteri gereksinimi"
 
 #: taiga/projects/epics/models.py:81 taiga/projects/userstories/models.py:135
 msgid "is team requirement"
@@ -1935,7 +2186,7 @@ msgstr "takım gereksinimi"
 
 #: taiga/projects/epics/models.py:85
 msgid "user stories"
-msgstr ""
+msgstr "kullanıcı hikayeleri"
 
 #: taiga/projects/epics/models.py:87 taiga/projects/issues/models.py:114
 #: taiga/projects/tasks/models.py:106 taiga/projects/userstories/models.py:147
@@ -1944,15 +2195,15 @@ msgstr "dış referans"
 
 #: taiga/projects/epics/validators.py:35
 msgid "There's no epic with that id"
-msgstr ""
+msgstr "Bu kimliğe sahip bir destan yok"
 
 #: taiga/projects/history/api.py:98
 msgid "comment is required"
-msgstr ""
+msgstr "yorum gerekli"
 
 #: taiga/projects/history/api.py:101
 msgid "deleted comments can't be edited"
-msgstr ""
+msgstr "silinen yorumlar düzenlenemez"
 
 #: taiga/projects/history/api.py:144
 msgid "Comment already deleted"
@@ -2043,7 +2294,7 @@ msgstr "Atanmamış"
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:164
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:175
 msgid "Not set"
-msgstr ""
+msgstr "Ayarlanmadı"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:286
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:91
@@ -2143,11 +2394,11 @@ msgstr "bitirme tarihi"
 #: taiga/projects/tasks/validators.py:174
 #: taiga/projects/userstories/validators.py:258
 msgid "The milestone isn't valid for the project"
-msgstr ""
+msgstr "Aşama, proje için geçerli değil"
 
 #: taiga/projects/issues/validators.py:77
 msgid "All the issues must be from the same project"
-msgstr ""
+msgstr "Tüm talepler aynı projeden olmalıdır"
 
 #: taiga/projects/likes/models.py:39
 msgid "Like"
@@ -2189,12 +2440,12 @@ msgstr "Tahmini başlangıç, tahmini bitişten önce olmalı."
 
 #: taiga/projects/milestones/validators.py:33
 msgid "There's no milestone with that id"
-msgstr ""
+msgstr "Bu kimliğe sahip bir aşama yok"
 
 #: taiga/projects/milestones/validators.py:64
 #: taiga/projects/userstories/validators.py:268
 msgid "All the user stories must be from the same project"
-msgstr ""
+msgstr "Tüm kullanıcı hikayeleri aynı projeden olmalıdır"
 
 #: taiga/projects/mixins/blocked.py:29
 msgid "is blocked"
@@ -2202,11 +2453,11 @@ msgstr "engellenmiş"
 
 #: taiga/projects/mixins/by_ref.py:30
 msgid "ref param is needed"
-msgstr ""
+msgstr "referans parametresi gerekli"
 
 #: taiga/projects/mixins/by_ref.py:33
 msgid "project or project__slug param is needed"
-msgstr ""
+msgstr "proje veya project__slug parametresi gerekli"
 
 #: taiga/projects/mixins/on_destroy.py:42
 msgid "Query param 'moveTo' is required"
@@ -2227,7 +2478,7 @@ msgstr "'proje' parametresi zorunlu"
 
 #: taiga/projects/mixins/validators.py:38
 msgid "The user must be a project member."
-msgstr ""
+msgstr "Kullanıcı bir proje üyesi olmalıdır."
 
 #: taiga/projects/models.py:95
 msgid "email"
@@ -2384,27 +2635,27 @@ msgstr "sayı"
 
 #: taiga/projects/models.py:270
 msgid "fans last week"
-msgstr "geçen hafta fanları"
+msgstr "geçen haftanın hayranları"
 
 #: taiga/projects/models.py:273
 msgid "fans last month"
-msgstr "geçen ayın fanları"
+msgstr "geçen ayın hayranları"
 
 #: taiga/projects/models.py:276
 msgid "fans last year"
-msgstr "geçen yılın fanları"
+msgstr "geçen yılın hayranları"
 
 #: taiga/projects/models.py:283
 msgid "activity last week"
-msgstr "geçen haftanın aktiviteleri"
+msgstr "geçen haftanın etkinlikleri"
 
 #: taiga/projects/models.py:287
 msgid "activity last month"
-msgstr "geçen ayın aktiviteleri"
+msgstr "geçen ayın etkinlikleri"
 
 #: taiga/projects/models.py:291
 msgid "activity last year"
-msgstr "geçen yılın aktiviteleri"
+msgstr "geçen yılın etkinlikleri"
 
 #: taiga/projects/models.py:553
 msgid "modules config"
@@ -3217,50 +3468,50 @@ msgstr "sürüm"
 #: taiga/projects/permissions.py:43
 msgid ""
 "You can't leave the project if you are the owner or there are no more admins"
-msgstr ""
+msgstr "Sahibiyseniz veya başka yönetici yoksa projeden ayrılamazsınız"
 
 #: taiga/projects/services/members.py:131
 msgid "Project without owner"
-msgstr ""
+msgstr "Sahibi olmayan proje"
 
 #: taiga/projects/services/members.py:136
 msgid "You have reached your current limit of memberships for private projects"
-msgstr ""
+msgstr "Gizli projeler için geçerli üyelik sınırınıza ulaştınız"
 
 #: taiga/projects/services/members.py:140
 msgid "You have reached your current limit of memberships for public projects"
-msgstr ""
+msgstr "Herkese açık projeler için geçerli üyelik sınırınıza ulaştınız"
 
 #: taiga/projects/services/members.py:146
 msgid "You have reached the current limit of pending memberships"
-msgstr ""
+msgstr "Geçerli bekleyen üyelik sınırına ulaştınız"
 
 #: taiga/projects/services/projects.py:99
 #: taiga/projects/services/projects.py:139 taiga/users/services.py:598
 msgid "You can't have more private projects"
-msgstr ""
+msgstr "Daha fazla gizli projeye sahip olamazsınız"
 
 #: taiga/projects/services/projects.py:103
 #: taiga/projects/services/projects.py:143 taiga/users/services.py:601
 msgid ""
 "This project reaches your current limit of memberships for private projects"
-msgstr ""
+msgstr "Bu proje, gizli projeler için geçerli üyelik sınırınıza ulaştı"
 
 #: taiga/projects/services/projects.py:107
 #: taiga/projects/services/projects.py:147 taiga/users/services.py:605
 msgid "You can't have more public projects"
-msgstr ""
+msgstr "Daha fazla herkese açık projeye sahip olamazsınız"
 
 #: taiga/projects/services/projects.py:111
 #: taiga/projects/services/projects.py:151 taiga/users/services.py:608
 msgid ""
 "This project reaches your current limit of memberships for public projects"
-msgstr ""
+msgstr "Bu proje, herkese açık projeler için geçerli üyelik sınırınıza ulaştı"
 
 #: taiga/projects/services/promote.py:47
 #, python-format
 msgid "Task #%(ref)s"
-msgstr ""
+msgstr "Görev #%(ref)s"
 
 #: taiga/projects/services/stats.py:195
 msgid "Future sprint"
@@ -3278,15 +3529,15 @@ msgstr "Kupon geçersiz"
 
 #: taiga/projects/services/transfer.py:65
 msgid "Token has expired"
-msgstr ""
+msgstr "Kuponun süresi doldu"
 
 #: taiga/projects/settings/choices.py:31
 msgid "Timeline"
-msgstr ""
+msgstr "Zaman Çizelgesi"
 
 #: taiga/projects/settings/choices.py:32
 msgid "Epics"
-msgstr ""
+msgstr "Destanlar"
 
 #: taiga/projects/settings/choices.py:33
 msgid "Backlog"
@@ -3299,20 +3550,21 @@ msgstr "Kanban"
 
 #: taiga/projects/settings/choices.py:35
 msgid "Issues"
-msgstr ""
+msgstr "Sorunlar"
 
 #: taiga/projects/settings/choices.py:36
 msgid "TeamWiki"
-msgstr ""
+msgstr "TakımWikisi"
 
 #: taiga/projects/settings/validators.py:34
 msgid "You don't have access to this section"
-msgstr ""
+msgstr "Bu bölüme erişiminiz yok"
 
 #: taiga/projects/tagging/fields.py:50
 #, python-brace-format
 msgid "Invalid tag '{value}'. The color is not a valid HEX color or null."
 msgstr ""
+"Geçersiz etiket '{value}'. Renk, geçerli bir HEX rengi veya boş (null) değil."
 
 #: taiga/projects/tagging/fields.py:53
 #, python-brace-format
@@ -3320,11 +3572,13 @@ msgid ""
 "Invalid tag '{value}'. it must be the name or a pair '[\"name\", \"hex color/"
 "\" | null]'."
 msgstr ""
+"Geçersiz etiket '{value}'. Ad veya bir '[\"ad\", \"hex rengi/\" | null]' "
+"çifti olmalıdır."
 
 #: taiga/projects/tagging/fields.py:75
 #, python-brace-format
 msgid "Invalid tag '{value}'. It must be the tag name."
-msgstr ""
+msgstr "Geçersiz etiket '{value}'. Etiket adı olmalıdır."
 
 #: taiga/projects/tagging/models.py:24
 msgid "tags"
@@ -3337,19 +3591,19 @@ msgstr "etiket renkleri"
 #: taiga/projects/tagging/validators.py:45
 #: taiga/projects/tagging/validators.py:72
 msgid "This tag already exists."
-msgstr ""
+msgstr "Bu etiket zaten var."
 
 #: taiga/projects/tagging/validators.py:52
 #: taiga/projects/tagging/validators.py:79
 msgid "The color is not a valid HEX color."
-msgstr ""
+msgstr "Renk, geçerli bir HEX rengi değil."
 
 #: taiga/projects/tagging/validators.py:65
 #: taiga/projects/tagging/validators.py:99
 #: taiga/projects/tagging/validators.py:112
 #: taiga/projects/tagging/validators.py:119
 msgid "The tag doesn't exist."
-msgstr ""
+msgstr "Etiket mevcut değil."
 
 #: taiga/projects/tasks/api.py:111 taiga/projects/tasks/api.py:120
 msgid "You don't have permissions to set this sprint to this task."
@@ -3377,37 +3631,41 @@ msgstr "baldıran zehri"
 
 #: taiga/projects/tasks/validators.py:59
 msgid "Invalid milestone id."
-msgstr ""
+msgstr "Geçersiz aşama kimliği."
 
 #: taiga/projects/tasks/validators.py:70
 msgid "Invalid task status id."
-msgstr ""
+msgstr "Geçersiz görev durumu kimliği."
 
 #: taiga/projects/tasks/validators.py:83
 msgid "Invalid user story id."
-msgstr ""
+msgstr "Geçersiz kullanıcı hikayesi kimliği."
 
 #: taiga/projects/tasks/validators.py:107
 msgid "Invalid task status id. The status must belong to the same project."
-msgstr ""
+msgstr "Geçersiz görev durumu kimliği. Durum, aynı projeye ait olmalıdır."
 
 #: taiga/projects/tasks/validators.py:121
 msgid "Invalid user story id. The user story must belong to the same project."
 msgstr ""
+"Geçersiz kullanıcı hikayesi kimliği. Kullanıcı hikayesi, aynı projeye ait "
+"olmalıdır."
 
 #: taiga/projects/tasks/validators.py:133
 msgid "Invalid milestone id. The milestone must belong to the same project."
-msgstr ""
+msgstr "Geçersiz aşama kimliği. Aşama, aynı projeye ait olmalıdır."
 
 #: taiga/projects/tasks/validators.py:150
 msgid ""
 "Invalid task ids. All tasks must belong to the same project and, if it "
 "exists, to the same status, user story and/or milestone."
 msgstr ""
+"Geçersiz görev kimlikleri. Tüm görevler aynı projeye ve varsa aynı duruma, "
+"kullanıcı hikayesine ve/veya aşamaya ait olmalıdır."
 
 #: taiga/projects/tasks/validators.py:184
 msgid "All the tasks must be from the same project"
-msgstr ""
+msgstr "Tüm görevler aynı projeden olmalıdır"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:6
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:4
@@ -3990,17 +4248,17 @@ msgstr ""
 #: taiga/projects/userstories/api.py:275
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
-msgstr ""
+msgstr "Geçersiz rol kimliği '{role_id}'"
 
 #: taiga/projects/userstories/api.py:282
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
-msgstr ""
+msgstr "Geçersiz puan kimliği '{points_id}'"
 
 #: taiga/projects/userstories/api.py:301
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
-msgstr ""
+msgstr "Kullanıcı hikayesi oluşturuluyor #{ref} - {subject}"
 
 #: taiga/projects/userstories/models.py:48
 msgid "role"
@@ -4016,7 +4274,7 @@ msgstr "sprint sırası"
 
 #: taiga/projects/userstories/models.py:108
 msgid "kanban order"
-msgstr ""
+msgstr "kanban sırası"
 
 #: taiga/projects/userstories/models.py:116
 msgid "finish date"
@@ -4024,7 +4282,7 @@ msgstr "bitiş tarihi"
 
 #: taiga/projects/userstories/models.py:131
 msgid "assigned users"
-msgstr ""
+msgstr "atanan kullanıcılar"
 
 #: taiga/projects/userstories/models.py:140
 msgid "generated from issue"
@@ -4052,6 +4310,8 @@ msgstr "Bu id ye sahip kullanıcı hikayesi yok"
 msgid ""
 "Invalid user story status id. The status must belong to the same project."
 msgstr ""
+"Geçersiz kullanıcı hikayesi durumu kimliği. Durum, aynı projeye ait "
+"olmalıdır."
 
 #: taiga/projects/userstories/validators.py:96
 #: taiga/projects/userstories/validators.py:180
@@ -4060,13 +4320,15 @@ msgstr ""
 
 #: taiga/projects/userstories/validators.py:134
 msgid "Invalid milestone id. The milistone must belong to the same project."
-msgstr ""
+msgstr "Geçersiz aşama kimliği. Aşama, aynı projeye ait olmalıdır."
 
 #: taiga/projects/userstories/validators.py:147
 msgid ""
 "Invalid user story ids. All stories must belong to the same project and, if "
 "it exists, to the same status and milestone."
 msgstr ""
+"Geçersiz kullanıcı hikayesi kimlikleri. Tüm hikayeler aynı projeye ve varsa "
+"aynı duruma ve aşamaya ait olmalıdır."
 
 #: taiga/projects/userstories/validators.py:199
 msgid ""
@@ -4076,7 +4338,7 @@ msgstr ""
 
 #: taiga/projects/userstories/validators.py:209
 msgid "You can't use after and before at the same time."
-msgstr ""
+msgstr "Sonrayı ve önceyi aynı anda kullanamazsınız."
 
 #: taiga/projects/userstories/validators.py:223
 msgid ""
@@ -4087,6 +4349,8 @@ msgstr ""
 #: taiga/projects/userstories/validators.py:235
 msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
+"Geçersiz kullanıcı hikayesi kimlikleri. Tüm hikayeler aynı projeye ait "
+"olmalıdır."
 
 #: taiga/projects/validators.py:61
 msgid "There's no project with that id"
@@ -4098,7 +4362,7 @@ msgstr ""
 
 #: taiga/projects/validators.py:179
 msgid "Invalid operation"
-msgstr ""
+msgstr "Geçersiz işlem"
 
 #: taiga/projects/validators.py:191
 msgid "Invalid role for the project"
@@ -4110,15 +4374,15 @@ msgstr ""
 
 #: taiga/projects/validators.py:227
 msgid "The project owner must be admin."
-msgstr ""
+msgstr "Proje sahibi yönetici olmalıdır."
 
 #: taiga/projects/validators.py:231
 msgid "At least one user must be an active admin for this project."
-msgstr ""
+msgstr "Bu proje için en az bir kullanıcı etkin yönetici olmalıdır."
 
 #: taiga/projects/validators.py:284
 msgid "Invalid role ids. All roles must belong to the same project."
-msgstr ""
+msgstr "Geçersiz rol kimlikleri. Tüm roller aynı projeye ait olmalıdır."
 
 #: taiga/projects/validators.py:308
 msgid "Default options"
@@ -4195,23 +4459,23 @@ msgstr ""
 
 #: taiga/users/admin.py:37
 msgid "Project Member"
-msgstr ""
+msgstr "Proje Üyesi"
 
 #: taiga/users/admin.py:38
 msgid "Project Members"
-msgstr ""
+msgstr "Proje Üyeleri"
 
 #: taiga/users/admin.py:48
 msgid "id"
-msgstr ""
+msgstr "kimlik"
 
 #: taiga/users/admin.py:79
 msgid "Project Ownership"
-msgstr ""
+msgstr "Proje Sahipliği"
 
 #: taiga/users/admin.py:80
 msgid "Project Ownerships"
-msgstr ""
+msgstr "Proje Sahiplikleri"
 
 #: taiga/users/admin.py:117
 msgid "Personal info"
@@ -4223,7 +4487,7 @@ msgstr "İzinler"
 
 #: taiga/users/admin.py:121
 msgid "Restrictions"
-msgstr ""
+msgstr "Kısıtlamalar"
 
 #: taiga/users/admin.py:123
 msgid "Important dates"
@@ -4231,11 +4495,11 @@ msgstr "Önemli tarihler"
 
 #: taiga/users/api.py:130
 msgid "Duplicated email"
-msgstr ""
+msgstr "Yinelenen e-posta"
 
 #: taiga/users/api.py:132
 msgid "Invalid email"
-msgstr ""
+msgstr "Geçersiz e-posta"
 
 #: taiga/users/api.py:170
 msgid "Invalid username or email"
@@ -4243,11 +4507,11 @@ msgstr "Geçersiz kullanıcı adı ya da e-posta"
 
 #: taiga/users/api.py:179
 msgid "Mail sent successfully!"
-msgstr ""
+msgstr "Posta başarıyla gönderildi!"
 
 #: taiga/users/api.py:217
 msgid "Current password parameter needed"
-msgstr ""
+msgstr "Geçerli parola parametresi gerekli"
 
 #: taiga/users/api.py:220
 msgid "New password parameter needed"
@@ -4255,7 +4519,7 @@ msgstr "Yeni parola parametresi gerekli"
 
 #: taiga/users/api.py:223
 msgid "Invalid password length at least 6 characters needed"
-msgstr ""
+msgstr "Geçersiz parola uzunluğu, en az 6 karakter gerekli"
 
 #: taiga/users/api.py:226
 msgid "Invalid current password"
@@ -4274,11 +4538,11 @@ msgstr "Geçersiz, kuponun doğru olduğuna emin misin?"
 
 #: taiga/users/api.py:348
 msgid "Email address already verified"
-msgstr ""
+msgstr "E-posta adresi zaten doğrulandı"
 
 #: taiga/users/api.py:350
 msgid "Unable to verify this email address"
-msgstr ""
+msgstr "Bu e-posta adresi doğrulanamıyor"
 
 #: taiga/users/api.py:353
 msgid "Mail sended successful!"
@@ -4617,7 +4881,7 @@ msgstr "süre"
 
 #: taiga/webhooks/validators.py:40
 msgid "Not allowed IP Address"
-msgstr ""
+msgstr "İzin verilmeyen IP adresi"
 
 #~ msgid "Twitter"
 #~ msgstr "Twitter"
