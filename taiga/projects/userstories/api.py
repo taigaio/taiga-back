@@ -96,10 +96,10 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             return serializers.UserStoryNeighborsSerializer
 
         if self.action == "list":
-            if self.request.QUERY_PARAMS.get('dashboard', False):
-                return serializers.UserStoryLightSerializer
-            elif self.request.QUERY_PARAMS.get('only_ref', False):
+            if self.request.QUERY_PARAMS.get('only_ref', False):
                 return serializers.UserStoryOnlyRefSerializer
+            elif self.request.QUERY_PARAMS.get('dashboard', False):
+                return serializers.UserStoryLightSerializer
             return serializers.UserStoryListSerializer
 
         return serializers.UserStorySerializer
@@ -107,14 +107,14 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
     def get_queryset(self):
         qs = super().get_queryset()
 
-        if self.request.QUERY_PARAMS.get('only_ref', False):
+        if self.action == "list" and self.request.QUERY_PARAMS.get('only_ref', False):
             return qs
 
         qs = qs.select_related("project",
                                "status",
                                "assigned_to")
 
-        if self.request.QUERY_PARAMS.get('dashboard', False):
+        if self.action == "list" and self.request.QUERY_PARAMS.get('dashboard', False):
             return qs
 
         qs = qs.select_related("milestone",

@@ -1657,7 +1657,7 @@ def test_api_headers_userstories_without_swimlane_not_send(client):
 
 
 def test_api_list_userstory_using_onlyref_serializer(client):
-    project = f.create_project(owner=f.UserFactory.create() )
+    project = f.create_project(owner=f.UserFactory.create())
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     us1 = f.create_userstory(project=project)
     us2 = f.create_userstory(project=project)
@@ -1669,3 +1669,29 @@ def test_api_list_userstory_using_onlyref_serializer(client):
     response = client.json.get(url)
     assert response.status_code == 200, response.data
     assert set(response.data[0].keys()) == set(["id", "ref"])
+
+
+def test_bug_regresion_api_by_ref_userstory_using_onlyref_serializer(client):
+    # Prevent error triying to get detail of userstory with only_ref=true
+    #
+    #   File ".../taiga-back/taiga/projects/userstories/serializers.py", line 124, in get_points
+    #       assert hasattr(obj, "role_points_attr"), "instance must have a role_points_attr attribute"
+    #   AssertionError: instance must have a role_points_attr attribute
+
+    project = f.create_project(owner=f.UserFactory.create())
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    us1 = f.create_userstory(project=project)
+
+    url = f"{reverse('userstories-by-ref')}?include_attachments=true&include_tasks=true&only_ref=true&page=40&project={us1.project_id}&ref={us1.ref}"
+
+    client.login(project.owner)
+    response = client.json.get(url)
+    assert response.status_code == 200, response.data
+    assert set(response.data.keys()) != set(["id", "ref"])
+
+    url = f"{reverse('userstories-detail', args=[us1.id])}?include_attachments=true&include_tasks=true&only_ref=true"
+
+    client.login(project.owner)
+    response = client.json.get(url)
+    assert response.status_code == 200, response.data
+    assert set(response.data.keys()) != set(["id", "ref"])
