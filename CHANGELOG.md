@@ -4,6 +4,10 @@
 
 - ...
 
+## 6.4.1 (unreleased)
+
+- fix(settings): increase default lifteme of ACCESS and REFRESH token
+
 ## 6.4.0 (2021-09-06)
 
 - Serve Taiga in subpath
