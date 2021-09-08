@@ -4,7 +4,7 @@
 
 - ...
 
-## 6.4.1 (unreleased)
+## 6.4.1 (2021-09-08)
 
 - fix(settings): increase default lifteme of ACCESS and REFRESH token
 - fix(userstories): invalid serializer for userstories if only_ref=true
