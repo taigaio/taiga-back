@@ -4,6 +4,12 @@
 
 - ...
 
+
+## 6.4.2 (2021-09-16)
+
+- Update locales
+
+
 ## 6.4.1 (2021-09-08)
 
 - fix(settings): increase default lifteme of ACCESS and REFRESH token
