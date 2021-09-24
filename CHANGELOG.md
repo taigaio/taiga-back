@@ -12,7 +12,7 @@
 
 ## 6.4.1 (2021-09-08)
 
-- fix(settings): increase default lifteme of ACCESS and REFRESH token
+- fix(settings): increase default lifetime of ACCESS and REFRESH token
 - fix(userstories): invalid serializer for userstories if only_ref=true
 
 ## 6.4.0 (2021-09-06)
