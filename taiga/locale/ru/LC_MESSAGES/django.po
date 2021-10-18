@@ -38,18 +38,18 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-03-01 10:23+0000\n"
-"Last-Translator: Inga Krinkina <i.krinkina@sigma-it.ru>\n"
-"Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
-"language/ru/)\n"
+"PO-Revision-Date: 2021-10-19 09:15+0000\n"
+"Last-Translator: Artem <Localizer_in_Russian@protonmail.com>\n"
+"Language-Team: Russian <https://hosted.weblate.org/projects/taiga/taiga-back/"
+"ru/>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ru\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
@@ -3920,7 +3920,7 @@ msgstr "Неверный тэг '{value}'. Это должно быть имя �
 
 #: taiga/projects/tagging/models.py:24
 msgid "tags"
-msgstr "тэги"
+msgstr "теги"
 
 #: taiga/projects/tagging/models.py:32
 msgid "tags colors"
