@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-07-29 10:33+0000\n"
+"PO-Revision-Date: 2021-10-22 10:56+0000\n"
 "Last-Translator: random r <epsilin@yopmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "it/>\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.7.2-dev\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
@@ -202,8 +202,7 @@ msgstr ""
 
 #: taiga/base/api/fields.py:1007
 msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
-"Carica il file oppure controlla la casella deselezionata. Non entrambi. "
+msgstr "Carica un file oppure controlla la casella deselezionata, non entrambi."
 
 #: taiga/base/api/fields.py:1047
 msgid ""
@@ -1592,7 +1591,7 @@ msgstr "Moduli"
 
 #: taiga/projects/admin.py:117
 msgid "Default values"
-msgstr "Valori di default"
+msgstr "Valori predefiniti"
 
 #: taiga/projects/admin.py:124
 msgid "Activity"
@@ -3417,7 +3416,7 @@ msgstr ""
 #: taiga/projects/tagging/fields.py:75
 #, python-brace-format
 msgid "Invalid tag '{value}'. It must be the tag name."
-msgstr "Tag '{value}' non corretto. Deve essere il nome tag"
+msgstr "Etichetta '{value}' non valida. Deve essere il nome dell'etichetta."
 
 #: taiga/projects/tagging/models.py:24
 msgid "tags"
@@ -3726,8 +3725,9 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<p>Se vuoi, puoi ancora provare a trasferire la proprieta' del progetto ad "
-"un'altra persona.</p>"
+"    <p>Se vuoi, puoi ancora provare a trasferire la proprietà del progetto "
+"ad un'altra persona.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:21
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:22
@@ -3755,8 +3755,7 @@ msgid ""
 "different person.\n"
 msgstr ""
 "\n"
-"\n"
-"<p>Se vuoi, puoi ancora provare a trasferire la proprieta' del progetto ad "
+"<p>Se vuoi, puoi ancora provare a trasferire la proprietà del progetto ad "
 "un'altra persona.</p>\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:15
@@ -3790,8 +3789,9 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<p>Per favore, clicca su \"Continua\" se vuoi cominciare il trasferimento di "
-"progetto dal pannello di amministrazione.</p>"
+"        <p>Clicca \"Continua\" se vuoi cominciare il trasferimento di "
+"progetto dal pannello di amministrazione.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:14
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:22
@@ -3840,9 +3840,10 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<p>Ciao %(receiver_name)s,</p>\n"
+"        <p>Ciao %(receiver_name)s,</p>\n"
 "<p>%(owner_name)s, il proprietario attuale del progetto \"%(project_name)s\" "
-"vorrebbe che tu diventassi il nuovo proprietario di progetto.</p>"
+"vorrebbe che tu ne diventassi il nuovo proprietario.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:10
 #, python-format
@@ -3852,7 +3853,8 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"<p>%(owner_name)s dice:</p>"
+"        <p>%(owner_name)s dice:</p>\n"
+"        "
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:17
 msgid ""
@@ -3862,8 +3864,9 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<p>Per favire, clicca su \"Continua\" per accettare o rifiutare questa "
-"proposta.</p>"
+"        <p>Clicca \"Continua\" per accettare o rifiutare questa proposta.</p>"
+"\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:1
 #, python-format
@@ -3923,12 +3926,12 @@ msgid ""
 "then allowed to grow and change as more is learned about the product and its "
 "customers"
 msgstr ""
-"Il prodotto agile \"backlog\" su Scrum è una lista di features che contiene "
-"brevi descrizioni di tutte le funzionalità richieste nel prodotto. Quando "
+"Il prodotto agile \"backlog\" su Scrum è una lista contenente brevi "
+"descrizioni di tutte le funzionalità desiderate nel prodotto. Quando "
 "applichi Scrum non è necessario iniziare un progetto elencando "
 "dettagliatamente tutta la documentazione necessaria. Il backlog Scrum, in "
 "questo modo, può crescere e cambiare man mano che si apprendono le "
-"caratteristiche del prodotto e dei suoi clienti."
+"caratteristiche del prodotto e dei suoi clienti"
 
 #. Translators: Description of kanban project template.
 #: taiga/projects/translations.py:35
@@ -4058,7 +4061,7 @@ msgstr "Necessita di informazioni"
 #. Translators: Issue status
 #: taiga/projects/translations.py:122
 msgid "Postponed"
-msgstr "Postposto "
+msgstr "Posposto"
 
 #. Translators: Issue status
 #: taiga/projects/translations.py:124
@@ -4068,7 +4071,7 @@ msgstr "Rifiutato"
 #. Translators: Issue type
 #: taiga/projects/translations.py:132
 msgid "Bug"
-msgstr "Bug"
+msgstr "Errore"
 
 #. Translators: Issue type
 #: taiga/projects/translations.py:134
@@ -4139,7 +4142,7 @@ msgstr "Back"
 #. Translators: User role
 #: taiga/projects/translations.py:178
 msgid "Product Owner"
-msgstr "Product Owner"
+msgstr "Proprietario prodotto"
 
 #. Translators: User role
 #: taiga/projects/translations.py:180
@@ -4674,10 +4677,10 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"\n"
-"<strong>Puoi eliminare il tuo account da questo servizio</strong> <a href="
-"\"%(url)s\" title=\"Remove your account\" style=\"color: #9dce0a\">clicca "
-"qui</a>"
+"    <strong>Puoi eliminare il tuo account da questo servizio</strong> <a "
+"href=\"%(url)s\" title=\"Remove your account\" style=\"color: #9dce0a\""
+">cliccando qui</a>\n"
+"    "
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:1
 #, python-format
@@ -4712,7 +4715,6 @@ msgid ""
 "\n"
 "You may remove your account from this service: %(url)s\n"
 msgstr ""
-"\n"
 "\n"
 "Puoi eliminare il tuo account da questo servizio: %(url)s\n"
 
