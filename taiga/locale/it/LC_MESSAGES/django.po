@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-10-22 10:56+0000\n"
+"PO-Revision-Date: 2021-11-03 14:34+0000\n"
 "Last-Translator: random r <epsilin@yopmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "it/>\n"
@@ -4147,7 +4147,7 @@ msgstr "Proprietario prodotto"
 #. Translators: User role
 #: taiga/projects/translations.py:180
 msgid "Stakeholder"
-msgstr "Stakeholder"
+msgstr "Soggetto interessato"
 
 #: taiga/projects/userstories/api.py:191
 msgid "You don't have permissions to set this sprint to this user story."
