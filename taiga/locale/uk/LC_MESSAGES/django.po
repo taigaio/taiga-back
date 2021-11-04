@@ -10,19 +10,19 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Ukrainian (http://www.transifex.com/taiga-agile-llc/taiga-"
-"back/language/uk/)\n"
+"PO-Revision-Date: 2021-11-05 03:35+0000\n"
+"Last-Translator: Tymofii Lytvynenko <till.svit@gmail.com>\n"
+"Language-Team: Ukrainian <https://hosted.weblate.org/projects/taiga/"
+"taiga-back/uk/>\n"
+"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: uk\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
-"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
-"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
-"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
-"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 "
+"? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > "
+"14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % "
+"100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
@@ -60,7 +60,7 @@ msgstr "Користувач уже зареєстрований."
 
 #: taiga/auth/services.py:143
 msgid "This user is already a member of the project."
-msgstr "Цей користувач уже є членом проекту."
+msgstr "Цей користувач уже є членом проєкту."
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
@@ -363,7 +363,7 @@ msgstr ""
 
 #: taiga/base/exceptions.py:217
 msgid "No room left for more projects."
-msgstr "Не залишилось місця для інших проектів."
+msgstr "Не залишилось місця для інших проєктів."
 
 #: taiga/base/fields.py:86
 #, python-format
@@ -377,7 +377,7 @@ msgstr ""
 #: taiga/base/filters.py:171 taiga/base/filters.py:295
 #: taiga/base/filters.py:529 taiga/projects/filters.py:63
 msgid "'project' must be an integer value."
-msgstr "'проект' повинно бути цілим числом."
+msgstr "'проєкт' повинно бути цілим числом."
 
 #: taiga/base/templates/emails/base-body-html.jinja:6
 msgid "Taiga"
@@ -550,7 +550,7 @@ msgstr ""
 #: taiga/export_import/services/store.py:815
 #: taiga/export_import/services/store.py:837
 msgid "error importing project data"
-msgstr "помилка імпортування проектних даних"
+msgstr "помилка імпортування проєктних даних"
 
 #: taiga/export_import/services/store.py:844
 msgid "error importing roles"
@@ -562,7 +562,7 @@ msgstr "помилка імпортування членства"
 
 #: taiga/export_import/services/store.py:864
 msgid "error importing lists of project attributes"
-msgstr "помилка імпортування списку проектних характеристик"
+msgstr "помилка імпортування списку проєктних характеристик"
 
 #: taiga/export_import/services/store.py:868
 msgid "error importing default project attribute values"
@@ -610,7 +610,7 @@ msgstr "помилка імпортування графіків часу"
 
 #: taiga/export_import/services/store.py:940
 msgid "unexpected error importing project"
-msgstr "неочікувана помилка імпортування проекту"
+msgstr "неочікувана помилка імпортування проєкту"
 
 #: taiga/export_import/tasks.py:60 taiga/export_import/tasks.py:61
 msgid "Error generating project dump"
@@ -801,7 +801,7 @@ msgstr ""
 
 #: taiga/export_import/validators/fields.py:142
 msgid "{}=\"{}\" not found in this project"
-msgstr "{}=\"{}\" не знайдено в цьому проекті"
+msgstr "{}=\"{}\" не знайдено в цьому проєкті"
 
 #: taiga/export_import/validators/validators.py:182
 #: taiga/projects/custom_attributes/validators.py:107
@@ -979,7 +979,7 @@ msgstr ""
 #: taiga/projects/issues/api.py:146 taiga/projects/tasks/api.py:214
 #: taiga/projects/userstories/api.py:339
 msgid "The project doesn't exist"
-msgstr "Проект не існує"
+msgstr "Проєкт не існує"
 
 #: taiga/hooks/api.py:64
 msgid "Bad signature"
@@ -1345,7 +1345,7 @@ msgstr ""
 
 #: taiga/permissions/choices.py:20 taiga/permissions/choices.py:31
 msgid "View project"
-msgstr "Переглянути проект"
+msgstr "Переглянути проєкт"
 
 #: taiga/permissions/choices.py:21 taiga/permissions/choices.py:33
 msgid "View milestones"
