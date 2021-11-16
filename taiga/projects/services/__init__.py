@@ -35,13 +35,15 @@ from .members import create_members_in_bulk
 from .members import get_members_from_bulk
 from .members import remove_user_from_project, project_has_valid_admins, can_user_leave_project
 from .members import get_max_memberships_for_project, get_total_project_memberships
-from .members import check_if_project_can_have_more_memberships
+from .members import check_if_new_member_can_be_created
+from .members import check_if_new_members_can_be_created
 
 from .modules_config import get_modules_config
 
 from .projects import check_if_project_privacy_can_be_changed
 from .projects import check_if_project_can_be_created_or_updated
 from .projects import check_if_project_can_be_transfered
+from .projects import check_if_project_can_be_duplicate
 from .projects import check_if_project_is_out_of_owner_limits
 from .projects import orphan_project
 from .projects import delete_project

@@ -2,7 +2,7 @@
 
 ## 6.5.0 (unreleased)
 
-- ...
+- Now member limits by projects are counted by owner and not by project.
 
 ## 6.4.3 (2021-10-27)
 
@@ -11,7 +11,6 @@
 ## 6.4.2 (2021-09-16)
 
 - Update locales
-
 
 ## 6.4.1 (2021-09-08)
 

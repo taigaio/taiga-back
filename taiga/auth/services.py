@@ -59,6 +59,9 @@ def make_auth_response_data(user):
     data['refresh'] = str(refresh)
     data['auth_token'] = str(refresh.access_token)
 
+    if api_settings.UPDATE_LAST_LOGIN:
+        update_last_login(None, user)
+
     return data
 
 
@@ -72,12 +75,7 @@ def login(username: str, password: str):
         )
 
     # Generate data
-    data =  make_auth_response_data(user)
-
-    if api_settings.UPDATE_LAST_LOGIN:
-        update_last_login(None, user)
-
-    return data
+    return make_auth_response_data(user)
 
 
 def refresh_token(refresh_token: str):

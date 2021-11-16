@@ -26,10 +26,10 @@ from taiga.projects.references import models as refs
 from taiga.projects.userstories.models import RolePoints
 from taiga.projects.services import find_invited_user
 from taiga.timeline.service import build_project_namespace
-from taiga.users import services as users_service
 
 from .. import exceptions as err
 from .. import validators
+from .. import services
 
 import logging
 logger = logging.getLogger('taiga.export_import')
@@ -784,14 +784,11 @@ def _validate_if_owner_have_enough_space_to_this_project(owner, data):
     data["owner"] = owner.email
 
     is_private = data.get("is_private", False)
-    total_memberships = len([m for m in data.get("memberships", [])
-                            if m.get("email", None) != data["owner"]])
-
-    total_memberships = total_memberships + 1  # 1 is the owner
-    (enough_slots, error_message) = users_service.has_available_slot_for_new_project(
+    memberships = [m["email"] for m in data.get("memberships", []) if m.get("email", None)]
+    enough_slots, error_message, _ = services.has_available_slot_for_new_project(
         owner,
         is_private,
-        total_memberships
+        memberships
     )
     if not enough_slots:
         raise err.TaigaImportError(error_message, None)

@@ -103,6 +103,15 @@ class RoleAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(DjangoUserAdmin):
+    list_display = ("username", "email", "full_name")
+    list_filter = ("is_superuser", "is_active", "verified_email")
+    search_fields = ("username", "full_name", "email")
+    ordering = ("username",)
+    readonly_fields = (
+        "total_private_projects", "total_memberships_private_projects",
+        "total_public_projects", "total_memberships_public_projects"
+    )
+    filter_horizontal = ()
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (_("Personal info"), {"fields": ("full_name", "email", "bio", "photo")}),
@@ -111,7 +120,9 @@ class UserAdmin(DjangoUserAdmin):
         (_("Permissions"), {"fields": ("is_active", "is_superuser")}),
         (_("Restrictions"), {"fields": (("max_private_projects", "max_memberships_private_projects"),
                                         ("max_public_projects", "max_memberships_public_projects"))}),
-        (_("Important dates"), {"fields": ("last_login", "date_joined", "date_cancelled")}),
+        (_("Restrictions (Current Status)"), {"fields": (("total_private_projects", "total_memberships_private_projects"),
+                                                         ("total_public_projects", "total_memberships_public_projects"))}),
+        (_("Important dates"), {"fields": (("last_login", "date_joined", "date_cancelled"),)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -121,17 +132,50 @@ class UserAdmin(DjangoUserAdmin):
             'fields': ('username', 'email', 'password1', 'password2')}
         ),
     )
-    form = UserChangeForm
-    add_form = UserCreationForm
-    list_display = ("username", "email", "full_name")
-    list_filter = ("is_superuser", "is_active", "verified_email")
-    search_fields = ("username", "full_name", "email")
-    ordering = ("username",)
-    filter_horizontal = ()
     inlines = [
         OwnedProjectsInline,
         MembershipsInline
     ]
+    form = UserChangeForm
+    add_form = UserCreationForm
+
+    def total_private_projects(self, obj):
+        return obj.owned_projects.filter(is_private=True).count()
+    total_private_projects.short_description = _("Total private projects owned")
+
+    def total_memberships_private_projects(self, obj):
+        Membership = apps.get_model("projects", "Membership")
+        return (Membership.objects.filter(project__is_private=True,
+                                          project__owner_id=obj.id,
+                                          user_id__isnull=False)
+                                   .order_by("user_id")
+                                   .distinct("user_id").count()
+                +
+                Membership.objects.filter(project__is_private=True,
+                                          project__owner_id=obj.id,
+                                          user_id__isnull=True)
+                                   .order_by("email")
+                                   .distinct("email").count())
+    total_memberships_private_projects.short_description = _("Total private memberships owned")
+
+    def total_public_projects(self, obj):
+        return obj.owned_projects.filter(is_private=False).count()
+    total_public_projects.short_description = _("Total public projects owned")
+
+    def total_memberships_public_projects(self, obj):
+        Membership = apps.get_model("projects", "Membership")
+        return (Membership.objects.filter(project__is_private=False,
+                                          project__owner_id=obj.id,
+                                          user_id__isnull=False)
+                                   .order_by("user_id")
+                                   .distinct("user_id").count()
+                +
+                Membership.objects.filter(project__is_private=False,
+                                          project__owner_id=obj.id,
+                                          user_id__isnull=True)
+                                   .order_by("email")
+                                   .distinct("email").count())
+    total_memberships_public_projects.short_description = _("Total public memberships owned")
 
 
 admin.site.register(User, UserAdmin)

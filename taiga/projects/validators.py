@@ -326,7 +326,7 @@ class UpdateProjectOrderBulkValidator(ProjectExistsValidator, validators.Validat
 
 
 class DuplicateProjectMemberValidator(validators.Validator):
-    id = serializers.CharField()
+    id = serializers.IntegerField()
 
 
 class DuplicateProjectValidator(validators.Validator):

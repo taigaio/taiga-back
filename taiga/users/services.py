@@ -14,7 +14,6 @@ import os
 import uuid
 import zipfile
 
-
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.files.storage import default_storage
@@ -580,31 +579,6 @@ def get_voted_list(for_user, from_user, type=None, q=None):
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
-
-
-def has_available_slot_for_new_project(owner, is_private, total_memberships):
-    if is_private:
-        current_projects = owner.owned_projects.filter(is_private=True).count()
-        max_projects = owner.max_private_projects
-        error_project_exceeded =  _("You can't have more private projects")
-
-        max_memberships = owner.max_memberships_private_projects
-        error_memberships_exceeded = _("This project reaches your current limit of memberships for private projects")
-    else:
-        current_projects = owner.owned_projects.filter(is_private=False).count()
-        max_projects = owner.max_public_projects
-        error_project_exceeded = _("You can't have more public projects")
-
-        max_memberships = owner.max_memberships_public_projects
-        error_memberships_exceeded = _("This project reaches your current limit of memberships for public projects")
-
-    if max_projects is not None and current_projects >= max_projects:
-        return (False, error_project_exceeded)
-
-    if max_memberships is not None and total_memberships > max_memberships:
-        return (False, error_memberships_exceeded)
-
-    return (True, None)
 
 
 def render_profile(user, outfile):

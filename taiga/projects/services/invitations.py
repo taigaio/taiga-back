@@ -32,20 +32,22 @@ def send_invitation(invitation):
 def find_invited_user(email, default=None):
     """Check if the invited user is already a registered.
 
-    :param invitation: Invitation object.
+    :param email: some user email
     :param default: Default object to return if user is not found.
-
-    TODO: only used by importer/exporter and should be moved here
 
     :return: The user if it's found, othwerwise return `default`.
     """
 
-    user_model = apps.get_model(settings.AUTH_USER_MODEL)
+    User = apps.get_model(settings.AUTH_USER_MODEL)
+    qs = User.objects.filter(email__iexact=email)
 
-    try:
-        return user_model.objects.get(email=email)
-    except user_model.DoesNotExist:
+    if len(qs) > 1:
+        qs = qs.filter(email=email)
+
+    if len(qs) == 0:
         return default
+
+    return qs[0]
 
 
 def get_membership_by_token(token:str):
