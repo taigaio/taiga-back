@@ -553,56 +553,6 @@ def attach_my_role_permissions(queryset, user, as_field="my_role_permissions_att
     return queryset
 
 
-def attach_private_projects_same_owner(queryset, user, as_field="private_projects_same_owner_attr"):
-    """Attach a private projects counter to each object of the queryset.
-
-    :param queryset: A Django projects queryset object.
-    :param as_field: Attach the counter as an attribute with this name.
-
-    :return: Queryset object with the additional `as_field` field.
-    """
-    model = queryset.model
-    if user is None or user.is_anonymous:
-        sql = "SELECT 0"
-    else:
-        sql = """
-                 SELECT COUNT(id)
-                   FROM projects_project p_aux
-                  WHERE p_aux.is_private = True AND
-                        p_aux.owner_id = {tbl}.owner_id
-              """
-
-        sql = sql.format(tbl=model._meta.db_table, user_id=user.id)
-
-    queryset = queryset.extra(select={as_field: sql})
-    return queryset
-
-
-def attach_public_projects_same_owner(queryset, user, as_field="public_projects_same_owner_attr"):
-    """Attach a public projects counter to each object of the queryset.
-
-    :param queryset: A Django projects queryset object.
-    :param as_field: Attach the counter as an attribute with this name.
-
-    :return: Queryset object with the additional `as_field` field.
-    """
-    model = queryset.model
-    if user is None or user.is_anonymous:
-        sql = "SELECT 0"
-    else:
-        sql = """
-                 SELECT COUNT(id)
-                   FROM projects_project p_aux
-                  WHERE p_aux.is_private = False AND
-                        p_aux.owner_id = {tbl}.owner_id
-              """
-
-        sql = sql.format(tbl=model._meta.db_table, user_id=user.id)
-
-    queryset = queryset.extra(select={as_field: sql})
-    return queryset
-
-
 def attach_my_homepage(queryset, user, as_field="my_homepage_attr"):
     """Attach a homepage array to each object of the queryset.
 
@@ -650,8 +600,6 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_roles(queryset)
     queryset = attach_is_fan(queryset, user)
     queryset = attach_my_role_permissions(queryset, user)
-    queryset = attach_private_projects_same_owner(queryset, user)
-    queryset = attach_public_projects_same_owner(queryset, user)
     queryset = attach_milestones(queryset)
     queryset = attach_my_homepage(queryset, user)
 
@@ -670,8 +618,6 @@ def attach_basic_info(queryset, user=None):
     queryset = attach_notify_policies(queryset)
     queryset = attach_is_fan(queryset, user)
     queryset = attach_my_role_permissions(queryset, user)
-    queryset = attach_private_projects_same_owner(queryset, user)
-    queryset = attach_public_projects_same_owner(queryset, user)
     queryset = attach_my_homepage(queryset, user)
 
     return queryset

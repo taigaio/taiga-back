@@ -5,9 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.exceptions import ValidationError
+import uuid
+
+from taiga.base.exceptions import ValidationError, WrongArguments
 from taiga.base.utils import db
 from taiga.users.models import User
+from taiga.users.services import get_user_by_username_or_email
 
 from django.conf import settings
 from django.core.validators import validate_email
@@ -25,34 +28,42 @@ def get_members_from_bulk(bulk_data, **additional_fields):
     :return: List of `Member` instances.
     """
     members = []
+
     for data in bulk_data:
         data_copy = data.copy()
+
+        # Try to find the user
         username = data_copy.pop("username")
         try:
-            validate_email(username)
-            data_copy["email"] = username
-
-        except ValidationError:
-            user = User.objects.filter(username=username).first()
+            user = get_user_by_username_or_email(username)
             data_copy["user_id"] = user.id
+        except WrongArguments:
+            # If not exist, is an invitation. Set the email and a token
+            try:
+                validate_email(username)
+                data_copy["email"] = username
+            except ValidationError:
+                raise WrongArguments(_("Malformed email adress."))
+
+            if "token" not in data_copy.keys():
+                data_copy["token"] = str(uuid.uuid1())
 
         data_copy.update(additional_fields)
+
         members.append(models.Membership(**data_copy))
+
     return members
 
 
-def create_members_in_bulk(bulk_data, callback=None, precall=None, **additional_fields):
+def create_members_in_bulk(members, callback=None, precall=None):
     """Create members from `bulk_data`.
 
-    :param bulk_data: List of dicts `{"project_id": <>, "role_id": <>, "username": <>}`.
+    :param members: List of dicts `{"project_id": <>, "role_id": <>, "username": <>}`.
     :param callback: Callback to execute after each task save.
     :param additional_fields: Additional fields when instantiating each task.
 
-    :return: List of created `Member` instances.
     """
-    members = get_members_from_bulk(bulk_data, **additional_fields)
     db.save_in_bulk(members, callback, precall)
-    return members
 
 
 def remove_user_from_project(user, project):
@@ -110,31 +121,96 @@ def get_total_project_memberships(project):
     return project.memberships.count()
 
 
-def check_if_project_can_have_more_memberships(project, total_new_memberships):
-    """Return if a project can have more n new memberships.
+def check_if_new_member_can_be_created(new_membership):
+    """Return if a new mebership could be created.
 
-    :param project: A project object.
-    :param total_new_memberships: the total of new memberships to add (int).
+    :param new_memberships: the new membershhip object (not saved in the database jet)
 
-    :return: {bool, error_mesage} return a tuple (can add new members?, error message).
+    :return: {bool, error_mesage, total_memberships} return a tuple (can add new members?, error message, total of members).
     """
+    project = new_membership.project
+
     if project.owner is None:
-        return False, _("Project without owner")
+        return False, _("Project without owner"), None
+
+    confirmed_memberships = (models.Membership.objects.filter(project__is_private=project.is_private,
+                                                              project__owner_id=project.owner_id,
+                                                              user_id__isnull=False)
+                                                      .order_by("user_id")
+                                                      .distinct("user_id")
+                                                      .count()) # Just confirmed members
+    pending_memberships = (models.Membership.objects.filter(project__is_private=project.is_private,
+                                                            project__owner_id=project.owner_id,
+                                                            user_id__isnull=True)
+                                                     .order_by("email")
+                                                     .distinct("email")
+                                                     .count()) # Pending members
+    if new_membership.user_id:
+        confirmed_memberships +=1
+    else:
+        pending_memberships +=1
+
+    total_memberships = confirmed_memberships + pending_memberships
 
     if project.is_private:
-        total_memberships = project.memberships.count() + total_new_memberships
         max_memberships = project.owner.max_memberships_private_projects
         error_members_exceeded = _("You have reached your current limit of memberships for private projects")
     else:
-        total_memberships = project.memberships.count() + total_new_memberships
         max_memberships = project.owner.max_memberships_public_projects
         error_members_exceeded = _("You have reached your current limit of memberships for public projects")
 
     if max_memberships is not None and total_memberships > max_memberships:
-        return False, error_members_exceeded
+        return False, error_members_exceeded, total_memberships
 
-    if project.memberships.filter(user=None).count() + total_new_memberships > settings.MAX_PENDING_MEMBERSHIPS:
+    if pending_memberships > settings.MAX_PENDING_MEMBERSHIPS:
         error_pending_memberships_exceeded = _("You have reached the current limit of pending memberships")
-        return False, error_pending_memberships_exceeded
+        return False, error_pending_memberships_exceeded, pending_memberships
 
-    return True, None
+    return True, None, total_memberships
+
+
+def check_if_new_members_can_be_created(project, new_memberships):
+    """Return if some new meberships could be created.
+
+    :param project: the common projects for all the memberships
+    :param new_memberships: a list with the new membershhips object (not saved in the database jet)
+
+    :return: {bool, error_mesage, total_memberships} return a tuple (can add new members?, error message, total of members).
+    """
+    if project.owner is None:
+        return False, _("Project without owner"), None
+
+    new_confirmed_memberships = [m.user_id for m in new_memberships if m.user_id]
+    new_pending_memberships = [m.email for m in new_memberships if not m.user_id]
+
+    confirmed_memberships = (models.Membership.objects.filter(project__is_private=project.is_private,
+                                                              project__owner_id=project.owner_id,
+                                                              user_id__isnull=False)
+                                                      .order_by("user_id")
+                                                      .distinct("user_id")
+                                                      .values_list("user_id", flat=True)) # Just confirmed members
+    pending_memberships = (models.Membership.objects.filter(project__is_private=project.is_private,
+                                                            project__owner_id=project.owner_id,
+                                                            user_id__isnull=True)
+                                                     .order_by("email")
+                                                     .distinct("email")
+                                                     .values_list("email", flat=True))
+
+    total_memberships =  len({*pending_memberships, *new_pending_memberships, *confirmed_memberships, *new_confirmed_memberships})
+    total_pending_memberships = len({*pending_memberships, *new_pending_memberships})
+
+    if project.is_private:
+        max_memberships = project.owner.max_memberships_private_projects
+        error_members_exceeded = _("You have reached your current limit of memberships for private projects")
+    else:
+        max_memberships = project.owner.max_memberships_public_projects
+        error_members_exceeded = _("You have reached your current limit of memberships for public projects")
+
+    if max_memberships is not None and total_memberships > max_memberships:
+        return False, error_members_exceeded, total_memberships
+
+    if total_pending_memberships > settings.MAX_PENDING_MEMBERSHIPS:
+        error_pending_memberships_exceeded = _("You have reached the current limit of pending memberships")
+        return False, error_pending_memberships_exceeded, pending_memberships
+
+    return True, None, total_memberships

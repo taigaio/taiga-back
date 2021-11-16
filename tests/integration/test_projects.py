@@ -1215,9 +1215,9 @@ def test_project_transfer_accept_from_member_with_valid_token_without_enough_mem
 
     f.create_membership(project=project)
     f.create_membership(project=project)
-    f.create_membership(project=project)
-    f.create_membership(project=project)
-    f.create_membership(project=project)
+    f.create_membership(project=project, user=None, email="test_1@email.com")
+    f.create_membership(project=project, user=None, email="test_2@email.com")
+    f.create_membership(project=project, user=None, email="test_3@email.com")
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1243,15 +1243,18 @@ def test_project_transfer_accept_from_member_with_valid_token_without_enough_mem
     signer = signing.TimestampSigner()
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token, is_private=True)
+    project2 = f.create_project(owner=user_to, is_private=True)
 
     f.create_membership(user=user_from, project=project, is_admin=True)
     f.create_membership(user=user_to, project=project)
+    f.create_membership(project=project)
+    f.create_membership(project=project, user=None, email="test_1@email.com")
 
-    f.create_membership(project=project)
-    f.create_membership(project=project)
-    f.create_membership(project=project)
-    f.create_membership(project=project)
-    f.create_membership(project=project)
+    f.create_membership(user=user_from, project=project2, is_admin=True)
+    f.create_membership(user=user_to, project=project2)
+    f.create_membership(project=project2)
+    f.create_membership(project=project2)
+    f.create_membership(project=project2, user=None, email="test_1@email.com")
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1272,7 +1275,7 @@ def test_project_transfer_accept_from_member_with_valid_token_without_enough_mem
 
 def test_project_transfer_accept_from_admin_member_with_valid_token_with_enough_slots(client):
     user_from = f.UserFactory.create()
-    user_to = f.UserFactory.create(max_private_projects=1)
+    user_to = f.UserFactory.create(max_private_projects=3)
 
     signer = signing.TimestampSigner()
     token = signer.sign(user_to.id)
@@ -1280,6 +1283,7 @@ def test_project_transfer_accept_from_admin_member_with_valid_token_with_enough_
 
     f.create_membership(user=user_from, project=project, is_admin=True)
     f.create_membership(user=user_to, project=project, is_admin=True)
+    f.create_membership(user=None, project=project, email="test_1@email.com")
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1582,12 +1586,14 @@ def test_private_project_can_be_public_because_project_has_unlimited_members(cli
 
 def test_public_project_cant_be_private_because_owner_doesnt_have_enough_slot_and_too_much_members(client):
     project = f.create_project(is_private=False)
+    project2 = f.create_project(is_private=True, owner=project.owner)
     f.MembershipFactory(project=project, user=project.owner)
     f.MembershipFactory(project=project)
-    f.MembershipFactory(project=project)
-    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project2, user=project.owner)
+    f.MembershipFactory(project=project2)
+    f.MembershipFactory(project=project2)
 
-    project.owner.max_private_projects = 0
+    project.owner.max_private_projects = 2
     project.owner.max_memberships_private_projects = 3
 
     assert (check_if_project_privacy_can_be_changed(project) ==
@@ -1610,10 +1616,12 @@ def test_public_project_cant_be_private_because_owner_doesnt_have_enough_slot(cl
 
 def test_public_project_cant_be_private_because_too_much_members(client):
     project = f.create_project(is_private=False)
+    project2 = f.create_project(is_private=True, owner=project.owner)
     f.MembershipFactory(project=project, user=project.owner)
     f.MembershipFactory(project=project)
-    f.MembershipFactory(project=project)
-    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project2, user=project.owner)
+    f.MembershipFactory(project=project2)
+    f.MembershipFactory(project=project2)
 
     project.owner.max_private_projects = 2
     project.owner.max_memberships_private_projects = 3
@@ -1675,17 +1683,19 @@ def test_public_project_can_be_private_because_project_has_unlimited_members(cli
 
 
 ####################################################################################
-# Test taiga.projects.services.projects.check_if_project_is_out_of_owner_limit
+# test taiga.projects.services.projects.check_if_project_is_out_of_owner_limit
 ####################################################################################
 
 from taiga.projects.services.projects import check_if_project_is_out_of_owner_limits
 
 def test_private_project_when_owner_doesnt_have_enough_slot_and_too_much_members(client):
     project = f.create_project(is_private=True)
+    project2 = f.create_project(is_private=True, owner=project.owner)
     f.MembershipFactory(project=project, user=project.owner)
     f.MembershipFactory(project=project)
-    f.MembershipFactory(project=project)
-    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project2, user=project.owner)
+    f.MembershipFactory(project=project2)
+    f.MembershipFactory(project=project2)
 
     project.owner.max_private_projects = 0
     project.owner.max_memberships_private_projects = 3
@@ -1708,10 +1718,12 @@ def test_private_project_when_owner_doesnt_have_enough_slot(client):
 
 def test_private_project_when_too_much_members(client):
     project = f.create_project(is_private=True)
+    project2 = f.create_project(is_private=True, owner=project.owner)
     f.MembershipFactory(project=project, user=project.owner)
     f.MembershipFactory(project=project)
-    f.MembershipFactory(project=project)
-    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project2, user=project.owner)
+    f.MembershipFactory(project=project2)
+    f.MembershipFactory(project=project2)
 
     project.owner.max_private_projects = 2
     project.owner.max_memberships_private_projects = 3
@@ -1864,6 +1876,10 @@ def test_public_project_when_project_has_unlimited_members(client):
     assert check_if_project_is_out_of_owner_limits(project) == False
 
 
+####################################################################################
+# test project deletion
+####################################################################################
+
 def test_delete_project_with_celery_enabled(client, settings):
     settings.CELERY_ENABLED = True
     user = f.UserFactory.create()
@@ -1896,6 +1912,10 @@ def test_delete_project_with_celery_disabled(client, settings):
     assert response.status_code == 204
     assert Project.objects.filter(id=project.id).count() == 0
 
+
+####################################################################################
+# test project tags
+####################################################################################
 
 def test_create_tag(client, settings):
     user = f.UserFactory.create()
@@ -2118,6 +2138,10 @@ def test_color_tags_project_fired_on_element_update_respecting_color():
     assert ["tag", "#123123"] in project.tags_colors
 
 
+####################################################################################
+# test project duplication
+####################################################################################
+
 def test_duplicate_project(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(
@@ -2232,7 +2256,7 @@ def test_duplicate_private_project_without_enough_memberships_slots(client):
     user = f.UserFactory.create(max_memberships_private_projects=1)
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(user=user, project=project, is_admin=True, role__project=project)
-    extra_membership = f.MembershipFactory.create(project=project, is_admin=True, role__project=project)
+    extra_membership = f.MembershipFactory(project=project, role__project=project)
 
     url = reverse("projects-duplicate", args=(project.id,))
     data = {
@@ -2249,6 +2273,34 @@ def test_duplicate_private_project_without_enough_memberships_slots(client):
     assert response.status_code == 400
     assert "current limit of memberships" in response.data["_error_message"]
     assert response["Taiga-Info-Project-Memberships"] == "2"
+    assert response["Taiga-Info-Project-Is-Private"] == "True"
+
+
+def test_duplicate_private_project_without_enough_memberships_slots_for_existen_projects(client):
+    user = f.UserFactory.create(max_memberships_private_projects=3)
+    project = f.ProjectFactory.create()
+    extra_membership = f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    f.MembershipFactory(user=user, project=project, is_admin=True)
+    project2 = f.ProjectFactory.create(owner=user, is_private=True)
+    f.MembershipFactory(user=user, project=project2, is_admin=True)
+    f.MembershipFactory(project=project2)
+    f.MembershipFactory(project=project2)
+
+    url = reverse("projects-duplicate", args=(project.id,))
+    data = {
+        "name": "test",
+        "description": "description",
+        "is_private": True,
+        "users": [{
+            "id": extra_membership.user_id
+        }]
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert "current limit of memberships" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "4"
     assert response["Taiga-Info-Project-Is-Private"] == "True"
 
 
@@ -2277,7 +2329,35 @@ def test_duplicate_public_project_without_enough_memberships_slots(client):
     user = f.UserFactory.create(max_memberships_public_projects=1)
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(user=user, project=project, is_admin=True, role__project=project)
-    extra_membership = f.MembershipFactory.create(project=project, is_admin=True, role__project=project)
+    extra_membership = f.MembershipFactory(project=project, role__project=project)
+
+    url = reverse("projects-duplicate", args=(project.id,))
+    data = {
+        "name": "test",
+        "description": "description",
+        "is_private": False,
+        "users": [
+            {"id": extra_membership.user_id},
+        ]
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert "current limit of memberships" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "2"
+    assert response["Taiga-Info-Project-Is-Private"] == "False"
+
+
+def test_duplicate_public_project_without_enough_memberships_slots_for_existen_projects(client):
+    user = f.UserFactory.create(max_memberships_public_projects=3)
+    project = f.ProjectFactory.create()
+    extra_membership = f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    f.MembershipFactory(user=user, project=project, is_admin=True)
+    project2 = f.ProjectFactory.create(owner=user, is_private=False)
+    f.MembershipFactory(user=user, project=project2, is_admin=True)
+    f.MembershipFactory(project=project2)
+    f.MembershipFactory(project=project2)
 
     url = reverse("projects-duplicate", args=(project.id,))
     data = {
@@ -2293,9 +2373,44 @@ def test_duplicate_public_project_without_enough_memberships_slots(client):
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
     assert "current limit of memberships" in response.data["_error_message"]
-    assert response["Taiga-Info-Project-Memberships"] == "2"
+    assert response["Taiga-Info-Project-Memberships"] == "4"
     assert response["Taiga-Info-Project-Is-Private"] == "False"
 
+
+def test_duplicate_public_project_without_enough_memberships_slots_for_existen_projects_with_invitations(client):
+    user = f.UserFactory.create(max_memberships_public_projects=3)
+    project = f.ProjectFactory.create()
+    extra_membership = f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    f.MembershipFactory(user=user, project=project, is_admin=True)
+    f.MembershipFactory(project=project, email="test@email.com", user=None)
+    project2 = f.ProjectFactory.create(owner=user, is_private=False)
+    f.MembershipFactory(user=user, project=project2, is_admin=True)
+    f.MembershipFactory(project=project2)
+    f.MembershipFactory(project=project2, email="test@email.com", user=None)
+
+    url = reverse("projects-duplicate", args=(project.id,))
+    data = {
+        "name": "test",
+        "description": "description",
+        "is_private": False,
+        "users": [{
+            "id": extra_membership.user_id
+        }]
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert "current limit of memberships" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "4"
+    assert response["Taiga-Info-Project-Is-Private"] == "False"
+
+
+####################################################################################
+# test due dates
+####################################################################################
+
+# User story
 
 def test_create_us_default_due_dates(client):
     project = f.create_project()
@@ -2368,6 +2483,8 @@ def test_prevent_delete_us_default_due_dates(client):
     assert project.us_duedates.count() == 1
 
 
+# Task
+
 def test_create_task_default_due_dates(client):
     project = f.create_project()
 
@@ -2439,6 +2556,8 @@ def test_prevent_delete_task_default_due_dates(client):
     assert project.task_duedates.count() == 1
 
 
+# Issue
+
 def test_create_issue_default_due_dates(client):
     project = f.create_project()
 
@@ -2509,6 +2628,10 @@ def test_prevent_delete_issue_default_due_dates(client):
     assert response.status_code == 400
     assert project.issue_duedates.count() == 1
 
+
+####################################################################################
+# test swimlanes
+####################################################################################
 
 def test_create_first_swimlane_and_assign_to_uss(client):
     project = f.create_project()

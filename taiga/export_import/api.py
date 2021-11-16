@@ -91,12 +91,11 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         # Validate if the project can be imported
         is_private = data.get('is_private', False)
-        total_memberships = len([m for m in data.get("memberships", []) if m.get("email", None) != data["owner"]])
-        total_memberships = total_memberships + 1  # 1 is the owner
-        (enough_slots, error_message) = users_services.has_available_slot_for_new_project(
+        memberships = [m["email"] for m in data.get("memberships", []) if m.get("email", None)]
+        (enough_slots, error_message, total_memberships) = services.has_available_slot_for_new_project(
             self.request.user,
             is_private,
-            total_memberships
+            memberships
         )
         if not enough_slots:
             raise exc.NotEnoughSlotsForProject(is_private, total_memberships, error_message)
@@ -346,13 +345,11 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         # Validate if the project can be imported
         is_private = dump.get("is_private", False)
-        total_memberships = len([m for m in dump.get("memberships", [])
-                                            if m.get("email", None) != dump["owner"]])
-        total_memberships = total_memberships + 1 # 1 is the owner
-        (enough_slots, error_message) = users_services.has_available_slot_for_new_project(
+        memberships = [m["email"] for m in dump.get("memberships", []) if m.get("email", None)]
+        (enough_slots, error_message, total_memberships) = services.has_available_slot_for_new_project(
             user,
             is_private,
-            total_memberships
+            memberships
         )
         if not enough_slots:
             raise exc.NotEnoughSlotsForProject(is_private, total_memberships, error_message)

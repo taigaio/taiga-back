@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.apps import apps
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from taiga.celery import app
 from taiga.base.api.utils import get_object_or_404
@@ -15,6 +16,7 @@ from taiga.projects.history.services import take_snapshot
 from .. import choices
 from ..apps import connect_projects_signals, disconnect_projects_signals
 
+
 ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS = 'max_public_projects_memberships'
 ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS = 'max_private_projects_memberships'
 ERROR_MAX_PUBLIC_PROJECTS = 'max_public_projects'
@@ -22,48 +24,47 @@ ERROR_MAX_PRIVATE_PROJECTS = 'max_private_projects'
 ERROR_PROJECT_WITHOUT_OWNER = 'project_without_owner'
 
 
-def check_if_project_privacy_can_be_changed(
-        project,
-        current_memberships=None,
-        current_private_projects=None,
-        current_public_projects=None):
+def check_if_project_privacy_can_be_changed(project):
     """Return if the project privacy can be changed from private to public or viceversa.
 
     :param project: A project object.
-    :param current_memberships: Project total memberships, If None it will be calculated.
-    :param current_private_projects: total private projects owned by the project owner, If None it will be calculated.
-    :param current_public_projects: total public projects owned by the project owner, If None it will be calculated.
 
     :return: A dict like this {'can_be_updated': bool, 'reason': error message}.
     """
     if project.owner is None:
         return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
 
-    if current_memberships is None:
-        current_memberships = project.memberships.count()
+    current_projects = (project.owner.owned_projects.filter(is_private=not project.is_private)
+                                                    .count())
+    Membership = apps.get_model("projects", "Membership")
+    current_memberships = (Membership.objects.filter(Q(project__is_private=not project.is_private,  # public/private members
+                                                       project__owner_id=project.owner_id,
+                                                       user_id__isnull=False) |
+                                                     Q(project_id=project.pk,  # current project members
+                                                       user_id__isnull=False))
+                                             .order_by("user_id")
+                                             .distinct("user_id")
+                                             .count()) # Just confirmed members
+
+    current_memberships += (Membership.objects.filter(Q(project__is_private=not project.is_private,  # public/private members
+                                                        project__owner_id=project.owner_id,
+                                                        user_id__isnull=True) |
+                                                      Q(project_id=project.pk,  # current project members
+                                                        user_id__isnull=True))
+                                              .order_by("email")
+                                              .distinct("email")
+                                              .count()) # Just pending members
 
     if project.is_private:
-        max_memberships = project.owner.max_memberships_public_projects
-        error_memberships_exceeded = ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS
-
-        if current_public_projects is None:
-            current_projects = project.owner.owned_projects.filter(is_private=False).count()
-        else:
-            current_projects = current_public_projects
-
         max_projects = project.owner.max_public_projects
+        max_memberships = project.owner.max_memberships_public_projects
         error_project_exceeded = ERROR_MAX_PUBLIC_PROJECTS
+        error_memberships_exceeded = ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS
     else:
-        max_memberships = project.owner.max_memberships_private_projects
-        error_memberships_exceeded = ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS
-
-        if current_private_projects is None:
-            current_projects = project.owner.owned_projects.filter(is_private=True).count()
-        else:
-            current_projects = current_private_projects
-
         max_projects = project.owner.max_private_projects
+        max_memberships = project.owner.max_memberships_private_projects
         error_project_exceeded = ERROR_MAX_PRIVATE_PROJECTS
+        error_memberships_exceeded = ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS
 
     if max_memberships is not None and current_memberships > max_memberships:
         return {'can_be_updated': False, 'reason': error_memberships_exceeded}
@@ -79,35 +80,44 @@ def check_if_project_can_be_created_or_updated(project):
 
     :param project: A project object.
 
-    :return: {bool, error_mesage} return a tuple (can be created or updated, error message).
+    :return: (bool, error_mesage, int) return a tuple (can be duplicated, error message, total new project members).
     """
     if project.owner is None:
-        return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
+        return (False, ERROR_PROJECT_WITHOUT_OWNER, 0)
+
+    current_projects = project.owner.owned_projects.filter(is_private=project.is_private).count()
+    Membership = apps.get_model("projects", "Membership")
+    current_memberships = (Membership.objects.filter(project__is_private=project.is_private,
+                                                     project__owner_id=project.owner_id,
+                                                     user_id__isnull=False)
+                                             .order_by("user_id")
+                                             .distinct("user_id")
+                                             .count()) # Just confirmed members
+    current_memberships += (Membership.objects.filter(project__is_private=project.is_private,
+                                                      project__owner_id=project.owner_id,
+                                                      user_id__isnull=True)
+                                              .order_by("email")
+                                              .distinct("email")
+                                              .count()) # Pending members
 
     if project.is_private:
-        current_projects = project.owner.owned_projects.filter(is_private=True).count()
         max_projects = project.owner.max_private_projects
-        error_project_exceeded = _("You can't have more private projects")
-
-        current_memberships = project.memberships.count() or 1
         max_memberships = project.owner.max_memberships_private_projects
+        error_project_exceeded = _("You can't have more private projects")
         error_memberships_exceeded = _("This project reaches your current limit of memberships for private projects")
     else:
-        current_projects = project.owner.owned_projects.filter(is_private=False).count()
         max_projects = project.owner.max_public_projects
-        error_project_exceeded = _("You can't have more public projects")
-
-        current_memberships = project.memberships.count() or 1
         max_memberships = project.owner.max_memberships_public_projects
+        error_project_exceeded = _("You can't have more public projects")
         error_memberships_exceeded = _("This project reaches your current limit of memberships for public projects")
 
     if max_projects is not None and current_projects >= max_projects:
-        return (False, error_project_exceeded)
+        return (False, error_project_exceeded, current_memberships)
 
     if max_memberships is not None and current_memberships > max_memberships:
-        return (False, error_memberships_exceeded)
+        return (False, error_memberships_exceeded, current_memberships)
 
-    return (True, None)
+    return (True, None, current_memberships)
 
 
 def check_if_project_can_be_transfered(project, new_owner):
@@ -116,79 +126,133 @@ def check_if_project_can_be_transfered(project, new_owner):
     :param project: A project object.
     :param new_owner: The new owner.
 
-    :return: {bool, error_mesage} return a tuple (can be transfered?, error message).
+    :return: (bool, error_mesage, int) return a tuple (can be duplicated, error message, total new project members).
     """
-    if project.owner is None:
-        return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
-
     if project.owner == new_owner:
-        return (True, None)
+        return (True, None, 0)
+
+    current_projects = new_owner.owned_projects.filter(is_private=project.is_private).count()
+    Membership = apps.get_model("projects", "Membership")
+    current_memberships = (Membership.objects.filter(Q(project__is_private=project.is_private,  # public/private members
+                                                       project__owner_id=new_owner.id,
+                                                       user_id__isnull=False) |
+                                                     Q(project_id=project.pk,  # current project members
+                                                       user_id__isnull=False))
+                                             .order_by("user_id")
+                                             .distinct("user_id")
+                                             .count())  # Just confirmed members
+    current_memberships += (Membership.objects.filter(Q(project__is_private=project.is_private,  # public/private members
+                                                        project__owner_id=new_owner.id,
+                                                        user_id__isnull=True) |
+                                                      Q(project_id=project.pk,  # current project members
+                                                        user_id__isnull=True))
+                                             .order_by("email")
+                                             .distinct("email")
+                                             .count())  # Pending members
 
     if project.is_private:
-        current_projects = new_owner.owned_projects.filter(is_private=True).count()
         max_projects = new_owner.max_private_projects
-        error_project_exceeded = _("You can't have more private projects")
-
-        current_memberships = project.memberships.count()
         max_memberships = new_owner.max_memberships_private_projects
+        error_project_exceeded = _("You can't have more private projects")
         error_memberships_exceeded = _("This project reaches your current limit of memberships for private projects")
     else:
-        current_projects = new_owner.owned_projects.filter(is_private=False).count()
         max_projects = new_owner.max_public_projects
-        error_project_exceeded = _("You can't have more public projects")
-
-        current_memberships = project.memberships.count()
         max_memberships = new_owner.max_memberships_public_projects
+        error_project_exceeded = _("You can't have more public projects")
         error_memberships_exceeded = _("This project reaches your current limit of memberships for public projects")
 
     if max_projects is not None and current_projects >= max_projects:
-        return (False, error_project_exceeded)
+        return (False, error_project_exceeded, current_memberships)
 
     if max_memberships is not None and current_memberships > max_memberships:
-        return (False, error_memberships_exceeded)
+        return (False, error_memberships_exceeded, current_memberships)
 
-    return (True, None)
+    return (True, None, current_memberships)
 
 
-def check_if_project_is_out_of_owner_limits(
-        project,
-        current_memberships=None,
-        current_private_projects=None,
-        current_public_projects=None):
+def check_if_project_can_be_duplicate(project, new_owner, new_is_private, new_user_id_members):
+    """Return if the project can be duplicate.
 
+    :param project: A project object.
+    :param new_owner: The new owner.
+    :param new_is_private: 'True' if new project will be private.
+    :param new_user_id_members: A list of user ids for new members.
+
+    :return: (bool, error_mesage, int) return a tuple (can be duplicated, error message, total new project members).
+    """
+    current_projects = new_owner.owned_projects.filter(is_private=project.is_private).count()
+    Membership = apps.get_model("projects", "Membership")
+    actual_user_id_members = (Membership.objects.filter(project__is_private=new_is_private,
+                                                        project__owner_id=new_owner.id,
+                                                        user_id__isnull=False)
+                                                .order_by("user_id")
+                                                .distinct("user_id")
+                                                .values_list("user__id", flat=True))
+    total_pending_members = (Membership.objects.filter(project__is_private=new_is_private,
+                                                       project__owner_id=new_owner.id,
+                                                       user_id__isnull=True)
+                                               .order_by("email")
+                                               .distinct("email")
+                                               .count())
+
+    current_memberships = len(
+        set(list(actual_user_id_members) + new_user_id_members)
+        - set([new_owner.id]) # remove owner if exist, maybe not
+    )
+    current_memberships += 1  # +1 for new owner
+    current_memberships += total_pending_members
+
+    if new_is_private:
+        max_projects = new_owner.max_private_projects
+        max_memberships = new_owner.max_memberships_private_projects
+        error_project_exceeded = _("You can't have more private projects")
+        error_memberships_exceeded = _("This project reaches your current limit of memberships for private projects")
+    else:
+        max_projects = new_owner.max_public_projects
+        max_memberships = new_owner.max_memberships_public_projects
+        error_project_exceeded = _("You can't have more public projects")
+        error_memberships_exceeded = _("This project reaches your current limit of memberships for public projects")
+
+    if max_projects is not None and current_projects >= max_projects:
+        return (False, error_project_exceeded, current_memberships)
+
+    if max_memberships is not None and current_memberships > max_memberships:
+        return (False, error_memberships_exceeded, current_memberships)
+
+    return (True, None, current_memberships)
+
+
+def check_if_project_is_out_of_owner_limits(project):
     """Return if the project fits on its owner limits.
 
     :param project: A project object.
-    :param current_memberships: Project total memberships, If None it will be calculated.
-    :param current_private_projects: total private projects owned by the project owner, If None it will be calculated.
-    :param current_public_projects: total public projects owned by the project owner, If None it will be calculated.
 
     :return: bool
     """
     if project.owner is None:
-        return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
+        return False
 
-    if current_memberships is None:
-        current_memberships = project.memberships.count()
+    current_projects = project.owner.owned_projects.filter(is_private=project.is_private).count()
+    Membership = apps.get_model("projects", "Membership")
+    current_memberships = (Membership.objects.filter(project__is_private=project.is_private,
+                                                     project__owner_id=project.owner_id,
+                                                     user_id__isnull=False)
+                                             .order_by("user_id")
+                                             .distinct("user_id")
+                                             .count()) # Current confirmed members
+    current_memberships += (Membership.objects.filter(project__is_private=project.is_private,
+                                                      project__owner_id=project.owner_id,
+                                                      user_id__isnull=True)
+                                              .order_by("email")
+                                              .distinct("email")
+                                              .count()) # Pending members
 
     if project.is_private:
-        max_memberships = project.owner.max_memberships_private_projects
-
-        if current_private_projects is None:
-            current_projects = project.owner.owned_projects.filter(is_private=True).count()
-        else:
-            current_projects = current_private_projects
-
         max_projects = project.owner.max_private_projects
+        max_memberships = project.owner.max_memberships_private_projects
     else:
-        max_memberships = project.owner.max_memberships_public_projects
-
-        if current_public_projects is None:
-            current_projects = project.owner.owned_projects.filter(is_private=False).count()
-        else:
-            current_projects = current_public_projects
-
         max_projects = project.owner.max_public_projects
+        max_memberships = project.owner.max_memberships_public_projects
 
     if max_memberships is not None and current_memberships > max_memberships:
         return True

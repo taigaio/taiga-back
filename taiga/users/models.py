@@ -170,12 +170,14 @@ class User(AbstractBaseUser, PermissionsMixin):
                                               verbose_name=_("max number of owned public projects"))
     max_memberships_private_projects = models.IntegerField(null=True, blank=True,
                                                            default=settings.MAX_MEMBERSHIPS_PRIVATE_PROJECTS,
-                                                           verbose_name=_("max number of memberships for "
-                                                                          "each owned private project"))
+                                                           verbose_name=_("max number of memberships of "
+                                                                          "different users for all owned "
+                                                                          "private project"))
     max_memberships_public_projects = models.IntegerField(null=True, blank=True,
                                                           default=settings.MAX_MEMBERSHIPS_PUBLIC_PROJECTS,
-                                                          verbose_name=_("max number of memberships for "
-                                                                         "each owned public project"))
+                                                          verbose_name=_("max number of memberships of "
+                                                                         "different users for all owned "
+                                                                         "public project"))
 
     _cached_memberships = None
     _cached_liked_ids = None
