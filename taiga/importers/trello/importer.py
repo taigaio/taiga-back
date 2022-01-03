@@ -52,8 +52,21 @@ class TrelloClient:
         else:
             self.oauth = None
 
+    def _validate_response(self, response):
+        if response.status_code == 400:
+            raise exc.WrongArguments(_("Invalid Request: %s at %s") % (response.text, response.url))
+        if response.status_code == 401:
+            raise exc.AuthenticationFailed(_("Unauthorized: %s at %s") % (response.text, response.url))
+        if response.status_code == 403:
+            raise exc.PermissionDenied(_("Unauthorized: %s at %s") % (response.text, response.url))
+        if response.status_code == 404:
+            raise exc.NotFound(_("Resource Unavailable: %s at %s") % (response.text, response.url))
+        if response.status_code != 200:
+            raise exc.WrongArguments(_("Resource Unavailable: %s at %s") % (response.text, response.url))
+
     def get(self, uri_path, query_params=None):
         headers = {'Accept': 'application/json'}
+
         if query_params is None:
             query_params = {}
 
@@ -62,19 +75,13 @@ class TrelloClient:
         url = 'https://api.trello.com/1/%s' % uri_path
 
         response = requests.get(url, params=query_params, headers=headers, auth=self.oauth)
-
-        if response.status_code == 400:
-            raise exc.WrongArguments(_("Invalid Request: %s at %s") % (response.text, url))
-        if response.status_code == 401:
-            raise exc.AuthenticationFailed(_("Unauthorized: %s at %s") % (response.text, url))
-        if response.status_code == 403:
-            raise exc.PermissionDenied(_("Unauthorized: %s at %s") % (response.text, url))
-        if response.status_code == 404:
-            raise exc.NotFound(_("Resource Unavailable: %s at %s") % (response.text, url))
-        if response.status_code != 200:
-            raise exc.WrongArguments(_("Resource Unavailable: %s at %s") % (response.text, url))
-
+        self._validate_response(response)
         return response.json()
+
+    def download(self, url):
+        response = requests.get(url, auth=self.oauth)
+        self._validate_response(response)
+        return response.content
 
 
 class TrelloImporter:
@@ -234,9 +241,9 @@ class TrelloImporter:
             creation_template=project_template,
             is_private=options.get('is_private', False),
         )
-        (can_create, error_message) = projects_service.check_if_project_can_be_created_or_updated(project)
+        (can_create, error_message, total_members) = projects_service.check_if_project_can_be_created_or_updated(project)
         if not can_create:
-            raise exceptions.NotEnoughSlotsForProject(project.is_private, 1, error_message)
+            raise exceptions.NotEnoughSlotsForProject(project.is_private, total_members or 1, error_message)
         project.save()
 
         if board.get('organization', None):
@@ -332,7 +339,9 @@ class TrelloImporter:
         for attachment in card['attachments']:
             if attachment['bytes'] is None:
                 continue
-            data = requests.get(attachment['url'])
+
+            data = self._client.download(attachment['url'])
+
             att = Attachment(
                 owner=users_bindings.get(attachment['idMember'], self._user),
                 project=us.project,
@@ -343,7 +352,7 @@ class TrelloImporter:
                 created_date=attachment['date'],
                 is_deprecated=False,
             )
-            att.attached_file.save(attachment['name'], ContentFile(data.content), save=True)
+            att.attached_file.save(attachment['name'], ContentFile(data), save=True)
 
             UserStory.objects.filter(id=us.id, created_date__gt=attachment['date']).update(
                 created_date=attachment['date']
