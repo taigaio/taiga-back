@@ -11,7 +11,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-14 19:17+0200\n"
 "PO-Revision-Date: 2022-01-05 18:52+0000\n"
-"Last-Translator: balnaimi two <balnaimi2@gmail.com>\n"
+"Last-Translator: Ali Al-Ghanim <alghanim_777@hotmail.com>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "ar/>\n"
 "Language: ar\n"
@@ -206,7 +206,7 @@ msgstr ""
 #: taiga/projects/tasks/api.py:307 taiga/projects/userstories/api.py:362
 #: taiga/projects/userstories/api.py:414 taiga/webhooks/api.py:71
 msgid "Blocked element"
-msgstr ""
+msgstr "عنصر محظور"
 
 #: taiga/base/api/pagination.py:228
 msgid "Page is not 'last', nor can it be converted to an int."
