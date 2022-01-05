@@ -10,21 +10,21 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-14 19:17+0200\n"
-"PO-Revision-Date: 2020-09-14 17:17+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
-"Language-Team: Arabic (http://www.transifex.com/taiga-agile-llc/taiga-back/"
-"language/ar/)\n"
+"PO-Revision-Date: 2022-01-05 18:28+0000\n"
+"Last-Translator: balnaimi two <balnaimi2@gmail.com>\n"
+"Language-Team: Arabic <https://hosted.weblate.org/projects/taiga/taiga-back/"
+"ar/>\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
-"X-Generator: Poedit 2.3\n"
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: taiga/auth/api.py:71
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "التسجيل العام غير مفعل."
 
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
@@ -32,7 +32,7 @@ msgstr "يجب عليك قبول شروطنا للخدمة و سياستنا ل�
 
 #: taiga/auth/api.py:102
 msgid "invalid registration type"
-msgstr ""
+msgstr "نوع التسجيل غير صالح"
 
 #: taiga/auth/api.py:118
 msgid "invalid login type"
@@ -48,7 +48,7 @@ msgstr "البريد الإلكتروني مستعمل حاليا."
 
 #: taiga/auth/services.py:96
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "الرمز لا يتطابق مع أي دعوة صالحة."
 
 #: taiga/auth/services.py:128
 msgid "User is already registered."
@@ -60,7 +60,7 @@ msgstr "هذا المستخدم عضو في المشروع من قبل."
 
 #: taiga/auth/services.py:169
 msgid "Error while creating new user."
-msgstr ""
+msgstr "حدث خطأ عند انشاء المستخدم."
 
 #: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
 #: taiga/external_apps/services.py:34 taiga/projects/api.py:432
