@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-14 19:17+0200\n"
-"PO-Revision-Date: 2022-01-05 18:30+0000\n"
+"PO-Revision-Date: 2022-01-05 18:52+0000\n"
 "Last-Translator: balnaimi two <balnaimi2@gmail.com>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "ar/>\n"
@@ -118,77 +118,79 @@ msgstr "الرجاء ادخال بريد إلكتروني صالح."
 #: taiga/base/api/fields.py:689
 #, python-format
 msgid "Date has wrong format. Use one of these formats instead: %s"
-msgstr ""
+msgstr "صيغة التاريخ خاطئة. استخدم احدى هذه الصيغ بالمقابل: %s"
 
 #: taiga/base/api/fields.py:753
 #, python-format
 msgid "Datetime has wrong format. Use one of these formats instead: %s"
-msgstr ""
+msgstr "صيغة التاريخ و الوقت خاطئة. استخدم احدى هذه الصيغ بالمقابل: %s"
 
 #: taiga/base/api/fields.py:823
 #, python-format
 msgid "Time has wrong format. Use one of these formats instead: %s"
-msgstr ""
+msgstr "صيغة الوقت خاطئة. استخدم احدى هذه الصيغ بالمقابل: %s"
 
 #: taiga/base/api/fields.py:880
 msgid "Enter a whole number."
-msgstr ""
+msgstr "ادخل الرقم بالكامل."
 
 #: taiga/base/api/fields.py:881 taiga/base/api/fields.py:934
 #, python-format
 msgid "Ensure this value is less than or equal to %(limit_value)s."
-msgstr ""
+msgstr "تأكد أن تكون هذه القيمة أقل أو تساوي %(limit_value)s."
 
 #: taiga/base/api/fields.py:882 taiga/base/api/fields.py:935
 #, python-format
 msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr ""
+msgstr "تأكد أن تكون هذه القيمة أعلى أو تساوي %(limit_value)s."
 
 #: taiga/base/api/fields.py:912
 #, python-format
 msgid "\"%s\" value must be a float."
-msgstr ""
+msgstr "يجب أن تكون قيمة \"%s\" عددًا عشريًا."
 
 #: taiga/base/api/fields.py:933
 msgid "Enter a number."
-msgstr ""
+msgstr "أدخل رقم"
 
 #: taiga/base/api/fields.py:936
 #, python-format
 msgid "Ensure that there are no more than %s digits in total."
-msgstr ""
+msgstr "تأكد من عدم وجود أكثر من %s رقم في المجموع."
 
 #: taiga/base/api/fields.py:937
 #, python-format
 msgid "Ensure that there are no more than %s decimal places."
-msgstr ""
+msgstr "تأكد من عدم وجود أكثر من %s من المنازل العشرية."
 
 #: taiga/base/api/fields.py:938
 #, python-format
 msgid "Ensure that there are no more than %s digits before the decimal point."
-msgstr ""
+msgstr "تأكد من عدم وجود أكثر من أرقام %s قبل الفاصلة العشرية."
 
 #: taiga/base/api/fields.py:1005
 msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
+msgstr "لم يتم تقديم أي ملف. تحقق من نوع الترميز في النموذج."
 
 #: taiga/base/api/fields.py:1006
 msgid "No file was submitted."
-msgstr ""
+msgstr "لم يتم تقديم أي ملف."
 
 #: taiga/base/api/fields.py:1007
 msgid "The submitted file is empty."
-msgstr ""
+msgstr "الملف المقدم فارغ."
 
 #: taiga/base/api/fields.py:1008
 #, python-format
 msgid ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr ""
+"تأكد من أن اسم الملف هذا يحتوي على أكثر من %(max)d أحرف (يحتوي على "
+"%(length)d)."
 
 #: taiga/base/api/fields.py:1009
 msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
+msgstr "يرجى إما إرسال ملف أو تحديد مربع الاختيار ، وليس كلاهما."
 
 #: taiga/base/api/fields.py:1049
 msgid ""
