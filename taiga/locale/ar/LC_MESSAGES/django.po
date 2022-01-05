@@ -11,7 +11,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-14 19:17+0200\n"
 "PO-Revision-Date: 2022-01-05 18:30+0000\n"
-"Last-Translator: Ali Al-Ghanim <alghanim_777@hotmail.com>\n"
+"Last-Translator: balnaimi two <balnaimi2@gmail.com>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "ar/>\n"
 "Language: ar\n"
@@ -93,7 +93,7 @@ msgstr "القيمة غير صالحة."
 #: taiga/base/api/fields.py:484
 #, python-format
 msgid "'%s' value must be either True or False."
-msgstr "%s القيمة يجب أن تكون صح أو خطأ."
+msgstr "'%s' القيمة يجب أن تكون صح أو خطأ."
 
 #: taiga/base/api/fields.py:549
 msgid ""
