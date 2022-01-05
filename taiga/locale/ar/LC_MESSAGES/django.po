@@ -11,7 +11,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-14 19:17+0200\n"
 "PO-Revision-Date: 2022-01-05 18:28+0000\n"
-"Last-Translator: balnaimi two <balnaimi2@gmail.com>\n"
+"Last-Translator: Ali Al-Ghanim <alghanim_777@hotmail.com>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "ar/>\n"
 "Language: ar\n"
@@ -66,48 +66,50 @@ msgstr "حدث خطأ عند انشاء المستخدم."
 #: taiga/external_apps/services.py:34 taiga/projects/api.py:432
 #: taiga/projects/api.py:453
 msgid "Invalid token"
-msgstr ""
+msgstr "رمز غير صالح"
 
 #: taiga/auth/validators.py:38 taiga/users/validators.py:47
 msgid "invalid username"
-msgstr ""
+msgstr "اسم مستخدم غير صالح"
 
 #: taiga/auth/validators.py:43 taiga/users/validators.py:53
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
-msgstr ""
+msgstr "مطلوب. 255 حرفاً او اقل. حروف، ارقام و /./-/_ رموز"
 
 #: taiga/auth/validators.py:50 taiga/auth/validators.py:53
 #: taiga/users/validators.py:66 taiga/users/validators.py:69
 msgid "Invalid full name"
-msgstr ""
+msgstr "الاسم الكامل غير صالح"
 
 #: taiga/base/api/fields.py:294
 msgid "This field is required."
-msgstr ""
+msgstr "هذا الحقل مطلوب."
 
 #: taiga/base/api/fields.py:295 taiga/base/api/relations.py:337
 msgid "Invalid value."
-msgstr ""
+msgstr "القيمة غير صالحة."
 
 #: taiga/base/api/fields.py:484
 #, python-format
 msgid "'%s' value must be either True or False."
-msgstr ""
+msgstr "%s القيمة يجب أن تكون صح أو خطأ."
 
 #: taiga/base/api/fields.py:549
 msgid ""
 "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
 msgstr ""
+"أدخل قيمة صالحة \"سبيكة\" تكون من الحروف ، الارقام ، الشرطات السفلية أو "
+"الوصلات."
 
 #: taiga/base/api/fields.py:564
 #, python-format
 msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
+msgstr "حدد اختياراً صالحاً. %(value)s ليس من الخيارات المتوفرة."
 
 #: taiga/base/api/fields.py:638
 msgid "You email domain is not allowed"
-msgstr ""
+msgstr "مجال البريد الالكتروني غير متاح."
 
 #: taiga/base/api/fields.py:647
 msgid "Enter a valid email address."
