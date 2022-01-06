@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-14 19:17+0200\n"
-"PO-Revision-Date: 2022-01-05 18:52+0000\n"
+"PO-Revision-Date: 2022-01-07 20:55+0000\n"
 "Last-Translator: Ali Al-Ghanim <alghanim_777@hotmail.com>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "ar/>\n"
@@ -24,7 +24,7 @@ msgstr ""
 
 #: taiga/auth/api.py:71
 msgid "Public registration is disabled."
-msgstr "التسجيل العام غير مفعل."
+msgstr "التسجيل العام معطل."
 
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
@@ -32,7 +32,7 @@ msgstr "يجب عليك قبول شروطنا للخدمة و سياستنا ل�
 
 #: taiga/auth/api.py:102
 msgid "invalid registration type"
-msgstr "نوع التسجيل غير صالح"
+msgstr "خطأ في نوع التسجيل"
 
 #: taiga/auth/api.py:118
 msgid "invalid login type"
@@ -151,7 +151,7 @@ msgstr "يجب أن تكون قيمة \"%s\" عددًا عشريًا."
 
 #: taiga/base/api/fields.py:933
 msgid "Enter a number."
-msgstr "أدخل رقم"
+msgstr "أدخل رقم."
 
 #: taiga/base/api/fields.py:936
 #, python-format
@@ -161,7 +161,7 @@ msgstr "تأكد من عدم وجود أكثر من %s رقم في المجمو�
 #: taiga/base/api/fields.py:937
 #, python-format
 msgid "Ensure that there are no more than %s decimal places."
-msgstr "تأكد من عدم وجود أكثر من %s من المنازل العشرية."
+msgstr "تأكد من عدم وجود أكثر %s من المنازل العشرية."
 
 #: taiga/base/api/fields.py:938
 #, python-format
@@ -197,6 +197,7 @@ msgid ""
 "Upload a valid image. The file you uploaded was either not an image or a "
 "corrupted image."
 msgstr ""
+"الرجاء رفع صورة صالحة. الملف الذي تم رفعه اما انه ليس بصورة او صورة معطلة."
 
 #: taiga/base/api/mixins.py:281 taiga/base/exceptions.py:211
 #: taiga/hooks/api.py:69 taiga/projects/api.py:467 taiga/projects/api.py:500
@@ -210,16 +211,16 @@ msgstr "عنصر محظور"
 
 #: taiga/base/api/pagination.py:228
 msgid "Page is not 'last', nor can it be converted to an int."
-msgstr ""
+msgstr "الصفحة ليس \"الاخيرة\" ، و لا يمكن تحويلها إلى عدد صحيح."
 
 #: taiga/base/api/pagination.py:232
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
+msgstr "صفحة معطلة (%(page_number)s): %(message)s"
 
 #: taiga/base/api/permissions.py:65
 msgid "Invalid permission definition."
-msgstr ""
+msgstr "تعريف إذن غير صالح."
 
 #: taiga/base/api/relations.py:247
 #, python-format
@@ -371,7 +372,7 @@ msgstr ""
 
 #: taiga/base/templates/emails/base-body-html.jinja:6
 msgid "Taiga"
-msgstr ""
+msgstr "التايغا"
 
 #: taiga/base/templates/emails/hero-body-html.jinja:6
 msgid "You have been Taigatized"
@@ -413,7 +414,7 @@ msgstr ""
 
 #: taiga/base/templates/emails/updates-body-html.jinja:359
 msgid "Updates"
-msgstr ""
+msgstr "التحديثات"
 
 #: taiga/base/templates/emails/updates-body-html.jinja:365
 #, python-format
@@ -829,7 +830,7 @@ msgstr ""
 #: taiga/users/admin.py:54 taiga/users/models.py:312
 #: taiga/webhooks/models.py:34
 msgid "name"
-msgstr ""
+msgstr "الاسم"
 
 #: taiga/external_apps/models.py:37
 msgid "Icon url"
@@ -837,7 +838,7 @@ msgstr ""
 
 #: taiga/external_apps/models.py:38
 msgid "web"
-msgstr ""
+msgstr "موقع"
 
 #: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:78
 #: taiga/projects/custom_attributes/models.py:37
@@ -847,7 +848,7 @@ msgstr ""
 #: taiga/projects/models.py:920 taiga/projects/tasks/models.py:94
 #: taiga/projects/userstories/models.py:117
 msgid "description"
-msgstr ""
+msgstr "وصف"
 
 #: taiga/external_apps/models.py:41
 msgid "Next url"
@@ -857,11 +858,11 @@ msgstr ""
 #: taiga/projects/likes/models.py:35 taiga/projects/notifications/models.py:106
 #: taiga/projects/votes/models.py:56
 msgid "user"
-msgstr ""
+msgstr "مستخدم"
 
 #: taiga/external_apps/models.py:67
 msgid "application"
-msgstr ""
+msgstr "تطبيق"
 
 #: taiga/feedback/models.py:25 taiga/users/models.py:147
 msgid "full name"
@@ -873,7 +874,7 @@ msgstr ""
 
 #: taiga/feedback/models.py:29 taiga/projects/contact/models.py:41
 msgid "comment"
-msgstr ""
+msgstr "تعليق"
 
 #: taiga/feedback/models.py:31 taiga/projects/attachments/models.py:64
 #: taiga/projects/contact/models.py:44
@@ -1450,11 +1451,11 @@ msgstr ""
 
 #: taiga/projects/admin.py:100
 msgid "Privacy"
-msgstr ""
+msgstr "خصوصية"
 
 #: taiga/projects/admin.py:111
 msgid "Modules"
-msgstr ""
+msgstr "وحدات"
 
 #: taiga/projects/admin.py:119
 msgid "Default values"
@@ -1462,11 +1463,11 @@ msgstr ""
 
 #: taiga/projects/admin.py:126
 msgid "Activity"
-msgstr ""
+msgstr "نشاط"
 
 #: taiga/projects/admin.py:131
 msgid "Fans"
-msgstr ""
+msgstr "مشجعين"
 
 #: taiga/projects/admin.py:145 taiga/projects/attachments/models.py:42
 #: taiga/projects/epics/models.py:50 taiga/projects/issues/models.py:43
@@ -1475,7 +1476,7 @@ msgstr ""
 #: taiga/projects/userstories/models.py:91 taiga/projects/wiki/models.py:50
 #: taiga/users/admin.py:69 taiga/userstorage/models.py:31
 msgid "owner"
-msgstr ""
+msgstr "مالك"
 
 #: taiga/projects/admin.py:191
 #, python-brace-format
@@ -1594,7 +1595,7 @@ msgstr ""
 #: taiga/projects/userstories/models.py:87 taiga/projects/wiki/models.py:38
 #: taiga/projects/wiki/models.py:91 taiga/users/models.py:327
 msgid "project"
-msgstr ""
+msgstr "مشروع"
 
 #: taiga/projects/attachments/models.py:57
 msgid "content type"
@@ -1641,7 +1642,7 @@ msgstr ""
 #: taiga/projects/models.py:888 taiga/projects/wiki/models.py:98
 #: taiga/users/models.py:318
 msgid "order"
-msgstr ""
+msgstr "طلب"
 
 #: taiga/projects/choices.py:23
 msgid "Whereby.com"
@@ -1725,7 +1726,7 @@ msgstr ""
 
 #: taiga/projects/custom_attributes/choices.py:32
 msgid "Text"
-msgstr ""
+msgstr "نص"
 
 #: taiga/projects/custom_attributes/choices.py:33
 msgid "Multi-Line Text"
@@ -1737,36 +1738,36 @@ msgstr ""
 
 #: taiga/projects/custom_attributes/choices.py:35
 msgid "Date"
-msgstr ""
+msgstr "التاريخ"
 
 #: taiga/projects/custom_attributes/choices.py:36
 msgid "Url"
-msgstr ""
+msgstr "رابط"
 
 #: taiga/projects/custom_attributes/choices.py:37
 msgid "Dropdown"
-msgstr ""
+msgstr "القائمة"
 
 #: taiga/projects/custom_attributes/choices.py:38
 msgid "Checkbox"
-msgstr ""
+msgstr "خانة الاختيار"
 
 #: taiga/projects/custom_attributes/choices.py:39
 msgid "Number"
-msgstr ""
+msgstr "رقم"
 
 #: taiga/projects/custom_attributes/models.py:40
 #: taiga/projects/issues/models.py:75
 msgid "type"
-msgstr ""
+msgstr "نوع"
 
 #: taiga/projects/custom_attributes/models.py:101
 msgid "values"
-msgstr ""
+msgstr "قيم"
 
 #: taiga/projects/custom_attributes/models.py:114
 msgid "epic"
-msgstr ""
+msgstr "ملحمي"
 
 #: taiga/projects/custom_attributes/models.py:135
 #: taiga/projects/tasks/models.py:40 taiga/projects/userstories/models.py:42
@@ -1775,7 +1776,7 @@ msgstr ""
 
 #: taiga/projects/custom_attributes/models.py:156
 msgid "task"
-msgstr ""
+msgstr "مهمة"
 
 #: taiga/projects/custom_attributes/models.py:177
 msgid "issue"
@@ -1800,12 +1801,12 @@ msgstr ""
 #: taiga/projects/epics/models.py:36 taiga/projects/issues/models.py:36
 #: taiga/projects/tasks/models.py:44 taiga/projects/userstories/models.py:78
 msgid "ref"
-msgstr ""
+msgstr "مرجع"
 
 #: taiga/projects/epics/models.py:54 taiga/projects/issues/models.py:51
 #: taiga/projects/tasks/models.py:59 taiga/projects/userstories/models.py:94
 msgid "status"
-msgstr ""
+msgstr "الحالة"
 
 #: taiga/projects/epics/models.py:57
 msgid "epics order"
@@ -1814,7 +1815,7 @@ msgstr ""
 #: taiga/projects/epics/models.py:66 taiga/projects/issues/models.py:103
 #: taiga/projects/tasks/models.py:87 taiga/projects/userstories/models.py:116
 msgid "subject"
-msgstr ""
+msgstr "الموضوع"
 
 #: taiga/projects/epics/models.py:70 taiga/projects/models.py:570
 #: taiga/projects/models.py:611 taiga/projects/models.py:675
@@ -1823,7 +1824,7 @@ msgstr ""
 #: taiga/projects/models.py:830 taiga/projects/models.py:864
 #: taiga/projects/models.py:892 taiga/users/models.py:149
 msgid "color"
-msgstr ""
+msgstr "لون"
 
 #: taiga/projects/epics/models.py:77 taiga/projects/issues/models.py:111
 #: taiga/projects/tasks/models.py:101 taiga/projects/userstories/models.py:124
@@ -1869,15 +1870,15 @@ msgstr ""
 
 #: taiga/projects/history/choices.py:31
 msgid "Change"
-msgstr ""
+msgstr "تغيير"
 
 #: taiga/projects/history/choices.py:32
 msgid "Create"
-msgstr ""
+msgstr "إنشاء"
 
 #: taiga/projects/history/choices.py:33
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:25
 #, python-format
@@ -1894,7 +1895,7 @@ msgstr ""
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:213
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:267
 msgid "from"
-msgstr ""
+msgstr "من"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:34
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:144
@@ -1907,7 +1908,7 @@ msgstr ""
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:244
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:273
 msgid "to"
-msgstr ""
+msgstr "إلى"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:46
 msgid "Added new attachment"
@@ -1919,7 +1920,7 @@ msgstr ""
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:70
 msgid "deprecated"
-msgstr ""
+msgstr "مهمل"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:72
 msgid "not deprecated"
@@ -1931,11 +1932,11 @@ msgstr ""
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:107
 msgid "added"
-msgstr ""
+msgstr "تمت الاضافة"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:112
 msgid "removed"
-msgstr ""
+msgstr "تمت الازالة"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:137
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:148
@@ -1943,7 +1944,7 @@ msgstr ""
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:202
 #: taiga/projects/services/stats.py:55 taiga/projects/services/stats.py:56
 msgid "Unassigned"
-msgstr ""
+msgstr "غير معين"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:164
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:175
@@ -1953,50 +1954,50 @@ msgstr ""
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:286
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:91
 msgid "-deleted-"
-msgstr ""
+msgstr "-محذوف-"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:23
 msgid "to:"
-msgstr ""
+msgstr "إلى:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:23
 msgid "from:"
-msgstr ""
+msgstr "من:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:29
 msgid "Added"
-msgstr ""
+msgstr "تمت اضافته"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:36
 msgid "Changed"
-msgstr ""
+msgstr "تم التغيير"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:43
 msgid "Deleted"
-msgstr ""
+msgstr "تم الحذف"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:57
 msgid "added:"
-msgstr ""
+msgstr "تمت اضافته:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:60
 msgid "removed:"
-msgstr ""
+msgstr "تمت ازالته:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:65
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:83
 msgid "From:"
-msgstr ""
+msgstr "من:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:66
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:84
 msgid "To:"
-msgstr ""
+msgstr "إلى:"
 
 #: taiga/projects/history/templatetags/functions.py:26
 #: taiga/projects/wiki/models.py:44
 msgid "content"
-msgstr ""
+msgstr "محتوى"
 
 #: taiga/projects/history/templatetags/functions.py:27
 #: taiga/projects/mixins/blocked.py:33
@@ -2005,7 +2006,7 @@ msgstr ""
 
 #: taiga/projects/history/templatetags/functions.py:28
 msgid "sprint"
-msgstr ""
+msgstr "العدو"
 
 #: taiga/projects/issues/api.py:167
 msgid "You don't have permissions to set this sprint to this issue."
@@ -2029,16 +2030,16 @@ msgstr ""
 
 #: taiga/projects/issues/models.py:59
 msgid "severity"
-msgstr ""
+msgstr "شده"
 
 #: taiga/projects/issues/models.py:67
 msgid "priority"
-msgstr ""
+msgstr "أولوية"
 
 #: taiga/projects/issues/models.py:84 taiga/projects/tasks/models.py:77
 #: taiga/projects/userstories/models.py:81
 msgid "milestone"
-msgstr ""
+msgstr "حدث رئيسي"
 
 #: taiga/projects/issues/models.py:101 taiga/projects/tasks/models.py:85
 msgid "finished date"
@@ -2056,11 +2057,11 @@ msgstr ""
 
 #: taiga/projects/likes/models.py:42
 msgid "Like"
-msgstr ""
+msgstr "إعجاب"
 
 #: taiga/projects/likes/models.py:43
 msgid "Likes"
-msgstr ""
+msgstr "الاعجابات"
 
 #: taiga/projects/milestones/models.py:40 taiga/projects/models.py:173
 #: taiga/projects/models.py:564 taiga/projects/models.py:603
@@ -2068,7 +2069,7 @@ msgstr ""
 #: taiga/projects/models.py:918 taiga/projects/wiki/models.py:42
 #: taiga/users/admin.py:58 taiga/users/models.py:314
 msgid "slug"
-msgstr ""
+msgstr "سبيكة"
 
 #: taiga/projects/milestones/models.py:57
 msgid "estimated start date"
@@ -2086,7 +2087,7 @@ msgstr ""
 
 #: taiga/projects/milestones/models.py:67
 msgid "disponibility"
-msgstr ""
+msgstr "عدم المسؤولية"
 
 #: taiga/projects/milestones/models.py:88
 msgid "The estimated start must be previous to the estimated finish."
@@ -2128,7 +2129,7 @@ msgstr ""
 
 #: taiga/projects/models.py:97
 msgid "email"
-msgstr ""
+msgstr "البريد الالكتروني"
 
 #: taiga/projects/models.py:99
 msgid "create at"
@@ -2136,7 +2137,7 @@ msgstr ""
 
 #: taiga/projects/models.py:101 taiga/users/models.py:166
 msgid "token"
-msgstr ""
+msgstr "رمز"
 
 #: taiga/projects/models.py:112
 msgid "invitation extra text"
@@ -2184,11 +2185,11 @@ msgstr ""
 
 #: taiga/projects/models.py:179
 msgid "logo"
-msgstr ""
+msgstr "الشعار"
 
 #: taiga/projects/models.py:196
 msgid "members"
-msgstr ""
+msgstr "اعضاء"
 
 #: taiga/projects/models.py:199
 msgid "total of milestones"
@@ -2273,7 +2274,7 @@ msgstr ""
 #: taiga/projects/models.py:265 taiga/projects/models.py:277
 #: taiga/projects/votes/models.py:30
 msgid "count"
-msgstr ""
+msgstr "عدد"
 
 #: taiga/projects/models.py:268
 msgid "fans last week"
@@ -2313,7 +2314,7 @@ msgstr ""
 
 #: taiga/projects/models.py:647 taiga/userstorage/models.py:39
 msgid "value"
-msgstr ""
+msgstr "قيمة"
 
 #: taiga/projects/models.py:673 taiga/projects/models.py:742
 #: taiga/projects/models.py:890
@@ -2348,7 +2349,7 @@ msgstr ""
 #: taiga/projects/models.py:957 taiga/projects/userstories/models.py:58
 #: taiga/projects/userstories/models.py:99
 msgid "points"
-msgstr ""
+msgstr "نقاط"
 
 #: taiga/projects/models.py:958
 msgid "task statuses"
@@ -2372,15 +2373,15 @@ msgstr ""
 
 #: taiga/projects/models.py:963
 msgid "priorities"
-msgstr ""
+msgstr "أولويات"
 
 #: taiga/projects/models.py:964
 msgid "severities"
-msgstr ""
+msgstr "شدة"
 
 #: taiga/projects/models.py:965
 msgid "roles"
-msgstr ""
+msgstr "الأدوار"
 
 #: taiga/projects/models.py:966
 msgid "epic custom attributes"
@@ -2400,23 +2401,23 @@ msgstr ""
 
 #: taiga/projects/notifications/choices.py:30
 msgid "Involved"
-msgstr ""
+msgstr "متضمن"
 
 #: taiga/projects/notifications/choices.py:31
 msgid "All"
-msgstr ""
+msgstr "جميع"
 
 #: taiga/projects/notifications/choices.py:32
 msgid "None"
-msgstr ""
+msgstr "لا احد"
 
 #: taiga/projects/notifications/choices.py:46
 msgid "Assigned"
-msgstr ""
+msgstr "مكلف"
 
 #: taiga/projects/notifications/choices.py:47
 msgid "Mentioned"
-msgstr ""
+msgstr "مذكور"
 
 #: taiga/projects/notifications/choices.py:48
 msgid "Added as watcher"
@@ -2428,7 +2429,7 @@ msgstr ""
 
 #: taiga/projects/notifications/choices.py:50
 msgid "Comment"
-msgstr ""
+msgstr "تعليق"
 
 #: taiga/projects/notifications/choices.py:51
 msgid "Mentioned in comment"
@@ -2449,7 +2450,7 @@ msgstr ""
 #: taiga/projects/notifications/models.py:120
 #: taiga/projects/notifications/models.py:121
 msgid "Watched"
-msgstr ""
+msgstr "تمت مشاهدته"
 
 #: taiga/projects/notifications/services.py:75
 #: taiga/projects/notifications/services.py:99
@@ -3073,7 +3074,7 @@ msgstr ""
 
 #: taiga/projects/occ/mixins.py:95
 msgid "version"
-msgstr ""
+msgstr "إصدار"
 
 #: taiga/projects/permissions.py:44
 msgid ""
@@ -3144,24 +3145,24 @@ msgstr ""
 
 #: taiga/projects/settings/choices.py:33
 msgid "Timeline"
-msgstr ""
+msgstr "الجدول الزمني"
 
 #: taiga/projects/settings/choices.py:34
 msgid "Epics"
-msgstr ""
+msgstr "الملاحم"
 
 #: taiga/projects/settings/choices.py:35
 msgid "Backlog"
-msgstr ""
+msgstr "تراكم"
 
 #. Translators: Name of kanban project template.
 #: taiga/projects/settings/choices.py:36 taiga/projects/translations.py:35
 msgid "Kanban"
-msgstr ""
+msgstr "كانبان"
 
 #: taiga/projects/settings/choices.py:37
 msgid "Issues"
-msgstr ""
+msgstr "مشاكل"
 
 #: taiga/projects/settings/choices.py:38
 msgid "TeamWiki"
@@ -3190,7 +3191,7 @@ msgstr ""
 
 #: taiga/projects/tagging/models.py:27
 msgid "tags"
-msgstr ""
+msgstr "العلامات"
 
 #: taiga/projects/tagging/models.py:35
 msgid "tags colors"
@@ -3274,7 +3275,7 @@ msgstr ""
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:6
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:4
 msgid "someone"
-msgstr ""
+msgstr "شخص"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:11
 #, python-format
@@ -3519,7 +3520,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:14
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:22
 msgid "Continue"
-msgstr ""
+msgstr "إستكمال"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:1
 #, python-format
@@ -3634,7 +3635,7 @@ msgstr ""
 #. Translators: User story point value (value = undefined)
 #: taiga/projects/translations.py:45
 msgid "?"
-msgstr ""
+msgstr "؟"
 
 #. Translators: User story point value (value = 0)
 #: taiga/projects/translations.py:47
@@ -3697,12 +3698,12 @@ msgstr ""
 #: taiga/projects/translations.py:75 taiga/projects/translations.py:98
 #: taiga/projects/translations.py:114
 msgid "New"
-msgstr ""
+msgstr "جديد"
 
 #. Translators: User story status
 #: taiga/projects/translations.py:78
 msgid "Ready"
-msgstr ""
+msgstr "جاهز"
 
 #. Translators: User story status
 #. Translators: Task status
@@ -3723,18 +3724,18 @@ msgstr ""
 #. Translators: User story status
 #: taiga/projects/translations.py:87
 msgid "Done"
-msgstr ""
+msgstr "تم"
 
 #. Translators: User story status
 #: taiga/projects/translations.py:90
 msgid "Archived"
-msgstr ""
+msgstr "مؤرشف"
 
 #. Translators: Task status
 #. Translators: Issue status
 #: taiga/projects/translations.py:104 taiga/projects/translations.py:120
 msgid "Closed"
-msgstr ""
+msgstr "مغلق"
 
 #. Translators: Task status
 #. Translators: Issue status
@@ -3745,83 +3746,83 @@ msgstr ""
 #. Translators: Issue status
 #: taiga/projects/translations.py:124
 msgid "Postponed"
-msgstr ""
+msgstr "مؤجل"
 
 #. Translators: Issue status
 #: taiga/projects/translations.py:126
 msgid "Rejected"
-msgstr ""
+msgstr "مرفوض"
 
 #. Translators: Issue type
 #: taiga/projects/translations.py:134
 msgid "Bug"
-msgstr ""
+msgstr "خلل"
 
 #. Translators: Issue type
 #: taiga/projects/translations.py:136
 msgid "Question"
-msgstr ""
+msgstr "سؤال"
 
 #. Translators: Issue type
 #: taiga/projects/translations.py:138
 msgid "Enhancement"
-msgstr ""
+msgstr "تعزيز"
 
 #. Translators: Issue priority
 #: taiga/projects/translations.py:146
 msgid "Low"
-msgstr ""
+msgstr "منخفض"
 
 #. Translators: Issue priority
 #. Translators: Issue severity
 #: taiga/projects/translations.py:148 taiga/projects/translations.py:161
 msgid "Normal"
-msgstr ""
+msgstr "عادي"
 
 #. Translators: Issue priority
 #: taiga/projects/translations.py:150
 msgid "High"
-msgstr ""
+msgstr "عالي"
 
 #. Translators: Issue severity
 #: taiga/projects/translations.py:157
 msgid "Wishlist"
-msgstr ""
+msgstr "قائمة الرغبات"
 
 #. Translators: Issue severity
 #: taiga/projects/translations.py:159
 msgid "Minor"
-msgstr ""
+msgstr "مصغر"
 
 #. Translators: Issue severity
 #: taiga/projects/translations.py:163
 msgid "Important"
-msgstr ""
+msgstr "مهم"
 
 #. Translators: Issue severity
 #: taiga/projects/translations.py:165
 msgid "Critical"
-msgstr ""
+msgstr "حرج"
 
 #. Translators: User role
 #: taiga/projects/translations.py:172
 msgid "UX"
-msgstr ""
+msgstr "تجربة المستخدم"
 
 #. Translators: User role
 #: taiga/projects/translations.py:174
 msgid "Design"
-msgstr ""
+msgstr "تصميم"
 
 #. Translators: User role
 #: taiga/projects/translations.py:176
 msgid "Front"
-msgstr ""
+msgstr "أمام"
 
 #. Translators: User role
 #: taiga/projects/translations.py:178
 msgid "Back"
-msgstr ""
+msgstr "خلف"
 
 #. Translators: User role
 #: taiga/projects/translations.py:180
@@ -3831,7 +3832,7 @@ msgstr ""
 #. Translators: User role
 #: taiga/projects/translations.py:182
 msgid "Stakeholder"
-msgstr ""
+msgstr "أصحاب المصلحه"
 
 #: taiga/projects/userstories/api.py:147
 msgid "You don't have permissions to set this sprint to this user story."
@@ -3858,7 +3859,7 @@ msgstr ""
 
 #: taiga/projects/userstories/models.py:50
 msgid "role"
-msgstr ""
+msgstr "دور"
 
 #: taiga/projects/userstories/models.py:102
 msgid "backlog order"
@@ -3954,7 +3955,7 @@ msgstr ""
 
 #: taiga/projects/validators.py:299
 msgid "Points"
-msgstr ""
+msgstr "نقاط"
 
 #: taiga/projects/validators.py:300
 msgid "Task's statuses"
@@ -3970,7 +3971,7 @@ msgstr ""
 
 #: taiga/projects/validators.py:303
 msgid "Priorities"
-msgstr ""
+msgstr "أولويات"
 
 #: taiga/projects/validators.py:304
 msgid "Severities"
