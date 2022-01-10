@@ -33,6 +33,7 @@ RUN set -eux; \
     apt-get install -y \
        build-essential \
        gettext \
+       libpq-dev \
        git \
        net-tools \
        procps \
@@ -68,6 +69,7 @@ RUN set -eux; \
     apt-get purge -y \
        build-essential \
        gettext \
+       libpq-dev \
        git; \
     apt-get autoremove -y; \
     rm -rf /var/lib/apt/lists/*; \

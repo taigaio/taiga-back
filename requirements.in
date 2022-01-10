@@ -1,6 +1,6 @@
 asana
 bleach
-celery==4.3.0
+celery==5.2.3
 diff-match-patch==20121119
 django-ipware==1.1.6
 django-jinja==2.7.0
@@ -11,11 +11,10 @@ django-sites==0.10
 django-sr==0.0.4
 djmail==1.0.1
 easy-thumbnails==2.7.0
-fn==0.4.3
-gunicorn==19.9.0
+gunicorn==20.1.0
 netaddr==0.7.19
 premailer==3.0.1
-psd-tools==1.8.38
+psd-tools==1.9.18
 psycopg2-binary==2.8.5
 pymdown-extensions==8.1.1
 python-dateutil==2.7.5
@@ -23,7 +22,7 @@ python-magic==0.4.15
 pytz
 raven
 redis==2.10.5
-requests==2.21.0
+requests==2.27.1
 requests_oauthlib
 rudder-sdk-python==1.0.0b1
 serpy==0.1.1
