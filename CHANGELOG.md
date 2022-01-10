@@ -5,6 +5,7 @@
 - Now member limits by projects are counted by owner and not by project
 - Fix Trello importer, now it does not generate empty attachments (issue #tg-4782)
 - Fix previsualization of .psd files for attachments, project logos and user avatars
+- Upgrade project dependencies. Now taiga only works with python >= 3.7
 
 ## 6.4.3 (2021-10-27)
 

@@ -177,7 +177,7 @@ def emit_live_notification_for_model(obj, user, history, *, type:str="change", c
 def emit_event_for_ids(ids, content_type:str, projectid:int, *,
                        type:str="change", channel:str="events", sessionid:str=None):
     assert type in set(["create", "change", "delete"])
-    assert isinstance(ids, collections.Iterable)
+    assert isinstance(ids, collections.abc.Iterable)
     assert content_type, "'content_type' parameter is mandatory"
 
     app_name, model_name = content_type.split(".", 1)
