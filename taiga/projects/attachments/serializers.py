@@ -42,7 +42,7 @@ class AttachmentSerializer(serializers.LightSerializer):
         return services.get_card_image_thumbnail_url(obj)
 
     def get_preview_url(self, obj):
-        if obj.name.endswith(".psd"):
+        if obj.attached_file.name.lower().endswith(".psd"):
             return services.get_attachment_image_preview_url(obj)
         return self.get_url(obj)
 
