@@ -20,7 +20,7 @@ import re
 class WikiLinkExtension(Extension):
     def __init__(self, project, *args, **kwargs):
         self.project = project
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
         WIKILINK_RE = r"\[\[([\w0-9_ -]+)(\|[^\]]+)?\]\]"

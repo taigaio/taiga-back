@@ -40,7 +40,7 @@ from taiga.front.templatetags.functions import resolve
 class TaigaReferencesExtension(Extension):
     def __init__(self, project, *args, **kwargs):
         self.project = project
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
         TAIGA_REFERENCE_RE = r'(?<=^|(?<=[^a-zA-Z0-9-\[]))#(\d+)'
