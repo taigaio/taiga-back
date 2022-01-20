@@ -1,6 +1,10 @@
 # Changelog
 
-## 6.5.0 (unreleased)
+## 6.6.0 (unreleased)
+
+- ...
+
+## 6.5.0 (2022-01-24)
 
 - Now member limits by projects are counted by owner and not by project
 - Fix Trello importer, now it does not generate empty attachments (issue #tg-4782)
