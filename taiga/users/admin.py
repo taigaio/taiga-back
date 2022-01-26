@@ -11,11 +11,14 @@ from django.contrib import admin
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Role, User
 from .forms import UserChangeForm, UserCreationForm
 
+
+SEPARATOR = "<strong>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</strong>"
 
 admin.site.unregister(Group)
 
@@ -69,8 +72,8 @@ class OwnedProjectsInline(admin.TabularInline):
     fk_name = "owner"
     verbose_name = _("Project Ownership")
     verbose_name_plural = _("Project Ownerships")
-    fields = ("id", "name", "slug", "is_private")
-    readonly_fields = ("id", "name", "slug", "is_private")
+    fields = ("id", "name", "slug", "is_private", "total_memberships")
+    readonly_fields = ("id", "name", "slug", "is_private", "total_memberships")
     show_change_link = True
     extra = 0
 
@@ -79,6 +82,14 @@ class OwnedProjectsInline(admin.TabularInline):
 
     def has_delete_permission(self, *args):
         return False
+
+    def total_memberships(self, obj):
+        total = obj.memberships.all().count()
+        pending = obj.memberships.filter(user=None).count()
+        accepted = total - pending
+        return mark_safe(f"{total}{SEPARATOR}<i>{accepted} accepted</i>{SEPARATOR}<i>{pending} pending</i>")
+
+    total_memberships.short_description = _("Memberships")
 
 
 class RoleInline(admin.TabularInline):
@@ -109,20 +120,22 @@ class UserAdmin(DjangoUserAdmin):
     ordering = ("username",)
     readonly_fields = (
         "total_private_projects", "total_memberships_private_projects",
-        "total_public_projects", "total_memberships_public_projects"
+        "total_public_projects", "total_memberships_public_projects",
     )
     filter_horizontal = ()
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        (_("Personal info"), {"fields": ("full_name", "email", "bio", "photo")}),
-        (_("Extra info"), {"fields": ("color", "lang", "timezone", "token", "colorize_tags",
+        (_("PERSONAL INFO"), {"fields": ("full_name", "email", "bio", "photo")}),
+        (_("EXTRA INFO"), {"fields": ("color", "lang", "timezone", "token", "colorize_tags",
                                       "email_token", "new_email", "verified_email", "accepted_terms", "read_new_terms")}),
-        (_("Permissions"), {"fields": ("is_active", "is_superuser")}),
-        (_("Restrictions"), {"fields": (("max_private_projects", "max_memberships_private_projects"),
+        (_("PERMISSIONS"), {"fields": ("is_active", "is_superuser")}),
+        (_("IMPORTANT DATES"), {"fields": (("last_login", "date_joined", "date_cancelled"),)}),
+        (_("PROJECT OWNERSHIPS RESTRICTIONS"), {"fields": (("max_private_projects", "max_memberships_private_projects"),
                                         ("max_public_projects", "max_memberships_public_projects"))}),
-        (_("Restrictions (Current Status)"), {"fields": (("total_private_projects", "total_memberships_private_projects"),
-                                                         ("total_public_projects", "total_memberships_public_projects"))}),
-        (_("Important dates"), {"fields": (("last_login", "date_joined", "date_cancelled"),)}),
+        (_("PROJECT OWNERSHIPS STATS"), {"fields": (("total_private_projects",
+                                                     "total_memberships_private_projects"),
+                                                    ("total_public_projects",
+                                                     "total_memberships_public_projects"))}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -141,41 +154,43 @@ class UserAdmin(DjangoUserAdmin):
 
     def total_private_projects(self, obj):
         return obj.owned_projects.filter(is_private=True).count()
-    total_private_projects.short_description = _("Total private projects owned")
+    total_private_projects.short_description = _("Private projects owned")
 
     def total_memberships_private_projects(self, obj):
         Membership = apps.get_model("projects", "Membership")
-        return (Membership.objects.filter(project__is_private=True,
+        accepted = (Membership.objects.filter(project__is_private=True,
                                           project__owner_id=obj.id,
                                           user_id__isnull=False)
-                                   .order_by("user_id")
-                                   .distinct("user_id").count()
-                +
-                Membership.objects.filter(project__is_private=True,
+                                  .order_by("user_id")
+                                  .distinct("user_id").count())
+        pending = (Membership.objects.filter(project__is_private=True,
                                           project__owner_id=obj.id,
                                           user_id__isnull=True)
-                                   .order_by("email")
-                                   .distinct("email").count())
-    total_memberships_private_projects.short_description = _("Total private memberships owned")
+                                  .order_by("email")
+                                  .distinct("email").count())
+        total = pending + accepted
+        return mark_safe(f"{total}{SEPARATOR}<i>{accepted} accepted</i>{SEPARATOR}<i>{pending} pending</i>")
+    total_memberships_private_projects.short_description = _("Private memberships owned")
 
     def total_public_projects(self, obj):
         return obj.owned_projects.filter(is_private=False).count()
-    total_public_projects.short_description = _("Total public projects owned")
+    total_public_projects.short_description = _("Public projects owned")
 
     def total_memberships_public_projects(self, obj):
         Membership = apps.get_model("projects", "Membership")
-        return (Membership.objects.filter(project__is_private=False,
+        accepted =  (Membership.objects.filter(project__is_private=False,
                                           project__owner_id=obj.id,
                                           user_id__isnull=False)
-                                   .order_by("user_id")
-                                   .distinct("user_id").count()
-                +
-                Membership.objects.filter(project__is_private=False,
+                                  .order_by("user_id")
+                                  .distinct("user_id").count())
+        pending = (Membership.objects.filter(project__is_private=False,
                                           project__owner_id=obj.id,
                                           user_id__isnull=True)
-                                   .order_by("email")
-                                   .distinct("email").count())
-    total_memberships_public_projects.short_description = _("Total public memberships owned")
+                                  .order_by("email")
+                                  .distinct("email").count())
+        total = pending + accepted
+        return mark_safe(f"{total}{SEPARATOR}<i>{accepted} accepted</i>{SEPARATOR}<i>{pending} pending</i>")
+    total_memberships_public_projects.short_description = _("Public memberships owned")
 
 
 admin.site.register(User, UserAdmin)
