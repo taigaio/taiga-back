@@ -162,7 +162,7 @@ def check_if_new_member_can_be_created(new_membership):
     if max_memberships is not None and total_memberships > max_memberships:
         return False, error_members_exceeded, total_memberships
 
-    if pending_memberships > settings.MAX_PENDING_MEMBERSHIPS:
+    if not new_membership.user_id and project.memberships.filter(user=None).count() + 1 > settings.MAX_PENDING_MEMBERSHIPS:
         error_pending_memberships_exceeded = _("You have reached the current limit of pending memberships")
         return False, error_pending_memberships_exceeded, pending_memberships
 
@@ -209,7 +209,7 @@ def check_if_new_members_can_be_created(project, new_memberships):
     if max_memberships is not None and total_memberships > max_memberships:
         return False, error_members_exceeded, total_memberships
 
-    if total_pending_memberships > settings.MAX_PENDING_MEMBERSHIPS:
+    if new_pending_memberships and project.memberships.filter(user=None).count() + len(new_pending_memberships) > settings.MAX_PENDING_MEMBERSHIPS:
         error_pending_memberships_exceeded = _("You have reached the current limit of pending memberships")
         return False, error_pending_memberships_exceeded, pending_memberships
 

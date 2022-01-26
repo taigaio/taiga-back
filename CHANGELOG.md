@@ -4,6 +4,11 @@
 
 - ...
 
+## 6.5.1 (unreleased)
+
+- The maximum number of pending invitations is per project again.
+- Add more stats in the User detail section in the admin panel.
+
 ## 6.5.0 (2022-01-24)
 
 - Now member limits by projects are counted by owner and not by project
