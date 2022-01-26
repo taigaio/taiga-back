@@ -4,7 +4,7 @@
 
 - ...
 
-## 6.5.1 (unreleased)
+## 6.5.1 (2022-01-27)
 
 - The maximum number of pending invitations is per project again.
 - Add more stats in the User detail section in the admin panel.
