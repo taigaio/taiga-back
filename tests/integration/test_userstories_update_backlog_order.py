@@ -635,7 +635,7 @@ def test_api_update_orders_in_bulk_invalid_after_us_because_project_two(client):
     assert "before_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_after_us_because_milestone_two(client):
+def test_api_update_orders_in_bulk_invalid_after_us_because_milestone_three(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     milestone = f.MilestoneFactory.create(project=project)
@@ -664,7 +664,7 @@ def test_api_update_orders_in_bulk_invalid_after_us_because_milestone_two(client
     assert "before_userstory_id" in response.data
 
 
-def test_api_update_orders_in_bulk_invalid_after_us_because_no_milestone_two(client):
+def test_api_update_orders_in_bulk_invalid_after_us_because_no_milestone_four(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     milestone = f.MilestoneFactory.create(project=project)
