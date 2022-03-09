@@ -209,6 +209,9 @@ class BaseIssueEventHook(BaseEventHook):
             external_reference=[self.platform_slug, data['url']],
             owner=user,
         )
+        take_snapshot(user_story, user=user)
+
+        # TODO: 1. create comment 2. take snapshot 3. send notifications
 
     def _update_issue(self, data):
         issue = self.get_issue(data)
