@@ -198,6 +198,18 @@ class BaseIssueEventHook(BaseEventHook):
         snapshot = take_snapshot(issue, comment=comment, user=user)
         send_notifications(issue, history=snapshot)
 
+    def _create_user_story(self, data):
+        user = self.get_user(data["user_id"], self.platform_slug)
+
+        user_story = UserStory.objects.create(
+            project=self.project,
+            subject=data['subject'],
+            description=data['description'],
+            status=data.get('status'),
+            external_reference=[self.platform_slug, data['url']],
+            owner=user,
+        )
+
     def _update_issue(self, data):
         issue = self.get_issue(data)
 
