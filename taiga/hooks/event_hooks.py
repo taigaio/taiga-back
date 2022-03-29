@@ -198,6 +198,32 @@ class BaseIssueEventHook(BaseEventHook):
         snapshot = take_snapshot(issue, comment=comment, user=user)
         send_notifications(issue, history=snapshot)
 
+    def _create_user_story_and_task(self, data):
+        user = self.get_user(data["user_id"], self.platform_slug)
+
+        user_story = UserStory.objects.create(
+            project=self.project,
+            subject=data['subject'],
+            description=data['description'],
+            # status=data.get('status'),  # сделать, чтобы указывался не <IssueStatus: New>, а <UserStoryStatus: New>
+            external_reference=[self.platform_slug, data['url']],
+            owner=user,
+        )
+        take_snapshot(user_story, user=user)
+        # TODO: 1. create comment 2. take snapshot 3. send notifications
+
+        task = Task.objects.create(
+            user_story=user_story,
+            project=self.project,
+            subject=data['subject'],
+            description=data['description'],
+            # status=data.get('status'), # сделать, чтобы указывался не <IssueStatus: New>, а <TaskStatus: New>
+            external_reference=[self.platform_slug, data['url']],
+            owner=user,
+        )
+        take_snapshot(task, user=user)
+        # TODO: 1. create comment 2. take snapshot 3. send notifications
+
     def _update_issue(self, data):
         issue = self.get_issue(data)
 
@@ -269,7 +295,8 @@ class BaseIssueEventHook(BaseEventHook):
             raise ActionSyntaxException(_("Invalid issue information"))
 
         if self.action_type == ISSUE_ACTION_CREATE:
-            self._create_issue(data)
+            # self._create_issue(data)
+            self._create_user_story_and_task(data)
         elif self.action_type == ISSUE_ACTION_UPDATE:
             self._update_issue(data)
         elif self.action_type == ISSUE_ACTION_CLOSE:
