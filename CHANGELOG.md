@@ -4,6 +4,7 @@
 
 - Adapt Dockerfile to the removal of psycopg2-binary
 - DOCKER: Added env `POSTGRES_SSLMODE` with default value disabled (thanks to [@ribeiromiranda](https://github.com/ribeiromiranda))
+- Fix some silent css error in email templates (thanks to [@sarbanha](https://github.com/sarbanha))
 
 ## 6.5.2 (2022-09-26)
 
