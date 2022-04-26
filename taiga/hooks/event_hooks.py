@@ -129,6 +129,39 @@ class BaseIssueEventHook(BaseEventHook):
         except Issue.DoesNotExist:
             return None
 
+    def get_user_story(self, data):
+        try:
+            return UserStory.objects.get(
+                project=self.project,
+                external_reference=[self.platform_slug, data["url"]]
+            )
+        except UserStory.DoesNotExist:
+            return None
+
+    def get_task(self, data):
+        try:
+            return Task.objects.get(
+                project=self.project,
+                external_reference=[self.platform_slug, data["url"]]
+            )
+        except Task.DoesNotExist:
+            return None
+
+    def get_assigned_user(self, data):
+        username = data.get('assigned_username')
+        from taiga.users import models as users_models
+        is_user_exists = users_models.User.objects.filter(username=username).exists()
+        if not is_user_exists:
+            return None
+        return users_models.User.objects.get(username=username)
+
+    def get_full_issue_description(self, data):
+        markdown_issue_link = '[{}]({})'.format(data['subject'], data['url'])
+        return '{}\n\n{}'.format(markdown_issue_link, data['description'])
+
+    def get_gitlab_issue_labels(self, data):
+        return data.get('labels')
+
     def generate_create_issue_comment(self, **kwargs):
         _new_issue_message = _(
             "Issue created by [{user_name}]({user_url} "
@@ -199,29 +232,37 @@ class BaseIssueEventHook(BaseEventHook):
         send_notifications(issue, history=snapshot)
 
     def _create_user_story_and_task(self, data):
-        user = self.get_user(data["user_id"], self.platform_slug)
+        assigned_user = self.get_assigned_user(data)
+        full_description = self.get_full_issue_description(data)
 
         user_story = UserStory.objects.create(
             project=self.project,
             subject=data['subject'],
-            description=data['description'],
+            description=full_description,
             # status=data.get('status'),  # сделать, чтобы указывался не <IssueStatus: New>, а <UserStoryStatus: New>
             external_reference=[self.platform_slug, data['url']],
-            owner=user,
+            owner=assigned_user,
+            assigned_to=assigned_user
         )
-        take_snapshot(user_story, user=user)
+        if user_story.assigned_users:
+            user_story.assigned_users.clear()
+        if assigned_user:
+            user_story.assigned_users.add(assigned_user)
+        user_story.save()
+        take_snapshot(user_story, user=assigned_user)
         # TODO: 1. create comment 2. take snapshot 3. send notifications
 
         task = Task.objects.create(
             user_story=user_story,
             project=self.project,
             subject=data['subject'],
-            description=data['description'],
+            description=full_description,
             # status=data.get('status'), # сделать, чтобы указывался не <IssueStatus: New>, а <TaskStatus: New>
             external_reference=[self.platform_slug, data['url']],
-            owner=user,
+            owner=assigned_user,
+            assigned_to=assigned_user
         )
-        take_snapshot(task, user=user)
+        take_snapshot(task, user=assigned_user)
         # TODO: 1. create comment 2. take snapshot 3. send notifications
 
     def _update_issue(self, data):
@@ -242,6 +283,91 @@ class BaseIssueEventHook(BaseEventHook):
         snapshot = take_snapshot(issue, comment=comment, user=user)
         send_notifications(issue, history=snapshot)
 
+    def _update_user_story_and_task(self, data):
+        assigned_user = self.get_assigned_user(data)
+        gitlab_issue_labels = self.get_gitlab_issue_labels(data)
+        IN_PROGRESS = 'In progress'
+        DONE = 'Done'
+        CLOSED = 'Closed'
+
+        appropriate_user_story_status = None
+        appropriate_task_status = None
+
+        if 'Ready' in gitlab_issue_labels:
+            is_appropriate_user_story_status_exists = UserStoryStatus.objects.filter(
+                project=self.project,
+                name=DONE
+            ).exists()
+            if is_appropriate_user_story_status_exists:
+                appropriate_user_story_status = UserStoryStatus.objects.get(
+                    project=self.project,
+                    name=DONE
+                )
+
+            is_appropriate_task_status_exists = TaskStatus.objects.filter(
+                project=self.project,
+                name=CLOSED
+            ).exists()
+            if is_appropriate_task_status_exists:
+                appropriate_task_status = TaskStatus.objects.get(
+                    project=self.project,
+                    name=CLOSED
+                )
+
+        elif 'Doing' in gitlab_issue_labels:
+            is_appropriate_user_story_status_exists = UserStoryStatus.objects.filter(
+                project=self.project,
+                name=IN_PROGRESS
+            ).exists()
+            if is_appropriate_user_story_status_exists:
+                appropriate_user_story_status = UserStoryStatus.objects.get(
+                    project=self.project,
+                    name=IN_PROGRESS
+                )
+
+            is_appropriate_task_status_exists = TaskStatus.objects.filter(
+                project=self.project,
+                name=IN_PROGRESS
+            ).exists()
+            if is_appropriate_task_status_exists:
+                appropriate_task_status = TaskStatus.objects.get(
+                    project=self.project,
+                    name=IN_PROGRESS
+                )
+
+        full_description = self.get_full_issue_description(data)
+
+        # user story
+
+        user_story = self.get_user_story(data)
+
+        # if not user_story:
+        #     self._create_user_story_and_task()
+
+        user_story.assigned_to = assigned_user
+        if user_story.assigned_users:
+            user_story.assigned_users.clear()
+        if assigned_user:
+            user_story.assigned_users.add(assigned_user)
+
+        user_story.subject = data['subject']
+        user_story.description = full_description
+        if appropriate_user_story_status:
+            user_story.status = appropriate_user_story_status
+        user_story.save()
+
+        # task
+
+        task = self.get_task(data)
+
+        task.assigned_to = assigned_user
+
+        task.subject = data['subject']
+        task.description = full_description
+        if appropriate_task_status:
+            task.status = appropriate_task_status
+        task.save()
+
     def _close_issue(self, data):
         issue = self.get_issue(data)
 
@@ -261,6 +387,54 @@ class BaseIssueEventHook(BaseEventHook):
 
         snapshot = take_snapshot(issue, comment=comment, user=user)
         send_notifications(issue, history=snapshot)
+
+    def _close_user_story_and_task(self, data):
+        assigned_user = self.get_assigned_user(data)
+        DONE = 'Done'
+        CLOSED = 'Closed'
+
+        appropriate_user_story_status = None
+        appropriate_task_status = None
+
+        is_appropriate_user_story_status_exists = UserStoryStatus.objects.filter(
+            project=self.project,
+            name=DONE
+        ).exists()
+        if is_appropriate_user_story_status_exists:
+            appropriate_user_story_status = UserStoryStatus.objects.get(
+                project=self.project,
+                name=DONE
+            )
+
+        is_appropriate_task_status_exists = TaskStatus.objects.filter(
+            project=self.project,
+            name=CLOSED
+        ).exists()
+        if is_appropriate_task_status_exists:
+            appropriate_task_status = TaskStatus.objects.get(
+                project=self.project,
+                name=CLOSED
+            )
+
+        # close user story
+
+        user_story = self.get_user_story(data)
+
+        # if not user_story:
+        #     self._create_user_story_and_task()
+
+        if appropriate_user_story_status:
+            user_story.status = appropriate_user_story_status
+        user_story.is_closed = True
+        user_story.save()
+
+        # close task
+
+        task = self.get_task(data)
+
+        if appropriate_task_status:
+            task.status = appropriate_task_status
+        task.save()
 
     def _reopen_issue(self, data):
         issue = self.get_issue(data)
@@ -298,9 +472,11 @@ class BaseIssueEventHook(BaseEventHook):
             # self._create_issue(data)
             self._create_user_story_and_task(data)
         elif self.action_type == ISSUE_ACTION_UPDATE:
-            self._update_issue(data)
+            # self._update_issue(data)
+            self._update_user_story_and_task(data)
         elif self.action_type == ISSUE_ACTION_CLOSE:
-            self._close_issue(data)
+            # self._close_issue(data)
+            self._close_user_story_and_task(data)
         elif self.action_type == ISSUE_ACTION_REOPEN:
             self._reopen_issue(data)
         elif self.action_type == ISSUE_ACTION_DELETE:

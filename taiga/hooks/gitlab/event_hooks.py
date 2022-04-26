@@ -58,9 +58,12 @@ class IssuesEventHook(BaseGitLabEventHook, BaseIssueEventHook):
             "url": self.payload.get('object_attributes', {}).get('url', None),
             "user_id": None,
             "user_name": user_name,
+            "assigned_username": None if not self.payload.get('assignees') else self.payload['assignees'][0]['username'],
+            "labels": [] if not self.payload.get('labels') else [item['title'] for item in self.payload['labels']],
             "user_url": os.path.join(os.path.dirname(os.path.dirname(project_url)), user_name),
             "description": self.replace_gitlab_references(project_url, description),
             "status": self.close_status if state == "closed" else self.open_status,
+
         }
 
 

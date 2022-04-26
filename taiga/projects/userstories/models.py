@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.db import models
+from django.db import models, transaction
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
@@ -152,12 +152,23 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
         ordering = ["project", "backlog_order", "ref"]
 
     def save(self, *args, **kwargs):
+        @transaction.atomic
+        def save_tasks():
+            if self.tasks.exists() and not kwargs.get('called_from_related_save'):
+                for task in self.tasks.all():
+                    task.assigned_to = self.assigned_to
+                    task.save(called_from_related_save=True)
+
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
         if not self.status:
             self.status = self.project.default_us_status
 
+        # save all related tasks on user story save()
+        save_tasks()
+        if 'called_from_related_save' in kwargs:
+            del kwargs['called_from_related_save']
         super().save(*args, **kwargs)
 
         if not self.role_points.all():

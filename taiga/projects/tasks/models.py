@@ -110,6 +110,17 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, DueDateM
         if not self.status:
             self.status = self.project.default_task_status
 
+        # save user story on task save()
+        if self.user_story and not kwargs.get('called_from_related_save'):
+            self.user_story.assigned_to = self.assigned_to
+            self.user_story.assigned_users.clear()
+            if self.assigned_to:
+                self.user_story.assigned_users.add(self.assigned_to)
+            self.user_story.save(called_from_related_save=True)
+
+        if 'called_from_related_save' in kwargs:
+            del kwargs['called_from_related_save']
+
         return super().save(*args, **kwargs)
 
     def __str__(self):
