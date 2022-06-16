@@ -148,7 +148,7 @@ prompt-toolkit==3.0.24
     # via click-repl
 psd-tools==1.9.18
     # via -r requirements.in
-psycopg2-binary==2.8.5
+psycopg2==2.8.6
     # via -r requirements.in
 pycparser==2.21
     # via cffi
