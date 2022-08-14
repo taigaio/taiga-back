@@ -36,3 +36,4 @@ Pygments>=2.7.4
 oauthlib[signedtoken]
 html5lib
 zipp<2
+sentry-sdk
