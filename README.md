@@ -12,7 +12,7 @@ Currently, we have authored three main documentation hubs:
 
 - **[API](https://docs.taiga.io/api.html)**: Our API documentation and reference for developing from Taiga API.
 - **[Documentation](https://docs.taiga.io/)**: If you need to install Taiga on your own server, this is the place to find some guides.
-- **[Taiga Resources](https://resources.taiga.io)**: This page is intended to be the support reference page for the users.
+- **[Taiga Resources](https://community.taiga.io/)**: This page is intended to be the support reference page for the users.
 
 ## Bug reports
 
