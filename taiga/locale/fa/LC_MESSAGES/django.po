@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2022-08-10 09:22+0000\n"
+"PO-Revision-Date: 2022-09-09 12:16+0000\n"
 "Last-Translator: Ahmad HosseinBor <123hozeifeh@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "fa/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.14-dev\n"
+"X-Generator: Weblate 4.14.1-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
@@ -61,7 +61,7 @@ msgstr "این کاربر در حال حاضر عضوی از پروژه است."
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
-msgstr ""
+msgstr "خطا هنگام ایجاد کاربر جدید."
 
 #: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
 #: taiga/external_apps/services.py:32 taiga/projects/api.py:432
@@ -81,7 +81,7 @@ msgstr "255 کاراکتر یا کمتر ضروری است. حروف و اعدا
 #: taiga/auth/validators.py:48 taiga/auth/validators.py:51
 #: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
-msgstr ""
+msgstr "نام کامل نامعتبر است"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
@@ -366,7 +366,7 @@ msgstr "فضا برای پروژه‌های بیشتر وجود ندارد."
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s یک لیست نیست"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
