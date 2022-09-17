@@ -16,28 +16,28 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Chinese Traditional (http://www.transifex.com/taiga-agile-llc/"
-"taiga-back/language/zh-Hant/)\n"
+"PO-Revision-Date: 2022-09-18 16:16+0000\n"
+"Last-Translator: Steven Huang <aiboost@proton.me>\n"
+"Language-Team: Chinese (Traditional) <https://hosted.weblate.org/projects/"
+"taiga/taiga-back/zh_Hant/>\n"
+"Language: zh-Hant\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh-Hant\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "暫不開放註冊。"
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
-msgstr ""
+msgstr "您必須要接受我們的服務條款及隱私政策"
 
 #: taiga/auth/api.py:100
 msgid "invalid registration type"
-msgstr ""
+msgstr "無效的註冊類型"
 
 #: taiga/auth/api.py:116
 msgid "invalid login type"
@@ -45,15 +45,15 @@ msgstr "無效的登入類型"
 
 #: taiga/auth/services.py:75
 msgid "Username is already in use."
-msgstr "本用戶名稱已被註冊"
+msgstr "本用戶名稱已被註冊。"
 
 #: taiga/auth/services.py:78
 msgid "Email is already in use."
-msgstr "本電子郵件已使用"
+msgstr "本電子郵件已使用。"
 
 #: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "代碼無法與任何有效的邀請匹配。"
 
 #: taiga/auth/services.py:126
 msgid "User is already registered."
@@ -61,17 +61,17 @@ msgstr "使用者已被註冊。"
 
 #: taiga/auth/services.py:143
 msgid "This user is already a member of the project."
-msgstr "使用者已是專案成員"
+msgstr "使用者已是專案成員。"
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
-msgstr ""
+msgstr "建立新使用者時發生錯誤。"
 
 #: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
 #: taiga/external_apps/services.py:32 taiga/projects/api.py:432
 #: taiga/projects/api.py:453
 msgid "Invalid token"
-msgstr "無效的代碼　"
+msgstr "無效的代碼"
 
 #: taiga/auth/validators.py:36 taiga/users/validators.py:45
 msgid "invalid username"
@@ -85,7 +85,7 @@ msgstr "必填。最多255字元(可為數字，字母，符號....)"
 #: taiga/auth/validators.py:48 taiga/auth/validators.py:51
 #: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
-msgstr ""
+msgstr "無效的姓名"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
@@ -93,7 +93,7 @@ msgstr "此欄位是必要的。"
 
 #: taiga/base/api/fields.py:293 taiga/base/api/relations.py:335
 msgid "Invalid value."
-msgstr "無效的數值"
+msgstr "無效的數值。"
 
 #: taiga/base/api/fields.py:482
 #, python-format
@@ -103,7 +103,7 @@ msgstr "'%s' 數值必須為「是」或「否」。"
 #: taiga/base/api/fields.py:547
 msgid ""
 "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
-msgstr "輸入有效的代稱，其包括字母,數字,底底線與連字符號"
+msgstr "輸入有效的代稱，其包括字母,數字,底底線與連字符號。"
 
 #: taiga/base/api/fields.py:562
 #, python-format
@@ -208,7 +208,7 @@ msgstr "上傳有效圖片，你所上傳的檔案非圖檔或已損壞"
 #: taiga/projects/userstories/api.py:446 taiga/projects/userstories/api.py:476
 #: taiga/webhooks/api.py:69
 msgid "Blocked element"
-msgstr ""
+msgstr "被阻擋的元素"
 
 #: taiga/base/api/pagination.py:226
 msgid "Page is not 'last', nor can it be converted to an int."
@@ -365,7 +365,7 @@ msgstr "沒有空間再放入專案"
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s並不是一個清單"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
@@ -392,6 +392,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                "
+"<p>歡迎來到%(product_name)s，一個開源、敏捷專案管理工具軟體</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:7
 #, python-format
@@ -405,6 +409,14 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\""
+">設定電子郵件提醒設定或取消訂閱</a>\n"
+"&nbsp;&bull;&nbsp;\n"
+"<a href=\"%(support_url)s\">Taiga支援</a>\n"
+"&nbsp;&bull;&nbsp;\n"
+"<a href=\"mailto:%(support_email)s\" >聯絡我們</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:18
 msgid "Follow us on Twitter"
@@ -448,43 +460,43 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:65
 msgid "Host access error"
-msgstr ""
+msgstr "主機連線錯誤"
 
 #: taiga/base/utils/urls.py:71
 msgid "IP Address error"
-msgstr ""
+msgstr "IP位址錯誤"
 
 #: taiga/events/events.py:119
 msgid "User story created"
-msgstr ""
+msgstr "使用者故事已建立"
 
 #: taiga/events/events.py:122
 msgid "User story changed"
-msgstr ""
+msgstr "使用者故事已修改"
 
 #: taiga/events/events.py:125
 msgid "User story deleted"
-msgstr ""
+msgstr "使用者故事已刪除"
 
 #: taiga/events/events.py:127
 msgid "US #{} - {}"
-msgstr ""
+msgstr "US #{} - {}"
 
 #: taiga/events/events.py:130
 msgid "Task created"
-msgstr ""
+msgstr "工作已建立"
 
 #: taiga/events/events.py:133
 msgid "Task changed"
-msgstr ""
+msgstr "工作已修改"
 
 #: taiga/events/events.py:136
 msgid "Task deleted"
-msgstr ""
+msgstr "工作已刪除"
 
 #: taiga/events/events.py:138
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "工作 #{} - {}"
 
 #: taiga/events/events.py:141
 msgid "Issue created"
