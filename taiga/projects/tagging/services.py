@@ -27,19 +27,19 @@ def edit_tag(project, from_tag, to_tag, color):
     sql = """
         UPDATE userstories_userstory
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(from_tag)s = ANY(tags);
 
         UPDATE tasks_task
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(from_tag)s = ANY(tags);
 
         UPDATE issues_issue
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(from_tag)s = ANY(tags);
 
         UPDATE epics_epic
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(from_tag)s = ANY(tags);
     """
     cursor = connection.cursor()
     cursor.execute(sql, params={"from_tag": from_tag, "to_tag": to_tag, "project_id": project.id})
@@ -62,19 +62,19 @@ def rename_tag(project, from_tag, to_tag, **kwargs):
     sql = """
         UPDATE userstories_userstory
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(from_tag)s = ANY(tags);
 
         UPDATE tasks_task
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(from_tag)s = ANY(tags);
 
         UPDATE issues_issue
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(from_tag)s = ANY(tags);
 
         UPDATE epics_epic
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(from_tag)s = ANY(tags);
     """
     cursor = connection.cursor()
     cursor.execute(sql, params={"from_tag": from_tag, "to_tag": to_tag, "project_id": project.id})
@@ -90,19 +90,19 @@ def delete_tag(project, tag):
     sql = """
         UPDATE userstories_userstory
            SET tags = array_remove(tags, %(tag)s)
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(tag)s = ANY(tags);
 
         UPDATE tasks_task
            SET tags = array_remove(tags, %(tag)s)
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(tag)s = ANY(tags);
 
         UPDATE issues_issue
            SET tags = array_remove(tags, %(tag)s)
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(tag)s = ANY(tags);
 
         UPDATE epics_epic
            SET tags = array_remove(tags, %(tag)s)
-         WHERE project_id = %(project_id)s;
+         WHERE project_id = %(project_id)s AND %(tag)s = ANY(tags);
     """
     cursor = connection.cursor()
     cursor.execute(sql, params={"tag": tag, "project_id": project.id})
