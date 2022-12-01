@@ -2,14 +2,13 @@
 
 ## 6.6.0 (unreleased)
 
-- ...
+- Adapt Dockerfile to the removal of psycopg2-binary
 
 ## 6.5.2 (2022-09-26)
 
 - Updated links to the Taiga community site.
 - Update locales.
 - Change psycopg dependency to use the binary page.
-
 
 ## 6.5.1 (2022-01-27)
 
