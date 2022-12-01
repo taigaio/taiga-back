@@ -27,12 +27,13 @@ WORKDIR /taiga-back
 ENV GOSU_VERSION 1.12
 
 RUN set -eux; \
-    savedAptMark="$(apt-mark showmanual)"; \
     apt-get update; \
     # install system dependencies
     apt-get install -y \
        build-essential \
        gettext \
+       # libpq5 needed in runtime for psycopg2
+       libpq5 \
        libpq-dev \
        git \
        net-tools \
@@ -69,15 +70,14 @@ RUN set -eux; \
     apt-get purge -y \
        build-essential \
        gettext \
+       git \
        libpq-dev \
-       git; \
+       net-tools \
+       procps \
+       wget; \
     apt-get autoremove -y; \
     rm -rf /var/lib/apt/lists/*; \
     rm -rf /root/.cache; \
-    # clean gosu
-    apt-mark auto '.*' > /dev/null; \
-    [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     # clean taiga
     rm requirements.txt; \
     rm requirements-contribs.txt; \
