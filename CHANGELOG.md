@@ -8,7 +8,7 @@
 
 - Updated links to the Taiga community site.
 - Update locales.
-- Change psycopg dependency to use the binary page.
+- Drop psycopg2-binary dependency; use psycopg2 instead
 
 ## 6.5.1 (2022-01-27)
 
