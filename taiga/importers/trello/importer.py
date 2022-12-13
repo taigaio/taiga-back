@@ -503,7 +503,7 @@ class TrelloImporter:
         authorize_url = 'https://trello.com/1/OAuthAuthorizeToken'
         return_url = resolve_front_url("new-project-import", "trello")
         expiration = "1day"
-        scope = "read,write,account"
+        scope = "read,account"
         trello_key = settings.IMPORTERS.get('trello', {}).get('api_key', None)
         trello_secret = settings.IMPORTERS.get('trello', {}).get('secret_key', None)
         name = "Taiga"
