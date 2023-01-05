@@ -13,20 +13,20 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Catalan (http://www.transifex.com/taiga-agile-llc/taiga-back/"
-"language/ca/)\n"
+"PO-Revision-Date: 2023-01-07 11:48+0000\n"
+"Last-Translator: jamor <jamoros@xtec.cat>\n"
+"Language-Team: Catalan <https://hosted.weblate.org/projects/taiga/taiga-back/"
+"ca/>\n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ca\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.15.1-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr "El registre públic està deshabilitat"
+msgstr "El registre públic està deshabilitat."
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
@@ -50,15 +50,15 @@ msgstr "Aquest e-mail ja està en ús."
 
 #: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
-msgstr "El token no s'ajusta a cap invitació vàlida"
+msgstr "El token no coincideix amb cap invitació vàlida."
 
 #: taiga/auth/services.py:126
 msgid "User is already registered."
-msgstr "Aquest usuari ja està registrat"
+msgstr "Aquest usuari ja està registrat."
 
 #: taiga/auth/services.py:143
 msgid "This user is already a member of the project."
-msgstr "L'usuari ja és membre del projecte"
+msgstr "L'usuari ja és membre del projecte."
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
@@ -86,16 +86,16 @@ msgstr "Nom complet invàlid"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
-msgstr "Aquest camp es obligatori"
+msgstr "Aquest camp es obligatori."
 
 #: taiga/base/api/fields.py:293 taiga/base/api/relations.py:335
 msgid "Invalid value."
-msgstr "Valor invàlid"
+msgstr "Valor invàlid."
 
 #: taiga/base/api/fields.py:482
 #, python-format
 msgid "'%s' value must be either True or False."
-msgstr "'%s' valor deu ser Verdader o Fals"
+msgstr "'%s' valor ha de ser Verdader o Fals."
 
 #: taiga/base/api/fields.py:547
 msgid ""
@@ -113,7 +113,7 @@ msgstr "El domini d'aquest correu no està permés"
 
 #: taiga/base/api/fields.py:645
 msgid "Enter a valid email address."
-msgstr "Introdueix una adreça de correu vàlida-"
+msgstr "Introduïu una adreça de correu electrònic vàlida."
 
 #: taiga/base/api/fields.py:687
 #, python-format
@@ -185,8 +185,8 @@ msgstr "El fitxer enviat està buit."
 msgid ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr ""
-"Asegurat que el nom del fitxer te un màxim de %(max)d caràcters (te "
-"%(length)d)"
+"Assegureu-vos que aquest nom de fitxer tingui com a màxim %(max)d caràcters ("
+"ara té %(length)d)."
 
 #: taiga/base/api/fields.py:1007
 msgid "Please either submit a file or check the clear checkbox, not both."
@@ -213,7 +213,7 @@ msgstr "Element bloquejat"
 
 #: taiga/base/api/pagination.py:226
 msgid "Page is not 'last', nor can it be converted to an int."
-msgstr "La página no es 'last' ni pot ser convertida a un 'int'"
+msgstr "La pàgina no és la 'última' ni pot ser convertida a un enter."
 
 #: taiga/base/api/pagination.py:230
 #, python-format
@@ -222,71 +222,73 @@ msgstr "Pàgina invàlida (%(page_number)s): %(message)s"
 
 #: taiga/base/api/permissions.py:63
 msgid "Invalid permission definition."
-msgstr "Definició de permís invàlida"
+msgstr "Definició de permís invàlida."
 
 #: taiga/base/api/relations.py:245
 #, python-format
 msgid "Invalid pk '%s' - object does not exist."
-msgstr "Invàlid pk '1%s' - l'objecte no existeix"
+msgstr "Invàlid pk '%s' - l'objecte no existeix."
 
 #: taiga/base/api/relations.py:246
 #, python-format
 msgid "Incorrect type. Expected pk value, received %s."
-msgstr "Tipus incorrecte. S'espera valor pk, rebut '1%s'"
+msgstr "Tipus incorrecte. S'espera valor pk, rebut '1%s'."
 
 #: taiga/base/api/relations.py:334
 #, python-format
 msgid "Object with %s=%s does not exist."
-msgstr "Objecte amb '1%s' = '1%s' no existeix"
+msgstr "L'objecte amb %s=%s' no existeix."
 
 #: taiga/base/api/relations.py:370
 msgid "Invalid hyperlink - No URL match"
-msgstr ""
+msgstr "Enllaç no vàlid - No es troba l'URL"
 
 #: taiga/base/api/relations.py:371
 msgid "Invalid hyperlink - Incorrect URL match"
-msgstr ""
+msgstr "Enllaç no vàlid - L'URL no és correcta"
 
 #: taiga/base/api/relations.py:372
 msgid "Invalid hyperlink due to configuration error"
-msgstr ""
+msgstr "Enllaç no vàlid a causa d'un error de configuració"
 
 #: taiga/base/api/relations.py:373
 msgid "Invalid hyperlink - object does not exist."
-msgstr ""
+msgstr "Enllaç invàlid: l'objecte no existeix."
 
 #: taiga/base/api/relations.py:374
 #, python-format
 msgid "Incorrect type.  Expected url string, received %s."
-msgstr ""
+msgstr "Tipus incorrecte.  S'esperava una cadena URL i s'ha rebut %s."
 
 #: taiga/base/api/serializers.py:322
 msgid "Invalid data"
-msgstr ""
+msgstr "Dades no vàlides"
 
 #: taiga/base/api/serializers.py:414
 msgid "No input provided"
-msgstr ""
+msgstr "No s'han introduït dades"
 
 #: taiga/base/api/serializers.py:577
 msgid "Cannot create a new item, only existing items may be updated."
 msgstr ""
+"No es pot crear un element nou, només es poden actualitzar els elements "
+"existents."
 
 #: taiga/base/api/serializers.py:588
 msgid "Expected a list of items."
-msgstr ""
+msgstr "S'esperava una llista d'elements."
 
 #: taiga/base/api/views.py:124
 msgid "Not found"
-msgstr ""
+msgstr "No s'ha trobat"
 
 #: taiga/base/api/views.py:127
 msgid "Permission denied"
-msgstr ""
+msgstr "Permís denegat"
 
 #: taiga/base/api/views.py:489
 msgid "Server application error"
-msgstr ""
+msgstr "Error a l'aplicació del servidor"
 
 #: taiga/base/connectors/exceptions.py:24
 msgid "Connection error."
@@ -294,42 +296,42 @@ msgstr "Error de connexió."
 
 #: taiga/base/exceptions.py:77
 msgid "Malformed request."
-msgstr ""
+msgstr "Consulta amb format incorrecte."
 
 #: taiga/base/exceptions.py:82
 msgid "Incorrect authentication credentials."
-msgstr ""
+msgstr "Credencials d'autenticació incorrectes."
 
 #: taiga/base/exceptions.py:87
 msgid "Authentication credentials were not provided."
-msgstr ""
+msgstr "No s'han proporcionat les credencials d'autenticació."
 
 #: taiga/base/exceptions.py:92
 msgid "You do not have permission to perform this action."
-msgstr ""
+msgstr "No teniu permisos per realitzar aquesta acció."
 
 #: taiga/base/exceptions.py:97
 #, python-format
 msgid "Method '%s' not allowed."
-msgstr ""
+msgstr "Mètode '%s' no permès."
 
 #: taiga/base/exceptions.py:105
 msgid "Could not satisfy the request's Accept header"
-msgstr ""
+msgstr "No s'ha pogut satisfer la petició de la capçalera Accept"
 
 #: taiga/base/exceptions.py:114
 #, python-format
 msgid "Unsupported media type '%s' in request."
-msgstr ""
+msgstr "Petició amb tipus de suport '%s' no compatible."
 
 #: taiga/base/exceptions.py:122
 msgid "Request was throttled."
-msgstr ""
+msgstr "Excés de peticions."
 
 #: taiga/base/exceptions.py:123
 #, python-format
 msgid "Expected available in %d second%s."
-msgstr ""
+msgstr "Estarà disponible en %d segon%s."
 
 #: taiga/base/exceptions.py:137
 msgid "Unexpected error"
@@ -353,20 +355,20 @@ msgstr "Validació de data errònia"
 
 #: taiga/base/exceptions.py:186
 msgid "Integrity Error for wrong or invalid arguments"
-msgstr "Error d'integritat per argument invàlid o erroni."
+msgstr "Error d'integritat per arguments incorrectes o no vàlids"
 
 #: taiga/base/exceptions.py:193
 msgid "Precondition error"
-msgstr "Precondició errònia."
+msgstr "Precondició errònia"
 
 #: taiga/base/exceptions.py:217
 msgid "No room left for more projects."
-msgstr ""
+msgstr "No queda espai per a més projectes."
 
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s no és una llista"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
@@ -539,7 +541,7 @@ msgstr ""
 
 #: taiga/export_import/api.py:337
 msgid "Needed dump file"
-msgstr "Es necessita arxiu dump."
+msgstr "Es necessita l'arxiu de bolcat de dades"
 
 #: taiga/export_import/api.py:347
 msgid "Invalid dump format"
@@ -682,7 +684,7 @@ msgstr ""
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your project dump has been generated"
-msgstr "[%(project)s] El bolcat de dades del teu projecte ha sigut generat "
+msgstr "[%(project)s] El bolcat de dades del teu projecte ha sigut generat"
 
 #: taiga/export_import/templates/emails/export_error-body-html.jinja:4
 #, python-format
@@ -995,7 +997,7 @@ msgstr "El projecte no existeix"
 
 #: taiga/hooks/api.py:64
 msgid "Bad signature"
-msgstr "Firma no vàlida."
+msgstr "Firma no vàlida"
 
 #: taiga/hooks/event_hooks.py:79
 #, python-brace-format
@@ -1016,7 +1018,7 @@ msgstr ""
 
 #: taiga/hooks/event_hooks.py:97
 msgid "Invalid issue comment information"
-msgstr "Informació del comentari a l'incidència no vàlid."
+msgstr "Informació de comentari d'incidència no vàlida"
 
 #: taiga/hooks/event_hooks.py:143
 #, python-brace-format
@@ -1068,7 +1070,7 @@ msgstr ""
 
 #: taiga/hooks/event_hooks.py:278
 msgid "Invalid issue information"
-msgstr "Informació d'incidència no vàlida."
+msgstr "Informació d'incidència no vàlida"
 
 #: taiga/hooks/event_hooks.py:300 taiga/hooks/event_hooks.py:322
 msgid "unknown user"
@@ -1111,7 +1113,7 @@ msgstr "L'element referenciat no existeix"
 
 #: taiga/hooks/event_hooks.py:373
 msgid "The status doesn't exist"
-msgstr "L'estatus no existeix."
+msgstr "L'estatus no existeix"
 
 #: taiga/importers/asana/api.py:44 taiga/importers/asana/api.py:86
 #: taiga/importers/github/api.py:45 taiga/importers/github/api.py:75
@@ -1568,7 +1570,7 @@ msgstr ""
 
 #: taiga/projects/api.py:181 taiga/users/api.py:242
 msgid "Incomplete arguments"
-msgstr "Arguments incomplets."
+msgstr "Arguments incomplets"
 
 #: taiga/projects/api.py:185 taiga/users/api.py:247
 msgid "Invalid image format"
@@ -1700,7 +1702,7 @@ msgstr ""
 
 #: taiga/projects/attachments/models.py:74
 msgid "is deprecated"
-msgstr "està obsolet "
+msgstr "està obsolet"
 
 #: taiga/projects/attachments/models.py:75
 msgid "from comment"
@@ -1821,11 +1823,11 @@ msgstr "Url"
 
 #: taiga/projects/custom_attributes/choices.py:35
 msgid "Dropdown"
-msgstr "Menú desplegable "
+msgstr "Menú desplegable"
 
 #: taiga/projects/custom_attributes/choices.py:36
 msgid "Checkbox"
-msgstr "Checkbox"
+msgstr "Casella de selecció"
 
 #: taiga/projects/custom_attributes/choices.py:37
 msgid "Number"
@@ -1863,7 +1865,7 @@ msgstr "Ja existix altre amb el matex nom."
 
 #: taiga/projects/due_dates/models.py:22
 msgid "due date"
-msgstr "Data de venciment "
+msgstr "Data de venciment"
 
 #: taiga/projects/due_dates/models.py:25
 msgid "reason for the due date"
@@ -2086,23 +2088,23 @@ msgstr ""
 
 #: taiga/projects/issues/api.py:168
 msgid "You don't have permissions to set this sprint to this issue."
-msgstr "No tens permissos per a ficar aquest sprint a aquesta incidència"
+msgstr "No teniu permisos per a assignar un sprint a aquesta incidència."
 
 #: taiga/projects/issues/api.py:172
 msgid "You don't have permissions to set this status to this issue."
-msgstr "No tens permissos per a ficar aquest status a aquesta tasca"
+msgstr "No teniu permisos per a assignar un estatus a aquesta incidència."
 
 #: taiga/projects/issues/api.py:176
 msgid "You don't have permissions to set this severity to this issue."
-msgstr "No tens permissos per a ficar aquesta severitat a aquesta tasca"
+msgstr "No teniu permisos per a assignar una severitat a aquesta incidència."
 
 #: taiga/projects/issues/api.py:180
 msgid "You don't have permissions to set this priority to this issue."
-msgstr "No tens permissos per a ficar aquesta prioritat a aquesta incidència"
+msgstr "No teniu permisos per a assignar una prioritat a aquesta incidència."
 
 #: taiga/projects/issues/api.py:184
 msgid "You don't have permissions to set this type to this issue."
-msgstr "No tens permissos per a ficar aquest tipus a aquesta incidència"
+msgstr "No teniu permisos per a assignar un tipus a aquesta incidència."
 
 #: taiga/projects/issues/models.py:57
 msgid "severity"
@@ -3747,62 +3749,62 @@ msgstr ""
 #. Translators: User story point value (value = undefined)
 #: taiga/projects/translations.py:43
 msgid "?"
-msgstr ""
+msgstr "?"
 
 #. Translators: User story point value (value = 0)
 #: taiga/projects/translations.py:45
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #. Translators: User story point value (value = 0.5)
 #: taiga/projects/translations.py:47
 msgid "1/2"
-msgstr ""
+msgstr "1/2"
 
 #. Translators: User story point value (value = 1)
 #: taiga/projects/translations.py:49
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #. Translators: User story point value (value = 2)
 #: taiga/projects/translations.py:51
 msgid "2"
-msgstr ""
+msgstr "2"
 
 #. Translators: User story point value (value = 3)
 #: taiga/projects/translations.py:53
 msgid "3"
-msgstr ""
+msgstr "3"
 
 #. Translators: User story point value (value = 5)
 #: taiga/projects/translations.py:55
 msgid "5"
-msgstr ""
+msgstr "5"
 
 #. Translators: User story point value (value = 8)
 #: taiga/projects/translations.py:57
 msgid "8"
-msgstr ""
+msgstr "8"
 
 #. Translators: User story point value (value = 10)
 #: taiga/projects/translations.py:59
 msgid "10"
-msgstr ""
+msgstr "10"
 
 #. Translators: User story point value (value = 13)
 #: taiga/projects/translations.py:61
 msgid "13"
-msgstr ""
+msgstr "13"
 
 #. Translators: User story point value (value = 20)
 #: taiga/projects/translations.py:63
 msgid "20"
-msgstr ""
+msgstr "20"
 
 #. Translators: User story point value (value = 40)
 #: taiga/projects/translations.py:65
 msgid "40"
-msgstr ""
+msgstr "40"
 
 #. Translators: User story status
 #. Translators: Task status
@@ -3810,12 +3812,12 @@ msgstr ""
 #: taiga/projects/translations.py:73 taiga/projects/translations.py:96
 #: taiga/projects/translations.py:112
 msgid "New"
-msgstr ""
+msgstr "Nova"
 
 #. Translators: User story status
 #: taiga/projects/translations.py:76
 msgid "Ready"
-msgstr ""
+msgstr "Preparada"
 
 #. Translators: User story status
 #. Translators: Task status
@@ -3823,7 +3825,7 @@ msgstr ""
 #: taiga/projects/translations.py:79 taiga/projects/translations.py:98
 #: taiga/projects/translations.py:114
 msgid "In progress"
-msgstr ""
+msgstr "En curs"
 
 #. Translators: User story status
 #. Translators: Task status
@@ -3831,120 +3833,120 @@ msgstr ""
 #: taiga/projects/translations.py:82 taiga/projects/translations.py:100
 #: taiga/projects/translations.py:116
 msgid "Ready for test"
-msgstr ""
+msgstr "Preparada per a provar"
 
 #. Translators: User story status
 #: taiga/projects/translations.py:85
 msgid "Done"
-msgstr "Fet"
+msgstr "Acabada"
 
 #. Translators: User story status
 #: taiga/projects/translations.py:88
 msgid "Archived"
-msgstr "Arxivades"
+msgstr "Arxivada"
 
 #. Translators: Task status
 #. Translators: Issue status
 #: taiga/projects/translations.py:102 taiga/projects/translations.py:118
 msgid "Closed"
-msgstr ""
+msgstr "Tancada"
 
 #. Translators: Task status
 #. Translators: Issue status
 #: taiga/projects/translations.py:104 taiga/projects/translations.py:120
 msgid "Needs Info"
-msgstr ""
+msgstr "Es necessita informació"
 
 #. Translators: Issue status
 #: taiga/projects/translations.py:122
 msgid "Postponed"
-msgstr ""
+msgstr "Ajornada"
 
 #. Translators: Issue status
 #: taiga/projects/translations.py:124
 msgid "Rejected"
-msgstr ""
+msgstr "Rebutjada"
 
 #. Translators: Issue type
 #: taiga/projects/translations.py:132
 msgid "Bug"
-msgstr ""
+msgstr "Error"
 
 #. Translators: Issue type
 #: taiga/projects/translations.py:134
 msgid "Question"
-msgstr ""
+msgstr "Pregunta"
 
 #. Translators: Issue type
 #: taiga/projects/translations.py:136
 msgid "Enhancement"
-msgstr ""
+msgstr "Millora"
 
 #. Translators: Issue priority
 #: taiga/projects/translations.py:144
 msgid "Low"
-msgstr ""
+msgstr "Baixa"
 
 #. Translators: Issue priority
 #. Translators: Issue severity
 #: taiga/projects/translations.py:146 taiga/projects/translations.py:159
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 #. Translators: Issue priority
 #: taiga/projects/translations.py:148
 msgid "High"
-msgstr ""
+msgstr "Alta"
 
 #. Translators: Issue severity
 #: taiga/projects/translations.py:155
 msgid "Wishlist"
-msgstr ""
+msgstr "Llista de suggeriments"
 
 #. Translators: Issue severity
 #: taiga/projects/translations.py:157
 msgid "Minor"
-msgstr ""
+msgstr "Menor"
 
 #. Translators: Issue severity
 #: taiga/projects/translations.py:161
 msgid "Important"
-msgstr ""
+msgstr "Important"
 
 #. Translators: Issue severity
 #: taiga/projects/translations.py:163
 msgid "Critical"
-msgstr ""
+msgstr "Crítica"
 
 #. Translators: User role
 #: taiga/projects/translations.py:170
 msgid "UX"
-msgstr ""
+msgstr "Experiència d'usuari"
 
 #. Translators: User role
 #: taiga/projects/translations.py:172
 msgid "Design"
-msgstr ""
+msgstr "Disseny"
 
 #. Translators: User role
 #: taiga/projects/translations.py:174
 msgid "Front"
-msgstr ""
+msgstr "Front"
 
 #. Translators: User role
 #: taiga/projects/translations.py:176
 msgid "Back"
-msgstr ""
+msgstr "Back"
 
 #. Translators: User role
 #: taiga/projects/translations.py:178
 msgid "Product Owner"
-msgstr ""
+msgstr "Propietari del producte"
 
 #. Translators: User role
 #: taiga/projects/translations.py:180
 msgid "Stakeholder"
-msgstr ""
+msgstr "Participant"
 
 #: taiga/projects/userstories/api.py:191
 msgid "You don't have permissions to set this sprint to this user story."
@@ -4011,7 +4013,7 @@ msgstr ""
 
 #: taiga/projects/userstories/models.py:153
 msgid "swimlane"
-msgstr ""
+msgstr "swimlane"
 
 #: taiga/projects/userstories/validators.py:42
 msgid "There's no user story with that id"
@@ -4252,7 +4254,7 @@ msgstr ""
 
 #: taiga/users/api.py:353
 msgid "Mail sended successful!"
-msgstr "Correu enviat satisfactòriament"
+msgstr "Correu enviat satisfactòriament!"
 
 #: taiga/users/models.py:97
 msgid "superuser status"
@@ -4277,7 +4279,7 @@ msgstr "Requerit. 30 caràcters o menys. Lletres, nombres i caràcters /./-/_"
 
 #: taiga/users/models.py:134
 msgid "Enter a valid username."
-msgstr "Introdueix un nom d'usuari vàlid"
+msgstr "Introdueixi un nom d'usuari vàlid."
 
 #: taiga/users/models.py:137
 msgid "active"
@@ -4539,7 +4541,7 @@ msgstr "invàlid"
 
 #: taiga/users/validators.py:57
 msgid "Invalid username. Try with a different one."
-msgstr "Nom d'usuari invàlid"
+msgstr "Nom d'usuari no vàlid. Proveu-ho amb un altre."
 
 #: taiga/users/validators.py:84
 msgid "Read new terms has to be true'"
