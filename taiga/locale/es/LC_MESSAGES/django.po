@@ -27,7 +27,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2023-01-10 14:51+0000\n"
+"PO-Revision-Date: 2023-01-22 17:08+0000\n"
 "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "es/>\n"
@@ -36,7 +36,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.1-dev\n"
+"X-Generator: Weblate 4.15.1\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
@@ -844,6 +844,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Hola %(user)s,</p>\n"
+"    <p>Su proyecto no se pudo importar con éxito.</p>\n"
+"    Se ha informado a la administración del sistema de <p>%(product_name)s.<"
+"br/> Vuelva a intentarlo o póngase en contacto con el equipo de soporte en\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>Más información sobre el error:</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:1
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:1
@@ -1152,6 +1164,10 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}]({user_url} \"Ver el perfil {platform} de {user_name}\") dice "
+"en [{platform}#{number}]({comment_url} \"Ir al comentario\"):\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:84
 #, python-brace-format
@@ -1174,6 +1190,8 @@ msgid ""
 "Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema creado por [{user_name}]({user_url} \"Vea el {user_name}'s "
+"{platform} perfil\") de [{platform}#{number}]({url} \"Ir al problema\")."
 
 #: taiga/hooks/event_hooks.py:147
 #, python-brace-format
