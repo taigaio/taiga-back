@@ -27,7 +27,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2023-01-22 17:08+0000\n"
+"PO-Revision-Date: 2023-01-24 19:51+0000\n"
 "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "es/>\n"
@@ -36,7 +36,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.1\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
@@ -1204,11 +1204,13 @@ msgid ""
 "Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema modificado por [{user_name}]({user_url} \"Ver el perfil {platform} "
+"de {user_name}\") de [{platform}#{number}]({url} \"Ir al problema\")."
 
 #: taiga/hooks/event_hooks.py:159
 #, python-brace-format
 msgid "Issue modified from {platform}."
-msgstr ""
+msgstr "Problema modificado de {platform}."
 
 #: taiga/hooks/event_hooks.py:167
 #, python-brace-format
@@ -1216,11 +1218,13 @@ msgid ""
 "Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema cerrado por [{user_name}]({user_url} \"Ver el perfil de {platform} "
+"{user_name}\") de [{platform}#{number}]({url} \"Ir al problema\")."
 
 #: taiga/hooks/event_hooks.py:171
 #, python-brace-format
 msgid "Issue closed from {platform}."
-msgstr ""
+msgstr "Problema cerrado desde {platform}."
 
 #: taiga/hooks/event_hooks.py:179
 #, python-brace-format
@@ -1228,11 +1232,13 @@ msgid ""
 "Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema reabierto por [{user_name}]({user_url} \"Ver el perfil {platform} "
+"de {user_name}\") desde [{platform}#{number}]({url} \"Ir al problema\")."
 
 #: taiga/hooks/event_hooks.py:183
 #, python-brace-format
 msgid "Issue reopened from {platform}."
-msgstr ""
+msgstr "Problema reabierto desde {platform}."
 
 #: taiga/hooks/event_hooks.py:278
 msgid "Invalid issue information"
@@ -1343,6 +1349,11 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"                Se ha producido un error; probablemente debido a una versión "
+"de Jira no soportada.\n"
+"                Taiga no es compatible con versiones de Jira a partir de la 8"
+".6."
 
 #: taiga/importers/jira/api.py:167
 msgid "Invalid project_type {}"
@@ -1485,6 +1496,17 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Hola %(user)s,</p>\n"
+"    <p>Tu proyecto no se ha importado correctamente.</p>\n"
+"    <p>El %(product_name)s se ha informado a los administradores del "
+"sistema.<br/> Por favor, inténtelo de nuevo o póngase en contacto con el "
+"equipo de soporte en\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-html.jinja:4
 #, python-format
@@ -1852,7 +1874,7 @@ msgstr "El usuario debe ser ya miembro del proyecto"
 
 #: taiga/projects/api.py:684
 msgid "The default swimlane cannot be deleted."
-msgstr ""
+msgstr "El carril predeterminado no se puede eliminar."
 
 #: taiga/projects/api.py:714
 msgid "You can't delete the default due date status of a user story"
@@ -1905,7 +1927,7 @@ msgstr ""
 
 #: taiga/projects/api.py:1149
 msgid "You don't have permissions to see that."
-msgstr ""
+msgstr "No tienes permisos para verlo."
 
 #: taiga/projects/attachments/api.py:52
 msgid "Partial updates are not supported"
@@ -2482,11 +2504,11 @@ msgstr "el parámetro project o project__slug es necesario"
 
 #: taiga/projects/mixins/on_destroy.py:42
 msgid "Query param 'moveTo' is required"
-msgstr ""
+msgstr "Requiere el parámetro de consulta 'moveTo'"
 
 #: taiga/projects/mixins/on_destroy.py:94
 msgid "Cannot set swimlane to None if there are available swimlanes"
-msgstr ""
+msgstr "No se puede configurar el carril en Ninguno si hay carriles disponibles"
 
 #: taiga/projects/mixins/ordering.py:46
 #, python-brace-format
@@ -2559,7 +2581,7 @@ msgstr "tipo de petición por defecto"
 
 #: taiga/projects/models.py:165
 msgid "default swimlane"
-msgstr ""
+msgstr "carril predeterminado"
 
 #: taiga/projects/models.py:181
 msgid "logo"
@@ -2706,7 +2728,7 @@ msgstr "días para vencimiento"
 
 #: taiga/projects/models.py:953
 msgid "user story status"
-msgstr ""
+msgstr "estado de la historia del usuario"
 
 #: taiga/projects/models.py:1005
 msgid "default owner's role"
@@ -4708,6 +4730,7 @@ msgstr ""
 #: taiga/projects/userstories/api.py:199
 msgid "You don't have permissions to set this swimlane to this user story."
 msgstr ""
+"No tienes permiso para configurar esta pista para esta historia de usuario."
 
 #: taiga/projects/userstories/api.py:275
 #, python-brace-format
@@ -4762,7 +4785,7 @@ msgstr "referencia de tarea"
 
 #: taiga/projects/userstories/models.py:153
 msgid "swimlane"
-msgstr ""
+msgstr "diagrama de carril"
 
 #: taiga/projects/userstories/validators.py:42
 msgid "There's no user story with that id"
@@ -4781,6 +4804,8 @@ msgstr ""
 #: taiga/projects/userstories/validators.py:180
 msgid "Invalid swimlane id. The swimlane must belong to the same project."
 msgstr ""
+"Identificación del carril no válida. El carril debe pertenecer al mismo "
+"proyecto."
 
 #: taiga/projects/userstories/validators.py:134
 msgid "Invalid milestone id. The milistone must belong to the same project."
@@ -4799,20 +4824,26 @@ msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"El identificador de la historia de usuario que se va a mover no es válido. "
+"La historia de usuario debe pertenecer al mismo proyecto, estado y calle."
 
 #: taiga/projects/userstories/validators.py:209
 msgid "You can't use after and before at the same time."
-msgstr ""
+msgstr "No se puede utilizar after y before al mismo tiempo."
 
 #: taiga/projects/userstories/validators.py:223
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"El identificador de la historia de usuario que se va a mover no es válido. "
+"La historia de usuario debe pertenecer al mismo proyecto, estado y calle."
 
 #: taiga/projects/userstories/validators.py:235
 msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
+"Identificador de historia de usuario no válidos. Todas las historias deben "
+"pertenecer al mismo proyecto."
 
 #: taiga/projects/validators.py:61
 msgid "There's no project with that id"
@@ -4911,11 +4942,11 @@ msgstr "href"
 
 #: taiga/telemetry/models.py:27
 msgid "instance id"
-msgstr ""
+msgstr "identificador de la instancia"
 
 #: taiga/telemetry/models.py:30
 msgid "created at"
-msgstr ""
+msgstr "creado en"
 
 #: taiga/timeline/signals.py:63
 msgid "Check the history API for the exact diff"
@@ -4971,7 +5002,7 @@ msgstr "Nombre de usuario o email no válidos"
 
 #: taiga/users/api.py:179
 msgid "Mail sent successfully!"
-msgstr ""
+msgstr "¡Correo enviado con éxito!"
 
 #: taiga/users/api.py:217
 msgid "Current password parameter needed"
@@ -4983,7 +5014,7 @@ msgstr "La nueva contraseña es obligatoria"
 
 #: taiga/users/api.py:223
 msgid "Invalid password length at least 6 characters needed"
-msgstr ""
+msgstr "Longitud de contraseña no válida se necesitan al menos 6 caracteres"
 
 #: taiga/users/api.py:226
 msgid "Invalid current password"
@@ -5050,11 +5081,12 @@ msgstr ""
 
 #: taiga/users/models.py:140
 msgid "staff status"
-msgstr ""
+msgstr "situación del personal"
 
 #: taiga/users/models.py:141
 msgid "Designates whether the user can log into this admin site."
 msgstr ""
+"Indica si el usuario puede iniciar sesión en este sitio de administración."
 
 #: taiga/users/models.py:147
 msgid "biography"
