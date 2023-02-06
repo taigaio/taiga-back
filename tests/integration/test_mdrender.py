@@ -21,7 +21,7 @@ dummy_project.slug = "test"
 
 def test_proccessor_valid_user_mention():
     user=factories.UserFactory(username="user1", full_name="test name")
-    project=factories.ProjectFactory(id=1, slug="test")
+    project=factories.ProjectFactory()
     factories.MembershipFactory(user=user, project=project)
     result = render(project, "**@user1**")
     expected_result = "<p><strong><a class=\"mention\" href=\"http://localhost:9001/profile/user1\" title=\"test name\">@user1</a></strong></p>"
@@ -30,7 +30,7 @@ def test_proccessor_valid_user_mention():
 
 def test_proccessor_valid_user_mention_with_dashes():
     user=factories.UserFactory(username="user1_text_after_dash", full_name="test name")
-    project=factories.ProjectFactory(id=1, slug="test")
+    project=factories.ProjectFactory()
     factories.MembershipFactory(user=user, project=project)
     result = render(project, "**@user1_text_after_dash**")
     expected_result = "<p><strong><a class=\"mention\" href=\"http://localhost:9001/profile/user1_text_after_dash\" title=\"test name\">@user1_text_after_dash</a></strong></p>"
@@ -44,16 +44,16 @@ def test_proccessor_invalid_user_mention():
 
 def test_render_and_extract_mentions():
     user=factories.UserFactory(username="user1", full_name="test name")
-    project=factories.ProjectFactory(id=1, slug="test")
+    project=factories.ProjectFactory()
     factories.MembershipFactory(user=user, project=project)
     (_, extracted) = render_and_extract(project, "**@user1**")
     assert extracted['mentions'] == [user]
 
 def test_render_and_extract_mentions_with_capitalized_username():
     user=factories.UserFactory(username="User1", full_name="test")
-    project=factories.ProjectFactory(id=1, slug="test")
+    project=factories.ProjectFactory()
     factories.MembershipFactory(user=user, project=project)
-    (_, extracted) = render_and_extract(dummy_project, "**@User1**")
+    (_, extracted) = render_and_extract(project, "**@User1**")
     assert extracted['mentions'] == [user]
 
 

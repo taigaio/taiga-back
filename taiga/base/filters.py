@@ -12,7 +12,7 @@ from dateutil.parser import parse as parse_date
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_error

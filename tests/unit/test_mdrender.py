@@ -205,9 +205,33 @@ def test_render_url_autolinks_without_http():
     assert render(dummy_project, source) == expected_result
 
 
+def test_render_url_autolinks_with_http():
+    expected_result = "<p>Test the <a href=\"http://example.com/\" target=\"_blank\">http://example.com/</a> autolink</p>"
+    source = "Test the http://example.com/ autolink"
+    assert render(dummy_project, source) == expected_result
+
+
+def test_render_url_autolinks_with_https():
+    expected_result = "<p>Test the <a href=\"https://example.com/\" target=\"_blank\">https://example.com/</a> autolink</p>"
+    source = "Test the https://example.com/ autolink"
+    assert render(dummy_project, source) == expected_result
+
+
+def test_render_url_autolinks_with_ftp():
+    expected_result = "<p>Test the <a href=\"ftp://example.com/\" target=\"_blank\">ftp://example.com/</a> autolink</p>"
+    source = "Test the ftp://example.com/ autolink"
+    assert render(dummy_project, source) == expected_result
+
+
 def test_render_url_automail():
     expected_result = "<p>Test the <a href=\"mailto:example@example.com\" target=\"_blank\">example@example.com</a> automail</p>"
     source = "Test the example@example.com automail"
+    assert render(dummy_project, source) == expected_result
+
+
+def test_render_url_automail_case_insensitive():
+    expected_result = "<p>Test the <a href=\"mailto:eXAMPle+1@ExamplE.Com\" target=\"_blank\">eXAMPle+1@ExamplE.Com</a> automail</p>"
+    source = "Test the eXAMPle+1@ExamplE.Com automail"
     assert render(dummy_project, source) == expected_result
 
 

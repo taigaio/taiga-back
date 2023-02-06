@@ -45,7 +45,7 @@ from django.conf import settings
 from django.http import QueryDict
 from django.http.multipartparser import parse_header
 from django.utils.datastructures import MultiValueDict
-from django.utils.six import BytesIO
+import six
 
 from taiga.base import exceptions
 
@@ -332,7 +332,7 @@ class Request(object):
         elif hasattr(self._request, "read"):
             self._stream = self._request
         else:
-            self._stream = BytesIO(self.raw_post_data)
+            self._stream = six.BytesIO(self.raw_post_data)
 
     def _perform_form_overloading(self):
         """
@@ -367,7 +367,7 @@ class Request(object):
             self._CONTENT_PARAM in self._data and
             self._CONTENTTYPE_PARAM in self._data):
             self._content_type = self._data[self._CONTENTTYPE_PARAM]
-            self._stream = BytesIO(self._data[self._CONTENT_PARAM].encode(self.parser_context["encoding"]))
+            self._stream = six.BytesIO(self._data[self._CONTENT_PARAM].encode(self.parser_context["encoding"]))
             self._data, self._files = (Empty, Empty)
 
     def _parse(self):

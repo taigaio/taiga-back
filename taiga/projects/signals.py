@@ -162,4 +162,4 @@ def try_to_close_or_open_user_stories_when_edit_task_status(sender, instance, cr
 
 ## Custom signals
 
-issue_status_post_move_on_destroy = Signal(providing_args=["deleted", "moved"])
+issue_status_post_move_on_destroy = Signal()

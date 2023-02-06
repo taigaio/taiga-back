@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .models import Role, User
 from .forms import UserChangeForm, UserCreationForm
@@ -37,28 +37,38 @@ class MembershipsInline(admin.TabularInline):
     show_change_link = True
     extra = 0
 
+    @admin.display(
+        description=_("id")
+    )
     def project_id(self, obj):
         return obj.project.id if obj.project else None
-    project_id.short_description = _("id")
 
+    @admin.display(
+        description=_("name")
+    )
     def project_name(self, obj):
         return obj.project.name if obj.project else None
-    project_name.short_description = _("name")
 
+    @admin.display(
+        description=_("slug")
+    )
     def project_slug(self, obj):
         return obj.project.slug if obj.project else None
-    project_slug.short_description = _("slug")
 
+    @admin.display(
+        description=_("is private"),
+        boolean=True,
+    )
     def project_is_private(self, obj):
         return obj.project.is_private if obj.project else None
-    project_is_private.short_description = _("is private")
-    project_is_private.boolean = True
 
+    @admin.display(
+        description=_("owner")
+    )
     def project_owner(self, obj):
         if obj.project and obj.project.owner:
             return "{} (@{})".format(obj.project.owner.get_full_name(), obj.project.owner.username)
         return None
-    project_owner.short_description = _("owner")
 
     def has_add_permission(self, *args):
         return False
@@ -83,13 +93,15 @@ class OwnedProjectsInline(admin.TabularInline):
     def has_delete_permission(self, *args):
         return False
 
+    @admin.display(
+        description=_("Memberships")
+    )
     def total_memberships(self, obj):
         total = obj.memberships.all().count()
         pending = obj.memberships.filter(user=None).count()
         accepted = total - pending
         return mark_safe(f"{total}{SEPARATOR}<i>{accepted} accepted</i>{SEPARATOR}<i>{pending} pending</i>")
 
-    total_memberships.short_description = _("Memberships")
 
 
 class RoleInline(admin.TabularInline):
@@ -113,6 +125,7 @@ class RoleAdmin(admin.ModelAdmin):
             db_field, request=request, **kwargs)
 
 
+@admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     list_display = ("username", "email", "full_name")
     list_filter = ("is_superuser", "is_active", "verified_email")
@@ -152,10 +165,15 @@ class UserAdmin(DjangoUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
+    @admin.display(
+        description=_("Private projects owned")
+    )
     def total_private_projects(self, obj):
         return obj.owned_projects.filter(is_private=True).count()
-    total_private_projects.short_description = _("Private projects owned")
 
+    @admin.display(
+        description=_("Private memberships owned")
+    )
     def total_memberships_private_projects(self, obj):
         Membership = apps.get_model("projects", "Membership")
         accepted = (Membership.objects.filter(project__is_private=True,
@@ -170,12 +188,16 @@ class UserAdmin(DjangoUserAdmin):
                                   .distinct("email").count())
         total = pending + accepted
         return mark_safe(f"{total}{SEPARATOR}<i>{accepted} accepted</i>{SEPARATOR}<i>{pending} pending</i>")
-    total_memberships_private_projects.short_description = _("Private memberships owned")
 
+    @admin.display(
+        description=_("Public projects owned")
+    )
     def total_public_projects(self, obj):
         return obj.owned_projects.filter(is_private=False).count()
-    total_public_projects.short_description = _("Public projects owned")
 
+    @admin.display(
+        description=_("Public memberships owned")
+    )
     def total_memberships_public_projects(self, obj):
         Membership = apps.get_model("projects", "Membership")
         accepted =  (Membership.objects.filter(project__is_private=False,
@@ -190,7 +212,5 @@ class UserAdmin(DjangoUserAdmin):
                                   .distinct("email").count())
         total = pending + accepted
         return mark_safe(f"{total}{SEPARATOR}<i>{accepted} accepted</i>{SEPARATOR}<i>{pending} pending</i>")
-    total_memberships_public_projects.short_description = _("Public memberships owned")
 
 
-admin.site.register(User, UserAdmin)

@@ -31,7 +31,7 @@
 
 from markdown.extensions import Extension
 from markdown.inlinepatterns import Pattern
-from markdown.util import etree
+from xml.etree import ElementTree as etree
 
 from taiga.projects.references.services import get_instance_by_ref
 from taiga.front.templatetags.functions import resolve
@@ -46,7 +46,7 @@ class TaigaReferencesExtension(Extension):
         TAIGA_REFERENCE_RE = r'(?<=^|(?<=[^a-zA-Z0-9-\[]))#(\d+)'
         referencesPattern = TaigaReferencesPattern(TAIGA_REFERENCE_RE, self.project)
         referencesPattern.md = md
-        md.inlinePatterns.add('taiga-references', referencesPattern, '_begin')
+        md.inlinePatterns.register(referencesPattern, 'taiga-references', 65)
 
 
 class TaigaReferencesPattern(Pattern):

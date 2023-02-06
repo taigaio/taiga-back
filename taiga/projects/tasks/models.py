@@ -10,7 +10,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from taiga.base.utils.time import timestamp_ms
 from taiga.projects.due_dates.models import DueDateMixin

@@ -49,8 +49,8 @@ from django.apps import apps
 from django.core.paginator import Page
 from django.db import models
 from django.forms import widgets
-from django.utils import six
-from django.utils.translation import ugettext as _
+import six
+from django.utils.translation import gettext as _
 
 from .settings import api_settings
 

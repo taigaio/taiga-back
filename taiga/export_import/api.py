@@ -10,7 +10,7 @@ import uuid
 import gzip
 
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.db.transaction import atomic
 from django.db.models import signals
 from django.conf import settings
@@ -66,7 +66,7 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
         if dump_format == "gzip":
             path = "exports/{}/{}-{}.json.gz".format(project.pk, project.slug, uuid.uuid4().hex)
             with default_storage.open(path, mode="wb") as outfile:
-                services.render_project(project, gzip.GzipFile(fileobj=outfile))
+                services.render_project(project, gzip.GzipFile(fileobj=outfile, mode="wb"))
         else:
             path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
             with default_storage.open(path, mode="wb") as outfile:

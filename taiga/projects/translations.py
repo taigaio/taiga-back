@@ -8,7 +8,7 @@
 # NOTE: This file is useful to translate default projects templates. Remember update
 #       when taiga/projects/fixtures/initial_project_templates.json change.
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 
 ##########################

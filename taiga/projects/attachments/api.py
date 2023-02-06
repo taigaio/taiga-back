@@ -9,7 +9,7 @@ import os.path as path
 import mimetypes
 mimetypes.init()
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from taiga.base import filters

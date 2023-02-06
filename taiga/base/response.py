@@ -37,7 +37,7 @@ from http.client import responses
 from django import http
 
 from django.template.response import SimpleTemplateResponse
-from django.utils import six
+import six
 
 
 class Response(SimpleTemplateResponse):

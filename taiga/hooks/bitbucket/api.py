@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 from taiga.base import exceptions as exc
@@ -62,4 +62,4 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
         return project_secret == secret_key
 
     def _get_event_name(self, request):
-        return request.META.get('HTTP_X_EVENT_KEY', None)
+        return request.headers.get('x-event-key', None)

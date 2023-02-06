@@ -15,7 +15,7 @@ from contextlib import closing
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base.utils import db, text
 from taiga.projects.history.services import take_snapshot

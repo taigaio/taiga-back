@@ -14,7 +14,7 @@ from taiga.users.services import get_user_by_username_or_email
 
 from django.conf import settings
 from django.core.validators import validate_email
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .. import models
 

@@ -5,13 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import pytz
-
-from datetime import datetime, timedelta
+from datetime import timedelta
 import pytest
 
 from .. import factories
 from django.contrib.auth.models import AnonymousUser
+from django.utils import timezone
 from taiga.timeline.service import build_project_namespace, build_user_namespace, get_timeline
 from taiga.projects.history import services as history_services
 from taiga.timeline import service
@@ -466,14 +465,14 @@ def test_assigned_to_user_story_timeline():
 
 
 def test_due_date_user_story_timeline():
-    initial_due_date = datetime.now(pytz.utc) + timedelta(days=1)
+    initial_due_date = timezone.now() + timedelta(days=1)
     membership = factories.MembershipFactory.create()
     user_story = factories.UserStoryFactory.create(subject="test us timeline",
                                                    due_date=initial_due_date,
                                                    project=membership.project)
     history_services.take_snapshot(user_story, user=user_story.owner)
 
-    new_due_date = datetime.now(pytz.utc) + timedelta(days=3)
+    new_due_date = timezone.now() + timedelta(days=3)
     user_story.due_date = new_due_date
     user_story.save()
 
@@ -601,21 +600,21 @@ def test_epic_related_uss():
     service.register_timeline_implementation("epics.relateduserstory", "test", lambda x, extra_data=None: id(x))
     project_namespace = build_project_namespace(public_project)
     # Timeline entries regarding the first epic-related public US, for both a user and a project namespace
-    service._add_to_object_timeline(public_project, related_public_us, "create", datetime.now(), project_namespace)
-    service._add_to_object_timeline(public_project_owner, related_public_us, "create", datetime.now(),
+    service._add_to_object_timeline(public_project, related_public_us, "create", timezone.now(), project_namespace)
+    service._add_to_object_timeline(public_project_owner, related_public_us, "create", timezone.now(),
                                     build_user_namespace(public_project_owner))
     # Timeline entries regarding the first epic-related private US, for both a user and a project namespace
-    service._add_to_object_timeline(public_project, related_private_us, "create", datetime.now(), project_namespace)
-    service._add_to_object_timeline(private_project_owner, related_private_us, "create", datetime.now(),
+    service._add_to_object_timeline(public_project, related_private_us, "create", timezone.now(), project_namespace)
+    service._add_to_object_timeline(private_project_owner, related_private_us, "create", timezone.now(),
                                     build_user_namespace(private_project_owner))
 
     """
     # A list of users for the test iterations
     #
     # [index0] An anonymous user, who doesn't even have rights to see neither public nor private related USs.
-    # [index1] A public project's owner, who related a public US to an epic from her own public project. She just 
+    # [index1] A public project's owner, who related a public US to an epic from her own public project. She just
     #   has privileges to see her public related USs, and is a simple registered user regarding the private project.
-    # [index2] An unprivileged private member, whose role doesn't have access to the private project's USs, 
+    # [index2] An unprivileged private member, whose role doesn't have access to the private project's USs,
     #   but is able to view the related-USs from the public project's.
     # [index3] A private project's owner, who linked her private US to an epic from the public project.
                 She has privileges to see any related USs.

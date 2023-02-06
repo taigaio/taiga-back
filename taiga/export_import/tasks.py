@@ -15,7 +15,7 @@ from django.core.files.base import ContentFile
 from django.utils import timezone
 
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base.mails import mail_builder
 from taiga.base.utils import json
@@ -36,7 +36,7 @@ def dump_project(self, user, project, dump_format):
         if dump_format == "gzip":
             path = "exports/{}/{}-{}.json.gz".format(project.pk, project.slug, self.request.id)
             with default_storage.open(path, mode="wb") as outfile:
-                services.render_project(project, gzip.GzipFile(fileobj=outfile))
+                services.render_project(project, gzip.GzipFile(fileobj=outfile, mode="wb"))
         else:
             path = "exports/{}/{}-{}.json".format(project.pk, project.slug, self.request.id)
             with default_storage.open(path, mode="wb") as outfile:

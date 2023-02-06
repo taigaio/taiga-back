@@ -21,7 +21,7 @@ class GitHubViewSet(BaseWebhookApiViewSet):
     }
 
     def _validate_signature(self, project, request):
-        x_hub_signature = request.META.get("HTTP_X_HUB_SIGNATURE", None)
+        x_hub_signature = request.headers.get("x-hub-signature", None)
         if not x_hub_signature:
             return False
 
@@ -41,4 +41,4 @@ class GitHubViewSet(BaseWebhookApiViewSet):
         return hmac.compare_digest(mac.hexdigest(), signature)
 
     def _get_event_name(self, request):
-        return request.META.get("HTTP_X_GITHUB_EVENT", None)
+        return request.headers.get("x-github-event", None)

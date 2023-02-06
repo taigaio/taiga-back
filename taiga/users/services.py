@@ -21,7 +21,7 @@ from django.db.models import OuterRef, Q, Subquery
 from django.db import connection
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.exceptions import InvalidImageFormatError

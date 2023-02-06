@@ -7,7 +7,7 @@
 
 from django.apps import apps
 from django.db import IntegrityError
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base import exceptions as exc
 from taiga.projects.settings.choices import Section

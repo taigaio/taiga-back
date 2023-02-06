@@ -10,7 +10,7 @@ import copy
 
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from taiga.base.api import serializers

@@ -8,7 +8,7 @@
 import uuid
 
 from django.apps import apps
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings

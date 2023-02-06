@@ -35,5 +35,5 @@ class SemiSaneListExtension(markdown.Extension):
     """
 
     def extendMarkdown(self, md):
-        md.parser.blockprocessors['olist'] = SemiSaneOListProcessor(md.parser)
-        md.parser.blockprocessors['ulist'] = SemiSaneUListProcessor(md.parser)
+        md.parser.blockprocessors.register(SemiSaneOListProcessor(md.parser), 'olist', 39)
+        md.parser.blockprocessors.register(SemiSaneUListProcessor(md.parser), 'ulist', 29)

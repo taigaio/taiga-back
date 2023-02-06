@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base import response
 from taiga.base.decorators import list_route

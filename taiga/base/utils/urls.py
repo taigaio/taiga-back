@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 
 import django_sites as sites
 from django.urls import reverse as django_reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 URL_TEMPLATE = "{scheme}://{domain}/{path}"
 

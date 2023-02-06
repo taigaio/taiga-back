@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from django.contrib import admin
 from django.urls import path
 
@@ -37,11 +37,11 @@ if settings.FRONT_SITEMAP_ENABLED:
     from taiga.front.sitemaps import sitemaps
 
     urlpatterns += [
-        url(r"^front/sitemap\.xml$",
+        re_path(r"^front/sitemap\.xml$",
             cache_page(settings.FRONT_SITEMAP_CACHE_TIMEOUT)(index),
             {"sitemaps": sitemaps, 'sitemap_url_name': 'front-sitemap'},
             name="front-sitemap-index"),
-        url(r"^front/sitemap-(?P<section>.+)\.xml$",
+        re_path(r"^front/sitemap-(?P<section>.+)\.xml$",
             cache_page(settings.FRONT_SITEMAP_CACHE_TIMEOUT)(sitemap),
             {"sitemaps": sitemaps},
             name="front-sitemap")
@@ -63,7 +63,7 @@ if settings.DEBUG:
         from django.views.static import serve
 
         return [
-            url(r'^%s(?P<path>.*)$' % re.escape(prefix.lstrip('/')), serve,
+            re_path(r'^%s(?P<path>.*)$' % re.escape(prefix.lstrip('/')), serve,
                 {'document_root': settings.MEDIA_ROOT})
         ]
 

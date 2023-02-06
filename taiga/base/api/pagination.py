@@ -14,7 +14,7 @@ from django.core.paginator import (
 )
 from django.http import Http404
 from django.http import QueryDict
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .settings import api_settings
 
@@ -148,7 +148,7 @@ class PaginationMixin(object):
 
         Otherwise defaults to using `self.paginate_by`.
         """
-        if "HTTP_X_DISABLE_PAGINATION" in self.request.META:
+        if "x-disable-pagination" in self.request.headers:
             return None
 
         if queryset is not None:
@@ -172,10 +172,10 @@ class PaginationMixin(object):
         Paginate a queryset if required, either returning a page object,
         or `None` if pagination is not configured for this view.
         """
-        if "HTTP_X_DISABLE_PAGINATION" in self.request.META:
+        if "x-disable-pagination" in self.request.headers:
             return None
 
-        if "HTTP_X_LAZY_PAGINATION" in self.request.META:
+        if "x-lazy-pagination" in self.request.headers:
             self.paginator_class = LazyPaginator
 
         deprecated_style = False
@@ -226,7 +226,7 @@ class PaginationMixin(object):
         if page is None:
             return page
 
-        if not "HTTP_X_LAZY_PAGINATION" in self.request.META:
+        if not "x-lazy-pagination" in self.request.headers:
             self.headers["x-pagination-count"] = page.paginator.count
 
         self.headers["x-paginated"] = "true"

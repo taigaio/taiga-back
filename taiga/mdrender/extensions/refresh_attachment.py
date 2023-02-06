@@ -21,9 +21,9 @@ class RefreshAttachmentExtension(markdown.Extension):
         super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
-        md.treeprocessors.add("refresh_attachment",
-                              RefreshAttachmentTreeprocessor(md, project=self.project),
-                              "<prettify")
+        md.treeprocessors.register(RefreshAttachmentTreeprocessor(md, project=self.project),
+                                   "refresh_attachment",
+                                   20)
 
 
 class RefreshAttachmentTreeprocessor(Treeprocessor):

@@ -49,7 +49,7 @@ class SessionIDMiddleware(object):
 
     def process_request(self, request):
         global _local
-        session_id = request.META.get("HTTP_X_SESSION_ID", None)
+        session_id = request.headers.get("x-session-id", None)
         _local.session_id = session_id
         request.session_id = session_id
 

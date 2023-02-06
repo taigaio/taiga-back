@@ -19,7 +19,7 @@ class BaseGogsEventHook():
         if wiki_text is None:
             wiki_text = ""
 
-        template = "\g<1>[Gogs#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
+        template = fr"\g<1>[Gogs#\g<2>]({project_url}/issues/\g<2>)\g<3>"
         return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
 

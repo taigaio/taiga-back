@@ -10,7 +10,6 @@ from importlib import import_module
 import random
 import uuid
 import re
-import datetime
 
 from django.apps import apps
 from django.apps.config import MODELS_MODULE_NAME
@@ -23,7 +22,7 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import models
 from django.dispatch import receiver
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from taiga.base.db.models.fields import JSONField
 from django_pglocks import advisory_lock
@@ -284,7 +283,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.token = None
             self.set_unusable_password()
             self.photo = None
-            self.date_cancelled = datetime.datetime.now()
+            self.date_cancelled = timezone.now()
             self.new_email = "{}@taiga.io".format(self.username)
             self.email_token = None
             self.save()

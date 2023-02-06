@@ -9,7 +9,7 @@
 
 import itertools
 from collections import namedtuple
-from django.conf.urls import url
+from django.urls import path, re_path
 from django.core.exceptions import ImproperlyConfigured
 from django.urls import NoReverseMatch, URLResolver
 
@@ -249,7 +249,7 @@ class SimpleRouter(BaseRouter):
                 )
                 view = viewset.as_view(mapping, **route.initkwargs)
                 name = route.name.format(basename=basename)
-                ret.append(url(regex, view, name=name))
+                ret.append(re_path(regex, view, name=name))
 
         return ret
 
@@ -295,7 +295,7 @@ class DRFDefaultRouter(SimpleRouter):
         urls = []
 
         if self.include_root_view:
-            root_url = url(r'^$', self.get_api_root_view(), name=self.root_view_name)
+            root_url = path('', self.get_api_root_view(), name=self.root_view_name)
             urls.append(root_url)
 
         default_urls = super(DRFDefaultRouter, self).get_urls()

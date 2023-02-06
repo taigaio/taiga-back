@@ -17,7 +17,7 @@ from taiga.base.api import ModelCrudViewSet, ModelRetrieveViewSet
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import list_route, detail_route
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class Application(ModelRetrieveViewSet):

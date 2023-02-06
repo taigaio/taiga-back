@@ -9,7 +9,7 @@ from collections import namedtuple
 
 from django.db import connection
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.sql.datastructures import EmptyResultSet
+from django.core.exceptions import EmptyResultSet
 from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
 

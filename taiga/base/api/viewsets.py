@@ -33,7 +33,7 @@
 
 from functools import update_wrapper
 from django.utils.decorators import classonlymethod
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from . import views
 from . import mixins

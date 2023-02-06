@@ -9,7 +9,7 @@ from django.apps import apps
 from django.db import transaction
 from django.db.models import Max
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.http import HttpResponse
 
 from taiga.base import filters as base_filters

@@ -9,6 +9,9 @@ import datetime
 from collections import OrderedDict
 
 from django.template.defaultfilters import slugify
+from django.utils import timezone
+
+from taiga.importers import services as import_service
 from taiga.projects.references.models import recalc_reference_counter
 from taiga.projects.models import Project, ProjectTemplate, Points
 from taiga.projects.userstories.models import UserStory, RolePoints
@@ -18,8 +21,8 @@ from taiga.projects.epics.models import Epic, RelatedUserStory
 from taiga.projects.history.services import take_snapshot
 from taiga.timeline.rebuilder import rebuild_timeline
 from taiga.timeline.models import Timeline
+
 from .common import JiraImporterCommon
-from taiga.importers import services as import_service
 
 
 class JiraAgileImporter(JiraImporterCommon):
@@ -158,8 +161,8 @@ class JiraAgileImporter(JiraImporterCommon):
                     estimated_finish=end_date,
                 )
                 Milestone.objects.filter(id=milestone.id).update(
-                    created_date=start_datetime or datetime.datetime.now(),
-                    modified_date=start_datetime or datetime.datetime.now(),
+                    created_date=start_datetime or timezone.now(),
+                    modified_date=start_datetime or timezone.now(),
                 )
         return project
 

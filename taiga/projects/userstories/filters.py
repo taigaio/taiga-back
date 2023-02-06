@@ -8,7 +8,7 @@
 from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import Q, OuterRef, Subquery
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base import filters
 

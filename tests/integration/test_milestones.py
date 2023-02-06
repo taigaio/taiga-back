@@ -6,12 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
-import pytz
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from urllib.parse import quote
 
 from django.urls import reverse
+from django.utils import timezone
 
 from taiga.base.utils import json
 
@@ -82,7 +82,7 @@ def test_api_filter_by_created_date__lte(client):
     f.MembershipFactory.create(
         project=project, user=user, role=role, is_admin=True
     )
-    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
 
     old_milestone = f.MilestoneFactory.create(
         project=project, owner=user, created_date=one_day_ago
@@ -108,7 +108,7 @@ def test_api_filter_by_modified_date__gte(client):
     f.MembershipFactory.create(
         project=project, user=user, role=role, is_admin=True
     )
-    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
 
     older_milestone = f.MilestoneFactory.create(
         project=project, owner=user, created_date=one_day_ago

@@ -8,7 +8,7 @@
 import bleach
 
 from django.core import validators as core_validators
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators

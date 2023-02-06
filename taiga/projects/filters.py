@@ -9,7 +9,7 @@ import logging
 
 from django.apps import apps
 from django.db.models import Q
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base import exceptions as exc
 from taiga.base.filters import FilterBackend

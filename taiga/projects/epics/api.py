@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.http import HttpResponse
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base.api.utils import get_object_or_error
 from taiga.base import filters, response
@@ -104,7 +104,7 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
         if old_order_key == order_key:
             return {}
 
-        extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+        extra_orders = json.loads(self.request.headers.get("set-orders", "{}"))
         data = [{"epic_id": obj.id, "order": getattr(obj, "epics_order")}]
         for id, order in extra_orders.items():
             data.append({"epic_id": int(id), "order": order})
@@ -235,7 +235,7 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
         if old_order_key == order_key:
             return {}
 
-        extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+        extra_orders = json.loads(self.request.headers.get("set-orders", "{}"))
         data = [{"us_id": obj.user_story.id, "order": getattr(obj, "order")}]
         for id, order in extra_orders.items():
             data.append({"us_id": int(id), "order": order})

@@ -15,8 +15,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-cleanup_pre_delete = Signal(providing_args=["file"])
-cleanup_post_delete = Signal(providing_args=["file"])
+cleanup_pre_delete = Signal()
+cleanup_post_delete = Signal()
 
 
 def _find_models_with_filefield():

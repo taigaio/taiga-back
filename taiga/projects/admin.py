@@ -9,7 +9,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.db import transaction
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from taiga.permissions.choices import ANON_PERMISSIONS
 from taiga.projects.notifications.admin import NotifyPolicyInline
@@ -124,6 +124,9 @@ class ProjectAdmin(admin.ModelAdmin):
         }),
     )
 
+    @admin.display(
+        description=_('owner')
+    )
     def owner_url(self, obj):
         if obj.owner:
             url = reverse('admin:{0}_{1}_change'.format(obj.owner._meta.app_label,
@@ -131,7 +134,6 @@ class ProjectAdmin(admin.ModelAdmin):
                           args=(obj.owner.pk,))
             return format_html("<a href='{url}' title='{user}'>{user}</a>", url=url, user=obj.owner)
         return ""
-    owner_url.short_description = _('owner')
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)
@@ -163,6 +165,9 @@ class ProjectAdmin(admin.ModelAdmin):
         "make_private",
     ]
 
+    @admin.action(
+        description=_("Make public")
+    )
     @transaction.atomic
     def make_public(self, request, queryset):
         total_updates = 0
@@ -178,8 +183,10 @@ class ProjectAdmin(admin.ModelAdmin):
             total_updates += 1
 
         self.message_user(request, _("{count} successfully made public.").format(count=total_updates))
-    make_public.short_description = _("Make public")
 
+    @admin.action(
+        description=_("Make private")
+    )
     @transaction.atomic
     def make_private(self, request, queryset):
         total_updates = 0
@@ -193,7 +200,6 @@ class ProjectAdmin(admin.ModelAdmin):
             total_updates += 1
 
         self.message_user(request, _("{count} successfully made private.").format(count=total_updates))
-    make_private.short_description = _("Make private")
 
     def delete_queryset(self, request, queryset):
         # NOTE: Override delete_queryset so its use the same approach used in

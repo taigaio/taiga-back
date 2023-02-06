@@ -43,8 +43,8 @@ from django import forms
 from django.db.models.fields import BLANK_CHOICE_DASH
 from django.forms import widgets
 from django.forms.models import ModelChoiceIterator
-from django.utils.encoding import smart_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import smart_str
+from django.utils.translation import gettext_lazy as _
 
 from .fields import Field, WritableField, get_component, is_simple_callable
 from .reverse import reverse
@@ -118,8 +118,8 @@ class RelatedField(WritableField):
         """
         Return a readable representation for use with eg. select widgets.
         """
-        desc = smart_text(obj)
-        ident = smart_text(self.to_native(obj))
+        desc = smart_str(obj)
+        ident = smart_str(self.to_native(obj))
         if desc == ident:
             return desc
         return "%s - %s" % (desc, ident)
@@ -245,8 +245,8 @@ class PrimaryKeyRelatedField(RelatedField):
         """
         Return a readable representation for use with eg. select widgets.
         """
-        desc = smart_text(obj)
-        ident = smart_text(self.to_native(obj.pk))
+        desc = smart_str(obj)
+        ident = smart_str(self.to_native(obj.pk))
         if desc == ident:
             return desc
         return "%s - %s" % (desc, ident)
@@ -262,7 +262,7 @@ class PrimaryKeyRelatedField(RelatedField):
         try:
             return self.queryset.get(pk=data)
         except ObjectDoesNotExist:
-            msg = self.error_messages["does_not_exist"] % smart_text(data)
+            msg = self.error_messages["does_not_exist"] % smart_str(data)
             raise ValidationError(msg)
         except (TypeError, ValueError):
             received = type(data).__name__
@@ -342,7 +342,7 @@ class SlugRelatedField(RelatedField):
             return self.queryset.get(**{self.slug_field: data})
         except ObjectDoesNotExist:
             raise ValidationError(self.error_messages["does_not_exist"] %
-                                  (self.slug_field, smart_text(data)))
+                                  (self.slug_field, smart_str(data)))
         except (TypeError, ValueError):
             msg = self.error_messages["invalid"]
             raise ValidationError(msg)
