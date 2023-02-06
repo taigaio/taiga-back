@@ -12,7 +12,7 @@ from functools import reduce
 
 from taiga.permissions.services import user_has_perm, is_project_admin
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 
 ######################################################################

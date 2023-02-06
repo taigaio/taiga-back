@@ -22,4 +22,4 @@ class StrikethroughExtension(markdown.Extension):
 
     def extendMarkdown(self, md):
         pattern = markdown.inlinepatterns.SimpleTagPattern(STRIKE_RE, 'del')
-        md.inlinePatterns.add('gfm-strikethrough', pattern, '_end')
+        md.inlinePatterns.register(pattern, 'strikethrough', 70)

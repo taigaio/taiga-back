@@ -205,7 +205,7 @@ class AnonRateThrottle(SimpleRateThrottle):
         if request.user.is_authenticated:
             return None  # Only throttle unauthenticated requests.
 
-        ident = request.META.get("HTTP_X_FORWARDED_FOR")
+        ident = request.headers.get("x-forwarded-for")
         if ident is None:
             ident = request.META.get("REMOTE_ADDR")
 

@@ -38,7 +38,7 @@ from django.db.models.query import QuerySet
 from django.utils.functional import Promise
 from django.utils import timezone
 # from django.utils.deprecation import CallableBool
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 import datetime
 import decimal
@@ -55,7 +55,7 @@ class JSONEncoder(json.JSONEncoder):
         # For Date Time string spec, see ECMA 262
         # http://ecma-international.org/ecma-262/5.1/#sec-15.9.1.15
         if isinstance(o, Promise):
-            return force_text(o)
+            return force_str(o)
         # elif isinstance(o, CallableBool):
         #     return bool(o)
         elif isinstance(o, datetime.datetime):

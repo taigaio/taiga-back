@@ -7,7 +7,7 @@
 
 import re
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.contrib.auth import get_user_model
 from taiga.projects.models import IssueStatus, TaskStatus, UserStoryStatus, EpicStatus, ProjectModulesConfig
 from taiga.projects.epics.models import Epic

@@ -52,7 +52,7 @@ back to the defaults.
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.utils import six
+import six
 
 import importlib
 

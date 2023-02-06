@@ -160,9 +160,9 @@ class EmojifyExtension(Extension):
 
     def extendMarkdown(self, md):
         md.registerExtension(self)
-        md.preprocessors.add('emojify',
-                             EmojifyPreprocessor(md),
-                             '_end')
+        md.preprocessors.register(EmojifyPreprocessor(md),
+                                  'emojify',
+                                  70)
 
 
 class EmojifyPreprocessor(Preprocessor):

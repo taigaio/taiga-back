@@ -32,7 +32,9 @@ from django.contrib.auth import get_user_model
 
 from markdown.extensions import Extension
 from markdown.inlinepatterns import Pattern
-from markdown.util import etree, AtomicString
+from markdown.util import AtomicString
+from xml.etree import ElementTree as etree
+from taiga.front.templatetags.functions import resolve
 
 
 class MentionsExtension(Extension):
@@ -43,10 +45,10 @@ class MentionsExtension(Extension):
         super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
-        MENTION_RE = r"(@)([\w.-]+)"
+        MENTION_RE = r"\B(@)([\w.-]+)\b"
         mentionsPattern = MentionsPattern(MENTION_RE, project=self.project)
         mentionsPattern.md = md
-        md.inlinePatterns.add("mentions", mentionsPattern, "_end")
+        md.inlinePatterns.register(mentionsPattern, "mentions", 80)
 
 
 class MentionsPattern(Pattern):
@@ -66,7 +68,7 @@ class MentionsPattern(Pattern):
         except get_user_model().DoesNotExist:
             return "@{}".format(username)
 
-        url = "/profile/{}".format(username)
+        url = resolve("user", username)
 
         link_text = "@{}".format(username)
 

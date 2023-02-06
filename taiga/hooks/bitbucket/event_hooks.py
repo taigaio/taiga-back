@@ -19,7 +19,7 @@ class BaseBitBucketEventHook():
         if wiki_text is None:
             wiki_text = ""
 
-        template = "\g<1>[BitBucket#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
+        template = fr"\g<1>[BitBucket#\g<2>]({project_url}/issues/\g<2>)\g<3>"
         return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
 
@@ -49,7 +49,7 @@ class IssueCommentEventHook(BaseBitBucketEventHook, BaseIssueCommentEventHook):
         project_url = self.payload.get('repository', {}).get('links', {}).get('html', {}).get('href', None)
         issue_url = self.payload.get('issue', {}).get('links', {}).get('html', {}).get('href', None)
         comment_id = self.payload.get('comment', {}).get('id', None)
-        comment_url = "{}#comment-{}".format(issue_url, comment_id)
+        comment_url = f"{issue_url}#comment-{comment_id}"
         return {
             "number": self.payload.get('issue', {}).get('id', None),
             'url': issue_url,

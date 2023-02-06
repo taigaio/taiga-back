@@ -12,7 +12,7 @@ from operator import itemgetter
 from contextlib import closing
 
 from django.db import connection
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base.utils import db, text
 from taiga.events import events

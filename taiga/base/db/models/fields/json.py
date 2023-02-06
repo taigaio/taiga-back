@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.postgres.fields import JSONField as DjangoJSONField
+from django.db.models import JSONField as DjangoJSONField
 
 
 __all__ = ["JSONField"]

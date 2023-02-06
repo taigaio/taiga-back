@@ -7,14 +7,14 @@
 
 import uuid
 import csv
-import pytz
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from urllib.parse import quote
 
 from unittest import mock
 
 from django.urls import reverse
+from django.utils import timezone
 
 from taiga.base.utils import json
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
@@ -710,7 +710,7 @@ def test_get_tasks_including_attachments(client):
 
 def test_api_filter_by_created_date(client):
     user = f.UserFactory(is_superuser=True)
-    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
 
     old_task = f.create_task(owner=user, created_date=one_day_ago)
     task = f.create_task(owner=user, subject="test")
@@ -730,7 +730,7 @@ def test_api_filter_by_created_date(client):
 
 def test_api_filter_by_created_date__lt(client):
     user = f.UserFactory(is_superuser=True)
-    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
 
     old_task = f.create_task(owner=user, created_date=one_day_ago)
     task = f.create_task(owner=user, subject="test")
@@ -749,7 +749,7 @@ def test_api_filter_by_created_date__lt(client):
 
 def test_api_filter_by_created_date__lte(client):
     user = f.UserFactory(is_superuser=True)
-    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
 
     old_task = f.create_task(owner=user, created_date=one_day_ago)
     task = f.create_task(owner=user)
@@ -768,7 +768,7 @@ def test_api_filter_by_created_date__lte(client):
 
 def test_api_filter_by_modified_date__gte(client):
     user = f.UserFactory(is_superuser=True)
-    _day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    _day_ago = timezone.now() - timedelta(days=1)
 
     older_task = f.create_task(owner=user)
     task = f.create_task(owner=user, subject="test")

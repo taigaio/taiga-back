@@ -33,7 +33,7 @@
 
 
 from django.urls import URLResolver
-from django.conf.urls import url, include
+from django.urls import include, re_path
 
 from .settings import api_settings
 
@@ -51,7 +51,7 @@ def apply_suffix_patterns(urlpatterns, suffix_pattern, suffix_required):
             patterns = apply_suffix_patterns(urlpattern.url_patterns,
                                              suffix_pattern,
                                              suffix_required)
-            ret.append(url(regex, include(patterns, namespace, app_name), kwargs))
+            ret.append(re_path(regex, include(patterns, namespace, app_name), kwargs))
 
         else:
             # Regular URL pattern
@@ -62,7 +62,7 @@ def apply_suffix_patterns(urlpatterns, suffix_pattern, suffix_required):
             # Add in both the existing and the new urlpattern
             if not suffix_required:
                 ret.append(urlpattern)
-            ret.append(url(regex, view, kwargs, name))
+            ret.append(re_path(regex, view, kwargs, name))
 
     return ret
 

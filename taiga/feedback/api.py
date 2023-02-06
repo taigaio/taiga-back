@@ -33,9 +33,9 @@ class FeedbackViewSet(viewsets.ViewSet):
         self.object = validator.save(force_insert=True)
 
         extra = {
-            "HTTP_HOST":  request.META.get("HTTP_HOST", None),
-            "HTTP_REFERER": request.META.get("HTTP_REFERER", None),
-            "HTTP_USER_AGENT": request.META.get("HTTP_USER_AGENT", None),
+            "HTTP_HOST":  request.headers.get("host", None),
+            "HTTP_REFERER": request.headers.get("referer", None),
+            "HTTP_USER_AGENT": request.headers.get("user-agent", None),
         }
         services.send_feedback(self.object, extra, reply_to=[request.user.email])
 

@@ -8,7 +8,7 @@
 from django.apps import AppConfig
 from django.apps import apps
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import include, path
 
 
 class FeedbackAppConfig(AppConfig):
@@ -19,4 +19,4 @@ class FeedbackAppConfig(AppConfig):
         if settings.FEEDBACK_ENABLED:
             from taiga.urls import urlpatterns
             from .routers import router
-            urlpatterns.append(url(r'^api/v1/', include(router.urls)))
+            urlpatterns.append(path('api/v1/', include(router.urls)))

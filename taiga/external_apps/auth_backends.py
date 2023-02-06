@@ -15,10 +15,10 @@ class Token(BaseAuthentication):
     auth_rx = re.compile(r"^Application (.+)$")
 
     def authenticate(self, request):
-        if "HTTP_AUTHORIZATION" not in request.META:
+        if "authorization" not in request.headers:
             return None
 
-        token_rx_match = self.auth_rx.search(request.META["HTTP_AUTHORIZATION"])
+        token_rx_match = self.auth_rx.search(request.headers["authorization"])
         if not token_rx_match:
             return None
 

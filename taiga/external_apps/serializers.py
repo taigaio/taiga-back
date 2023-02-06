@@ -11,7 +11,7 @@ from taiga.base.fields import Field
 from . import models
 from . import services
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 
 class ApplicationSerializer(serializers.LightSerializer):

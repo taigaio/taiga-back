@@ -33,7 +33,7 @@ import bleach
 import re
 
 from django.core import validators as core_validators
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base.api import serializers
 from taiga.base.exceptions import ValidationError

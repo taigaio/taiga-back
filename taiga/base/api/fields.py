@@ -42,17 +42,17 @@ from django.core import validators
 from django.db.models.fields import BLANK_CHOICE_DASH
 from django.forms import widgets
 from django.http import QueryDict
-from django.utils import six
+import six
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from django.utils.dateparse import parse_datetime
 from django.utils.dateparse import parse_time
-from django.utils.encoding import smart_text
-from django.utils.encoding import force_text
+from django.utils.encoding import smart_str
+from django.utils.encoding import force_str
 from django.utils.encoding import is_protected_type
 from django.utils.functional import Promise
-from django.utils.translation import ugettext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from taiga.base.exceptions import ValidationError
 
@@ -168,7 +168,7 @@ class Field(object):
         self.source = source
 
         if label is not None:
-            self.label = smart_text(label)
+            self.label = smart_str(label)
         else:
             self.label = None
 
@@ -250,7 +250,7 @@ class Field(object):
             for key, val in value.items():
                 ret[key] = self.to_native(val)
             return ret
-        return force_text(value)
+        return force_str(value)
 
     def attributes(self):
         """
@@ -269,7 +269,7 @@ class Field(object):
         for attr in optional_attrs:
             value = getattr(self, attr, None)
             if value is not None and value != "":
-                metadata[attr] = force_text(value, strings_only=True)
+                metadata[attr] = force_str(value, strings_only=True)
         return metadata
 
 
@@ -509,12 +509,12 @@ class CharField(WritableField):
         if value in validators.EMPTY_VALUES:
             return ""
 
-        return smart_text(value)
+        return smart_str(value)
 
     def to_native(self, value):
         ret = super(CharField, self).to_native(value)
         if self.i18n:
-            ret = ugettext(ret)
+            ret = gettext(ret)
 
         return ret
 
@@ -593,10 +593,10 @@ class ChoiceField(WritableField):
             if isinstance(v, (list, tuple)):
                 # This is an optgroup, so look inside the group for options
                 for k2, v2 in v:
-                    if value == smart_text(k2):
+                    if value == smart_str(k2):
                         return True
             else:
-                if value == smart_text(k) or value == k:
+                if value == smart_str(k) or value == k:
                     return True
         return False
 
@@ -946,7 +946,7 @@ class DecimalField(WritableField):
         """
         if value in validators.EMPTY_VALUES:
             return None
-        value = smart_text(value).strip()
+        value = smart_str(value).strip()
         try:
             value = Decimal(value)
         except DecimalException:

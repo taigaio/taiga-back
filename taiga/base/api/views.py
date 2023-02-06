@@ -42,8 +42,8 @@ from django.http.response import HttpResponseBase
 from django.views.decorators.csrf import csrf_exempt
 from django.views.defaults import server_error
 from django.views.generic import View
-from django.utils.encoding import smart_text
-from django.utils.translation import ugettext as _
+from django.utils.encoding import smart_str
+from django.utils.translation import gettext as _
 
 from .request import Request
 from .settings import api_settings
@@ -84,7 +84,7 @@ def get_view_description(view_cls, html=False):
     This function is the default for the `VIEW_DESCRIPTION_FUNCTION` setting.
     """
     description = view_cls.__doc__ or ''
-    description = formatting.dedent(smart_text(description))
+    description = formatting.dedent(smart_str(description))
     if html:
         return formatting.markup_description(description)
     return description
@@ -476,7 +476,7 @@ class APIView(View):
 
 
 def api_server_error(request, *args, **kwargs):
-    if settings.DEBUG is False and request.META.get('CONTENT_TYPE', None) == "application/json":
+    if settings.DEBUG is False and request.headers.get('content-type', None) == "application/json":
         return HttpResponse(json.dumps({"error": _("Server application error")}),
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return server_error(request, *args, **kwargs)

@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from taiga.base.api.utils import encoders
 
@@ -18,7 +18,7 @@ def dumps(data, ensure_ascii=True, encoder_class=encoders.JSONEncoder, indent=No
 
 def loads(data):
     if isinstance(data, bytes):
-        data = force_text(data)
+        data = force_str(data)
     return json.loads(data)
 
 load = json.load

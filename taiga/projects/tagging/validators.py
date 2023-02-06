@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
@@ -39,7 +39,7 @@ class CreateTagValidator(ProjectTagValidator):
 
     def validate_color(self, attrs, source):
         color = attrs.get(source, None)
-        if color and not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
+        if color and not re.match(r'^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
             raise ValidationError(_("The color is not a valid HEX color."))
 
         return attrs
@@ -66,7 +66,7 @@ class EditTagTagValidator(ProjectTagValidator):
 
     def validate_color(self, attrs, source):
         color = attrs.get(source, None)
-        if color and not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
+        if color and not re.match(r'^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
             raise ValidationError(_("The color is not a valid HEX color."))
 
         return attrs

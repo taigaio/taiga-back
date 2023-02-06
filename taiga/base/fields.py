@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.forms import widgets
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from taiga.base.api import serializers, ISO_8601
 from taiga.base.api.settings import api_settings
 

@@ -8,8 +8,7 @@
 from markdown import Extension
 from markdown.inlinepatterns import Pattern
 from markdown.treeprocessors import Treeprocessor
-
-from markdown.util import etree
+from xml.etree import ElementTree as etree
 
 from taiga.front.templatetags.functions import resolve
 from taiga.base.utils.slug import slugify
@@ -24,12 +23,12 @@ class WikiLinkExtension(Extension):
 
     def extendMarkdown(self, md):
         WIKILINK_RE = r"\[\[([\w0-9_ -]+)(\|[^\]]+)?\]\]"
-        md.inlinePatterns.add("wikilinks",
-                              WikiLinksPattern(md, WIKILINK_RE, self.project),
-                              "<not_strong")
-        md.treeprocessors.add("relative_to_absolute_links",
-                              RelativeLinksTreeprocessor(md, self.project),
-                              "<prettify")
+        md.inlinePatterns.register(WikiLinksPattern(md, WIKILINK_RE, self.project),
+                                   "wikilinks",
+                                   20)
+        md.treeprocessors.register(RelativeLinksTreeprocessor(md, self.project),
+                                   "relative_to_absolute_links",
+                                   20)
 
 
 class WikiLinksPattern(Pattern):

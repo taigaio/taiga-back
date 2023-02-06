@@ -45,7 +45,7 @@ class CorsMiddleware(object):
             response["Access-Control-Allow-Credentials"] = "true"
 
     def process_request(self, request):
-        if "HTTP_ACCESS_CONTROL_REQUEST_METHOD" in request.META:
+        if "access-control-request-method" in request.headers:
             response = http.HttpResponse()
             self._populate_response(response)
             return response

@@ -17,7 +17,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base import exceptions as exc
 from taiga.base.utils.iterators import iter_queryset

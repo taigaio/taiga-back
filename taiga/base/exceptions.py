@@ -41,8 +41,8 @@ In addition Django's built in 403 and 404 exceptions are handled.
 
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 from django.http import Http404
 
 from . import response
@@ -222,7 +222,7 @@ def format_exception(exc):
         class_name = exc.__class__.__name__
         class_module = exc.__class__.__module__
         detail = {
-            "_error_message": force_text(exc.detail),
+            "_error_message": force_str(exc.detail),
             "_error_type": "{0}.{1}".format(class_module, class_name)
         }
 

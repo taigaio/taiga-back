@@ -29,7 +29,7 @@ class GogsViewSet(BaseWebhookApiViewSet):
         if secret is None:
             return False
 
-        signature = request.META.get("HTTP_X_GOGS_SIGNATURE", None)
+        signature = request.headers.get("x-gogs-signature", None)
         if not signature:  # Old format signature support (before 0.11 version)
             payload = self._get_payload(request)
             return payload.get('secret', None) == secret

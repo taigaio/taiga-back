@@ -35,6 +35,7 @@ from django.utils.translation import gettext_lazy as _
 from .models import DenylistedToken, OutstandingToken
 
 
+@admin.register(OutstandingToken)
 class OutstandingTokenAdmin(admin.ModelAdmin):
     list_display = (
         'jti',
@@ -74,9 +75,9 @@ class OutstandingTokenAdmin(admin.ModelAdmin):
         )
 
 
-admin.site.register(OutstandingToken, OutstandingTokenAdmin)
 
 
+@admin.register(DenylistedToken)
 class DenylistedTokenAdmin(admin.ModelAdmin):
     list_display = (
         'token_jti',
@@ -98,25 +99,32 @@ class DenylistedTokenAdmin(admin.ModelAdmin):
 
         return qs.select_related('token__user')
 
+    @admin.display(
+        description=_('jti'),
+        ordering='token__jti',
+    )
     def token_jti(self, obj):
         return obj.token.jti
-    token_jti.short_description = _('jti')
-    token_jti.admin_order_field = 'token__jti'
 
+    @admin.display(
+        description=_('user'),
+        ordering='token__user',
+    )
     def token_user(self, obj):
         return obj.token.user
-    token_user.short_description = _('user')
-    token_user.admin_order_field = 'token__user'
 
+    @admin.display(
+        description=_('created at'),
+        ordering='token__created_at',
+    )
     def token_created_at(self, obj):
         return obj.token.created_at
-    token_created_at.short_description = _('created at')
-    token_created_at.admin_order_field = 'token__created_at'
 
+    @admin.display(
+        description=_('expires at'),
+        ordering='token__expires_at',
+    )
     def token_expires_at(self, obj):
         return obj.token.expires_at
-    token_expires_at.short_description = _('expires at')
-    token_expires_at.admin_order_field = 'token__expires_at'
 
 
-admin.site.register(DenylistedToken, DenylistedTokenAdmin)

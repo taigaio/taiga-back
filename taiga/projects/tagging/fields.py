@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.forms import widgets
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from taiga.base.api import serializers
 from taiga.base.exceptions import ValidationError
@@ -35,7 +35,7 @@ class TagsAndTagsColorsField(serializers.WritableField):
                         if color is None or color == "":
                             continue
 
-                        if isinstance(color, str) and re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
+                        if isinstance(color, str) and re.match(r'^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
                             continue
 
                         raise ValidationError(_("Invalid tag '{value}'. The color is not a "

@@ -2,11 +2,15 @@
 
 ## 6.6.0 (unreleased)
 
-- Adapt Dockerfile to the removal of psycopg2-binary
-- DOCKER: Added env `POSTGRES_SSLMODE` with default value disabled (thanks to [@ribeiromiranda](https://github.com/ribeiromiranda))
+- Add support for Python 3.11
+- Remove support for Python 3.7
+- Upgrade to Django 3.2 (and upgrade some other dependencies)
 - Fix some silent css error in email templates (thanks to [@sarbanha](https://github.com/sarbanha))
 - Improves the performance of operations on tags (thanks to [@theriverman](https://github.com/theriverman))
 - Remove `write` permission from Trello importer (thanks to [@northben](https://github.com/northben))
+- DOCKER: Use python-3.11-slim as base image
+- DOCKER: Adapt Dockerfile to the removal of psycopg2-binary
+- DOCKER: Added env `POSTGRES_SSLMODE` with default value disabled (thanks to [@ribeiromiranda](https://github.com/ribeiromiranda))
 
 ## 6.5.2 (2022-09-26)
 

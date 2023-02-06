@@ -7,13 +7,13 @@
 
 import uuid
 import csv
-import pytz
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from urllib.parse import quote
 
 from unittest import mock
 from django.urls import reverse
+from django.utils import timezone
 
 from taiga.base.utils import json
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
@@ -563,7 +563,7 @@ def test_get_total_points(client):
 
 def test_api_filter_by_created_date(client):
     user = f.UserFactory(is_superuser=True)
-    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
 
     old_userstory = f.create_userstory(owner=user, created_date=one_day_ago)
     userstory = f.create_userstory(owner=user, subject="test")
@@ -583,7 +583,7 @@ def test_api_filter_by_created_date(client):
 
 def test_api_filter_by_created_date__lt(client):
     user = f.UserFactory(is_superuser=True)
-    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
 
     old_userstory = f.create_userstory(
         owner=user, created_date=one_day_ago, subject="old test"
@@ -604,7 +604,7 @@ def test_api_filter_by_created_date__lt(client):
 
 def test_api_filter_by_created_date__lte(client):
     user = f.UserFactory(is_superuser=True)
-    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+    one_day_ago = timezone.now() - timedelta(days=1)
 
     old_userstory = f.create_userstory(owner=user, created_date=one_day_ago)
     userstory = f.create_userstory(owner=user)
@@ -646,7 +646,7 @@ def test_api_filter_by_modified_date__gte(client):
 
 def test_api_filter_by_finish_date(client):
     user = f.UserFactory(is_superuser=True)
-    one_day_later = datetime.now(pytz.utc) + timedelta(days=1)
+    one_day_later = timezone.now() + timedelta(days=1)
 
     userstory = f.create_userstory(owner=user)
     userstory_to_finish = f.create_userstory(

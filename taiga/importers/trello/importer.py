@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from requests_oauthlib import OAuth1Session, OAuth1
 from django.conf import settings

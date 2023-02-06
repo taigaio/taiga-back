@@ -9,7 +9,7 @@ from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_404
 
 from django.apps import apps
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 
 def get_user_for_application_token(token:str) -> object:

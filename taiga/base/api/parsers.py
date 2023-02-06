@@ -43,7 +43,7 @@ from django.http import QueryDict
 from django.http.multipartparser import MultiPartParser as DjangoMultiPartParser
 from django.http.multipartparser import MultiPartParserError, parse_header, ChunkIter
 
-from django.utils import six
+import six
 
 from taiga.base.exceptions import ParseError
 from taiga.base.api import renderers

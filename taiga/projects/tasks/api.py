@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.http import HttpResponse
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga.base.api.utils import get_object_or_error
 from taiga.base import filters, response
@@ -137,7 +137,7 @@ class TaskViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
                            project, user_story=None, status=None, milestone=None):
         # Executes the extra ordering if there is a difference in the  ordering keys
         if old_order_key != order_key:
-            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+            extra_orders = json.loads(self.request.headers.get("set-orders", "{}"))
             data = [{"task_id": obj.id, "order": getattr(obj, order_attr)}]
             for id, order in extra_orders.items():
                 data.append({"task_id": int(id), "order": order})

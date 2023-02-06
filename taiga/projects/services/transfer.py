@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.core import signing
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 import datetime
 

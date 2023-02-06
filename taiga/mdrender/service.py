@@ -57,6 +57,8 @@ bleach.ALLOWED_ATTRIBUTES["img"] = ["alt", "src"]
 bleach.ALLOWED_ATTRIBUTES["input"] = ["type", "checked"]
 bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style", "id"]
 
+ALLOWED_PROTOCOLS = ["http", "https", "ftp", "mailto"]
+
 
 def _make_extensions_list(project=None):
     return ["pymdownx.tasklist",
@@ -126,12 +128,12 @@ def _get_markdown(project):
 @cache_by_sha
 def render(project, text):
     md = _get_markdown(project)
-    return bleach.clean(md.convert(text))
+    return bleach.clean(md.convert(text), protocols=ALLOWED_PROTOCOLS)
 
 
 def render_and_extract(project, text):
     md = _get_markdown(project)
-    result = bleach.clean(md.convert(text))
+    result = bleach.clean(md.convert(text), protocols=ALLOWED_PROTOCOLS)
     return (result, md.extracted_data)
 
 
