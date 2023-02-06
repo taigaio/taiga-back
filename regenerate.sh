@@ -25,25 +25,32 @@ if $show_answer ; then
 	fi
 fi
 
-echo "Specify database name:"
-read database
-if [ -z "$database" ]; then
-    exit 1
+read -p 'Specify a Postgres user [default: taiga]: ' dbuser
+read -p 'Specify database name [default: taiga]: ' dbname
+read -p 'Specify host [default: 127.0.0.1]: ' dbhost
+read -p 'Specify port [default: 5432]: ' dbport
+dbuser=${dbuser:-taiga}
+dbname=${dbname:-taiga}
+dbhost=${dbhost:-127.0.0.1}
+dbport=${dbport:-5432}
+
+echo "-> Remove '${dbname}' DB"
+dropdb -U $dbuser -h $dbhost -p $dbport $dbname
+echo "-> Create '${dbname}' DB"
+createdb -U $dbuser -h $dbhost -p $dbport $dbname
+
+if [ "$?" -ne "0" ]; then
+    echo && echo "Error accessing the database, aborting."
+else
+    echo "-> Load migrations"
+    python manage.py migrate
+    python manage.py createcachetable
+    echo "-> Load initial user (admin/123123)"
+    python manage.py loaddata initial_user --traceback
+    echo "-> Load initial project_templates (scrum/kanban)"
+    python manage.py loaddata initial_project_templates --traceback
+    echo "-> Generate sample data"
+    python manage.py sample_data --traceback
+    echo "-> Rebuilding timeline"
+    python manage.py rebuild_timeline --purge
 fi
-
-echo "-> Remove taiga DB" $database
-dropdb $database
-echo "-> Create taiga DB"
-createdb $database
-
-echo "-> Load migrations"
-python manage.py migrate
-python manage.py createcachetable
-echo "-> Load initial user (admin/123123)"
-python manage.py loaddata initial_user --traceback
-echo "-> Load initial project_templates (scrum/kanban)"
-python manage.py loaddata initial_project_templates --traceback
-echo "-> Generate sample data"
-python manage.py sample_data --traceback
-echo "-> Rebuilding timeline"
-python manage.py rebuild_timeline --purge
