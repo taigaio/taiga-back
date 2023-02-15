@@ -3,6 +3,7 @@
 ## 6.6.0 (unreleased)
 
 - Adapt Dockerfile to the removal of psycopg2-binary
+- DOCKER: Added env `POSTGRES_SSLMODE` with default value disabled (thanks to [@ribeiromiranda](https://github.com/ribeiromiranda))
 
 ## 6.5.2 (2022-09-26)
 
