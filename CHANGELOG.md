@@ -6,6 +6,7 @@
 - DOCKER: Added env `POSTGRES_SSLMODE` with default value disabled (thanks to [@ribeiromiranda](https://github.com/ribeiromiranda))
 - Fix some silent css error in email templates (thanks to [@sarbanha](https://github.com/sarbanha))
 - Improves the performance of operations on tags (thanks to [@theriverman](https://github.com/theriverman))
+- Remove `write` permission from Trello importer (thanks to [@northben](https://github.com/northben))
 
 ## 6.5.2 (2022-09-26)
 
