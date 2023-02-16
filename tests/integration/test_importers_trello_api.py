@@ -35,7 +35,7 @@ def test_auth_url(client):
 
     assert response.status_code == 200
     assert 'url' in response.data
-    assert response.data['url'] == "https://trello.com/1/OAuthAuthorizeToken?oauth_token=token&scope=read,write,account&expiration=1day&name=Taiga&return_url=http://localhost:9001/project/new/import/trello"
+    assert response.data['url'] == "https://trello.com/1/OAuthAuthorizeToken?oauth_token=token&scope=read,account&expiration=1day&name=Taiga&return_url=http://localhost:9001/project/new/import/trello"
 
 
 def test_authorize(client):
