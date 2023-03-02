@@ -33,20 +33,20 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-05 10:55+0200\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Chinese Simplified (http://www.transifex.com/taiga-agile-llc/"
-"taiga-back/language/zh-Hans/)\n"
+"PO-Revision-Date: 2023-03-03 06:35+0000\n"
+"Last-Translator: 修昊 <svtter@163.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"taiga/taiga-back/zh_Hans/>\n"
+"Language: zh-Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh-Hans\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: taiga/auth/api.py:69
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "公开注册被禁用。"
 
 #: taiga/auth/api.py:91
 msgid "You must accept our terms of service and privacy policy"
@@ -54,7 +54,7 @@ msgstr "您需要接受我们的服务与隐私条款"
 
 #: taiga/auth/api.py:100
 msgid "invalid registration type"
-msgstr ""
+msgstr "不合法的注册类型"
 
 #: taiga/auth/api.py:116
 msgid "invalid login type"
@@ -70,7 +70,7 @@ msgstr "电子邮件已经被使用"
 
 #: taiga/auth/services.py:94
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "所使用的令牌无法匹配到合法的邀请。"
 
 #: taiga/auth/services.py:126
 msgid "User is already registered."
@@ -82,7 +82,7 @@ msgstr "该用户已经是此项目成员。"
 
 #: taiga/auth/services.py:171
 msgid "Error while creating new user."
-msgstr ""
+msgstr "在创建新用户时出现错误。"
 
 #: taiga/auth/tokens.py:47 taiga/auth/tokens.py:54
 #: taiga/external_apps/services.py:32 taiga/projects/api.py:432
@@ -102,7 +102,7 @@ msgstr "必填，长度小于255的数字、英文字母、“-”、“_”"
 #: taiga/auth/validators.py:48 taiga/auth/validators.py:51
 #: taiga/users/validators.py:64 taiga/users/validators.py:67
 msgid "Invalid full name"
-msgstr ""
+msgstr "不合法的全名"
 
 #: taiga/base/api/fields.py:292
 msgid "This field is required."
@@ -382,7 +382,7 @@ msgstr "没空间添加新项目了"
 #: taiga/base/fields.py:86
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s 不是一个列表"
 
 #: taiga/base/filters.py:104 taiga/base/filters.py:633
 msgid "Error in filter params types."
@@ -409,6 +409,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>欢迎使用 "
+"%(product_name)s，一个开源的，敏捷项目管理工具</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:7
 #, python-format
@@ -422,6 +426,13 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">配置邮件通知或取消订阅</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">Taiga 支持</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >联系我们</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:18
 msgid "Follow us on Twitter"
@@ -586,7 +597,7 @@ msgstr "项目属性列表导入错误"
 
 #: taiga/export_import/services/store.py:868
 msgid "error importing default project attribute values"
-msgstr ""
+msgstr "导入默认项目属性值时出现错误"
 
 #: taiga/export_import/services/store.py:879
 msgid "error importing custom attributes"
@@ -697,6 +708,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>项目导出已生成</h1>\n"
+"    <p>你好 %(user)s,</p>\n"
+"    <h3>项目 %(project)s 导出已经被正确生成。</h3>\n"
+"    <p>你可以从这里下载：</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Download the dump file\""
+">下载导出的文件</a>\n"
+"    <p>这个文件将在 %(deletion_date)s.被删除。</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/dump_project-body-text.jinja:1
 #, python-format
@@ -714,6 +735,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"你好 %(user)s,\n"
+"\n"
+"项目 %(project)s 的导出文件已经正确生成。你可以从这里下载：\n"
+"\n"
+"%(url)s\n"
+"\n"
+"文件将会在 %(deletion_date)s 被删除。\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:1
 #, python-format
@@ -734,6 +766,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>你好 %(user)s，</p>\n"
+"    <p>你的项目 %(project)s 没有被正确导出。</p>\n"
+"    <p>Taiga 系统管理员已经接收到相关通知。<br/> 请再试一次，"
+"或者联系下方的支持团队\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:1
 #, python-format
@@ -4680,10 +4722,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"你好 %(full_name)s，请验证你的邮件\n"
+"\n"
+"%(url)s\n"
+"\n"
+"如果你没有发起注册请求，请忽略此条消息。\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/send_verification-subject.jinja:1
 msgid "[Taiga] Verify email"
-msgstr ""
+msgstr "[Taiga] 验证邮件"
 
 #: taiga/users/validators.py:46
 msgid "invalid"
