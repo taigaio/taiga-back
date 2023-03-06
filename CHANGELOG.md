@@ -1,6 +1,10 @@
 # Changelog
 
-## 6.6.0 (unreleased)
+## 6.6.1 (unreleased)
+
+- ...
+
+## 6.6.0 (2023-03-06)
 
 - Add support for Python 3.11
 - Remove support for Python 3.7
