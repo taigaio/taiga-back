@@ -2,7 +2,7 @@
 
 ## 6.6.1 (unreleased)
 
-- Adapt Dockerfile to the removal of psycopg2-binary
+- ...
 
 ## 6.6.0 (2023-03-06)
 
