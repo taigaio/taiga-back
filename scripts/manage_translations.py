@@ -34,9 +34,12 @@ from argparse import RawTextHelpFormatter
 
 from subprocess import PIPE, Popen, call
 
-import django
 from django.core.management import call_command
 from django_jinja.management.commands import makemessages
+
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.common')
+django.setup()
 
 
 SOURCE_LANG = "en"
@@ -72,61 +75,95 @@ def _tx_resource_for_name(name):
     return "taiga-back.{}".format(name)
 
 
-def _check_diff(cat_name, base_path):
+def _check_diff(cat_name, lang, base_path):
     """
     Output the approximate number of changed/added strings in the en catalog.
     """
-    po_path = "{path}/en/LC_MESSAGES/django.po".format(path=base_path)
+    po_path = "{path}/{lang}/LC_MESSAGES/django.po".format(path=base_path, lang=lang)
     p = Popen("git diff -U0 {0} | egrep '^[-+]msgid' | wc -l".format(po_path),
               stdout=PIPE, stderr=PIPE, shell=True)
     output, errors = p.communicate()
     num_changes = int(output.strip())
-    print("{0} changed/added messages in '{1}' catalog.".format(num_changes, cat_name))
+    print("{0} changed/added messages in '{1}' for catalog '{2}'".format(num_changes, lang, cat_name))
+
+
+def _makemessages(languages):
+    cmd = makemessages.Command()
+    opts = {
+        "locale": languages,
+        "extensions": ["py", "jinja"],
+    }
+    call_command(cmd, **opts)
+
+
+def add_lang(resources=None, languages=None):
+    """
+    Create .po files for new language(s)
+    """
+    if not languages:
+        print("ERROR: Specify at least one language")
+        exit(1)
+
+    locale_dirs = _get_locale_dirs(None)
+    errors = []
+
+    for name, dir_ in locale_dirs:
+        # check if langs exists
+        catalog_langs = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d))])
+        if existing_langs := list(set(catalog_langs) & set(languages)):
+            print(f"ERROR: Lang(s) {existing_langs} just exist.")
+            exit(1)
+
+    _makemessages(languages)
 
 
 def update_catalogs(resources=None, languages=None):
     """
-    Update the en/LC_MESSAGES/django.po (all) files with
+    Update the existing .po files with
     new/updated translatable strings.
     """
     os.chdir(os.getcwd())
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.common')
-    from django.conf import settings
+    # Update all catalog
+    locale_dirs = _get_locale_dirs(None)
+    for name, dir_ in locale_dirs:
+        langs = languages or sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d))])
+        _makemessages(langs)
 
-    settings.configure()
-    django.setup()
+        for lang in langs:
+            _check_diff(name, lang, dir_)
 
-    cmd = makemessages.Command()
-    opts = {
-        "locale": [SOURCE_LANG],
-        "exclude": [],
-        "extensions": ["py", "jinja"],
 
-        # Default values
-        "domain": "django",
-        "all": False,
-        "symlinks": False,
-        "ignore_patterns": [],
-        "use_default_ignore_patterns": True,
-        "no_wrap": False,
-        "no_location": False,
-        "no_obsolete": False,
-        "keep_pot": False,
-        "verbosity": 0,
-        "add_location": None,
-    }
+def regenerate(resources=None, languages=None):
+    """
+    Wrap long lines and generate mo files.
+    """
+    locale_dirs = _get_locale_dirs(resources)
+    errors = []
 
-    if resources is not None:
-        print("`update_catalogs` will always process all resources.")
+    for name, dir_ in locale_dirs:
+        if languages is None:
+            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != SOURCE_LANG])
 
-    print("Updating en catalogs for all taiga-back resourcess...")
-    call_command(cmd, **opts)
+        for lang in languages:
+            po_path = "{path}/{lang}/LC_MESSAGES/django.po".format(path=dir_, lang=lang)
 
-    ## Output changed stats
-    contrib_dirs = _get_locale_dirs(None)
-    for name, dir_ in contrib_dirs:
-        _check_diff(name, dir_)
+            if not os.path.exists(po_path):
+                print("No {lang} translation for resource {res}".format(lang=lang, res=name))
+                continue
+
+            call("msgcat -o {0} {0}".format(po_path), shell=True)
+            res = call("msgfmt -c -o {0}.mo {1}".format(po_path[:-3], po_path), shell=True)
+
+            if res != 0:
+                errors.append((name, lang))
+
+    if errors:
+        print("\nWARNING: Errors have occurred in following cases:")
+        for resource, lang in errors:
+            print("\tResource {res} for language {lang}".format(res=resource, lang=lang))
+
+        exit(1)
 
 
 def lang_stats(resources=None, languages=None):
@@ -162,122 +199,10 @@ def lang_stats(resources=None, languages=None):
                 print("Errors happened when checking {0} translation for {1}:\n{2}".format(lang, name, errors))
 
 
-def fetch(resources=None, languages=None):
-    """
-    Fetch translations from Transifex, wrap long lines, generate mo files.
-    """
-    locale_dirs = _get_locale_dirs(resources)
-    errors = []
-
-    for name, dir_ in locale_dirs:
-        # Transifex pull
-        if languages is None:
-            call("tx pull -r {res} -f  --minimum-perc=5".format(res=_tx_resource_for_name(name)), shell=True)
-            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != SOURCE_LANG])
-        else:
-            for lang in languages:
-                call("tx pull -r {res} -f -l {lang}".format(res=_tx_resource_for_name(name), lang=lang), shell=True)
-
-        # msgcat to wrap lines and msgfmt for compilation of .mo file
-        for lang in languages:
-            po_path = "{path}/{lang}/LC_MESSAGES/django.po".format(path=dir_, lang=lang)
-
-            if not os.path.exists(po_path):
-                print("No {lang} translation for resource {res}".format(lang=lang, res=name))
-                continue
-
-            call("msgcat -o {0} {0}".format(po_path), shell=True)
-            res = call("msgfmt -c -o {0}.mo {1}".format(po_path[:-3], po_path), shell=True)
-
-            if res != 0:
-                errors.append((name, lang))
-
-    if errors:
-        print("\nWARNING: Errors have occurred in following cases:")
-        for resource, lang in errors:
-            print("\tResource {res} for language {lang}".format(res=resource, lang=lang))
-
-        exit(1)
-
-
-def regenerate(resources=None, languages=None):
-    """
-    Wrap long lines and generate mo files.
-    """
-    locale_dirs = _get_locale_dirs(resources)
-    errors = []
-
-    for name, dir_ in locale_dirs:
-        if languages is None:
-            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != SOURCE_LANG])
-
-        for lang in languages:
-            po_path = "{path}/{lang}/LC_MESSAGES/django.po".format(path=dir_, lang=lang)
-
-            if not os.path.exists(po_path):
-                print("No {lang} translation for resource {res}".format(lang=lang, res=name))
-                continue
-
-            call("msgcat -o {0} {0}".format(po_path), shell=True)
-            res = call("msgfmt -c -o {0}.mo {1}".format(po_path[:-3], po_path), shell=True)
-
-            if res != 0:
-                errors.append((name, lang))
-
-    if errors:
-        print("\nWARNING: Errors have occurred in following cases:")
-        for resource, lang in errors:
-            print("\tResource {res} for language {lang}".format(res=resource, lang=lang))
-
-        exit(1)
-
-
-def commit(resources=None, languages=None):
-    """
-    Commit messages to Transifex,
-    """
-    locale_dirs = _get_locale_dirs(resources)
-    errors = []
-
-    for name, dir_ in locale_dirs:
-        # Transifex push
-        if languages is None:
-            call("tx push -r {res} -s -l {lang}".format(res=_tx_resource_for_name(name), lang=SOURCE_LANG), shell=True)
-        else:
-            for lang in languages:
-                type = "-s" if lang == SOURCE_LANG else "-t"
-                call("tx push -r {res} -l {lang} {type}".format(res= _tx_resource_for_name(name), lang=lang, type=type), shell=True)
-
-
 if __name__ == "__main__":
-    try:
-        devnull = open(os.devnull)
-        Popen(["tx"], stdout=devnull, stderr=devnull).communicate()
-    except OSError as e:
-        if e.errno == errno.ENOENT:
-            print("""
-You need transifex-client, install it.
-
- 1. Install transifex-client, use
-
-       $ pip install --upgrade transifex-client
-
- 2. Create ~/.transifexrc file:
-
-       $ vim ~/.transifexrc"
-
-       [https://www.transifex.com]
-       hostname = https://www.transifex.com
-       token =
-       username = <YOUR_USERNAME>
-       password = <YOUR_PASSWOR>
-                  """)
-            exit(1)
-
     RUNABLE_SCRIPTS = {
-        "update_catalogs": "regenerate .po files of main lang (en).",
-        "commit": "send .po file to transifex ('en' by default).",
-        "fetch": "get .po files from transifex and regenerate .mo files.",
+        "add_lang": "Add a new language.",
+        "update_catalogs": "update .po files of all (default) or any language(s).",
         "regenerate": "regenerate .mo files.",
         "lang_stats": "get stats of local translations",
     }

@@ -54,15 +54,15 @@ class TrelloClient:
 
     def _validate_response(self, response):
         if response.status_code == 400:
-            raise exc.WrongArguments(_("Invalid Request: %s at %s") % (response.text, response.url))
+            raise exc.WrongArguments(_("Invalid Request: %(text)s at %(url)s") % ({"text": response.text, "url": response.url}))
         if response.status_code == 401:
-            raise exc.AuthenticationFailed(_("Unauthorized: %s at %s") % (response.text, response.url))
+            raise exc.AuthenticationFailed(_("Unauthorized: %(text)s at %(url)s") % ({"text": response.text, "url": response.url}))
         if response.status_code == 403:
-            raise exc.PermissionDenied(_("Unauthorized: %s at %s") % (response.text, response.url))
+            raise exc.PermissionDenied(_("Unauthorized: %(text)s at %(url)s") % ({"text": response.text, "url": response.url}))
         if response.status_code == 404:
-            raise exc.NotFound(_("Resource Unavailable: %s at %s") % (response.text, response.url))
+            raise exc.NotFound(_("Resource Unavailable: %(text)s at %(url)s") % ({"text": response.text, "url": response.url}))
         if response.status_code != 200:
-            raise exc.WrongArguments(_("Resource Unavailable: %s at %s") % (response.text, response.url))
+            raise exc.WrongArguments(_("Resource Unavailable: %(text)s at %(url)s") % ({"text": response.text, "url": response.url}))
 
     def get(self, uri_path, query_params=None):
         headers = {'Accept': 'application/json'}
