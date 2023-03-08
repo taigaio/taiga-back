@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2022-04-03 20:12+0000\n"
+"PO-Revision-Date: 2023-03-10 13:37+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "tr/>\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.12-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -42,46 +42,40 @@ msgstr "geçersiz kayıt türü"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
-msgstr ""
+msgstr "Yetkilendirme başlığı, boşlukla ayrılmış iki değer içermelidir"
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "Verilen kupon, herhangi bir kupon türü için geçerli değil"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "Kupon, tanınabilir bir kullanıcı kimliği içermiyor"
 
 #: taiga/auth/authentication.py:147
-#, fuzzy
-#| msgid "Not found"
 msgid "User not found"
-msgstr "Bulunamadı"
+msgstr "Kullanıcı bulunamadı"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "Kullanıcı etkin değil"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
-msgstr ""
+msgstr "Bilinmeyen algoritma türü '{}'"
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
-msgstr ""
+msgstr "{} kullanmak için kriptografi kurmuş olmanız gerekir."
 
 #: taiga/auth/backends.py:128
-#, fuzzy
-#| msgid "Invalid role for the project"
 msgid "Invalid algorithm specified"
-msgstr "Proje için geçersiz rol"
+msgstr "Geçersiz algoritma belirtildi"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is invalid or expired"
-msgstr "Kupon geçersiz"
+msgstr "Kupon geçersiz veya süresi doldu"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
@@ -100,7 +94,7 @@ msgstr "Geçersiz tam ad"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "Verilen kimlik bilgilerine sahip etkin bir hesap bulunamadı"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
@@ -120,7 +114,7 @@ msgstr "Yeni kullanıcı oluşturulurken hata oluştu."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr ""
+msgstr "jti"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
@@ -134,51 +128,39 @@ msgstr "oluşturulma zamanı"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "sona eriyor"
 
 #: taiga/auth/token_denylist/apps.py:74
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token Denylist"
-msgstr "Kupon geçersiz"
+msgstr "Kupon Reddetme Listesi"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "Türü veya kullanım ömrü olmayan kupon oluşturulamıyor"
 
 #: taiga/auth/tokens.py:127
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no id"
-msgstr "Kuponun süresi doldu"
+msgstr "Kuponun kimliği yok"
 
 #: taiga/auth/tokens.py:138
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no type"
-msgstr "Kuponun süresi doldu"
+msgstr "Kuponun türü yok"
 
 #: taiga/auth/tokens.py:141
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has wrong type"
-msgstr "Kuponun süresi doldu"
+msgstr "Kuponun türü yanlış"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "Kuponun '{}' talebi yok"
 
 #: taiga/auth/tokens.py:182
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token '{}' claim has expired"
-msgstr "Kuponun süresi doldu"
+msgstr "Kupon '{}' talebinin süresi doldu"
 
 #: taiga/auth/tokens.py:225
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is denylisted"
-msgstr "Kupon geçersiz"
+msgstr "Kupon reddetme listesine alındı"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
@@ -1190,7 +1172,7 @@ msgstr ""
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:26
 #: taiga/projects/admin.py:95
 msgid "Extra info"
-msgstr "Ekstra bilgi"
+msgstr "Ek bilgi"
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:38
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:33
@@ -1727,22 +1709,19 @@ msgid "[%(project)s] Your Trello project has been imported"
 msgstr "[%(project)s] Trello projeniz içe aktarıldı"
 
 #: taiga/importers/trello/importer.py:57
-#, fuzzy, python-format
-#| msgid "Invalid Request: %s at %s"
+#, python-format
 msgid "Invalid Request: %(text)s at %(url)s"
-msgstr "Geçersiz İstek: %s, %s"
+msgstr "Geçersiz İstek: %(text)s, %(url)s"
 
 #: taiga/importers/trello/importer.py:59 taiga/importers/trello/importer.py:61
-#, fuzzy, python-format
-#| msgid "Unauthorized: %s at %s"
+#, python-format
 msgid "Unauthorized: %(text)s at %(url)s"
-msgstr "Yetkisiz: %s, %s"
+msgstr "Yetkisiz: %(text)s, %(url)s"
 
 #: taiga/importers/trello/importer.py:63 taiga/importers/trello/importer.py:65
-#, fuzzy, python-format
-#| msgid "Resource Unavailable: %s at %s"
+#, python-format
 msgid "Resource Unavailable: %(text)s at %(url)s"
-msgstr "Kaynak Kullanılamıyor: %s, %s"
+msgstr "Kaynak Kullanılamıyor: %(text)s, %(url)s"
 
 #: taiga/importers/trello/tasks.py:31 taiga/importers/trello/tasks.py:32
 msgid "Error importing Trello project"
@@ -2030,10 +2009,8 @@ msgstr ""
 "çıkarılamıyor: {}."
 
 #: taiga/projects/api.py:1125
-#, fuzzy
-#| msgid "comment is required"
 msgid "Email is required"
-msgstr "yorum gerekli"
+msgstr "E-posta gerekli"
 
 #: taiga/projects/api.py:1136
 msgid ""
@@ -2124,28 +2101,20 @@ msgid "order"
 msgstr "sıra"
 
 #: taiga/projects/attachments/validators.py:46
-#, fuzzy
-#| msgid ""
-#| "Invalid user story id to move after. The user story must belong to the "
-#| "same project, status and swimlane."
 msgid ""
 "Invalid attachment id to move after. The attachment must belong to the same "
 "item (epic, userstory, task, issue or wiki page)."
 msgstr ""
-"Sonrasına taşınacak geçersiz kullanıcı hikayesi kimliği. Kullanıcı hikayesi "
-"aynı projeye, duruma ve kulvara ait olmalıdır."
+"Sonrasına taşınacak geçersiz ek kimliği. Ek aynı ögeye (destan, kullanıcı "
+"hikayesi, görev, talep veya wiki sayfası) ait olmalıdır."
 
 #: taiga/projects/attachments/validators.py:61
-#, fuzzy
-#| msgid ""
-#| "Invalid task ids. All tasks must belong to the same project and, if it "
-#| "exists, to the same status, user story and/or milestone."
 msgid ""
 "Invalid attachment ids. All attachments must belong to the same item (epic, "
 "userstory, task, issue or wiki page)."
 msgstr ""
-"Geçersiz görev kimlikleri. Tüm görevler aynı projeye ve varsa aynı duruma, "
-"kullanıcı hikayesine ve/veya aşamaya ait olmalıdır."
+"Geçersiz ek kimlikleri. Tüm ekler aynı ögeye (destan, kullanıcı hikayesi, "
+"görev, talep veya wiki sayfası) ait olmalıdır."
 
 #: taiga/projects/choices.py:12
 msgid "Whereby.com"
@@ -3957,20 +3926,16 @@ msgid "Token does not match any valid invitation."
 msgstr "Kupon, herhangi bir geçerli davetle eşleşmiyor."
 
 #: taiga/projects/services/invitations.py:74
-#, fuzzy
-#| msgid "The user doesn't exist"
 msgid "User does not exist."
-msgstr "Kullanıcı mevcut değil"
+msgstr "Kullanıcı yok."
 
 #: taiga/projects/services/invitations.py:81
 msgid "This user is already a member of the project."
 msgstr "Bu kullanızı halihazırda zaten projenin bir üyesi."
 
 #: taiga/projects/services/members.py:46
-#, fuzzy
-#| msgid "new email address"
 msgid "Malformed email adress."
-msgstr "yeni e-posta adresi"
+msgstr "Hatalı biçimlendirilmiş e-posta adresi."
 
 #: taiga/projects/services/members.py:134
 #: taiga/projects/services/members.py:181
@@ -4933,16 +4898,12 @@ msgid "Invalid swimlane id. The swimlane must belong to the same project."
 msgstr "Geçersiz kulvar kimliği. Kulvar aynı projeye ait olmalıdır."
 
 #: taiga/projects/userstories/validators.py:130
-#, fuzzy
-#| msgid ""
-#| "Invalid user story id to move after. The user story must belong to the "
-#| "same project, status and swimlane."
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project and milestone."
 msgstr ""
 "Sonrasına taşınacak geçersiz kullanıcı hikayesi kimliği. Kullanıcı hikayesi "
-"aynı projeye, duruma ve kulvara ait olmalıdır."
+"aynı projeye ve aşamaya ait olmalıdır."
 
 #: taiga/projects/userstories/validators.py:140
 #: taiga/projects/userstories/validators.py:226
@@ -4950,16 +4911,12 @@ msgid "You can't use after and before at the same time."
 msgstr "Sonrayı ve önceyi aynı anda kullanamazsınız."
 
 #: taiga/projects/userstories/validators.py:153
-#, fuzzy
-#| msgid ""
-#| "Invalid user story id to move before. The user story must belong to the "
-#| "same project, status and swimlane."
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project and milestone."
 msgstr ""
 "Öncesine taşınacak geçersiz kullanıcı hikayesi kimliği. Kullanıcı hikayesi "
-"aynı projeye, duruma ve kulvara ait olmalıdır."
+"aynı projeye ve aşamaya ait olmalıdır."
 
 #: taiga/projects/userstories/validators.py:165
 #: taiga/projects/userstories/validators.py:252
@@ -5106,54 +5063,48 @@ msgid "Project Ownerships"
 msgstr "Proje Sahiplikleri"
 
 #: taiga/users/admin.py:97
-#, fuzzy
-#| msgid "members"
 msgid "Memberships"
-msgstr "üyeler"
+msgstr "Üyelikler"
 
 #: taiga/users/admin.py:141
 msgid "PERSONAL INFO"
-msgstr ""
+msgstr "KİŞİSEL BİLGİLER"
 
 #: taiga/users/admin.py:142
 msgid "EXTRA INFO"
-msgstr ""
+msgstr "EK BİLGİLER"
 
 #: taiga/users/admin.py:144
 msgid "PERMISSIONS"
-msgstr ""
+msgstr "İZİNLER"
 
 #: taiga/users/admin.py:145
 msgid "IMPORTANT DATES"
-msgstr ""
+msgstr "ÖNEMLİ TARİHLER"
 
 #: taiga/users/admin.py:146
 msgid "PROJECT OWNERSHIPS RESTRICTIONS"
-msgstr ""
+msgstr "PROJE SAHİPLİĞİ KISITLAMALARI"
 
 #: taiga/users/admin.py:148
 msgid "PROJECT OWNERSHIPS STATS"
-msgstr ""
+msgstr "PROJE SAHİPLİĞİ İSTATİSTİKLERİ"
 
 #: taiga/users/admin.py:169
-#, fuzzy
-#| msgid "Project End"
 msgid "Private projects owned"
-msgstr "Proje Sonu"
+msgstr "Sahip olunan özel projeler"
 
 #: taiga/users/admin.py:175
 msgid "Private memberships owned"
-msgstr ""
+msgstr "Sahip olunan özel üyelikler"
 
 #: taiga/users/admin.py:193
-#, fuzzy
-#| msgid "Project End"
 msgid "Public projects owned"
-msgstr "Proje Sonu"
+msgstr "Sahip olunan herkese açık projeler"
 
 #: taiga/users/admin.py:199
 msgid "Public memberships owned"
-msgstr ""
+msgstr "Sahip olunan herkese açık üyelikler"
 
 #: taiga/users/api.py:123
 msgid "Duplicated email"
@@ -5267,10 +5218,8 @@ msgid "date joined"
 msgstr "katılma tarihi"
 
 #: taiga/users/models.py:142
-#, fuzzy
-#| msgid "date joined"
 msgid "date cancelled"
-msgstr "katılma tarihi"
+msgstr "iptal tarihi"
 
 #: taiga/users/models.py:143
 msgid "accepted terms"
@@ -5313,18 +5262,17 @@ msgid "max number of owned public projects"
 msgstr "sahip olunan en fazla herkese açık proje sayısı"
 
 #: taiga/users/models.py:172
-#, fuzzy
-#| msgid "max number of memberships for each owned private project"
 msgid ""
 "max number of memberships of different users for all owned private project"
-msgstr "sahip olunan her özel proje için en fazla üyelik sayısı"
+msgstr ""
+"sahip olunan tüm özel projeler için en fazla farklı kullanıcı üyelik sayısı"
 
 #: taiga/users/models.py:177
-#, fuzzy
-#| msgid "max number of memberships for each owned public project"
 msgid ""
 "max number of memberships of different users for all owned public project"
-msgstr "sahip olunan her herkese açık proje için en fazla üyelik sayısı"
+msgstr ""
+"sahip olunan tüm herkese açık projeler için en fazla farklı kullanıcı üyelik "
+"sayısı"
 
 #: taiga/users/models.py:305
 msgid "permissions"
