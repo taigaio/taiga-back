@@ -27,8 +27,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-01-26 11:50+0000\n"
-"Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
+"PO-Revision-Date: 2023-03-08 12:11+0000\n"
+"Last-Translator: David Barragán <david.barragan@kaleidos.net>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "es/>\n"
 "Language: es\n"
@@ -36,7 +36,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -68,18 +68,16 @@ msgid "Token contained no recognizable user identification"
 msgstr ""
 
 #: taiga/auth/authentication.py:147
-#, fuzzy
-#| msgid "Not found"
 msgid "User not found"
-msgstr "No encontrado"
+msgstr "Usuario no encontrado"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "El usuario está inactivo"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
-msgstr ""
+msgstr "Tipo de algoritmo '{}' no reconocido"
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
@@ -134,7 +132,7 @@ msgstr "Error al crear un nuevo usuario."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr ""
+msgstr "jti"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
@@ -144,11 +142,11 @@ msgstr "usuario"
 
 #: taiga/auth/token_denylist/admin.py:117 taiga/telemetry/models.py:21
 msgid "created at"
-msgstr "creado en"
+msgstr "creado el"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "expira el"
 
 #: taiga/auth/token_denylist/apps.py:74
 #, fuzzy
@@ -158,7 +156,7 @@ msgstr "token inválido"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "No se puede crear un token sin tipo o tiempo de vida"
 
 #: taiga/auth/tokens.py:127
 #, fuzzy
