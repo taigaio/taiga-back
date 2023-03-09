@@ -27,8 +27,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-03-08 12:11+0000\n"
-"Last-Translator: David Barragán <david.barragan@kaleidos.net>\n"
+"PO-Revision-Date: 2023-03-10 13:37+0000\n"
+"Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "es/>\n"
 "Language: es\n"
@@ -58,14 +58,16 @@ msgstr "tipo de registro inválido"
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
 msgstr ""
+"La cabecera de autorización debe contener dos valores delimitados por "
+"espacios"
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "El token dado no es válido para ningún tipo de token"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "El token no contenía ninguna identificación de usuario reconocible"
 
 #: taiga/auth/authentication.py:147
 msgid "User not found"
@@ -81,20 +83,16 @@ msgstr "Tipo de algoritmo '{}' no reconocido"
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
-msgstr ""
+msgstr "Debe tener instalada la criptografía para utilizar {}."
 
 #: taiga/auth/backends.py:128
-#, fuzzy
-#| msgid "Invalid role for the project"
 msgid "Invalid algorithm specified"
-msgstr "Rol inválido para el proyecto"
+msgstr "Algoritmo especificado no válido"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is invalid or expired"
-msgstr "token inválido"
+msgstr "Token no válido o caducado"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
@@ -113,6 +111,7 @@ msgstr "nombre completo no válido"
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
 msgstr ""
+"No se ha encontrado ninguna cuenta activa con las credenciales indicadas"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
@@ -149,48 +148,36 @@ msgid "expires at"
 msgstr "expira el"
 
 #: taiga/auth/token_denylist/apps.py:74
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token Denylist"
-msgstr "token inválido"
+msgstr "Lista de denegación de tokens"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
 msgstr "No se puede crear un token sin tipo o tiempo de vida"
 
 #: taiga/auth/tokens.py:127
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no id"
-msgstr "El token ha expirado"
+msgstr "El token no tiene identificador"
 
 #: taiga/auth/tokens.py:138
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no type"
-msgstr "El token ha expirado"
+msgstr "El token no tiene tipo"
 
 #: taiga/auth/tokens.py:141
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has wrong type"
-msgstr "El token ha expirado"
+msgstr "El token es incorrecto"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "El token no tiene reclamo '{}'"
 
 #: taiga/auth/tokens.py:182
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token '{}' claim has expired"
-msgstr "El token ha expirado"
+msgstr "El token '{}' ha caducado"
 
 #: taiga/auth/tokens.py:225
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is denylisted"
-msgstr "token inválido"
+msgstr "Se niega el token"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
@@ -1744,22 +1731,19 @@ msgid "[%(project)s] Your Trello project has been imported"
 msgstr "[%(project)s] Tu proyecto de Trello se ha importado"
 
 #: taiga/importers/trello/importer.py:57
-#, fuzzy, python-format
-#| msgid "Invalid Request: %s at %s"
+#, python-format
 msgid "Invalid Request: %(text)s at %(url)s"
-msgstr "Solicitud inválida: %s en %s"
+msgstr "Petición inválida: %(text)s en %(url)s"
 
 #: taiga/importers/trello/importer.py:59 taiga/importers/trello/importer.py:61
-#, fuzzy, python-format
-#| msgid "Unauthorized: %s at %s"
+#, python-format
 msgid "Unauthorized: %(text)s at %(url)s"
-msgstr "No autorizado: %s en %s"
+msgstr "No autorizado: %(text)s en %(url)s"
 
 #: taiga/importers/trello/importer.py:63 taiga/importers/trello/importer.py:65
-#, fuzzy, python-format
-#| msgid "Resource Unavailable: %s at %s"
+#, python-format
 msgid "Resource Unavailable: %(text)s at %(url)s"
-msgstr "Recurso no disponible: %s en %s"
+msgstr "Recurso no disponible: %(text)s en %(url)s"
 
 #: taiga/importers/trello/tasks.py:31 taiga/importers/trello/tasks.py:32
 msgid "Error importing Trello project"
@@ -2050,10 +2034,8 @@ msgstr ""
 "dejaría sin administradores activos: {}."
 
 #: taiga/projects/api.py:1125
-#, fuzzy
-#| msgid "comment is required"
 msgid "Email is required"
-msgstr "Comentario requerido"
+msgstr "Correo electrónico obligatorio"
 
 #: taiga/projects/api.py:1136
 msgid ""
@@ -2144,28 +2126,22 @@ msgid "order"
 msgstr "orden"
 
 #: taiga/projects/attachments/validators.py:46
-#, fuzzy
-#| msgid ""
-#| "Invalid user story id to move after. The user story must belong to the "
-#| "same project, status and swimlane."
 msgid ""
 "Invalid attachment id to move after. The attachment must belong to the same "
 "item (epic, userstory, task, issue or wiki page)."
 msgstr ""
-"El identificador de la historia de usuario que se va a mover no es válido. "
-"La historia de usuario debe pertenecer al mismo proyecto, estado y calle."
+"Identificador del archivo adjunto no válido para mover después. El archivo "
+"adjunto debe pertenecer al mismo elemento (épica, historia de usuario, "
+"tarea, problema o página wiki)."
 
 #: taiga/projects/attachments/validators.py:61
-#, fuzzy
-#| msgid ""
-#| "Invalid task ids. All tasks must belong to the same project and, if it "
-#| "exists, to the same status, user story and/or milestone."
 msgid ""
 "Invalid attachment ids. All attachments must belong to the same item (epic, "
 "userstory, task, issue or wiki page)."
 msgstr ""
-"Inválidos ids de tareas. Todas las tareas deben pertenecer al msimo proyecto "
-"y, si existe, al mismo estado, historia de usuario y/o milestone."
+"Identificadores de los archivos adjuntos no válidos. Todos los archivos "
+"adjuntos deben pertenecer al mismo elemento (epopeya, historia de usuario, "
+"tarea, problema o página wiki)."
 
 #: taiga/projects/choices.py:12
 msgid "Whereby.com"
@@ -3984,20 +3960,16 @@ msgid "Token does not match any valid invitation."
 msgstr "El token no pertenece a ninguna invitación válida."
 
 #: taiga/projects/services/invitations.py:74
-#, fuzzy
-#| msgid "The user doesn't exist"
 msgid "User does not exist."
-msgstr "El usuario no existe"
+msgstr "El usuario no existe."
 
 #: taiga/projects/services/invitations.py:81
 msgid "This user is already a member of the project."
 msgstr "Este usuario ya es miembro del proyecto."
 
 #: taiga/projects/services/members.py:46
-#, fuzzy
-#| msgid "new email address"
 msgid "Malformed email adress."
-msgstr "nueva dirección de email"
+msgstr "Dirección de correo electrónico mal redactada."
 
 #: taiga/projects/services/members.py:134
 #: taiga/projects/services/members.py:181
@@ -4971,16 +4943,12 @@ msgstr ""
 "proyecto."
 
 #: taiga/projects/userstories/validators.py:130
-#, fuzzy
-#| msgid ""
-#| "Invalid user story id to move after. The user story must belong to the "
-#| "same project, status and swimlane."
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project and milestone."
 msgstr ""
-"El identificador de la historia de usuario que se va a mover no es válido. "
-"La historia de usuario debe pertenecer al mismo proyecto, estado y calle."
+"Identificador de la historia del usuario es inválido para moverse después. "
+"La historia del usuario debe pertenecer al mismo proyecto e hito."
 
 #: taiga/projects/userstories/validators.py:140
 #: taiga/projects/userstories/validators.py:226
@@ -4988,16 +4956,12 @@ msgid "You can't use after and before at the same time."
 msgstr "No se puede utilizar after y before al mismo tiempo."
 
 #: taiga/projects/userstories/validators.py:153
-#, fuzzy
-#| msgid ""
-#| "Invalid user story id to move before. The user story must belong to the "
-#| "same project, status and swimlane."
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project and milestone."
 msgstr ""
-"El identificador de la historia de usuario que se va a mover no es válido. "
-"La historia de usuario debe pertenecer al mismo proyecto, estado y calle."
+"Identificador de historia del usuario inválido para mover antes. La historia "
+"del usuario debe pertenecer al mismo proyecto e hito."
 
 #: taiga/projects/userstories/validators.py:165
 #: taiga/projects/userstories/validators.py:252
@@ -5146,54 +5110,48 @@ msgid "Project Ownerships"
 msgstr "Dueños del proyecto"
 
 #: taiga/users/admin.py:97
-#, fuzzy
-#| msgid "members"
 msgid "Memberships"
-msgstr "miembros"
+msgstr "Asociaciones"
 
 #: taiga/users/admin.py:141
 msgid "PERSONAL INFO"
-msgstr ""
+msgstr "DATOS PERSONALES"
 
 #: taiga/users/admin.py:142
 msgid "EXTRA INFO"
-msgstr ""
+msgstr "INFORMACIÓN ADICIONAL"
 
 #: taiga/users/admin.py:144
 msgid "PERMISSIONS"
-msgstr ""
+msgstr "PERMISOS"
 
 #: taiga/users/admin.py:145
 msgid "IMPORTANT DATES"
-msgstr ""
+msgstr "FECHAS IMPORTANTES"
 
 #: taiga/users/admin.py:146
 msgid "PROJECT OWNERSHIPS RESTRICTIONS"
-msgstr ""
+msgstr "RESTRICCIONES A LA PROPIEDAD DEL PROYECTO"
 
 #: taiga/users/admin.py:148
 msgid "PROJECT OWNERSHIPS STATS"
-msgstr ""
+msgstr "ESTADÍSTICAS SOBRE LA PROPIEDAD DE LOS PROYECTOS"
 
 #: taiga/users/admin.py:169
-#, fuzzy
-#| msgid "Project End"
 msgid "Private projects owned"
-msgstr "Final de proyecto"
+msgstr "Proyectos sin dueño"
 
 #: taiga/users/admin.py:175
 msgid "Private memberships owned"
-msgstr ""
+msgstr "Asociaciones privadas sin dueño"
 
 #: taiga/users/admin.py:193
-#, fuzzy
-#| msgid "Project End"
 msgid "Public projects owned"
-msgstr "Final de proyecto"
+msgstr "Proyectos públicos propios"
 
 #: taiga/users/admin.py:199
 msgid "Public memberships owned"
-msgstr ""
+msgstr "Afiliaciones públicas propias"
 
 #: taiga/users/api.py:123
 msgid "Duplicated email"
@@ -5308,10 +5266,8 @@ msgid "date joined"
 msgstr "fecha de registro"
 
 #: taiga/users/models.py:142
-#, fuzzy
-#| msgid "date joined"
 msgid "date cancelled"
-msgstr "fecha de registro"
+msgstr "fecha cancelada"
 
 #: taiga/users/models.py:143
 msgid "accepted terms"
@@ -5354,18 +5310,18 @@ msgid "max number of owned public projects"
 msgstr "numero maximo de proyectos publicos asignados"
 
 #: taiga/users/models.py:172
-#, fuzzy
-#| msgid "max number of memberships for each owned private project"
 msgid ""
 "max number of memberships of different users for all owned private project"
-msgstr "máximo de membresías para cada proyecto privado poseído"
+msgstr ""
+"número máximo de afiliaciones de los diferentes usuarios para todos los "
+"proyectos privados propios"
 
 #: taiga/users/models.py:177
-#, fuzzy
-#| msgid "max number of memberships for each owned public project"
 msgid ""
 "max number of memberships of different users for all owned public project"
-msgstr "máximo de membresías para cada proyecto público poseído"
+msgstr ""
+"número máximo de afiliaciones de los distintos usuarios para todos los "
+"proyectos públicos propios"
 
 #: taiga/users/models.py:305
 msgid "permissions"
