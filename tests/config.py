@@ -9,6 +9,8 @@ from settings.common import * # noqa, pylint: disable=unused-wildcard-import
 
 DEBUG = True
 
+ENABLE_TELEMETRY = False
+
 SECRET_KEY = "not very secret in tests"
 
 TEMPLATES[0]["OPTIONS"]['context_processors'] += "django.template.context_processors.debug"
@@ -42,6 +44,10 @@ IMPORTERS['jira']['active'] = True
 IMPORTERS['asana']['active'] = True
 IMPORTERS['trello']['active'] = True
 
+FRONT_SITEMAP_ENABLED = True
+FRONT_SITEMAP_CACHE_TIMEOUT = 1  # In second
+FRONT_SITEMAP_PAGE_SIZE = 100
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -65,6 +71,3 @@ if os.getenv('GITHUB_WORKFLOW'):
             'PORT': '5432',
         }
     }
-
-
-ENABLE_TELEMETRY = False
