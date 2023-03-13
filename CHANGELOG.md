@@ -4,6 +4,10 @@
 
 - ...
 
+## 6.6.1 (2023-03-13)
+
+- Fix error generating the front sitemaps.xml files
+
 ## 6.6.0 (2023-03-06)
 
 - Add support for Python 3.11

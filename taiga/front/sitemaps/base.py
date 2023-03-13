@@ -17,9 +17,10 @@ class Sitemap(DjangoSitemap):
         latest_lastmod = None
         all_items_lastmod = True  # track if all items have a lastmod
         for item in self.paginator.page(page).object_list:
-            loc = self.__get('location', item)
-            priority = self.__get('priority', item, None)
-            lastmod = self.__get('lastmod', item, None)
+            loc = self._get('location', item)
+            priority = self._get('priority', item, None)
+            lastmod = self._get('lastmod', item, None)
+            changefreq = self._get('changefreq', item, None)
             if all_items_lastmod:
                 all_items_lastmod = lastmod is not None
                 if (all_items_lastmod and
@@ -29,7 +30,7 @@ class Sitemap(DjangoSitemap):
                 'item': item,
                 'location': loc,
                 'lastmod': lastmod,
-                'changefreq': self.__get('changefreq', item, None),
+                'changefreq': changefreq,
                 'priority': str(priority if priority is not None else ''),
             }
             urls.append(url_info)
