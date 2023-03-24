@@ -12,7 +12,7 @@ from django.db.models import Aggregate
 from django.db.models import Avg
 from django.db.models import Count
 from django.db.models import F, Func
-from django.db.models import FloatField
+from django.db.models import FloatField, IntegerField
 from django.db.models import Q
 from django.db.models.functions import Coalesce
 from django.contrib.contenttypes.models import ContentType
@@ -207,7 +207,7 @@ def generate_platform_data():
 
     # average and median of tags in projects with at least one tag
     tags = Project.objects.annotate(
-            total_tags=Func(F('tags_colors'), 1, function='array_length')
+            total_tags=Func(F('tags_colors'), 1, function='array_length', output_field=IntegerField())
         ).aggregate(
             avg_tags_project=Avg('total_tags'),
             median_tags_project=Median('total_tags')
