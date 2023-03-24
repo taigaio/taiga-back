@@ -1,8 +1,12 @@
 # Changelog
 
-## 6.6.1 (unreleased)
+## 6.6.3 (unreleased)
 
 - ...
+
+## 6.6.2 (2023-03-24)
+
+- Fix queries related to telemetry service.
 
 ## 6.6.1 (2023-03-13)
 
