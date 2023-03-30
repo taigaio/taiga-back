@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-01-22 17:08+0000\n"
+"PO-Revision-Date: 2023-04-01 01:47+0000\n"
 "Last-Translator: random r <epsilin@yopmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "it/>\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.1\n"
+"X-Generator: Weblate 4.17-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -1528,22 +1528,19 @@ msgid "[%(project)s] Your Trello project has been imported"
 msgstr "[%(project)s] Il tuo progetto Trello è stato importato"
 
 #: taiga/importers/trello/importer.py:57
-#, fuzzy, python-format
-#| msgid "Invalid Request: %s at %s"
+#, python-format
 msgid "Invalid Request: %(text)s at %(url)s"
-msgstr "Richiesta non valida: %s alla posizione %s"
+msgstr "Richiesta non valida: %(text)s su %(url)s"
 
 #: taiga/importers/trello/importer.py:59 taiga/importers/trello/importer.py:61
-#, fuzzy, python-format
-#| msgid "Unauthorized: %s at %s"
+#, python-format
 msgid "Unauthorized: %(text)s at %(url)s"
-msgstr "Non autorizzato: %s alla posizione %s"
+msgstr "Non autorizzato: %(text)s su %(url)s"
 
 #: taiga/importers/trello/importer.py:63 taiga/importers/trello/importer.py:65
-#, fuzzy, python-format
-#| msgid "Resource Unavailable: %s at %s"
+#, python-format
 msgid "Resource Unavailable: %(text)s at %(url)s"
-msgstr "Risorsa non raggiungibile: %s alla posizione %s"
+msgstr "Risorsa non raggiungibile: %(text)s su %(url)s"
 
 #: taiga/importers/trello/tasks.py:31 taiga/importers/trello/tasks.py:32
 msgid "Error importing Trello project"
@@ -3465,20 +3462,16 @@ msgid "Token does not match any valid invitation."
 msgstr "Il token non corrisponde ad un invito valido."
 
 #: taiga/projects/services/invitations.py:74
-#, fuzzy
-#| msgid "The user doesn't exist"
 msgid "User does not exist."
-msgstr "L'utente non esiste"
+msgstr "L'utente non esiste."
 
 #: taiga/projects/services/invitations.py:81
 msgid "This user is already a member of the project."
 msgstr "Questo utente fa già parte del progetto."
 
 #: taiga/projects/services/members.py:46
-#, fuzzy
-#| msgid "new email address"
 msgid "Malformed email adress."
-msgstr "nuovo indirizzo e-mail"
+msgstr "Indirizzo email malformato."
 
 #: taiga/projects/services/members.py:134
 #: taiga/projects/services/members.py:181
