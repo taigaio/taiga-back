@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2022-09-09 12:16+0000\n"
-"Last-Translator: Ahmad HosseinBor <123hozeifeh@gmail.com>\n"
+"PO-Revision-Date: 2023-04-04 06:36+0000\n"
+"Last-Translator: Amin <Amin_seven_sky@yahoo.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "fa/>\n"
 "Language: fa\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.14.1-dev\n"
+"X-Generator: Weblate 4.17-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -37,50 +37,44 @@ msgstr "شما باید موارد سرویس و سیاست های امنیت م
 
 #: taiga/auth/api.py:140
 msgid "invalid registration type"
-msgstr ""
+msgstr "ثبت نام نا معتبر"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
-msgstr ""
+msgstr "مجوز سرصفحه باید شامل دو مقدار با فاصله محدود باشد"
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "توکن داده شده برای هیچ نوع توکن معتبر نیست"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "توکن هیچ شناسه کاربری قابل تشخیص نبود"
 
 #: taiga/auth/authentication.py:147
-#, fuzzy
-#| msgid "Not found"
 msgid "User not found"
-msgstr "پیدا نشد"
+msgstr "کاربر پیدا نشد"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "کاربر غیر فعال است"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
-msgstr ""
+msgstr "نوع الگوریتم ناشناخته است \"{}\""
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
-msgstr ""
+msgstr "برای استفاده از {} باید رمزنگاری را نصب کرده باشید."
 
 #: taiga/auth/backends.py:128
-#, fuzzy
-#| msgid "Invalid role for the project"
 msgid "Invalid algorithm specified"
-msgstr "نقش نامعتبر برای پروژه"
+msgstr "الگوریتم نامعتبر مشخص شده است"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is invalid or expired"
-msgstr "توکن نامعتبر است"
+msgstr "توکن نامعتبر است یا باطل شده"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
@@ -98,7 +92,7 @@ msgstr "نام کامل نامعتبر است"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "هیچ حساب فعالی با اعتبار داده شده یافت نشد"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
@@ -118,7 +112,7 @@ msgstr "خطا هنگام ایجاد کاربر جدید."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr ""
+msgstr "جیت"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
@@ -128,55 +122,43 @@ msgstr "کاربر"
 
 #: taiga/auth/token_denylist/admin.py:117 taiga/telemetry/models.py:21
 msgid "created at"
-msgstr ""
+msgstr "ایجاد شده در"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "به اتمام میرسد در"
 
 #: taiga/auth/token_denylist/apps.py:74
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token Denylist"
-msgstr "توکن نامعتبر است"
+msgstr "توکن در لیست نیست"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "نمی توان توکن بدون نوع یا طول عمر ایجاد کرد"
 
 #: taiga/auth/tokens.py:127
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no id"
-msgstr "توکن منقضی شده است"
+msgstr "توکن هیچ شناسه ای ندارد"
 
 #: taiga/auth/tokens.py:138
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no type"
-msgstr "توکن منقضی شده است"
+msgstr "نوع توکن مشخص نیست"
 
 #: taiga/auth/tokens.py:141
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has wrong type"
-msgstr "توکن منقضی شده است"
+msgstr "توکن نوع اشتباهی دارد"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "توکن ادعای \"{}\" ندارد"
 
 #: taiga/auth/tokens.py:182
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token '{}' claim has expired"
-msgstr "توکن منقضی شده است"
+msgstr "ادعای توکن {} منقضی شده است"
 
 #: taiga/auth/tokens.py:225
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is denylisted"
-msgstr "توکن نامعتبر است"
+msgstr "توکن رد شده است"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
@@ -488,6 +470,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>به %(product_name)s، یک "
+"ابزار مدیریت پروژه چابک منبع باز، خوش آمدید</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:15
 #, python-format
@@ -501,6 +487,14 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">پیکربندی اعلان‌های ایمیل یا "
+"لغو اشتراک</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">Taiga Support</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >تماس با ما</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:26
 msgid "Follow us on Twitter"
@@ -665,7 +659,7 @@ msgstr "خطا در وارد کردن لیست خواص پروژه"
 
 #: taiga/export_import/services/store.py:856
 msgid "error importing default project attribute values"
-msgstr ""
+msgstr "خطا در وارد کردن مقادیر مشخصه پروژه پیش‌فرض"
 
 #: taiga/export_import/services/store.py:867
 msgid "error importing custom attributes"
