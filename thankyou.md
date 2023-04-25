@@ -32,3 +32,9 @@ big, to improve Taiga's overall security rating.
 ### 2022
 
 - Husnain Iqbal (CEO of Alpha Inferno PVT LTD)
+
+### 2023
+
+- Khurram Shoaib
+
+- Kamran Khan
