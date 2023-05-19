@@ -22,7 +22,7 @@ class WebhookValidator(validators.ModelValidator):
         model = Webhook
 
     def validate_url(self, attrs, source):
-        if settings.WEBHOOKS_BLOCK_PRIVATE_ADDRESS:
+        if not settings.WEBHOOKS_ALLOW_PRIVATE_ADDRESS:
             host = urlparse(attrs[source]).hostname
             try:
                 ipa = ipaddress.ip_address(host)

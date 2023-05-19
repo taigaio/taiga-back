@@ -2,7 +2,7 @@
 
 ## 6.6.3 (unreleased)
 
-- ...
+- Security improvements to webhooks functionality.
 
 ## 6.6.2 (2023-03-24)
 
