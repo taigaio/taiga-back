@@ -598,8 +598,8 @@ GITLAB_VALID_ORIGIN_IPS = []
 EXPORTS_TTL = 60 * 60 * 24  # 24 hours
 
 WEBHOOKS_ENABLED = False
-WEBHOOKS_BLOCK_PRIVATE_ADDRESS = False
-
+WEBHOOKS_ALLOW_PRIVATE_ADDRESS = False
+WEBHOOKS_ALLOW_REDIRECTS = False
 
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client
 FRONT_SITEMAP_ENABLED = False

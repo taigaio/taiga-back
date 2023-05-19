@@ -73,17 +73,17 @@ def _send_request(webhook_id, url, key, data):
         "Content-Type": "application/json"
     }
 
-    if settings.WEBHOOKS_BLOCK_PRIVATE_ADDRESS:
+    if not settings.WEBHOOKS_ALLOW_PRIVATE_ADDRESS:
         try:
             urls.validate_private_url(url)
         except (urls.IpAddresValueError, urls.HostnameException) as e:
             # Error validating url
-            webhook_log = WebhookLog.objects.create(webhook_id=webhook_id, url=url,
+            webhook_log = WebhookLog.objects.create(webhook_id=webhook_id,
+                                                    url=url,
                                                     status=0,
                                                     request_data=data,
                                                     request_headers=dict(),
-                                                    response_data="error-in-request: {}".format(
-                                                        str(e)),
+                                                    response_data="error-in-request: {}".format(str(e)),
                                                     response_headers={},
                                                     duration=0)
             _remove_leftover_webhooklogs(webhook_id)
@@ -95,10 +95,16 @@ def _send_request(webhook_id, url, key, data):
 
     with requests.Session() as session:
         try:
-            response = session.send(prepared_request)
+            response = session.send(prepared_request, allow_redirects=settings.WEBHOOKS_ALLOW_REDIRECTS)
+
+            if not settings.WEBHOOKS_ALLOW_REDIRECTS and response.status_code in [301, 302, 303, 307, 308]:
+                raise RequestException("Redirects are not allowed")
+
         except RequestException as e:
             # Error sending the webhook
-            webhook_log = WebhookLog.objects.create(webhook_id=webhook_id, url=url, status=0,
+            webhook_log = WebhookLog.objects.create(webhook_id=webhook_id,
+                                                    url=url,
+                                                    status=response.status_code or 0,
                                                     request_data=data,
                                                     request_headers=dict(prepared_request.headers),
                                                     response_data="error-in-request: {}".format(str(e)),
