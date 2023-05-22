@@ -20,14 +20,14 @@ python-dateutil==2.7.5
 python-magic==0.4.15
 pytz
 raven
-redis==4.5.1
+redis==4.5.3
 requests==2.27.1
 requests_oauthlib
 rudder-sdk-python==1.0.0b1
 serpy==0.1.1
 webcolors==1.9.1
 CairoSVG>=2.5.1
-Django>=3,<4
+Django>=3.2.19,<4
 Markdown==3.4.1
 pymdown-extensions==9.9.2
 Pillow

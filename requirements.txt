@@ -60,7 +60,7 @@ defusedxml==0.7.1
     # via cairosvg
 diff-match-patch==20121119
     # via -r requirements.in
-django==3.2.18
+django==3.2.19
     # via
     #   -r requirements.in
     #   django-jinja
@@ -173,7 +173,7 @@ pywavelets==1.4.1
     # via scikit-image
 raven==6.10.0
     # via -r requirements.in
-redis==4.5.1
+redis==4.5.3
     # via -r requirements.in
 requests==2.27.1
     # via
