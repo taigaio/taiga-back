@@ -9,7 +9,43 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
+from django.db import connection
 
+
+def _get_agg_array_agg_mult():
+    pg_version = connection.cursor().connection.server_version
+
+    if pg_version < 140000: # PostgreSQL < 14.0
+        return """
+            DROP AGGREGATE IF EXISTS array_agg_mult (anyarray);
+            CREATE AGGREGATE array_agg_mult (anyarray)  (
+                SFUNC     = array_cat
+               ,STYPE     = anyarray
+               ,INITCOND  = '{}'
+            );
+        """
+    else: # PostgreSQL >= 14.0
+        return """
+            DROP AGGREGATE IF EXISTS array_agg_mult (anycompatiblearray);
+            CREATE AGGREGATE array_agg_mult (anycompatiblearray)  (
+                SFUNC     = array_cat
+               ,STYPE     = anycompatiblearray
+               ,INITCOND  = '{}'
+            );
+        """
+
+
+def _delete_unused_function():
+    pg_version = connection.cursor().connection.server_version
+
+    if pg_version < 140000: # PostgreSQL < 14.0
+        return """
+            DROP AGGREGATE IF EXISTS array_agg_mult (anyarray);
+        """
+    else: # PostgreSQL >= 14.0
+        return """
+            DROP AGGREGATE IF EXISTS array_agg_mult (anycompatiblearray);
+        """
 
 class Migration(migrations.Migration):
 
@@ -21,6 +57,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        ###       Error:
+        ###         psycopg2.errors.UndefinedFunction: function array_cat(anyarray, anyarray) does not exist
+
+
         # Function: Reduce a multidimensional array only on its first level
         migrations.RunSQL(
             """
@@ -31,7 +71,7 @@ class Migration(migrations.Migration):
                 s $1%TYPE;
             BEGIN
                 IF $1 = '{}' THEN
-                	RETURN;
+                    RETURN;
                 END IF;
                 FOREACH s SLICE 1 IN ARRAY $1 LOOP
                     RETURN NEXT s;
@@ -43,16 +83,7 @@ class Migration(migrations.Migration):
             """
         ),
         # Function: aggregates multi dimensional arrays
-        migrations.RunSQL(
-            """
-            DROP AGGREGATE IF EXISTS array_agg_mult (anyarray);
-            CREATE AGGREGATE array_agg_mult (anyarray)  (
-                SFUNC     = array_cat
-               ,STYPE     = anyarray
-               ,INITCOND  = '{}'
-            );
-            """
-        ),
+        migrations.RunSQL(_get_agg_array_agg_mult()),
         # Function: array_distinct
         migrations.RunSQL(
             """
@@ -101,23 +132,23 @@ class Migration(migrations.Migration):
             CREATE OR REPLACE FUNCTION update_project_tags_colors()
             RETURNS trigger AS $update_project_tags_colors$
             DECLARE
-            	tags text[];
-            	project_tags_colors text[];
-            	tag_color text[];
-            	project_tags text[];
-            	tag text;
-            	project_id integer;
+                tags text[];
+                project_tags_colors text[];
+                tag_color text[];
+                project_tags text[];
+                tag text;
+                project_id integer;
             BEGIN
-            	tags := NEW.tags::text[];
-            	project_id := NEW.project_id::integer;
-            	project_tags := '{}';
+                tags := NEW.tags::text[];
+                project_id := NEW.project_id::integer;
+                project_tags := '{}';
 
-            	-- Read project tags_colors into project_tags_colors
-            	SELECT projects_project.tags_colors INTO project_tags_colors
+                -- Read project tags_colors into project_tags_colors
+                SELECT projects_project.tags_colors INTO project_tags_colors
                 FROM projects_project
                 WHERE id = project_id;
 
-            	-- Extract just the project tags to project_tags_colors
+                -- Extract just the project tags to project_tags_colors
                 IF project_tags_colors != ARRAY[]::text[] THEN
                     FOREACH tag_color SLICE 1 in ARRAY project_tags_colors
                     LOOP
@@ -125,7 +156,7 @@ class Migration(migrations.Migration):
                     END LOOP;
                 END IF;
 
-            	-- Add to project_tags_colors the new tags
+                -- Add to project_tags_colors the new tags
                 IF tags IS NOT NULL THEN
                     FOREACH tag in ARRAY tags
                     LOOP
@@ -136,12 +167,12 @@ class Migration(migrations.Migration):
                     END LOOP;
                 END IF;
 
-            	-- Save the result in the tags_colors column
+                -- Save the result in the tags_colors column
                 UPDATE projects_project
                 SET tags_colors = project_tags_colors
                 WHERE id = project_id;
 
-            	RETURN NULL;
+                RETURN NULL;
             END; $update_project_tags_colors$
             LANGUAGE plpgsql;
             """
@@ -201,4 +232,6 @@ class Migration(migrations.Migration):
             FOR EACH ROW EXECUTE PROCEDURE update_project_tags_colors();
             """
         ),
+        # Delete unneded function
+        migrations.RunSQL(_delete_unused_function()),
     ]
