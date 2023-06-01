@@ -94,6 +94,7 @@ def _send_request(webhook_id, url, key, data):
     prepared_request = request.prepare()
 
     with requests.Session() as session:
+        response = None
         try:
             response = session.send(prepared_request, allow_redirects=settings.WEBHOOKS_ALLOW_REDIRECTS)
 
@@ -104,7 +105,7 @@ def _send_request(webhook_id, url, key, data):
             # Error sending the webhook
             webhook_log = WebhookLog.objects.create(webhook_id=webhook_id,
                                                     url=url,
-                                                    status=response.status_code or 0,
+                                                    status=response.status_code if response else 0,
                                                     request_data=data,
                                                     request_headers=dict(prepared_request.headers),
                                                     response_data="error-in-request: {}".format(str(e)),
