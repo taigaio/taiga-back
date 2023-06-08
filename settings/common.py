@@ -296,6 +296,7 @@ MIDDLEWARE = [
     # Common middlewares
     "django.middleware.common.CommonMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
     # Only needed by django admin
