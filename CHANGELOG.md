@@ -1,6 +1,10 @@
 # Changelog
 
-## 6.6.3 (unreleased)
+## 6.7.1 (unreleased)
+
+- ...
+
+## 6.7.0 (2023-06-12)
 
 - Security improvements to webhooks functionality.
 - Make migrations compatible with Postgresql-14
