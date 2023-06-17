@@ -34,7 +34,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-03-23 16:41+0000\n"
+"PO-Revision-Date: 2023-06-18 16:51+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "de/>\n"
@@ -43,7 +43,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16.2-dev\n"
+"X-Generator: Weblate 4.18.1\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -138,7 +138,6 @@ msgid "Error while creating new user."
 msgstr "Fehler bei der Erstellung des neuen Benutzers."
 
 #: taiga/auth/token_denylist/admin.py:103
-#, fuzzy
 msgid "jti"
 msgstr "jti"
 
@@ -157,10 +156,8 @@ msgid "expires at"
 msgstr "läuft ab am"
 
 #: taiga/auth/token_denylist/apps.py:74
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token Denylist"
-msgstr "Token ist ungültig"
+msgstr "Token-Sperrliste"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
@@ -187,10 +184,8 @@ msgid "Token '{}' claim has expired"
 msgstr "Der Claim auf das Token '{}' ist abgelaufen"
 
 #: taiga/auth/tokens.py:225
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is denylisted"
-msgstr "Token ist ungültig"
+msgstr "Token steht auf der Sperrliste"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
@@ -3068,6 +3063,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Das Epic #%(ref)s \"%(subject)s\" wurde aktualisiert\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-html.jinja:12
 #, python-format
