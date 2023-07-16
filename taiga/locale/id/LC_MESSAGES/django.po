@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-08 12:10+0000\n"
-"PO-Revision-Date: 2023-04-09 21:51+0000\n"
+"PO-Revision-Date: 2023-07-17 10:04+0000\n"
 "Last-Translator: Reza Almanda <rezaalmanda27@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/taiga/"
 "taiga-back/id/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.17-dev\n"
+"X-Generator: Weblate 5.0-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -70,99 +70,99 @@ msgstr "Algoritma yang ditentukan tidak valid"
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
 msgid "Token is invalid or expired"
-msgstr ""
+msgstr "Token salah atau kedaluarsa"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
-msgstr ""
+msgstr "Nama pengguna tidak valid"
 
 #: taiga/auth/serializers.py:85 taiga/users/validators.py:43
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
-msgstr ""
+msgstr "Diperlukan. 255 karakter atau kurang. Huruf, angka dan /./-/_ karakter'"
 
 #: taiga/auth/serializers.py:92 taiga/auth/serializers.py:95
 #: taiga/users/validators.py:56 taiga/users/validators.py:59
 msgid "Invalid full name"
-msgstr ""
+msgstr "Nama lengkap tidak valid"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "Tidak ditemukan akun aktif dengan kredensial yang diberikan"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
-msgstr ""
+msgstr "Nama pengguna telah digunakan."
 
 #: taiga/auth/services.py:139
 msgid "Email is already in use."
-msgstr ""
+msgstr "Email sudah digunakan."
 
 #: taiga/auth/services.py:172
 msgid "User is already registered."
-msgstr ""
+msgstr "Pengguna sudah terdaftar."
 
 #: taiga/auth/services.py:203
 msgid "Error while creating new user."
-msgstr ""
+msgstr "Error saat membuat pengguna baru."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr ""
+msgstr "jti"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
 #: taiga/projects/notifications/models.py:95 taiga/projects/votes/models.py:44
 msgid "user"
-msgstr ""
+msgstr "pengguna"
 
 #: taiga/auth/token_denylist/admin.py:117 taiga/telemetry/models.py:21
 msgid "created at"
-msgstr ""
+msgstr "dibuat di"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "berakhir pada"
 
 #: taiga/auth/token_denylist/apps.py:74
 msgid "Token Denylist"
-msgstr ""
+msgstr "Penolakan Token"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "Tidak dapat membuat token tanpa jenis atau masa pakai"
 
 #: taiga/auth/tokens.py:127
 msgid "Token has no id"
-msgstr ""
+msgstr "Token tidak memiliki id"
 
 #: taiga/auth/tokens.py:138
 msgid "Token has no type"
-msgstr ""
+msgstr "Token tidak memiliki jenis"
 
 #: taiga/auth/tokens.py:141
 msgid "Token has wrong type"
-msgstr ""
+msgstr "Token memiliki jenis yang salah"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "Token tidak memiliki klaim '{}'"
 
 #: taiga/auth/tokens.py:182
 msgid "Token '{}' claim has expired"
-msgstr ""
+msgstr "Klaim Token '{}' telah kedaluwarsa"
 
 #: taiga/auth/tokens.py:225
 msgid "Token is denylisted"
-msgstr ""
+msgstr "Token ditolak"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
-msgstr ""
+msgstr "Bagian ini harap diisi."
 
 #: taiga/base/api/fields.py:284 taiga/base/api/relations.py:326
 msgid "Invalid value."
-msgstr ""
+msgstr "Nilai tidak valid."
 
 #: taiga/base/api/fields.py:473
 #, python-format
