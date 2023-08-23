@@ -578,7 +578,7 @@ PROJECT_MODULES_CONFIGURATORS = {
     "gogs": "taiga.hooks.gogs.services.get_or_generate_config",
 }
 
-# Odicial BitBucket valid IPs a https://confluence.atlassian.com/cloud/atlassian-cloud-ip-ranges-and-domains-744721662.html#AtlassiancloudIPrangesanddomains-OutgoingConnections
+# Official BitBucket valid IPs are https://confluence.atlassian.com/cloud/atlassian-cloud-ip-ranges-and-domains-744721662.html#AtlassiancloudIPrangesanddomains-OutgoingConnections
 BITBUCKET_VALID_ORIGIN_IPS = [
     "13.52.5.96/28",
     "13.236.8.224/28",
