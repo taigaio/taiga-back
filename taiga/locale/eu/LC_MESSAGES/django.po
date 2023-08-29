@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-04-09 21:51+0000\n"
-"Last-Translator: Alex Gabilondo <alexgabi@disroot.org>\n"
+"PO-Revision-Date: 2023-08-30 11:54+0000\n"
+"Last-Translator: Iker Salaberria Urkizu <ikerrena@gmail.com>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "eu/>\n"
 "Language: eu\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17-dev\n"
+"X-Generator: Weblate 5.0.1-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -42,46 +42,40 @@ msgstr "Izen-emate mota hori ez da baliozkoa"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
-msgstr ""
+msgstr "Baimenaren goiburuak zuriuneekin mugatutako bi balio izan behar ditu"
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "Emandako tokenak ez du balio inolako token motarentzat"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "Tokenak ez zuen erabiltzaile-identifikazio ezagunik"
 
 #: taiga/auth/authentication.py:147
-#, fuzzy
-#| msgid "Not found"
 msgid "User not found"
-msgstr "Ezin da aurkitu"
+msgstr "Erabiltzailea ez da aurkitu"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "Erabiltzailea ez dago aktibo"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
-msgstr ""
+msgstr "'{}' motako algoritmo ezezaguna"
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
-msgstr ""
+msgstr "Kriptografia instalatuta izan behar duzu {} erabiltzeko."
 
 #: taiga/auth/backends.py:128
-#, fuzzy
-#| msgid "Invalid role for the project"
 msgid "Invalid algorithm specified"
-msgstr "Balioagabea da rol hori proiektu honetan."
+msgstr "Zehaztutako algoritmoa baliogabea da"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is invalid or expired"
-msgstr "Identifikatzailea ez da baliozkoa"
+msgstr "Identifikatzailea ez da baliozkoa edo iraungita dago"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
@@ -101,7 +95,7 @@ msgstr "Izen osoa ez da baliozkoa"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "Emandako kredentzialekin ez da kontu aktiborik aurkitu"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
@@ -121,7 +115,7 @@ msgstr "Akatsa gertatu da erabiltzaile berria sortzerakoan."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr ""
+msgstr "jti"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
@@ -131,11 +125,11 @@ msgstr "erabiltzailea"
 
 #: taiga/auth/token_denylist/admin.py:117 taiga/telemetry/models.py:21
 msgid "created at"
-msgstr ""
+msgstr "Noiz sortua"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "Iraungitzen da"
 
 #: taiga/auth/token_denylist/apps.py:74
 #, fuzzy
@@ -145,35 +139,27 @@ msgstr "Identifikatzailea ez da baliozkoa"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "Ezin da sortu tokena mota edo iraupena zehaztu gabe"
 
 #: taiga/auth/tokens.py:127
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no id"
-msgstr "Identifikatzailea iraungi egin da"
+msgstr "Tokenak ez du IDrik"
 
 #: taiga/auth/tokens.py:138
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no type"
-msgstr "Identifikatzailea iraungi egin da"
+msgstr "Tokenak ez du motarik"
 
 #: taiga/auth/tokens.py:141
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has wrong type"
-msgstr "Identifikatzailea iraungi egin da"
+msgstr "Identifikatzaileak okerreko mota du"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "Tokenak ez du '{}' erreklamaziorik"
 
 #: taiga/auth/tokens.py:182
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token '{}' claim has expired"
-msgstr "Identifikatzailea iraungi egin da"
+msgstr "Token '{}' erreklamazioa iraungi da"
 
 #: taiga/auth/tokens.py:225
 #, fuzzy
@@ -192,7 +178,7 @@ msgstr "Balio hau ez da baliozkoa."
 #: taiga/base/api/fields.py:473
 #, python-format
 msgid "'%s' value must be either True or False."
-msgstr "'%s' balioa izan behar da Egia edo Gezurra."
+msgstr "'%s' balioak izan behar du Egia edo Gezurra."
 
 #: taiga/base/api/fields.py:538
 msgid ""
@@ -906,6 +892,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Kaixo %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"Zure %(project)s proiektua ez da behar bezala esportatu.\n"
+"\n"
+"Taigaren sistema administratzaileak jakinaren gainean jarri ditugu.\n"
+"\n"
+"Mesedez, saiatu berriro edo jarri harremanetan gure asistentzia taldearekin "
+"hemen %(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:9
 #, python-format
@@ -928,6 +927,19 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Kaixo%(user)s,</p>\n"
+"    <p>Zure proiektua ez da behar bezala inportatu.</p>\n"
+"    <p>%(product_name)s-ko sistema administratzaileak jakinaren gainean "
+"jarri ditugu.<br/> Mesedez, saiatu berriro edo jarri harremanetan gure "
+"asistentzia taldearekin hemen\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>Akatsaren xehetasunak</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:9
@@ -947,6 +959,20 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Kaixo %(user)s, \n"
+"\n"
+"%(error_message)s \n"
+"\n"
+"Zure %(project)s proiektua ez da behar bezala esportatu. \n"
+"\n"
+"Taigaren sistema administratzaileak jakinaren gainean jarri ditugu. \n"
+"\n"
+"Mesedez, saiatu berriro edo jarri harremanetan gure asistentzia taldearekin "
+"hemen %(support_email)s \n"
+"\n"
+"---\n"
+" %(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:9
