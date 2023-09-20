@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-05-12 12:48+0000\n"
-"Last-Translator: random r <epsilin@yopmail.com>\n"
+"PO-Revision-Date: 2023-09-10 09:21+0000\n"
+"Last-Translator: Random <random-r@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "it/>\n"
 "Language: it\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.18-dev\n"
+"X-Generator: Weblate 5.0.1-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -1899,7 +1899,7 @@ msgstr "sha1"
 
 #: taiga/projects/attachments/models.py:65
 msgid "is deprecated"
-msgstr "non approvato"
+msgstr "è deprecato"
 
 #: taiga/projects/attachments/models.py:66
 msgid "from comment"
@@ -2237,7 +2237,7 @@ msgstr "Allegato aggiornato"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:78
 msgid "deprecated"
-msgstr "non approvato"
+msgstr "deprecato"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:80
 msgid "not deprecated"
