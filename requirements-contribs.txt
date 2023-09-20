@@ -6,7 +6,7 @@
 #
 taiga-contrib-github-auth @ git+https://github.com/kaleidos-ventures/taiga-contrib-github-auth.git@6.7.0#subdirectory=back
     # via -r requirements-contribs.in
-taiga-contrib-gitlab-auth-official @ git+https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth.git@6.7.0#subdirectory=back
+taiga-contrib-gitlab-auth-official @ git+https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth.git@6.7.1#subdirectory=back
     # via -r requirements-contribs.in
 taiga-contrib-protected @ git+https://github.com/kaleidos-ventures/taiga-contrib-protected.git@6.7.0
     # via -r requirements-contribs.in

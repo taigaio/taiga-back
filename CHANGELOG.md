@@ -1,8 +1,14 @@
 # Changelog
 
-## 6.7.1 (unreleased)
+## 6.7.2 (unreleased)
 
 - ...
+
+## 6.7.1 (2023-09-20)
+
+- Upgrade gitlab auth contrib plugin
+- Set celery timezone customizable from docker envs (thanks to [@wowi42](https://github.com/wowi42))
+- Fix some typos in comments syntax in settings files (thanks to [@Ser5](https://github.com/Ser5))
 
 ## 6.7.0 (2023-06-12)
 
