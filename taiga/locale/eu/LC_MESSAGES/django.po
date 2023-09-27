@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-09-22 17:57+0000\n"
-"Last-Translator: David Barragán <david.barragan@kaleidos.net>\n"
+"PO-Revision-Date: 2023-09-28 08:02+0000\n"
+"Last-Translator: Iker Salaberria Urkizu <ikerrena@gmail.com>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "eu/>\n"
 "Language: eu\n"
@@ -132,10 +132,8 @@ msgid "expires at"
 msgstr "Iraungitzen da"
 
 #: taiga/auth/token_denylist/apps.py:74
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token Denylist"
-msgstr "Identifikatzailea ez da baliozkoa"
+msgstr "Identifikatzailea ukatzeko zerrenda"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
@@ -993,6 +991,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Inportatutako proiektuko datuak txertatzea</h1>\n"
+"    <p>Kaixo%(user)s,</p>\n"
+"    <h3>Inportatutako zure proiektuaren datuak behar bezala txertatu "
+"dira.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">Joan %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/load_dump-body-text.jinja:9
 #, python-format
@@ -1009,6 +1016,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Kaixo%(user)s,\n"
+"\n"
+"Inportatutako zure proiektuaren datuak behar bezala txertatu dira.\n"
+"\n"
+" %(project)s proiektua hemen ikusi dezakezu:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:9
 #, python-format
@@ -1027,12 +1045,12 @@ msgstr "Eduki baliogabea. Izan behar da {\"key\": \"value\",...}"
 #: taiga/export_import/validators/validators.py:188
 #: taiga/projects/custom_attributes/validators.py:112
 msgid "It contains invalid custom fields."
-msgstr ""
+msgstr "Eremu pertsonalizatu baliogabeak ditu."
 
 #: taiga/export_import/validators/validators.py:268
 #: taiga/projects/validators.py:43
 msgid "Duplicated name"
-msgstr ""
+msgstr "Izen bikoiztua"
 
 #: taiga/export_import/validators/validators.py:303
 #, python-format
@@ -1040,6 +1058,8 @@ msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
+"Epic batek kanpo-proiektu bati (%(project)s) lotutako historia du, eta ezin "
+"da inportatu"
 
 #: taiga/external_apps/api.py:32 taiga/external_apps/api.py:59
 #: taiga/external_apps/api.py:71
@@ -1155,6 +1175,9 @@ msgid ""
 "        <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:9
 #, python-format
@@ -1186,6 +1209,9 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/feedback/templates/emails/feedback_notification-subject.jinja:9
 #, python-format
@@ -1198,7 +1224,7 @@ msgstr ""
 
 #: taiga/hooks/api.py:43
 msgid "The payload is not valid json"
-msgstr ""
+msgstr "Payload-a ez da baliozko json-a"
 
 #: taiga/hooks/api.py:52 taiga/projects/epics/api.py:143
 #: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:205
@@ -1218,6 +1244,11 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}]({user_url} \"Ikusi {user_name}'(r)en {platform} profila\") "
+"hemen dioenez [{platform}#{number}]({comment_url} \"Joan komentarioetara\"):"
+"\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:75
 #, python-brace-format
@@ -1237,6 +1268,9 @@ msgid ""
 "Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Ondorengoak sortutako eskaera [{user_name}]({user_url} \"Ikusi "
+"{user_name}'(r)en {platform} profila\") hemengoa [{platform}#{number}]({url} "
+"\"Joan eskaerara\")."
 
 #: taiga/hooks/event_hooks.py:138
 #, python-brace-format
@@ -1249,11 +1283,14 @@ msgid ""
 "Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Ondorengoak moldatutako eskera [{user_name}]({user_url} \"Ikus {user_name}(r)"
+"en {platform} profila\") hemengoa [{platform}#{number}]({url} \"Joan "
+"eskaerara\")."
 
 #: taiga/hooks/event_hooks.py:150
 #, python-brace-format
 msgid "Issue modified from {platform}."
-msgstr ""
+msgstr "Hemendik {platform} moldatutako eskaera."
 
 #: taiga/hooks/event_hooks.py:158
 #, python-brace-format
@@ -1261,11 +1298,14 @@ msgid ""
 "Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Ondorengoak itxitako eskaera [{user_name}]({user_url} \"Ikus {user_name}(r)"
+"en {platform} profila\") hemendik [{platform}#{number}]({url} \"Joan "
+"eskaerara\")."
 
 #: taiga/hooks/event_hooks.py:162
 #, python-brace-format
 msgid "Issue closed from {platform}."
-msgstr ""
+msgstr "Hemendik {platform} itxitako eskaera."
 
 #: taiga/hooks/event_hooks.py:170
 #, python-brace-format
@@ -1273,11 +1313,14 @@ msgid ""
 "Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Ondorengoak berriz irekitako eskaera [{user_name}]({user_url} \"Ikus "
+"{user_name}(r)en {platform} profila\") hemendik [{platform}#{number}]({url} "
+"\"Joan eskaerara\")."
 
 #: taiga/hooks/event_hooks.py:174
 #, python-brace-format
 msgid "Issue reopened from {platform}."
-msgstr ""
+msgstr "Hemendik {platform} berriro irekitako eskaera."
 
 #: taiga/hooks/event_hooks.py:269
 msgid "Invalid issue information"
@@ -1385,6 +1428,11 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"                Errore bat gertatu da; ziurrenik, Jiraren bertsio jasanezin "
+"baten ondorioz.\n"
+"                Taiga ez da bateragarria 8.6 baino berriagoak diren Jiraren "
+"bertsioekin."
 
 #: taiga/importers/jira/api.py:158
 msgid "Invalid project_type {}"
@@ -1419,6 +1467,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Asana proiektua inportatu da</h1>\n"
+"    <p>Kaixo%(user)s,</p>\n"
+"    <h3>Zure Asanako proiektua behar bezala inportatu da.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">Go to %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:9
 #, python-format
@@ -1435,6 +1491,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Kaixo%(user)s,\n"
+"\n"
+"Zure Asanako proiektua behar bezala inportatu da.\n"
+"\n"
+" %(project)s proiektua hemen ikusi dezakezu:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:9
 #, python-format
@@ -1453,6 +1520,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>GitHub proiektua inportatu da</h1>\n"
+"    <p>Kaixo%(user)s,</p>\n"
+"    <h3>Zure GitHub proiektua behar bezala inportatu da.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">Go to %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/github_import_success-body-text.jinja:9
 #, python-format
@@ -1469,6 +1544,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Kaixo%(user)s,\n"
+"\n"
+"Zure GitHub proiektua behar bezala inportatu da.\n"
+"\n"
+" %(project)s proiektua hemen ikusi dezakezu:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:9
 #, python-format
