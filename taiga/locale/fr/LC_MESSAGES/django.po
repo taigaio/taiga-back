@@ -39,8 +39,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-08-12 20:47+0000\n"
-"Last-Translator: Louis <weblate.tobpx@simplelogin.com>\n"
+"PO-Revision-Date: 2023-11-11 14:37+0000\n"
+"Last-Translator: Louis Chance <contact@louischance.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "fr/>\n"
 "Language: fr\n"
@@ -48,7 +48,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.0-dev\n"
+"X-Generator: Weblate 5.2-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -5150,31 +5150,27 @@ msgstr "DATES IMPORTANTES"
 
 #: taiga/users/admin.py:146
 msgid "PROJECT OWNERSHIPS RESTRICTIONS"
-msgstr ""
+msgstr "RESTRICTIONS SUR LES PROPRIÉTÉS DU PROJET"
 
 #: taiga/users/admin.py:148
 msgid "PROJECT OWNERSHIPS STATS"
-msgstr ""
+msgstr "STATISTIQUES DE PROPRIÉTÉ DES PROJETS"
 
 #: taiga/users/admin.py:169
-#, fuzzy
-#| msgid "Project End"
 msgid "Private projects owned"
-msgstr "Fin du projet"
+msgstr "Mes projets privés"
 
 #: taiga/users/admin.py:175
 msgid "Private memberships owned"
-msgstr ""
+msgstr "Mes adhésions privées"
 
 #: taiga/users/admin.py:193
-#, fuzzy
-#| msgid "Project End"
 msgid "Public projects owned"
-msgstr "Fin du projet"
+msgstr "Mes projets publics"
 
 #: taiga/users/admin.py:199
 msgid "Public memberships owned"
-msgstr ""
+msgstr "Mes adhésions publiques"
 
 #: taiga/users/api.py:123
 msgid "Duplicated email"
@@ -5292,10 +5288,8 @@ msgid "date joined"
 msgstr "date d'inscription"
 
 #: taiga/users/models.py:142
-#, fuzzy
-#| msgid "date joined"
 msgid "date cancelled"
-msgstr "date d'inscription"
+msgstr "date annulée"
 
 #: taiga/users/models.py:143
 msgid "accepted terms"
@@ -5338,18 +5332,18 @@ msgid "max number of owned public projects"
 msgstr "Nombre maximal de projets publics"
 
 #: taiga/users/models.py:172
-#, fuzzy
-#| msgid "max number of memberships for each owned private project"
 msgid ""
 "max number of memberships of different users for all owned private project"
-msgstr "Nombre maximum d'adhésions pour chaque projet privé"
+msgstr ""
+"Nombre maximum d'adhésions de différents utilisateurs pour tous les projets "
+"privés que vous possédez"
 
 #: taiga/users/models.py:177
-#, fuzzy
-#| msgid "max number of memberships for each owned public project"
 msgid ""
 "max number of memberships of different users for all owned public project"
-msgstr "Nombre maximum d'adhésions pour chaque projet public détenu"
+msgstr ""
+"Nombre maximum d'adhésions de différents utilisateurs pour tous les projets "
+"publics que vous possédez"
 
 #: taiga/users/models.py:305
 msgid "permissions"
