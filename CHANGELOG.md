@@ -4,7 +4,7 @@
 
 - ...
 
-## 6.7.2 (unreleased)
+## 6.7.2 (2024-02-16)
 
 - Docker: DEBUG and LANGUAGE_CODE settings are customizable.
 
