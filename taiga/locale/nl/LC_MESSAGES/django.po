@@ -14,16 +14,16 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Dutch (http://www.transifex.com/taiga-agile-llc/taiga-back/"
-"language/nl/)\n"
+"PO-Revision-Date: 2023-11-23 17:05+0000\n"
+"Last-Translator: Ranforingus <ranforingus@hotmail.com>\n"
+"Language-Team: Dutch <https://hosted.weblate.org/projects/taiga/taiga-back/"
+"nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.2.1-rc\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -779,7 +779,7 @@ msgstr "Fout tijdens het laden van de project dump file"
 
 #: taiga/export_import/tasks.py:125
 msgid "  -- no detail info --"
-msgstr "-- geen gedetailleerde informatie --"
+msgstr "  -- geen gedetailleerde informatie --"
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:12
 #, python-format
