@@ -1,8 +1,12 @@
 # Changelog
 
-## 6.7.2 (unreleased)
+## 6.8.0 (unreleased)
 
 - ...
+
+## 6.7.2 (unreleased)
+
+- Docker: DEBUG and LANGUAGE_CODE settings are customizable.
 
 ## 6.7.1 (2023-09-20)
 

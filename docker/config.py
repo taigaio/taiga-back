@@ -12,7 +12,8 @@ import os
 #########################################
 ## GENERIC
 #########################################
-DEBUG = False
+
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 DATABASES = {
     'default': {
@@ -36,6 +37,8 @@ SITES = {
         "api": { "name": "api", "scheme": TAIGA_SITES_SCHEME, "domain": TAIGA_SITES_DOMAIN },
         "front": { "name": "front", "scheme": TAIGA_SITES_SCHEME, "domain": f"{ TAIGA_SITES_DOMAIN }{ FORCE_SCRIPT_NAME }" }
 }
+
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "en-us")
 
 INSTANCE_TYPE = "D"
 
