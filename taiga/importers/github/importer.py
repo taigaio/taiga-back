@@ -202,7 +202,7 @@ class GithubImporter:
 
         import_service.create_memberships(options.get('users_bindings', {}), project, self._user, "github")
 
-        for milestone in self._client.get("/repos/{}/milestones".format(repo['full_name'])):
+        for milestone in self._client.get("/repos/{}/milestones".format(repo['full_name']), {"state": "all"}):
             taiga_milestone = Milestone.objects.create(
                 name=milestone['title'],
                 owner=users_bindings.get(milestone.get('creator', {}).get('id', None), self._user),
@@ -240,11 +240,18 @@ class GithubImporter:
                 if options.get('keep_external_reference', False):
                     external_reference = ["github", issue['html_url']]
 
+                milestone = None
+                if issue['milestone']:
+                    try:
+                        milestone = project.milestones.get(name=issue['milestone']['title'])
+                    except Milestone.DoesNotExist:
+                        milestone = None
+
                 us = UserStory.objects.create(
                     ref=issue['number'],
                     project=project,
                     owner=users_bindings.get(issue['user']['id'], self._user),
-                    milestone=project.milestones.get(name=issue['milestone']['title']) if issue['milestone'] else None,
+                    milestone=milestone,
                     assigned_to=assigned_to,
                     status=project.us_statuses.get(slug=issue['state']),
                     kanban_order=issue['number'],

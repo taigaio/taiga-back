@@ -4,6 +4,10 @@
 
 - ...
 
+## 6.7.3 (unreleased)
+
+- GitHub Importer: fix import error with issues associated to a closed milestone.
+
 ## 6.7.2 (2024-02-16)
 
 - Docker: DEBUG and LANGUAGE_CODE settings are customizable.
