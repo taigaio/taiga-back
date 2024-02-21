@@ -9,6 +9,7 @@
 - GitHub Importer: fix import error with issues associated to a closed milestone.
 - Trello Importer: fix import error with attachemts without owner.
 - Trello Importer: fix import error when attachemt name ends with '/'.
+- User Story Report: add epic refs.
 
 ## 6.7.2 (2024-02-16)
 

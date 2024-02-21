@@ -510,7 +510,7 @@ def userstories_to_csv(project, queryset):
                    "client_requirement", "team_requirement", "attachments",
                    "generated_from_issue", "generated_from_task", "from_task_ref",
                    "external_reference", "tasks", "tags", "watchers", "voters",
-                   "due_date", "due_date_reason"]
+                   "due_date", "due_date_reason", "epics"]
 
     custom_attrs = project.userstorycustomattributes.all()
     for custom_attr in custom_attrs:
@@ -520,6 +520,7 @@ def userstories_to_csv(project, queryset):
                                          "role_points__points",
                                          "role_points__role",
                                          "tasks",
+                                         "epics",
                                          "attachments",
                                          "custom_attributes_values")
     queryset = queryset.select_related("milestone",
@@ -582,6 +583,7 @@ def userstories_to_csv(project, queryset):
             "voters": us.total_voters,
             "due_date": us.due_date,
             "due_date_reason": us.due_date_reason,
+            "epics": ",".join([str(epic.ref) for epic in us.epics.all()]),
         }
 
         us_role_points_by_role_id = {us_rp.role.id: us_rp.points.value for
