@@ -4,7 +4,7 @@
 
 - ...
 
-## 6.7.3 (unreleased)
+## 6.7.3 (2024-02-21)
 
 - GitHub Importer: fix import error with issues associated to a closed milestone.
 - Trello Importer: fix import error with attachemts without owner.
