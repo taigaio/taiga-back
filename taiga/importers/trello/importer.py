@@ -343,7 +343,7 @@ class TrelloImporter:
             data = self._client.download(attachment['url'])
 
             att = Attachment(
-                owner=users_bindings.get(attachment['idMember'], self._user),
+                owner=users_bindings.get(attachment['idMember'], self._user) or self._user,
                 project=us.project,
                 content_type=ContentType.objects.get_for_model(UserStory),
                 object_id=us.id,
@@ -352,7 +352,9 @@ class TrelloImporter:
                 created_date=attachment['date'],
                 is_deprecated=False,
             )
-            att.attached_file.save(attachment['name'], ContentFile(data), save=True)
+
+            file_name = attachment['name'][:-1] if attachment['name'].endswith('/') else attachment['name']
+            att.attached_file.save(file_name, ContentFile(data), save=True)
 
             UserStory.objects.filter(id=us.id, created_date__gt=attachment['date']).update(
                 created_date=attachment['date']
@@ -452,19 +454,19 @@ class TrelloImporter:
         elif action['type'] == "convertToCardFromCheckItem":
             UserStory.objects.filter(id=us.id, created_date__gt=action['date']).update(
                 created_date=action['date'],
-                owner=users_bindings.get(action["idMemberCreator"], self._user)
+                owner=users_bindings.get(action["idMemberCreator"], self._user) or self._user
             )
             result['hist_type'] = HistoryType.create
         elif action['type'] == "copyCommentCard":
             UserStory.objects.filter(id=us.id, created_date__gt=action['date']).update(
                 created_date=action['date'],
-                owner=users_bindings.get(action["idMemberCreator"], self._user)
+                owner=users_bindings.get(action["idMemberCreator"], self._user) or self._user
             )
             result['hist_type'] = HistoryType.create
         elif action['type'] == "createCard":
             UserStory.objects.filter(id=us.id, created_date__gt=action['date']).update(
                 created_date=action['date'],
-                owner=users_bindings.get(action["idMemberCreator"], self._user)
+                owner=users_bindings.get(action["idMemberCreator"], self._user) or self._user
             )
             result['hist_type'] = HistoryType.create
         elif action['type'] == "updateCard":
