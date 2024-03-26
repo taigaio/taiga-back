@@ -1,6 +1,6 @@
 # Update dependencies
 
-We can check [Dependabot](https://github.com/kaleidos-ventures/taiga-back/security/dependabot) to keep updated on dependencies alerts.
+We can check [Dependabot](https://github.com/taigaio/taiga-back/security/dependabot) to keep updated on dependencies alerts.
 
 To update major dependencies:
 - edit `requirements.in` and `requirements-devel.in` to update the version scopes if needed

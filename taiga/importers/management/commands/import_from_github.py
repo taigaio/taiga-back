@@ -18,7 +18,7 @@ class Command(BaseCommand):
         parser.add_argument('--token', dest="token", type=str,
                             help='Auth token')
         parser.add_argument('--project-id', dest="project_id", type=str,
-                            help='Project ID or full name (ex: kaleidos-ventures/taiga-back)')
+                            help='Project ID or full name (ex: taigaio/taiga-back)')
         parser.add_argument('--template', dest='template', default="kanban",
                             help='template to use: scrum or kanban (default kanban)')
         parser.add_argument('--type', dest='type', default="user_stories",
