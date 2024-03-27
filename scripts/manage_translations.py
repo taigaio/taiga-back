@@ -3,7 +3,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# Copyright (c) 2021-present Kaleidos Ventures SL
+# Copyright (c) 2021-present Kaleidos INC
 
 # NOTE: This script is based on django's manage_translations.py script
 #       (https://github.com/django/django/blob/master/scripts/manage_translations.py)
