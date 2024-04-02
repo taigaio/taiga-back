@@ -475,7 +475,11 @@ class TrelloImporter:
                 result['change_new']["description"] = str(action['data']['card'].get('desc', ''))
                 result['change_old']["description_html"] = mdrender(us.project, str(action['data']['old'].get('desc', '')))
                 result['change_new']["description_html"] = mdrender(us.project, str(action['data']['card'].get('desc', '')))
-            if 'idList' in action['data']['old']:
+            if (
+                'idList' in action['data']['old']
+                and action["data"]["old"]["idList"] in statuses
+                and action["data"]["card"]["idList"] in statuses
+            ):
                 old_status_name = statuses[action['data']['old']['idList']]['name']
                 result['change_old']["status"] = us.project.us_statuses.get(name=old_status_name).id
                 new_status_name = statuses[action['data']['card']['idList']]['name']
