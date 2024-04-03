@@ -43,7 +43,9 @@ LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "en-us")
 
 INSTANCE_TYPE = "D"
 
-WEBHOOKS_ENABLED = True
+WEBHOOKS_ENABLED = os.getenv('WEBHOOKS_ENABLED', 'True') == 'True'
+WEBHOOKS_ALLOW_PRIVATE_ADDRESS = os.getenv('WEBHOOKS_ALLOW_PRIVATE_ADDRESS', 'False') == 'True'
+WEBHOOKS_ALLOW_REDIRECTS = os.getenv('WEBHOOKS_ALLOW_REDIRECTS', 'False') == 'True'
 
 # Setting DEFAULT_PROJECT_SLUG_PREFIX to false
 # removes the username from project slug
