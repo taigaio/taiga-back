@@ -33,16 +33,16 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-03-03 06:35+0000\n"
-"Last-Translator: 修昊 <svtter@163.com>\n"
+"PO-Revision-Date: 2024-03-31 15:01+0000\n"
+"Last-Translator: \"ReinWD (ReinWD)\" <reinwdd@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "taiga/taiga-back/zh_Hans/>\n"
-"Language: zh-CN\n"
+"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.16.2-dev\n"
+"X-Generator: Weblate 5.5-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -62,46 +62,40 @@ msgstr "不合法的注册类型"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
-msgstr ""
+msgstr "校验头必须包含两个空格分隔的值"
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "口令类型不匹配任何可用的口令类型"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "口令未包含任何可用的用户信息"
 
 #: taiga/auth/authentication.py:147
-#, fuzzy
-#| msgid "Not found"
 msgid "User not found"
-msgstr "找不到"
+msgstr "找不到用户"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "用户不活跃"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
-msgstr ""
+msgstr "未知算法类型 '{}'"
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
-msgstr ""
+msgstr "您必须安装加密组件以使用'{}'。"
 
 #: taiga/auth/backends.py:128
-#, fuzzy
-#| msgid "Invalid role for the project"
 msgid "Invalid algorithm specified"
-msgstr "此角色在该项目无效"
+msgstr "无效的算法类型"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is invalid or expired"
-msgstr "令牌无效"
+msgstr "令牌无效或已经过期"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
@@ -119,7 +113,7 @@ msgstr "不合法的全名"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "给出的凭证未匹配到任何可用账户"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
@@ -149,55 +143,43 @@ msgstr "用户"
 
 #: taiga/auth/token_denylist/admin.py:117 taiga/telemetry/models.py:21
 msgid "created at"
-msgstr ""
+msgstr "创建于"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "过期于"
 
 #: taiga/auth/token_denylist/apps.py:74
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token Denylist"
-msgstr "令牌无效"
+msgstr "令牌黑名单"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "无法创建无类型或有效期的令牌"
 
 #: taiga/auth/tokens.py:127
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no id"
-msgstr "令牌已经过期"
+msgstr "令牌无对应id"
 
 #: taiga/auth/tokens.py:138
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no type"
-msgstr "令牌已经过期"
+msgstr "令牌无类型"
 
 #: taiga/auth/tokens.py:141
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has wrong type"
-msgstr "令牌已经过期"
+msgstr "令牌类型错误"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "令牌缺失声明: '{}'"
 
 #: taiga/auth/tokens.py:182
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token '{}' claim has expired"
-msgstr "令牌已经过期"
+msgstr "令牌声明 '{}' 已经过期"
 
 #: taiga/auth/tokens.py:225
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is denylisted"
-msgstr "令牌无效"
+msgstr "令牌在黑名单内"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
@@ -918,6 +900,18 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"用户 %(user)s 您好：\n"
+"\n"
+"%(error_message)s\n"
+"您的项目 %(project)s 未能成功导出。\n"
+"\n"
+"Taiga 系统管理员已收到通知。\n"
+"\n"
+"请重试或联系您的支持团队：%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:9
 #, python-format
@@ -940,6 +934,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>您好， %(user)s</p>\n"
+"    <p>您的项目未能成功导入。</p>\n"
+"    <p>项目%(product_name)s 的管理员已经收到通知。<br/> "
+"请重试或者联系您的支持团队：\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>错误详细信息：</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:9
@@ -959,6 +965,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"您好，%(user)s\n"
+"\n"
+"%(error_message)s\n"
+"\n"
+"您的项目未能成功导入\n"
+"\n"
+"%(product_name)s的系统管理员已经收到通知。\n"
+"\n"
+"请重试或者联系您的支持团队：%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:9
@@ -978,6 +997,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>项目dump已成功导入</h1>\n"
+"    <p>您好，%(user)s</p>\n"
+"    <h3>您的项目dump已成功导入</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">前往您的项目%(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/load_dump-body-text.jinja:9
 #, python-format
@@ -994,6 +1021,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"您好，%(user)s\n"
+"\n"
+"您的项目dump已经成功导入。\n"
+"\n"
+"您可以通过以下链接访问您的项目 %(project)s \n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:9
 #, python-format
@@ -1012,19 +1050,19 @@ msgstr "内容非法. 正确格式 {\"key\": \"value\",...}"
 #: taiga/export_import/validators/validators.py:188
 #: taiga/projects/custom_attributes/validators.py:112
 msgid "It contains invalid custom fields."
-msgstr ""
+msgstr "它包含无效的自定义字段。"
 
 #: taiga/export_import/validators/validators.py:268
 #: taiga/projects/validators.py:43
 msgid "Duplicated name"
-msgstr ""
+msgstr "命名重复"
 
 #: taiga/export_import/validators/validators.py:303
 #, python-format
 msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
-msgstr ""
+msgstr "存在一个史诗包含外部项目（%(project)s），无法导入"
 
 #: taiga/external_apps/api.py:32 taiga/external_apps/api.py:59
 #: taiga/external_apps/api.py:71
@@ -1134,12 +1172,15 @@ msgstr "更多信息"
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:38
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:33
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:26
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "        <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:9
 #, python-format
@@ -1169,12 +1210,15 @@ msgstr " - 更多信息："
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:26
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:20
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:25
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/feedback/templates/emails/feedback_notification-subject.jinja:9
 #, python-format
@@ -1187,7 +1231,7 @@ msgstr ""
 
 #: taiga/hooks/api.py:43
 msgid "The payload is not valid json"
-msgstr ""
+msgstr "payload内容不是一个有效的json"
 
 #: taiga/hooks/api.py:52 taiga/projects/epics/api.py:143
 #: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:205
@@ -1207,6 +1251,10 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}]({user_url} \"查看{user_name}的 {platform} 档案\") 提到 "
+"[{platform}#{number}]({comment_url} \"前往该评论\"):\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:75
 #, python-brace-format
