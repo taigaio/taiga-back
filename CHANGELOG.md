@@ -2,7 +2,11 @@
 
 ## 6.8.0 (unreleased)
 
-- ...
+- Changed the namespace of the repositories, from kaleidos-ventures to taigaio:q
+- Fix SECURE_PROXY_SSL_HEADER, adjust header name to match standard (thanks [@ChriFo](https://github.com/ChriFo))
+- Fix error appliying migrations: "resource module not found" (thanks [@VirajAdiga](https://github.com/VirajAdiga))
+- Allow to disable the use of server-side cursors to support pgbouncer (thanks [@ordinary-dev](https://github.com/ordinary-dev))
+- Inmproved RabbitMQ host configuration for Taiga events and asynchrous tasks (thanks [@iriseden](https://github.com/iriseden))
 
 ## 6.7.3 (2024-02-21)
 
