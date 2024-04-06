@@ -37,7 +37,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-10-20 04:21+0000\n"
+"PO-Revision-Date: 2024-04-07 13:01+0000\n"
 "Last-Translator: delubio lopes de paula <delubiod@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "taiga/taiga-back/pt_BR/>\n"
@@ -46,7 +46,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.1\n"
+"X-Generator: Weblate 5.5-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -63,7 +63,7 @@ msgstr "Você deve aceitar os termos do serviço e a política de privacidade"
 
 #: taiga/auth/api.py:140
 msgid "invalid registration type"
-msgstr ""
+msgstr "tipo de registro inválido"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
@@ -177,7 +177,7 @@ msgstr "O token tem o tipo errado"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "O token não '{}' tem declaração"
 
 #: taiga/auth/tokens.py:182
 #, fuzzy
@@ -520,6 +520,14 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">Configure notificações por e-"
+"mail ou cancele a inscrição</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">Suporte Taiga</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >Contate-nos</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:26
 msgid "Follow us on Twitter"
@@ -567,11 +575,11 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:56
 msgid "Host access error"
-msgstr ""
+msgstr "Erro de acesso ao host (a hospedagem)"
 
 #: taiga/base/utils/urls.py:62
 msgid "IP Address error"
-msgstr ""
+msgstr "Erro de endereço IP"
 
 #: taiga/events/events.py:109
 msgid "User story created"
@@ -684,7 +692,7 @@ msgstr "erro ao importar lista de atributos do projeto"
 
 #: taiga/export_import/services/store.py:856
 msgid "error importing default project attribute values"
-msgstr ""
+msgstr "erro ao importar valores de atributos padrão do projeto"
 
 #: taiga/export_import/services/store.py:867
 msgid "error importing custom attributes"
@@ -835,6 +843,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Descarte de projeto gerado</h1>\n"
+"    <p>Olá %(user)s,</p>\n"
+"    <h3>Seu descarte do projeto %(project)s foi gerado corretamente.</h3>\n"
+"    <p>Você pode baixá-lo aqui:</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Download the dump file\""
+">Baixe o arquivo descartado</a>\n"
+"    <p>Este arquivo será excluído em %(deletion_date)s.</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/dump_project-body-text.jinja:9
 #, python-format
@@ -852,6 +870,18 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá%(user)s,\n"
+"\n"
+"Seu descarte do projeto %(project)s foi gerado corretamente. Você pode baixá-"
+"lo aqui:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Este arquivo será excluído em %(deletion_date)s.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:9
 #, python-format
@@ -872,6 +902,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Olá%(user)s,</p>\n"
+"    <p>Seu Projeto%(project)s Não foi exportado corretamente.</p>\n"
+"    <p>Os administradores do sistema Taiga foram informados.<br/> Por favor, "
+"tente novamente ou entre em contato com a equipe de suporte no\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:9
 #, python-format
@@ -889,6 +929,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"Seu projeto %(project)s não foi exportado corretamente.\n"
+"\n"
+"Os administradores do sistema Taiga foram informados.\n"
+"\n"
+"Por favor, tente novamente ou entre em contato com a equipe de suporte no "
+"%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:9
 #, python-format
@@ -911,6 +964,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>Olá %(user)s,</p>\n"
+"    <p>Seu projeto não foi importado corretamente.</p>\n"
+"    <p>Os%(product_name)s os administradores do sistema foram informados.<br/"
+"> Por favor, tente novamente ou entre em contato com a equipe de suporte no\n"
+"       <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>Detalhes do erro</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:9
@@ -930,6 +995,20 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"\n"
+"Seu projeto não foi importado corretamente.\n"
+"\n"
+"Os %(product_name)s administradores do sistema foram informados.\n"
+"\n"
+"Por favor, tente novamente ou entre em contato com a equipe de suporte no "
+"%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:9
@@ -949,6 +1028,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Projeto descartado importado</h1>\n"
+"    <p>Olá %(user)s,</p>\n"
+"    <h3>Seu projeto descartado foi importado corretamente.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
+"s\">Vá para %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/load_dump-body-text.jinja:9
 #, python-format
@@ -965,6 +1052,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá %(user)s,\n"
+"\n"
+"Seu projeto descartado foi importado corretamente.\n"
+"\n"
+"Você pode ver seu projeto %(project)s aqui:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:9
 #, python-format
@@ -983,12 +1081,12 @@ msgstr "conteúdo inválido. Deve ser  {\"key\": \"value\",...}"
 #: taiga/export_import/validators/validators.py:188
 #: taiga/projects/custom_attributes/validators.py:112
 msgid "It contains invalid custom fields."
-msgstr ""
+msgstr "Contém campos personalizados inválidos."
 
 #: taiga/export_import/validators/validators.py:268
 #: taiga/projects/validators.py:43
 msgid "Duplicated name"
-msgstr ""
+msgstr "Nome duplicado"
 
 #: taiga/export_import/validators/validators.py:303
 #, python-format
@@ -996,6 +1094,8 @@ msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
+"Um \"Epic\" tem uma história relacionada de um projeto externo %(project)s e "
+"não pode ser importado"
 
 #: taiga/external_apps/api.py:32 taiga/external_apps/api.py:59
 #: taiga/external_apps/api.py:71
@@ -1158,7 +1258,7 @@ msgstr ""
 
 #: taiga/hooks/api.py:43
 msgid "The payload is not valid json"
-msgstr ""
+msgstr "O \"payload\" não é uma json válida"
 
 #: taiga/hooks/api.py:52 taiga/projects/epics/api.py:143
 #: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:205
@@ -1178,6 +1278,10 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}]({user_url} \"Ver {user_name}'s {platform} perfil\") vá "
+"[{platform}#{number}]({comment_url} \"para o comentário\"):\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:75
 #, python-brace-format
@@ -1200,6 +1304,9 @@ msgid ""
 "Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema criado por [{user_name}]({user_url} \"Veja o perfil  "
+"{user_name}'s{platform}} \") da [{platform}#{number}]({url} \"Ir para o "
+"problema\")."
 
 #: taiga/hooks/event_hooks.py:138
 #, python-brace-format
@@ -1216,7 +1323,7 @@ msgstr ""
 #: taiga/hooks/event_hooks.py:150
 #, python-brace-format
 msgid "Issue modified from {platform}."
-msgstr ""
+msgstr "Problema modificado na{platform}."
 
 #: taiga/hooks/event_hooks.py:158
 #, python-brace-format
@@ -1228,7 +1335,7 @@ msgstr ""
 #: taiga/hooks/event_hooks.py:162
 #, python-brace-format
 msgid "Issue closed from {platform}."
-msgstr ""
+msgstr "Problema encerrado na {platform}."
 
 #: taiga/hooks/event_hooks.py:170
 #, python-brace-format
@@ -1240,7 +1347,7 @@ msgstr ""
 #: taiga/hooks/event_hooks.py:174
 #, python-brace-format
 msgid "Issue reopened from {platform}."
-msgstr ""
+msgstr "Problema reaberto na {platform}."
 
 #: taiga/hooks/event_hooks.py:269
 msgid "Invalid issue information"
