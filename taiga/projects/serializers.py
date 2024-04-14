@@ -20,6 +20,7 @@ from taiga.permissions.services import is_project_admin, is_project_owner
 
 from . import services
 from .notifications.choices import NotifyLevel
+from .userstories.serializers import UserStoryLightSerializer, UserStoryListSerializer
 
 
 ######################################################
@@ -441,6 +442,9 @@ class ProjectDetailSerializer(ProjectSerializer):
     transfer_token = Field()
     milestones = MethodField()
 
+    # User stories related to the project
+    user_stories = MethodField()
+
     def get_milestones(self, obj):
         assert hasattr(obj, "milestones_attr"), "instance must have a milestones_attr attribute"
         if obj.milestones_attr is None:
@@ -508,6 +512,9 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     def get_max_memberships(self, obj):
         return services.get_max_memberships_for_project(obj)
+
+    def get_user_stories(self, obj):
+        return UserStoryLightSerializer(obj.user_stories.all(), many=True).data
 
 
 class ProjectLightSerializer(serializers.LightSerializer):
