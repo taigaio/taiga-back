@@ -42,8 +42,8 @@ def check_if_project_privacy_can_be_changed(project):
                                                        user_id__isnull=False) |
                                                      Q(project_id=project.pk,  # current project members
                                                        user_id__isnull=False))
-                                             .order_by("user_id")
-                                             .distinct("user_id")
+                                             .values("user_id")
+                                             .distinct()
                                              .count()) # Just confirmed members
 
     current_memberships += (Membership.objects.filter(Q(project__is_private=not project.is_private,  # public/private members
@@ -51,8 +51,8 @@ def check_if_project_privacy_can_be_changed(project):
                                                         user_id__isnull=True) |
                                                       Q(project_id=project.pk,  # current project members
                                                         user_id__isnull=True))
-                                              .order_by("email")
-                                              .distinct("email")
+                                              .values("email")
+                                              .distinct()
                                               .count()) # Just pending members
 
     if project.is_private:
@@ -90,14 +90,14 @@ def check_if_project_can_be_created_or_updated(project):
     current_memberships = (Membership.objects.filter(project__is_private=project.is_private,
                                                      project__owner_id=project.owner_id,
                                                      user_id__isnull=False)
-                                             .order_by("user_id")
-                                             .distinct("user_id")
+                                             .values("user_id")
+                                             .distinct()
                                              .count()) # Just confirmed members
     current_memberships += (Membership.objects.filter(project__is_private=project.is_private,
                                                       project__owner_id=project.owner_id,
                                                       user_id__isnull=True)
-                                              .order_by("email")
-                                              .distinct("email")
+                                              .values("email")
+                                              .distinct()
                                               .count()) # Pending members
 
     if project.is_private:
@@ -138,16 +138,16 @@ def check_if_project_can_be_transfered(project, new_owner):
                                                        user_id__isnull=False) |
                                                      Q(project_id=project.pk,  # current project members
                                                        user_id__isnull=False))
-                                             .order_by("user_id")
-                                             .distinct("user_id")
+                                             .values("user_id")
+                                             .distinct()
                                              .count())  # Just confirmed members
     current_memberships += (Membership.objects.filter(Q(project__is_private=project.is_private,  # public/private members
                                                         project__owner_id=new_owner.id,
                                                         user_id__isnull=True) |
                                                       Q(project_id=project.pk,  # current project members
                                                         user_id__isnull=True))
-                                             .order_by("email")
-                                             .distinct("email")
+                                             .values("email")
+                                             .distinct()
                                              .count())  # Pending members
 
     if project.is_private:
@@ -185,14 +185,14 @@ def check_if_project_can_be_duplicate(project, new_owner, new_is_private, new_us
     actual_user_id_members = (Membership.objects.filter(project__is_private=new_is_private,
                                                         project__owner_id=new_owner.id,
                                                         user_id__isnull=False)
-                                                .order_by("user_id")
-                                                .distinct("user_id")
+                                                .values("user_id")
+                                                .distinct()
                                                 .values_list("user__id", flat=True))
     total_pending_members = (Membership.objects.filter(project__is_private=new_is_private,
                                                        project__owner_id=new_owner.id,
                                                        user_id__isnull=True)
-                                               .order_by("email")
-                                               .distinct("email")
+                                               .values("email")
+                                               .distinct()
                                                .count())
 
     current_memberships = len(
@@ -237,14 +237,14 @@ def check_if_project_is_out_of_owner_limits(project):
     current_memberships = (Membership.objects.filter(project__is_private=project.is_private,
                                                      project__owner_id=project.owner_id,
                                                      user_id__isnull=False)
-                                             .order_by("user_id")
-                                             .distinct("user_id")
+                                             .values("user_id")
+                                             .distinct()
                                              .count()) # Current confirmed members
     current_memberships += (Membership.objects.filter(project__is_private=project.is_private,
                                                       project__owner_id=project.owner_id,
                                                       user_id__isnull=True)
-                                              .order_by("email")
-                                              .distinct("email")
+                                              .values("email")
+                                              .distinct()
                                               .count()) # Pending members
 
     if project.is_private:

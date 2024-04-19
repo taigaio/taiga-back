@@ -179,13 +179,13 @@ class UserAdmin(DjangoUserAdmin):
         accepted = (Membership.objects.filter(project__is_private=True,
                                           project__owner_id=obj.id,
                                           user_id__isnull=False)
-                                  .order_by("user_id")
-                                  .distinct("user_id").count())
+                                  .values("user_id")
+                                  .distinct().count())
         pending = (Membership.objects.filter(project__is_private=True,
                                           project__owner_id=obj.id,
                                           user_id__isnull=True)
-                                  .order_by("email")
-                                  .distinct("email").count())
+                                  .values("email")
+                                  .distinct().count())
         total = pending + accepted
         return mark_safe(f"{total}{SEPARATOR}<i>{accepted} accepted</i>{SEPARATOR}<i>{pending} pending</i>")
 
@@ -203,13 +203,13 @@ class UserAdmin(DjangoUserAdmin):
         accepted =  (Membership.objects.filter(project__is_private=False,
                                           project__owner_id=obj.id,
                                           user_id__isnull=False)
-                                  .order_by("user_id")
-                                  .distinct("user_id").count())
+                                  .values("user_id")
+                                  .distinct().count())
         pending = (Membership.objects.filter(project__is_private=False,
                                           project__owner_id=obj.id,
                                           user_id__isnull=True)
-                                  .order_by("email")
-                                  .distinct("email").count())
+                                  .values("email")
+                                  .distinct().count())
         total = pending + accepted
         return mark_safe(f"{total}{SEPARATOR}<i>{accepted} accepted</i>{SEPARATOR}<i>{pending} pending</i>")
 
