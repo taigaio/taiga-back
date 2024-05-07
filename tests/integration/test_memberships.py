@@ -731,15 +731,6 @@ def test_api_edit_membership(client):
     assert response.status_code == 200
 
 
-def test_api_edit_membership(client):
-    membership = f.MembershipFactory(is_admin=True)
-    client.login(membership.user)
-    url = reverse("memberships-detail", args=[membership.id])
-    data = {"username": "new@email.com"}
-    response = client.json.patch(url, json.dumps(data))
-    assert response.status_code == 200
-
-
 def test_api_change_owner_membership_to_no_admin_return_error(client):
     project = f.ProjectFactory()
     membership_owner = f.MembershipFactory(project=project, user=project.owner, is_admin=True)
