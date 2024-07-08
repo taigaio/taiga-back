@@ -813,6 +813,7 @@ def _get_userstories_assigned_users(project, queryset):
                   WHERE {where} AND "userstories_userstory"."id" NOT IN (
                     SELECT "userstories_userstory_assigned_users"."userstory_id" FROM
                       "userstories_userstory_assigned_users"
+                      WHERE "userstories_userstory_assigned_users"."userstory_id" = "userstories_userstory"."id"
                   ) AND "userstories_userstory"."assigned_to_id" IS NULL
                GROUP BY "username";
     """.format(where=where)
