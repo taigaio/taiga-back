@@ -141,6 +141,9 @@ class CustomAttributesValuesWebhookSerializerMixin(serializers.LightSerializer):
         raise NotImplementedError()
 
     def get_custom_attributes_values(self, obj):
+        if not obj:
+            return None
+
         def _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values):
             ret = {}
             for attr in custom_attributes:
