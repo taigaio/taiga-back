@@ -48,6 +48,20 @@ class TestUserStories:
 
         assert neighbors.right == us1
 
+    def test_results_set_left_repeat_id(self):
+        project = f.ProjectFactory.create()
+
+        us1 = f.UserStoryFactory.create(project=project)
+        f.RolePointsFactory.create(user_story=us1)
+        f.RolePointsFactory.create(user_story=us1)
+
+        us2 = f.UserStoryFactory.create(project=project)
+        f.RolePointsFactory.create(user_story=us2)
+
+        neighbors = n.get_neighbors(us2, results_set=UserStory.objects.get_queryset().filter(role_points__isnull=False))
+
+        assert neighbors.left == us1
+
     def test_filtered_by_tags(self):
         tag_names = ["test"]
         project = f.ProjectFactory.create()

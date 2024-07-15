@@ -64,7 +64,7 @@ def get_neighbors(obj, results_set=None):
     right_object_id = row[3]
 
     try:
-        left = results_set.get(id=left_object_id)
+        left = results_set.filter(id=left_object_id).first()
     except ObjectDoesNotExist:
         left = None
 
