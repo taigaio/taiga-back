@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-07-23 09:42+0000\n"
+"PO-Revision-Date: 2024-07-24 14:09+0000\n"
 "Last-Translator: Grzegorz Kawka-Osik <grzegorz@kawka-osik.eu>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "pl/>\n"
@@ -142,7 +142,7 @@ msgstr "Lista zablokowanych tokenów"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "Nie można utworzyć tokenu bez typu lub czasu trwania"
 
 #: taiga/auth/tokens.py:127
 #, fuzzy
@@ -151,32 +151,24 @@ msgid "Token has no id"
 msgstr "Token wygasł"
 
 #: taiga/auth/tokens.py:138
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has no type"
-msgstr "Token wygasł"
+msgstr "Token nie ma typu"
 
 #: taiga/auth/tokens.py:141
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token has wrong type"
-msgstr "Token wygasł"
+msgstr "Token ma zły typ"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "Token nie posiada roszczenia '{}'"
 
 #: taiga/auth/tokens.py:182
-#, fuzzy
-#| msgid "Token has expired"
 msgid "Token '{}' claim has expired"
-msgstr "Token wygasł"
+msgstr "Roszczenie '{}' w tokenie wygasło"
 
 #: taiga/auth/tokens.py:225
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is denylisted"
-msgstr "Nieprawidłowy token."
+msgstr "Token jest na liście zablokowanych"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
@@ -189,57 +181,56 @@ msgstr "Nieprawidłowa wartość."
 #: taiga/base/api/fields.py:473
 #, python-format
 msgid "'%s' value must be either True or False."
-msgstr "'%s' wartość musi przyjąć True albo False,"
+msgstr "'%s' wartość musi przyjąć True albo False."
 
 #: taiga/base/api/fields.py:538
 msgid ""
 "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
 msgstr ""
-"Podaj prawidłowy 'slug' zawierający litery, cyfry, podkreślenia lub myślniki."
+"Podaj prawidłowy 'skrót' zawierający litery, cyfry, podkreślenia lub "
+"myślniki."
 
 #: taiga/base/api/fields.py:553
 #, python-format
 msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
-"Dokonał właściwego wyboru. Wartość %(value)s nie jest jedną z dostępnych "
-"opcji."
+msgstr "Wybierz poprawną wartość. %(value)s nie jest jedną z dostępnych opcji."
 
 #: taiga/base/api/fields.py:627
 msgid "You email domain is not allowed"
-msgstr "Twoja domena email jest niedozwolona."
+msgstr "Twoja domena email jest niedozwolona"
 
 #: taiga/base/api/fields.py:636
 msgid "Enter a valid email address."
-msgstr "Podaj właściwy adres email."
+msgstr "Podaj poprawny adres email."
 
 #: taiga/base/api/fields.py:678
 #, python-format
 msgid "Date has wrong format. Use one of these formats instead: %s"
-msgstr "Zły format. Użyj jednego z tych formatów: %s"
+msgstr "Zły format daty. Użyj jednego z tych formatów: %s"
 
 #: taiga/base/api/fields.py:742
 #, python-format
 msgid "Datetime has wrong format. Use one of these formats instead: %s"
-msgstr "Zły format. Użyj jednego z tych formatów: %s"
+msgstr "Zły format daty. Użyj jednego z tych formatów: %s"
 
 #: taiga/base/api/fields.py:812
 #, python-format
 msgid "Time has wrong format. Use one of these formats instead: %s"
-msgstr "Zły format. Użyj jednego z tych formatów: %s"
+msgstr "Zły format czasu. Użyj jednego z tych formatów: %s"
 
 #: taiga/base/api/fields.py:869
 msgid "Enter a whole number."
-msgstr "Wpisz cały numer"
+msgstr "Wpisz cały numer."
 
 #: taiga/base/api/fields.py:870 taiga/base/api/fields.py:923
 #, python-format
 msgid "Ensure this value is less than or equal to %(limit_value)s."
-msgstr "Upewnij się, że wartość jest mniejsza lub równa od %(limit_value)s."
+msgstr "Upewnij się, że wartość jest mniejsza lub równa %(limit_value)s."
 
 #: taiga/base/api/fields.py:871 taiga/base/api/fields.py:924
 #, python-format
 msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr "Upewnij się, że wartość jest większa lub równa od %(limit_value)s."
+msgstr "Upewnij się, że wartość jest większa lub równa %(limit_value)s."
 
 #: taiga/base/api/fields.py:901
 #, python-format
