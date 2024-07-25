@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-07-24 14:09+0000\n"
+"PO-Revision-Date: 2024-07-26 13:09+0000\n"
 "Last-Translator: Grzegorz Kawka-Osik <grzegorz@kawka-osik.eu>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "pl/>\n"
@@ -431,7 +431,7 @@ msgstr "Nie odnaleziono."
 
 #: taiga/base/exceptions.py:145
 msgid "Method not supported for this endpoint."
-msgstr "Metoda nie wspierana  dla tej końcówki."
+msgstr "Metoda nie wspierana dla tej końcówki."
 
 #: taiga/base/exceptions.py:153 taiga/base/exceptions.py:161
 msgid "Wrong arguments."
@@ -456,7 +456,7 @@ msgstr "Nie ma miejsca na więcej projektów."
 #: taiga/base/fields.py:77
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s nie jest listą"
 
 #: taiga/base/filters.py:94 taiga/base/filters.py:542
 msgid "Error in filter params types."
@@ -483,6 +483,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>Witaj w %(product_name)s, "
+"otwartoźródłowym narzedziu do zarządznaia projektami w metodoligi Agile</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:15
 #, python-format
@@ -496,6 +500,14 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">Skonfiguruj powiadomienia "
+"email albo anuluj subskrypcję</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"%(support_url)s\">Wsparcie Taiga</a>\n"
+"                &nbsp;&bull;&nbsp;\n"
+"                <a href=\"mailto:%(support_email)s\" >Kontakt</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:26
 msgid "Follow us on Twitter"
@@ -503,7 +515,7 @@ msgstr "Obserwuj nas na Twitterze"
 
 #: taiga/base/templates/emails/includes/footer.jinja:28
 msgid "Get the code on GitHub"
-msgstr "Pobierz kog z GitHub"
+msgstr "Pobierz kod z GitHub"
 
 #: taiga/base/templates/emails/updates-body-html.jinja:14
 msgid "[Taiga] Updates"
@@ -543,27 +555,27 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:56
 msgid "Host access error"
-msgstr ""
+msgstr "Błąd dostępu do hosta"
 
 #: taiga/base/utils/urls.py:62
 msgid "IP Address error"
-msgstr ""
+msgstr "Błąd adresu IP"
 
 #: taiga/events/events.py:109
 msgid "User story created"
-msgstr "Historyjka użytkownika utworzona"
+msgstr "Historia użytkownika utworzona"
 
 #: taiga/events/events.py:112
 msgid "User story changed"
-msgstr "Historyjka użytkownika zmodyfikowana"
+msgstr "Historia użytkownika zmodyfikowana"
 
 #: taiga/events/events.py:115
 msgid "User story deleted"
-msgstr "Historyjka użytkownika usunięta"
+msgstr "Historia użytkownika usunięta"
 
 #: taiga/events/events.py:117
 msgid "US #{} - {}"
-msgstr ""
+msgstr "US #{} - {}"
 
 #: taiga/events/events.py:120
 msgid "Task created"
