@@ -156,6 +156,49 @@ def test_api_create_bulk_members(client):
     assert(user_ids.issubset(response_user_ids))
 
 
+def test_api_create_bulk_members_with_same_email(client):
+    project = f.ProjectFactory()
+    tester = f.RoleFactory(project=project, name="Tester")
+    gamer = f.RoleFactory(project=project, name="Gamer")
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
+
+    url = reverse("memberships-bulk-create")
+
+    data = {
+        "project_id": project.id,
+        "bulk_memberships": [
+            {"role_id": tester.pk, "username": "test1@email.com"},
+            {"role_id": gamer.pk, "username": "test1@email.com"},
+        ],
+    }
+    client.login(project.owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "bulk_memberships" in response.data
+
+
+def test_api_create_bulk_members_exists_member(client):
+    project = f.ProjectFactory()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
+    f.MembershipFactory(project=project, email="test1@email.com")
+
+    url = reverse("memberships-bulk-create")
+
+    data = {
+        "project_id": project.id,
+        "bulk_memberships": [
+            {"role_id": tester.pk, "username": "test1@email.com"},
+        ],
+    }
+    client.login(project.owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "bulk_memberships" in response.data
+
+
 def test_api_create_bulk_members_invalid_user_id(client):
     project = f.ProjectFactory()
     john = f.UserFactory.create()
