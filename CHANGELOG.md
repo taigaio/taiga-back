@@ -1,8 +1,15 @@
 # Changelog
 
-## 6.8.1 (unreleased)
+## 6.8.2 (unreleased)
 
 - ...
+
+## 6.8.1 (2024-07-23)
+
+- Changes to queries to improve their performance.
+- Fix: webhooks error.
+- Fix: multiple object returned on neighbour.
+- Update locales.
 
 ## 6.8.0 (2024-04-03)
 

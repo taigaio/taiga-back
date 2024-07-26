@@ -16,18 +16,18 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2021-02-26 11:31+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
-"Language-Team: Polish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
-"language/pl/)\n"
+"PO-Revision-Date: 2024-07-23 09:42+0000\n"
+"Last-Translator: Grzegorz Kawka-Osik <grzegorz@kawka-osik.eu>\n"
+"Language-Team: Polish <https://hosted.weblate.org/projects/taiga/taiga-back/"
+"pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
-"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && ("
+"n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
 "n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Weblate 5.7-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -45,50 +45,44 @@ msgstr ""
 
 #: taiga/auth/api.py:140
 msgid "invalid registration type"
-msgstr "Niepoprawny typ rejestracji. "
+msgstr "Niepoprawny typ rejestracji"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
-msgstr ""
+msgstr "Nagłówek Authorization musi posiadać dwie wartości rozdzielone spacją"
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "Podany token nie jest poprawny dla żadnego typu tokenu"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "Token nie posiada informacji identyfikującej konto"
 
 #: taiga/auth/authentication.py:147
-#, fuzzy
-#| msgid "Not found"
 msgid "User not found"
-msgstr "Nie znaleziono"
+msgstr "Konto nie znalezione"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "Konto nieaktywne"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
-msgstr ""
+msgstr "Nierozpoznany typ algorytmu '{}'"
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
-msgstr ""
+msgstr "Cryptography musi być zainstalowane by używać {}."
 
 #: taiga/auth/backends.py:128
-#, fuzzy
-#| msgid "Invalid role for the project"
 msgid "Invalid algorithm specified"
-msgstr "Nieprawidłowa rola w projekcie"
+msgstr "Wskazano niepoprawny algorytm"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is invalid or expired"
-msgstr "Nieprawidłowy token."
+msgstr "Token jest nieprawidłowy lub wygasł"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
@@ -97,16 +91,16 @@ msgstr "Nieprawidłowa nazwa użytkownika"
 #: taiga/auth/serializers.py:85 taiga/users/validators.py:43
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
-msgstr "Wymagane. Maksymalnie 255 znaków. Litery, cyfry oraz /./-/_ "
+msgstr "Wymagane. Maksymalnie 255 znaków. Litery, cyfry oraz /./-/_"
 
 #: taiga/auth/serializers.py:92 taiga/auth/serializers.py:95
 #: taiga/users/validators.py:56 taiga/users/validators.py:59
 msgid "Invalid full name"
-msgstr "Nieprawidłowe dane imienia i nazwiska "
+msgstr "Nieprawidłowe dane imienia i nazwiska"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "Nie znaleziono aktywnego konta z takimi danymi logowania"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
@@ -114,11 +108,11 @@ msgstr "Nazwa użytkownika jest już używana."
 
 #: taiga/auth/services.py:139
 msgid "Email is already in use."
-msgstr "Ten adres email jest już używany"
+msgstr "Ten adres email jest już używany."
 
 #: taiga/auth/services.py:172
 msgid "User is already registered."
-msgstr "Użytkownik już zarejestrowany"
+msgstr "Użytkownik już zarejestrowany."
 
 #: taiga/auth/services.py:203
 msgid "Error while creating new user."
@@ -126,7 +120,7 @@ msgstr "Błąd w trakcie tworzenia nowego użytkownika."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr ""
+msgstr "jti"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
@@ -136,17 +130,15 @@ msgstr "użytkownik"
 
 #: taiga/auth/token_denylist/admin.py:117 taiga/telemetry/models.py:21
 msgid "created at"
-msgstr ""
+msgstr "utworzono"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "wygasa"
 
 #: taiga/auth/token_denylist/apps.py:74
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token Denylist"
-msgstr "Nieprawidłowy token."
+msgstr "Lista zablokowanych tokenów"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
