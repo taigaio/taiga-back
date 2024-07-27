@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-07-24 14:09+0000\n"
+"PO-Revision-Date: 2024-07-28 15:09+0000\n"
 "Last-Translator: Tobias  Peereboom <tobias@it-online.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "nl/>\n"
@@ -113,7 +113,6 @@ msgid "Error while creating new user."
 msgstr "Fout bij het aanmaken van een nieuwe gebruiker."
 
 #: taiga/auth/token_denylist/admin.py:103
-#, fuzzy
 msgid "jti"
 msgstr "jti"
 
@@ -721,7 +720,7 @@ msgstr "onverwachte fout tijdens het importeren van het project"
 #: taiga/projects/services/projects.py:156
 #: taiga/projects/services/projects.py:208
 msgid "You can't have more private projects"
-msgstr ""
+msgstr "Je kunt geen privéprojecten meer hebben"
 
 #: taiga/export_import/services/validations.py:36
 #: taiga/projects/services/projects.py:107
@@ -730,13 +729,15 @@ msgstr ""
 msgid ""
 "This project reaches your current limit of memberships for private projects"
 msgstr ""
+"Dit project bereikt uw huidige limiet voor lidmaatschappen voor "
+"privéprojecten"
 
 #: taiga/export_import/services/validations.py:40
 #: taiga/projects/services/projects.py:111
 #: taiga/projects/services/projects.py:161
 #: taiga/projects/services/projects.py:213
 msgid "You can't have more public projects"
-msgstr ""
+msgstr "Je kunt niet meer openbare projecten hebben"
 
 #: taiga/export_import/services/validations.py:41
 #: taiga/projects/services/projects.py:112
