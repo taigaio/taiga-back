@@ -8,6 +8,8 @@
 import codecs
 import uuid
 import gzip
+import logging
+
 
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
@@ -41,6 +43,7 @@ from . import throttling
 
 from taiga.base.api.utils import get_object_or_error
 
+logger = logging.getLogger(__name__)
 
 class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet):
     model = Project
@@ -333,7 +336,12 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         try:
             dump = json.load(reader(dump))
+            
         except Exception:
+            raise exc.WrongArguments(_("Invalid dump format"))
+
+        if not isinstance(dump, dict):
+            logger.error("trying a load_dump with a different format than dict: {0}, from user {1}".format(dump, request.user))
             raise exc.WrongArguments(_("Invalid dump format"))
 
         slug = dump.get('slug', None)

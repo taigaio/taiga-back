@@ -1222,6 +1222,26 @@ def test_valid_dump_import_error_without_enough_public_projects_slots(client, se
     assert Project.objects.filter(slug="public-project-without-slots").count() == 0
 
 
+def test_invalid_dump_json_list(client, settings):
+    user = f.UserFactory.create(max_public_projects=0)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps([{
+        "slug": "public-project-without-slots",
+        "name": "Valid project",
+        "description": "Valid project desc",
+        "is_private": False
+    }]), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 400
+
+
+
+
 def test_valid_dump_import_error_without_enough_private_projects_slots(client, settings):
     user = f.UserFactory.create(max_private_projects=0)
     client.login(user)
