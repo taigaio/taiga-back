@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-07-28 15:09+0000\n"
+"PO-Revision-Date: 2024-08-04 07:09+0000\n"
 "Last-Translator: Tobias  Peereboom <tobias@it-online.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "nl/>\n"
@@ -746,6 +746,8 @@ msgstr "Je kunt niet meer openbare projecten hebben"
 msgid ""
 "This project reaches your current limit of memberships for public projects"
 msgstr ""
+"Dit project bereikt uw huidige limiet voor lidmaatschappen voor openbare "
+"projecten"
 
 #: taiga/export_import/tasks.py:51 taiga/export_import/tasks.py:52
 msgid "Error generating project dump"
@@ -770,6 +772,21 @@ msgid ""
 "TRACE ERROR:\n"
 "------------"
 msgstr ""
+"\n"
+"\n"
+"Fout bij het laden van dump door {user_full_name} <{user_email}>:\"\n"
+"\n"
+"\n"
+"REDEN:\n"
+"-------\n"
+"{reason}\n"
+"\n"
+"DETAILS:\n"
+"--------\n"
+"{details}\n"
+"\n"
+"TRACE ERROR:\n"
+"------------"
 
 #: taiga/export_import/tasks.py:109
 msgid "Error loading project dump"
@@ -798,6 +815,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Project dump gegenereerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw dump van project %(project)s is correct gegenereerd.</h3>\n"
+"<p>U kunt het hier downloaden:</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Download het dumpbestand\""
+">Download het dumpbestand</a>\n"
+"<p>Dit bestand wordt verwijderd op %(deletion_date)s.</p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/dump_project-body-text.jinja:9
 #, python-format
@@ -815,6 +842,18 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw dump van project %(project)s is correct gegenereerd. U kunt het hier "
+"downloaden:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Dit bestand wordt verwijderd op %(deletion_date)s.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:9
 #, python-format
@@ -835,6 +874,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<p>Uw project %(project)s is niet correct geëxporteerd.</p>\n"
+"<p>De Taiga-systeembeheerders zijn geïnformeerd.<br/> Probeer het opnieuw of "
+"neem contact op met het ondersteuningsteam op\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Ondersteunings-e-mail\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:9
 #, python-format
@@ -852,6 +901,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"Uw project %(project)s is niet correct geëxporteerd.\n"
+"\n"
+"De Taiga-systeembeheerders zijn geïnformeerd.\n"
+"\n"
+"Probeer het opnieuw of neem contact op met het ondersteuningsteam op "
+"%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:9
 #, python-format
@@ -874,6 +936,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<p>Uw project is niet correct geïmporteerd.</p>\n"
+"<p>De systeembeheerders van %(product_name)s zijn geïnformeerd.<br/> Probeer "
+"het opnieuw of neem contact op met het ondersteuningsteam op\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Ondersteunings-e-mail\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"<h2>Foutdetails</h2>\n"
+"<pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:9
@@ -893,6 +967,20 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"\n"
+"Uw project is niet correct geïmporteerd.\n"
+"\n"
+"De systeembeheerders van %(product_name)s zijn geïnformeerd.\n"
+"\n"
+"Probeer het opnieuw of neem contact op met het supportteam op "
+"%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:9
@@ -912,6 +1000,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Project dump geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw project dump is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/load_dump-body-text.jinja:9
 #, python-format
@@ -928,6 +1024,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw project dump is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier zien:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:9
 #, python-format
@@ -946,12 +1053,12 @@ msgstr "Ongeldige inhoud. Volgend formaat geldt {\"key\": \"value\",...}"
 #: taiga/export_import/validators/validators.py:188
 #: taiga/projects/custom_attributes/validators.py:112
 msgid "It contains invalid custom fields."
-msgstr ""
+msgstr "Het bevat ongeldige aangepaste velden."
 
 #: taiga/export_import/validators/validators.py:268
 #: taiga/projects/validators.py:43
 msgid "Duplicated name"
-msgstr ""
+msgstr "Dubbele naam"
 
 #: taiga/export_import/validators/validators.py:303
 #, python-format
@@ -959,6 +1066,8 @@ msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
+"Een initiatief heeft een gerelateerd verhaal van een extern project "
+"(%(project)s) en kan niet worden geïmporteerd"
 
 #: taiga/external_apps/api.py:32 taiga/external_apps/api.py:59
 #: taiga/external_apps/api.py:71
@@ -1074,6 +1183,9 @@ msgid ""
 "        <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p><small>%(handtekening)s</small></p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:9
 #, python-format
@@ -1109,6 +1221,9 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"---\n"
+"%(handtekening)s\n"
 
 #: taiga/feedback/templates/emails/feedback_notification-subject.jinja:9
 #, python-format
@@ -1121,7 +1236,7 @@ msgstr ""
 
 #: taiga/hooks/api.py:43
 msgid "The payload is not valid json"
-msgstr ""
+msgstr "De payload is geen geldige json"
 
 #: taiga/hooks/api.py:52 taiga/projects/epics/api.py:143
 #: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:205
@@ -1141,6 +1256,10 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}]({user_url} \"Zie {user_name}'s {platform} profiel\") zegt in "
+"[{platform}#{number}]({comment_url} \"Ga naar commentaar\"):\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:75
 #, python-brace-format
@@ -1149,6 +1268,9 @@ msgid ""
 "\n"
 "> {comment_message}"
 msgstr ""
+"Commentaar van {platform}:\n"
+"\n"
+"> {comment_message}"
 
 #: taiga/hooks/event_hooks.py:88
 msgid "Invalid issue comment information"
@@ -1160,11 +1282,14 @@ msgid ""
 "Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Probleem gecreëerd door [{user_name}]({user_url} \"Bekijk {user_name}'s "
+"{platform} profiel\") vanuit [{platform}#{number}]({url} \"Ga naar probleem\""
+")."
 
 #: taiga/hooks/event_hooks.py:138
 #, python-brace-format
 msgid "Issue created from {platform}."
-msgstr ""
+msgstr "Probleem veroorzaakt door {platform}."
 
 #: taiga/hooks/event_hooks.py:146
 #, python-brace-format
@@ -1172,11 +1297,13 @@ msgid ""
 "Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Probleem aangepast door [{user_name}]({user_url} \"Bekijk {user_name}'s "
+"{platform} profiel\") van [{platform}#{number}]({url} \"Ga naar probleem\")."
 
 #: taiga/hooks/event_hooks.py:150
 #, python-brace-format
 msgid "Issue modified from {platform}."
-msgstr ""
+msgstr "Probleem aangepast van {platform}."
 
 #: taiga/hooks/event_hooks.py:158
 #, python-brace-format
@@ -1184,11 +1311,14 @@ msgid ""
 "Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Probleem gesloten door [{user_name}]({user_url} \"Bekijk {user_name}'s "
+"{platform} profiel\") vanaf [{platform}#{number}]({url} \"Ga naar probleem\""
+")."
 
 #: taiga/hooks/event_hooks.py:162
 #, python-brace-format
 msgid "Issue closed from {platform}."
-msgstr ""
+msgstr "Probleem gesloten van {platform}."
 
 #: taiga/hooks/event_hooks.py:170
 #, python-brace-format
@@ -1196,11 +1326,14 @@ msgid ""
 "Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Probleem heropend door [{user_name}]({user_url} \"Bekijk {user_name}'s "
+"{platform} profiel\") vanaf [{platform}#{number}]({url} \"Ga naar probleem\""
+")."
 
 #: taiga/hooks/event_hooks.py:174
 #, python-brace-format
 msgid "Issue reopened from {platform}."
-msgstr ""
+msgstr "Probleem heropend vanaf {platform}."
 
 #: taiga/hooks/event_hooks.py:269
 msgid "Invalid issue information"
@@ -1208,7 +1341,7 @@ msgstr "Ongeldige issue informatie"
 
 #: taiga/hooks/event_hooks.py:291 taiga/hooks/event_hooks.py:313
 msgid "unknown user"
-msgstr ""
+msgstr "onbekende gebruiker"
 
 #: taiga/hooks/event_hooks.py:298
 #, python-brace-format
