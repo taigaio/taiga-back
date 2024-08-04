@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-08-04 07:09+0000\n"
+"PO-Revision-Date: 2024-08-05 12:09+0000\n"
 "Last-Translator: Tobias  Peereboom <tobias@it-online.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "nl/>\n"
@@ -1351,6 +1351,10 @@ msgid ""
 "\n"
 "  - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"{user_text} heeft de status gewijzigd van [{platform} commit]({commit_url} "
+"\"Zie commit '{commit_id} - {commit_short_message}'\")\n"
+"\n"
+"- Status: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:303
 #, python-brace-format
@@ -1359,6 +1363,9 @@ msgid ""
 "\n"
 " - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"Status gewijzigd van {platform} commit.\n"
+"\n"
+"- Status: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:321
 #, python-brace-format
@@ -1367,12 +1374,15 @@ msgid ""
 "({commit_url} \"See commit '{commit_id} - {commit_short_message}'\") "
 "\"{commit_message}\""
 msgstr ""
+"Deze {type_name} is genoemd door {user_text} in de [{platform} "
+"commit]({commit_url} \"Zie commit '{commit_id} - {commit_short_message}'\") "
+"\"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:326
 #, python-brace-format
 msgid ""
 "This issue has been mentioned in the {platform} commit \"{commit_message}\""
-msgstr ""
+msgstr "Dit probleem is vermeld in de {platform} commit \"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:348
 msgid "The referenced element doesn't exist"
@@ -1388,42 +1398,42 @@ msgstr "De status bestaat niet"
 #: taiga/importers/pivotal/api.py:35 taiga/importers/pivotal/api.py:72
 #: taiga/importers/trello/api.py:38 taiga/importers/trello/api.py:75
 msgid "The project param is needed"
-msgstr ""
+msgstr "De projectparameter is nodig"
 
 #: taiga/importers/asana/api.py:42 taiga/importers/asana/api.py:65
 #: taiga/importers/asana/api.py:131
 msgid "Invalid Asana API request"
-msgstr ""
+msgstr "Ongeldige Asana API-aanvraag"
 
 #: taiga/importers/asana/api.py:44 taiga/importers/asana/api.py:67
 #: taiga/importers/asana/api.py:133
 msgid "Failed to make the request to Asana API"
-msgstr ""
+msgstr "Het verzoek aan de Asana API kon niet worden gedaan"
 
 #: taiga/importers/asana/api.py:121 taiga/importers/github/api.py:115
 msgid "Code param needed"
-msgstr ""
+msgstr "Codeparameter nodig"
 
 #: taiga/importers/asana/tasks.py:31 taiga/importers/asana/tasks.py:32
 msgid "Error importing Asana project"
-msgstr ""
+msgstr "Fout bij het importeren van Asana-project"
 
 #: taiga/importers/github/api.py:127
 msgid "Invalid auth data"
-msgstr ""
+msgstr "Ongeldige authenticatiegegevens"
 
 #: taiga/importers/github/api.py:129
 msgid "Third party service failing"
-msgstr ""
+msgstr "Dienst van derden mislukt"
 
 #: taiga/importers/github/tasks.py:31 taiga/importers/github/tasks.py:32
 msgid "Error importing GitHub project"
-msgstr ""
+msgstr "Fout bij het importeren van GitHub-project"
 
 #: taiga/importers/jira/api.py:54 taiga/importers/jira/api.py:89
 #: taiga/importers/jira/api.py:109 taiga/importers/jira/api.py:182
 msgid "The url param is needed"
-msgstr ""
+msgstr "De url-parameter is nodig"
 
 #: taiga/importers/jira/api.py:61
 msgid ""
@@ -1432,27 +1442,31 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"                Er is een fout opgetreden; waarschijnlijk vanwege een niet-"
+"ondersteunde Jira-versie.\n"
+"Taiga ondersteunt geen Jira-releases vanaf 8.6."
 
 #: taiga/importers/jira/api.py:158
 msgid "Invalid project_type {}"
-msgstr ""
+msgstr "Ongeldig project_type {}"
 
 #: taiga/importers/jira/api.py:192
 msgid "Invalid Jira server configuration."
-msgstr ""
+msgstr "Ongeldige Jira-serverconfiguratie."
 
 #: taiga/importers/jira/api.py:233 taiga/importers/pivotal/api.py:130
 #: taiga/importers/trello/api.py:135
 msgid "Invalid or expired auth token"
-msgstr ""
+msgstr "Ongeldige of verlopen auth-token"
 
 #: taiga/importers/jira/tasks.py:37 taiga/importers/jira/tasks.py:38
 msgid "Error importing Jira project"
-msgstr ""
+msgstr "Fout bij het importeren van Jira-project"
 
 #: taiga/importers/pivotal/tasks.py:31 taiga/importers/pivotal/tasks.py:32
 msgid "Error importing PivotalTracker project"
-msgstr ""
+msgstr "Fout bij het importeren van PivotalTracker-project"
 
 #: taiga/importers/templates/emails/asana_import_success-body-html.jinja:12
 #, python-format
@@ -1466,6 +1480,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Asana-project geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw Asana-project is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:9
 #, python-format
@@ -1482,11 +1504,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw Asana-project is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier bekijken:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:9
 #, python-format
 msgid "[%(project)s] Your Asana project has been imported"
-msgstr ""
+msgstr "[%(project)s] Uw Asana-project is geïmporteerd"
 
 #: taiga/importers/templates/emails/github_import_success-body-html.jinja:12
 #, python-format
@@ -1500,6 +1533,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>GitHub-project geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw GitHub-project is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/github_import_success-body-text.jinja:9
 #, python-format
@@ -1516,11 +1557,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw GitHub-project is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier bekijken:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:9
 #, python-format
 msgid "[%(project)s] Your GitHub project has been imported"
-msgstr ""
+msgstr "[%(project)s] Uw GitHub-project is geïmporteerd"
 
 #: taiga/importers/templates/emails/importer_import_error-body-html.jinja:12
 #, python-format
@@ -1536,6 +1588,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<p>Uw project is niet correct geïmporteerd.</p>\n"
+"<p>De systeembeheerders van %(product_name)s zijn geïnformeerd.<br/> Probeer "
+"het opnieuw of neem contact op met het ondersteuningsteam op\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Ondersteunings-e-mail\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-html.jinja:12
 #, python-format
@@ -1549,6 +1611,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Jira-project geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw Jira-project is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-text.jinja:9
 #, python-format
@@ -1565,11 +1635,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw Jira-project is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier bekijken:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/jira_import_success-subject.jinja:9
 #, python-format
 msgid "[%(project)s] Your Jira project has been imported"
-msgstr ""
+msgstr "[%(project)s] Uw Jira-project is geïmporteerd"
 
 #: taiga/importers/templates/emails/trello_import_success-body-html.jinja:12
 #, python-format
@@ -1583,6 +1664,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Trello-project geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw Trello-project is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/trello_import_success-body-text.jinja:9
 #, python-format
@@ -1599,30 +1688,41 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw Trello-project is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier bekijken:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/trello_import_success-subject.jinja:9
 #, python-format
 msgid "[%(project)s] Your Trello project has been imported"
-msgstr ""
+msgstr "[%(project)s] Uw Trello-project is geïmporteerd"
 
 #: taiga/importers/trello/importer.py:57
 #, python-format
 msgid "Invalid Request: %(text)s at %(url)s"
-msgstr ""
+msgstr "Ongeldige aanvraag: %(text)s op %(url)s"
 
 #: taiga/importers/trello/importer.py:59 taiga/importers/trello/importer.py:61
 #, python-format
 msgid "Unauthorized: %(text)s at %(url)s"
-msgstr ""
+msgstr "Ongeautoriseerd: %(text)s op %(url)s"
 
 #: taiga/importers/trello/importer.py:63 taiga/importers/trello/importer.py:65
 #, python-format
 msgid "Resource Unavailable: %(text)s at %(url)s"
-msgstr ""
+msgstr "Bron niet beschikbaar: %(text)s op %(url)s"
 
 #: taiga/importers/trello/tasks.py:31 taiga/importers/trello/tasks.py:32
 msgid "Error importing Trello project"
-msgstr ""
+msgstr "Fout bij het importeren van Trello-project"
 
 #: taiga/permissions/choices.py:11 taiga/permissions/choices.py:22
 msgid "View project"
@@ -1634,7 +1734,7 @@ msgstr "Bekijk milestones"
 
 #: taiga/permissions/choices.py:13 taiga/permissions/choices.py:29
 msgid "View epic"
-msgstr ""
+msgstr "Bekijk initiatief"
 
 #: taiga/permissions/choices.py:14
 msgid "View user stories"
@@ -1670,19 +1770,19 @@ msgstr "Verwijder milestone"
 
 #: taiga/permissions/choices.py:30
 msgid "Add epic"
-msgstr ""
+msgstr "Voeg initiatief toe"
 
 #: taiga/permissions/choices.py:31
 msgid "Modify epic"
-msgstr ""
+msgstr "Wijzig initiatief"
 
 #: taiga/permissions/choices.py:32
 msgid "Comment epic"
-msgstr ""
+msgstr "Commentaar op initiatief"
 
 #: taiga/permissions/choices.py:33
 msgid "Delete epic"
-msgstr ""
+msgstr "Verwijder initiatief"
 
 #: taiga/permissions/choices.py:35
 msgid "View user story"
@@ -1698,7 +1798,7 @@ msgstr "Wijzig user story"
 
 #: taiga/permissions/choices.py:38
 msgid "Comment user story"
-msgstr ""
+msgstr "Commentaar op werkorder"
 
 #: taiga/permissions/choices.py:39
 msgid "Delete user story"
@@ -1714,7 +1814,7 @@ msgstr "Wijzig taak"
 
 #: taiga/permissions/choices.py:44
 msgid "Comment task"
-msgstr ""
+msgstr "Opmerking taak"
 
 #: taiga/permissions/choices.py:45
 msgid "Delete task"
@@ -1730,7 +1830,7 @@ msgstr "Wijzig issue"
 
 #: taiga/permissions/choices.py:50
 msgid "Comment issue"
-msgstr ""
+msgstr "Commentaar op probleem"
 
 #: taiga/permissions/choices.py:51
 msgid "Delete issue"
@@ -1746,7 +1846,7 @@ msgstr "Wijzig wiki pagina"
 
 #: taiga/permissions/choices.py:56
 msgid "Comment wiki page"
-msgstr ""
+msgstr "Wikipagina met commentaar"
 
 #: taiga/permissions/choices.py:57
 msgid "Delete wiki page"
@@ -1790,23 +1890,23 @@ msgstr "Admin rollen"
 
 #: taiga/projects/admin.py:89
 msgid "Privacy"
-msgstr ""
+msgstr "Privacy"
 
 #: taiga/projects/admin.py:100
 msgid "Modules"
-msgstr ""
+msgstr "Modulen"
 
 #: taiga/projects/admin.py:108
 msgid "Default values"
-msgstr ""
+msgstr "Standaard waarden"
 
 #: taiga/projects/admin.py:115
 msgid "Activity"
-msgstr ""
+msgstr "Activiteit"
 
 #: taiga/projects/admin.py:120
 msgid "Fans"
-msgstr ""
+msgstr "Medestander"
 
 #: taiga/projects/admin.py:128 taiga/projects/attachments/models.py:31
 #: taiga/projects/epics/models.py:39 taiga/projects/issues/models.py:32
@@ -1819,21 +1919,21 @@ msgstr "eigenaar"
 
 #: taiga/projects/admin.py:169
 msgid "Make public"
-msgstr ""
+msgstr "Openbaar maken"
 
 #: taiga/projects/admin.py:185
 #, python-brace-format
 msgid "{count} successfully made public."
-msgstr ""
+msgstr "{count} succesvol openbaar gemaakt."
 
 #: taiga/projects/admin.py:188
 msgid "Make private"
-msgstr ""
+msgstr "Maak prive"
 
 #: taiga/projects/admin.py:202
 #, python-brace-format
 msgid "{count} successfully made private."
-msgstr ""
+msgstr "{count} succesvol privé gemaakt."
 
 #: taiga/projects/api.py:172 taiga/users/api.py:235
 msgid "Incomplete arguments"
@@ -1845,27 +1945,27 @@ msgstr "Ongeldig afbeelding formaat"
 
 #: taiga/projects/api.py:237
 msgid "Invalid template name"
-msgstr ""
+msgstr "Ongeldige sjabloonnaam"
 
 #: taiga/projects/api.py:240
 msgid "Invalid template description"
-msgstr ""
+msgstr "Ongeldige sjabloonbeschrijving"
 
 #: taiga/projects/api.py:404 taiga/projects/api.py:1093
 msgid "Invalid user id"
-msgstr ""
+msgstr "Ongeldige gebruikersnaam"
 
 #: taiga/projects/api.py:410 taiga/projects/api.py:1099
 msgid "The user doesn't exist"
-msgstr ""
+msgstr "De gebruiker bestaat niet"
 
 #: taiga/projects/api.py:414
 msgid "The user must already be a project member"
-msgstr ""
+msgstr "De gebruiker moet al een projectlid zijn"
 
 #: taiga/projects/api.py:678
 msgid "The default swimlane cannot be deleted."
-msgstr ""
+msgstr "De standaard swimlane kan niet worden verwijderd."
 
 #: taiga/projects/api.py:708
 msgid "You can't delete the default due date status of a user story"
