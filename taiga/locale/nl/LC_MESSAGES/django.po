@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-11-23 17:05+0000\n"
-"Last-Translator: Ranforingus <ranforingus@hotmail.com>\n"
+"PO-Revision-Date: 2024-08-09 12:09+0000\n"
+"Last-Translator: Tobias  Peereboom <tobias@it-online.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "nl/>\n"
 "Language: nl\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.2.1-rc\n"
+"X-Generator: Weblate 5.7-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -31,7 +31,7 @@ msgstr "ongeldig login type"
 
 #: taiga/auth/api.py:108
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "Openbare registratie is uitgeschakeld."
 
 #: taiga/auth/api.py:131
 msgid "You must accept our terms of service and privacy policy"
@@ -39,50 +39,44 @@ msgstr "U moet onze servicevoorwaarden en ons privacybeleid accepteren"
 
 #: taiga/auth/api.py:140
 msgid "invalid registration type"
-msgstr ""
+msgstr "ongeldig registratietype"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
-msgstr ""
+msgstr "De autorisatieheader moet twee door spaties gescheiden waarden bevatten"
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "Gegeven token is voor geen enkel tokentype geldig"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "Token bevatte geen herkenbare gebruikersidentificatie"
 
 #: taiga/auth/authentication.py:147
-#, fuzzy
-#| msgid "Not found"
 msgid "User not found"
-msgstr "Niet gevonden"
+msgstr "Gebruiker niet gevonden"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "Gebruiker is inactief"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
-msgstr ""
+msgstr "Onbekend algoritmetype '{}'"
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
-msgstr ""
+msgstr "Om {} te kunnen gebruiken, moet cryptografie zijn geïnstalleerd."
 
 #: taiga/auth/backends.py:128
-#, fuzzy
-#| msgid "Invalid role for the project"
 msgid "Invalid algorithm specified"
-msgstr "Ongeldige rol voor project"
+msgstr "Ongeldig algoritme opgegeven"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is invalid or expired"
-msgstr "Token is ongeldig"
+msgstr "Token is ongeldig of verlopen"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
@@ -96,11 +90,11 @@ msgstr "Verplicht. 255 tekens of minder. Letters, nummers en  /./-/_ tekens'"
 #: taiga/auth/serializers.py:92 taiga/auth/serializers.py:95
 #: taiga/users/validators.py:56 taiga/users/validators.py:59
 msgid "Invalid full name"
-msgstr ""
+msgstr "Ongeldige volledige naam"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "Er is geen actief account gevonden met de opgegeven inloggegevens"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
@@ -116,11 +110,11 @@ msgstr "Gebruiker is al geregistreerd."
 
 #: taiga/auth/services.py:203
 msgid "Error while creating new user."
-msgstr ""
+msgstr "Fout bij het aanmaken van een nieuwe gebruiker."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr ""
+msgstr "jti"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
@@ -130,49 +124,43 @@ msgstr "gebruiker"
 
 #: taiga/auth/token_denylist/admin.py:117 taiga/telemetry/models.py:21
 msgid "created at"
-msgstr ""
+msgstr "gemaakt bij"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "verloopt om"
 
 #: taiga/auth/token_denylist/apps.py:74
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token Denylist"
-msgstr "Token is ongeldig"
+msgstr "Token-weigerlijst"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "Kan geen token maken zonder type of levensduur"
 
 #: taiga/auth/tokens.py:127
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token has no id"
-msgstr "Token is ongeldig"
+msgstr "Token heeft geen ID"
 
 #: taiga/auth/tokens.py:138
 msgid "Token has no type"
-msgstr ""
+msgstr "Token heeft geen type"
 
 #: taiga/auth/tokens.py:141
 msgid "Token has wrong type"
-msgstr ""
+msgstr "Token heeft het verkeerde type"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "Token heeft geen '{}'-claim"
 
 #: taiga/auth/tokens.py:182
 msgid "Token '{}' claim has expired"
-msgstr ""
+msgstr "Token '{}'-claim is verlopen"
 
 #: taiga/auth/tokens.py:225
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is denylisted"
-msgstr "Token is ongeldig"
+msgstr "Token staat op de weigeringslijst"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
@@ -468,7 +456,7 @@ msgstr "Er is geen ruimte over voor meer projecten."
 #: taiga/base/fields.py:77
 #, python-format
 msgid "%(value)s is not a list"
-msgstr ""
+msgstr "%(value)s is geen lijst"
 
 #: taiga/base/filters.py:94 taiga/base/filters.py:542
 msgid "Error in filter params types."
@@ -495,6 +483,10 @@ msgid ""
 "%(product_name)s, an Open Source, Agile Project Management Tool</p>\n"
 "                                                "
 msgstr ""
+"\n"
+"                                                <p>Welkom bij %(product_name)"
+"s, een open source, agile projectmanagementtool</p>\n"
+"                                                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:15
 #, python-format
@@ -508,6 +500,14 @@ msgid ""
 "                <a href=\"mailto:%(support_email)s\" >Contact us</a>\n"
 "                "
 msgstr ""
+"\n"
+"                <a href=\"%(unsubscribe_url)s\">E-mailmeldingen configureren "
+"of afmelden</a>\n"
+" &nbsp;&stier;&nbsp;\n"
+" <a href=\"%(support_url)s\">Taiga-ondersteuning</a>\n"
+" &nbsp;&stier;&nbsp;\n"
+" <a href=\"mailto:%(support_email)s\" >Neem contact met ons op</a>\n"
+"                "
 
 #: taiga/base/templates/emails/includes/footer.jinja:26
 msgid "Follow us on Twitter"
@@ -669,7 +669,7 @@ msgstr "fout bij importeren van project attributenlijst"
 
 #: taiga/export_import/services/store.py:856
 msgid "error importing default project attribute values"
-msgstr ""
+msgstr "Fout bij importeren van standaardprojectattribuutwaarden"
 
 #: taiga/export_import/services/store.py:867
 msgid "error importing custom attributes"
@@ -720,7 +720,7 @@ msgstr "onverwachte fout tijdens het importeren van het project"
 #: taiga/projects/services/projects.py:156
 #: taiga/projects/services/projects.py:208
 msgid "You can't have more private projects"
-msgstr ""
+msgstr "Je kunt geen privéprojecten meer hebben"
 
 #: taiga/export_import/services/validations.py:36
 #: taiga/projects/services/projects.py:107
@@ -729,13 +729,15 @@ msgstr ""
 msgid ""
 "This project reaches your current limit of memberships for private projects"
 msgstr ""
+"Dit project bereikt uw huidige limiet voor lidmaatschappen voor "
+"privéprojecten"
 
 #: taiga/export_import/services/validations.py:40
 #: taiga/projects/services/projects.py:111
 #: taiga/projects/services/projects.py:161
 #: taiga/projects/services/projects.py:213
 msgid "You can't have more public projects"
-msgstr ""
+msgstr "Je kunt niet meer openbare projecten hebben"
 
 #: taiga/export_import/services/validations.py:41
 #: taiga/projects/services/projects.py:112
@@ -744,6 +746,8 @@ msgstr ""
 msgid ""
 "This project reaches your current limit of memberships for public projects"
 msgstr ""
+"Dit project bereikt uw huidige limiet voor lidmaatschappen voor openbare "
+"projecten"
 
 #: taiga/export_import/tasks.py:51 taiga/export_import/tasks.py:52
 msgid "Error generating project dump"
@@ -768,6 +772,21 @@ msgid ""
 "TRACE ERROR:\n"
 "------------"
 msgstr ""
+"\n"
+"\n"
+"Fout bij het laden van dump door {user_full_name} <{user_email}>:\"\n"
+"\n"
+"\n"
+"REDEN:\n"
+"-------\n"
+"{reason}\n"
+"\n"
+"DETAILS:\n"
+"--------\n"
+"{details}\n"
+"\n"
+"TRACE ERROR:\n"
+"------------"
 
 #: taiga/export_import/tasks.py:109
 msgid "Error loading project dump"
@@ -796,6 +815,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Project dump gegenereerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw dump van project %(project)s is correct gegenereerd.</h3>\n"
+"<p>U kunt het hier downloaden:</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Download het dumpbestand\""
+">Download het dumpbestand</a>\n"
+"<p>Dit bestand wordt verwijderd op %(deletion_date)s.</p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/dump_project-body-text.jinja:9
 #, python-format
@@ -813,6 +842,18 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw dump van project %(project)s is correct gegenereerd. U kunt het hier "
+"downloaden:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Dit bestand wordt verwijderd op %(deletion_date)s.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:9
 #, python-format
@@ -833,6 +874,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<p>Uw project %(project)s is niet correct geëxporteerd.</p>\n"
+"<p>De Taiga-systeembeheerders zijn geïnformeerd.<br/> Probeer het opnieuw of "
+"neem contact op met het ondersteuningsteam op\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Ondersteunings-e-mail\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:9
 #, python-format
@@ -850,6 +901,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"Uw project %(project)s is niet correct geëxporteerd.\n"
+"\n"
+"De Taiga-systeembeheerders zijn geïnformeerd.\n"
+"\n"
+"Probeer het opnieuw of neem contact op met het ondersteuningsteam op "
+"%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:9
 #, python-format
@@ -872,6 +936,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<p>Uw project is niet correct geïmporteerd.</p>\n"
+"<p>De systeembeheerders van %(product_name)s zijn geïnformeerd.<br/> Probeer "
+"het opnieuw of neem contact op met het ondersteuningsteam op\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Ondersteunings-e-mail\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"<h2>Foutdetails</h2>\n"
+"<pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:9
@@ -891,6 +967,20 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"%(error_message)s\n"
+"\n"
+"Uw project is niet correct geïmporteerd.\n"
+"\n"
+"De systeembeheerders van %(product_name)s zijn geïnformeerd.\n"
+"\n"
+"Probeer het opnieuw of neem contact op met het supportteam op "
+"%(support_email)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:9
@@ -910,6 +1000,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Project dump geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw project dump is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/load_dump-body-text.jinja:9
 #, python-format
@@ -926,6 +1024,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw project dump is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier zien:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:9
 #, python-format
@@ -944,12 +1053,12 @@ msgstr "Ongeldige inhoud. Volgend formaat geldt {\"key\": \"value\",...}"
 #: taiga/export_import/validators/validators.py:188
 #: taiga/projects/custom_attributes/validators.py:112
 msgid "It contains invalid custom fields."
-msgstr ""
+msgstr "Het bevat ongeldige aangepaste velden."
 
 #: taiga/export_import/validators/validators.py:268
 #: taiga/projects/validators.py:43
 msgid "Duplicated name"
-msgstr ""
+msgstr "Dubbele naam"
 
 #: taiga/export_import/validators/validators.py:303
 #, python-format
@@ -957,6 +1066,8 @@ msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
+"Een initiatief heeft een gerelateerd verhaal van een extern project "
+"(%(project)s) en kan niet worden geïmporteerd"
 
 #: taiga/external_apps/api.py:32 taiga/external_apps/api.py:59
 #: taiga/external_apps/api.py:71
@@ -1072,6 +1183,9 @@ msgid ""
 "        <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p><small>%(handtekening)s</small></p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:9
 #, python-format
@@ -1107,6 +1221,9 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"---\n"
+"%(handtekening)s\n"
 
 #: taiga/feedback/templates/emails/feedback_notification-subject.jinja:9
 #, python-format
@@ -1119,7 +1236,7 @@ msgstr ""
 
 #: taiga/hooks/api.py:43
 msgid "The payload is not valid json"
-msgstr ""
+msgstr "De payload is geen geldige json"
 
 #: taiga/hooks/api.py:52 taiga/projects/epics/api.py:143
 #: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:205
@@ -1139,6 +1256,10 @@ msgid ""
 "\n"
 "\"{comment_message}\""
 msgstr ""
+"[{user_name}]({user_url} \"Zie {user_name}'s {platform} profiel\") zegt in "
+"[{platform}#{number}]({comment_url} \"Ga naar commentaar\"):\n"
+"\n"
+"\"{comment_message}\""
 
 #: taiga/hooks/event_hooks.py:75
 #, python-brace-format
@@ -1147,6 +1268,9 @@ msgid ""
 "\n"
 "> {comment_message}"
 msgstr ""
+"Commentaar van {platform}:\n"
+"\n"
+"> {comment_message}"
 
 #: taiga/hooks/event_hooks.py:88
 msgid "Invalid issue comment information"
@@ -1158,11 +1282,14 @@ msgid ""
 "Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Probleem gecreëerd door [{user_name}]({user_url} \"Bekijk {user_name}'s "
+"{platform} profiel\") vanuit [{platform}#{number}]({url} \"Ga naar probleem\""
+")."
 
 #: taiga/hooks/event_hooks.py:138
 #, python-brace-format
 msgid "Issue created from {platform}."
-msgstr ""
+msgstr "Probleem veroorzaakt door {platform}."
 
 #: taiga/hooks/event_hooks.py:146
 #, python-brace-format
@@ -1170,11 +1297,13 @@ msgid ""
 "Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Probleem aangepast door [{user_name}]({user_url} \"Bekijk {user_name}'s "
+"{platform} profiel\") van [{platform}#{number}]({url} \"Ga naar probleem\")."
 
 #: taiga/hooks/event_hooks.py:150
 #, python-brace-format
 msgid "Issue modified from {platform}."
-msgstr ""
+msgstr "Probleem aangepast van {platform}."
 
 #: taiga/hooks/event_hooks.py:158
 #, python-brace-format
@@ -1182,11 +1311,14 @@ msgid ""
 "Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Probleem gesloten door [{user_name}]({user_url} \"Bekijk {user_name}'s "
+"{platform} profiel\") vanaf [{platform}#{number}]({url} \"Ga naar probleem\""
+")."
 
 #: taiga/hooks/event_hooks.py:162
 #, python-brace-format
 msgid "Issue closed from {platform}."
-msgstr ""
+msgstr "Probleem gesloten van {platform}."
 
 #: taiga/hooks/event_hooks.py:170
 #, python-brace-format
@@ -1194,11 +1326,14 @@ msgid ""
 "Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Probleem heropend door [{user_name}]({user_url} \"Bekijk {user_name}'s "
+"{platform} profiel\") vanaf [{platform}#{number}]({url} \"Ga naar probleem\""
+")."
 
 #: taiga/hooks/event_hooks.py:174
 #, python-brace-format
 msgid "Issue reopened from {platform}."
-msgstr ""
+msgstr "Probleem heropend vanaf {platform}."
 
 #: taiga/hooks/event_hooks.py:269
 msgid "Invalid issue information"
@@ -1206,7 +1341,7 @@ msgstr "Ongeldige issue informatie"
 
 #: taiga/hooks/event_hooks.py:291 taiga/hooks/event_hooks.py:313
 msgid "unknown user"
-msgstr ""
+msgstr "onbekende gebruiker"
 
 #: taiga/hooks/event_hooks.py:298
 #, python-brace-format
@@ -1216,6 +1351,10 @@ msgid ""
 "\n"
 "  - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"{user_text} heeft de status gewijzigd van [{platform} commit]({commit_url} "
+"\"Zie commit '{commit_id} - {commit_short_message}'\")\n"
+"\n"
+"- Status: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:303
 #, python-brace-format
@@ -1224,6 +1363,9 @@ msgid ""
 "\n"
 " - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"Status gewijzigd van {platform} commit.\n"
+"\n"
+"- Status: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:321
 #, python-brace-format
@@ -1232,12 +1374,15 @@ msgid ""
 "({commit_url} \"See commit '{commit_id} - {commit_short_message}'\") "
 "\"{commit_message}\""
 msgstr ""
+"Deze {type_name} is genoemd door {user_text} in de [{platform} "
+"commit]({commit_url} \"Zie commit '{commit_id} - {commit_short_message}'\") "
+"\"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:326
 #, python-brace-format
 msgid ""
 "This issue has been mentioned in the {platform} commit \"{commit_message}\""
-msgstr ""
+msgstr "Dit probleem is vermeld in de {platform} commit \"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:348
 msgid "The referenced element doesn't exist"
@@ -1253,42 +1398,42 @@ msgstr "De status bestaat niet"
 #: taiga/importers/pivotal/api.py:35 taiga/importers/pivotal/api.py:72
 #: taiga/importers/trello/api.py:38 taiga/importers/trello/api.py:75
 msgid "The project param is needed"
-msgstr ""
+msgstr "De projectparameter is nodig"
 
 #: taiga/importers/asana/api.py:42 taiga/importers/asana/api.py:65
 #: taiga/importers/asana/api.py:131
 msgid "Invalid Asana API request"
-msgstr ""
+msgstr "Ongeldige Asana API-aanvraag"
 
 #: taiga/importers/asana/api.py:44 taiga/importers/asana/api.py:67
 #: taiga/importers/asana/api.py:133
 msgid "Failed to make the request to Asana API"
-msgstr ""
+msgstr "Het verzoek aan de Asana API kon niet worden gedaan"
 
 #: taiga/importers/asana/api.py:121 taiga/importers/github/api.py:115
 msgid "Code param needed"
-msgstr ""
+msgstr "Codeparameter nodig"
 
 #: taiga/importers/asana/tasks.py:31 taiga/importers/asana/tasks.py:32
 msgid "Error importing Asana project"
-msgstr ""
+msgstr "Fout bij het importeren van Asana-project"
 
 #: taiga/importers/github/api.py:127
 msgid "Invalid auth data"
-msgstr ""
+msgstr "Ongeldige authenticatiegegevens"
 
 #: taiga/importers/github/api.py:129
 msgid "Third party service failing"
-msgstr ""
+msgstr "Dienst van derden mislukt"
 
 #: taiga/importers/github/tasks.py:31 taiga/importers/github/tasks.py:32
 msgid "Error importing GitHub project"
-msgstr ""
+msgstr "Fout bij het importeren van GitHub-project"
 
 #: taiga/importers/jira/api.py:54 taiga/importers/jira/api.py:89
 #: taiga/importers/jira/api.py:109 taiga/importers/jira/api.py:182
 msgid "The url param is needed"
-msgstr ""
+msgstr "De url-parameter is nodig"
 
 #: taiga/importers/jira/api.py:61
 msgid ""
@@ -1297,27 +1442,31 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"                Er is een fout opgetreden; waarschijnlijk vanwege een niet-"
+"ondersteunde Jira-versie.\n"
+"Taiga ondersteunt geen Jira-releases vanaf 8.6."
 
 #: taiga/importers/jira/api.py:158
 msgid "Invalid project_type {}"
-msgstr ""
+msgstr "Ongeldig project_type {}"
 
 #: taiga/importers/jira/api.py:192
 msgid "Invalid Jira server configuration."
-msgstr ""
+msgstr "Ongeldige Jira-serverconfiguratie."
 
 #: taiga/importers/jira/api.py:233 taiga/importers/pivotal/api.py:130
 #: taiga/importers/trello/api.py:135
 msgid "Invalid or expired auth token"
-msgstr ""
+msgstr "Ongeldige of verlopen auth-token"
 
 #: taiga/importers/jira/tasks.py:37 taiga/importers/jira/tasks.py:38
 msgid "Error importing Jira project"
-msgstr ""
+msgstr "Fout bij het importeren van Jira-project"
 
 #: taiga/importers/pivotal/tasks.py:31 taiga/importers/pivotal/tasks.py:32
 msgid "Error importing PivotalTracker project"
-msgstr ""
+msgstr "Fout bij het importeren van PivotalTracker-project"
 
 #: taiga/importers/templates/emails/asana_import_success-body-html.jinja:12
 #, python-format
@@ -1331,6 +1480,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Asana-project geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw Asana-project is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:9
 #, python-format
@@ -1347,11 +1504,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw Asana-project is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier bekijken:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:9
 #, python-format
 msgid "[%(project)s] Your Asana project has been imported"
-msgstr ""
+msgstr "[%(project)s] Uw Asana-project is geïmporteerd"
 
 #: taiga/importers/templates/emails/github_import_success-body-html.jinja:12
 #, python-format
@@ -1365,6 +1533,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>GitHub-project geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw GitHub-project is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/github_import_success-body-text.jinja:9
 #, python-format
@@ -1381,11 +1557,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw GitHub-project is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier bekijken:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:9
 #, python-format
 msgid "[%(project)s] Your GitHub project has been imported"
-msgstr ""
+msgstr "[%(project)s] Uw GitHub-project is geïmporteerd"
 
 #: taiga/importers/templates/emails/importer_import_error-body-html.jinja:12
 #, python-format
@@ -1401,6 +1588,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<p>Uw project is niet correct geïmporteerd.</p>\n"
+"<p>De systeembeheerders van %(product_name)s zijn geïnformeerd.<br/> Probeer "
+"het opnieuw of neem contact op met het ondersteuningsteam op\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Ondersteunings-e-mail\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-html.jinja:12
 #, python-format
@@ -1414,6 +1611,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Jira-project geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw Jira-project is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-text.jinja:9
 #, python-format
@@ -1430,11 +1635,22 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw Jira-project is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier bekijken:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/jira_import_success-subject.jinja:9
 #, python-format
 msgid "[%(project)s] Your Jira project has been imported"
-msgstr ""
+msgstr "[%(project)s] Uw Jira-project is geïmporteerd"
 
 #: taiga/importers/templates/emails/trello_import_success-body-html.jinja:12
 #, python-format
@@ -1448,6 +1664,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Trello-project geïmporteerd</h1>\n"
+"<p>Hallo %(user)s,</p>\n"
+"<h3>Uw Trello-project is correct geïmporteerd.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar het project %(project)"
+"s\">Ga naar %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/trello_import_success-body-text.jinja:9
 #, python-format
@@ -1464,30 +1688,41 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(user)s,\n"
+"\n"
+"Uw Trello-project is correct geïmporteerd.\n"
+"\n"
+"U kunt het project %(project)s hier bekijken:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/trello_import_success-subject.jinja:9
 #, python-format
 msgid "[%(project)s] Your Trello project has been imported"
-msgstr ""
+msgstr "[%(project)s] Uw Trello-project is geïmporteerd"
 
 #: taiga/importers/trello/importer.py:57
 #, python-format
 msgid "Invalid Request: %(text)s at %(url)s"
-msgstr ""
+msgstr "Ongeldige aanvraag: %(text)s op %(url)s"
 
 #: taiga/importers/trello/importer.py:59 taiga/importers/trello/importer.py:61
 #, python-format
 msgid "Unauthorized: %(text)s at %(url)s"
-msgstr ""
+msgstr "Ongeautoriseerd: %(text)s op %(url)s"
 
 #: taiga/importers/trello/importer.py:63 taiga/importers/trello/importer.py:65
 #, python-format
 msgid "Resource Unavailable: %(text)s at %(url)s"
-msgstr ""
+msgstr "Bron niet beschikbaar: %(text)s op %(url)s"
 
 #: taiga/importers/trello/tasks.py:31 taiga/importers/trello/tasks.py:32
 msgid "Error importing Trello project"
-msgstr ""
+msgstr "Fout bij het importeren van Trello-project"
 
 #: taiga/permissions/choices.py:11 taiga/permissions/choices.py:22
 msgid "View project"
@@ -1499,7 +1734,7 @@ msgstr "Bekijk milestones"
 
 #: taiga/permissions/choices.py:13 taiga/permissions/choices.py:29
 msgid "View epic"
-msgstr ""
+msgstr "Bekijk initiatief"
 
 #: taiga/permissions/choices.py:14
 msgid "View user stories"
@@ -1535,19 +1770,19 @@ msgstr "Verwijder milestone"
 
 #: taiga/permissions/choices.py:30
 msgid "Add epic"
-msgstr ""
+msgstr "Voeg initiatief toe"
 
 #: taiga/permissions/choices.py:31
 msgid "Modify epic"
-msgstr ""
+msgstr "Wijzig initiatief"
 
 #: taiga/permissions/choices.py:32
 msgid "Comment epic"
-msgstr ""
+msgstr "Commentaar op initiatief"
 
 #: taiga/permissions/choices.py:33
 msgid "Delete epic"
-msgstr ""
+msgstr "Verwijder initiatief"
 
 #: taiga/permissions/choices.py:35
 msgid "View user story"
@@ -1563,7 +1798,7 @@ msgstr "Wijzig user story"
 
 #: taiga/permissions/choices.py:38
 msgid "Comment user story"
-msgstr ""
+msgstr "Commentaar op werkorder"
 
 #: taiga/permissions/choices.py:39
 msgid "Delete user story"
@@ -1579,7 +1814,7 @@ msgstr "Wijzig taak"
 
 #: taiga/permissions/choices.py:44
 msgid "Comment task"
-msgstr ""
+msgstr "Opmerking taak"
 
 #: taiga/permissions/choices.py:45
 msgid "Delete task"
@@ -1595,7 +1830,7 @@ msgstr "Wijzig issue"
 
 #: taiga/permissions/choices.py:50
 msgid "Comment issue"
-msgstr ""
+msgstr "Commentaar op probleem"
 
 #: taiga/permissions/choices.py:51
 msgid "Delete issue"
@@ -1611,7 +1846,7 @@ msgstr "Wijzig wiki pagina"
 
 #: taiga/permissions/choices.py:56
 msgid "Comment wiki page"
-msgstr ""
+msgstr "Wikipagina met commentaar"
 
 #: taiga/permissions/choices.py:57
 msgid "Delete wiki page"
@@ -1655,23 +1890,23 @@ msgstr "Admin rollen"
 
 #: taiga/projects/admin.py:89
 msgid "Privacy"
-msgstr ""
+msgstr "Privacy"
 
 #: taiga/projects/admin.py:100
 msgid "Modules"
-msgstr ""
+msgstr "Modulen"
 
 #: taiga/projects/admin.py:108
 msgid "Default values"
-msgstr ""
+msgstr "Standaard waarden"
 
 #: taiga/projects/admin.py:115
 msgid "Activity"
-msgstr ""
+msgstr "Activiteit"
 
 #: taiga/projects/admin.py:120
 msgid "Fans"
-msgstr ""
+msgstr "Medestander"
 
 #: taiga/projects/admin.py:128 taiga/projects/attachments/models.py:31
 #: taiga/projects/epics/models.py:39 taiga/projects/issues/models.py:32
@@ -1684,21 +1919,21 @@ msgstr "eigenaar"
 
 #: taiga/projects/admin.py:169
 msgid "Make public"
-msgstr ""
+msgstr "Openbaar maken"
 
 #: taiga/projects/admin.py:185
 #, python-brace-format
 msgid "{count} successfully made public."
-msgstr ""
+msgstr "{count} succesvol openbaar gemaakt."
 
 #: taiga/projects/admin.py:188
 msgid "Make private"
-msgstr ""
+msgstr "Maak prive"
 
 #: taiga/projects/admin.py:202
 #, python-brace-format
 msgid "{count} successfully made private."
-msgstr ""
+msgstr "{count} succesvol privé gemaakt."
 
 #: taiga/projects/api.py:172 taiga/users/api.py:235
 msgid "Incomplete arguments"
@@ -1710,90 +1945,94 @@ msgstr "Ongeldig afbeelding formaat"
 
 #: taiga/projects/api.py:237
 msgid "Invalid template name"
-msgstr ""
+msgstr "Ongeldige sjabloonnaam"
 
 #: taiga/projects/api.py:240
 msgid "Invalid template description"
-msgstr ""
+msgstr "Ongeldige sjabloonbeschrijving"
 
 #: taiga/projects/api.py:404 taiga/projects/api.py:1093
 msgid "Invalid user id"
-msgstr ""
+msgstr "Ongeldige gebruikersnaam"
 
 #: taiga/projects/api.py:410 taiga/projects/api.py:1099
 msgid "The user doesn't exist"
-msgstr ""
+msgstr "De gebruiker bestaat niet"
 
 #: taiga/projects/api.py:414
 msgid "The user must already be a project member"
-msgstr ""
+msgstr "De gebruiker moet al een projectlid zijn"
 
 #: taiga/projects/api.py:678
 msgid "The default swimlane cannot be deleted."
-msgstr ""
+msgstr "De standaard swimlane kan niet worden verwijderd."
 
 #: taiga/projects/api.py:708
 msgid "You can't delete the default due date status of a user story"
-msgstr ""
+msgstr "U kunt de standaardvervaldatumstatus van een werkorder niet verwijderen"
 
 #: taiga/projects/api.py:724
 msgid "Project does already have due dates"
-msgstr ""
+msgstr "Project heeft al einddatums"
 
 #: taiga/projects/api.py:784
 msgid "You can't delete the default due date status of a task"
-msgstr ""
+msgstr "U kunt de standaardvervaldatumstatus van een taak niet verwijderen"
 
 #: taiga/projects/api.py:800
 msgid "Project does already have task due dates"
-msgstr ""
+msgstr "Project heeft al taakvervaldatums"
 
 #: taiga/projects/api.py:925
 msgid "You can't delete the default due date status of an issue"
-msgstr ""
+msgstr "U kunt de standaardvervaldatumstatus van een probleem niet verwijderen"
 
 #: taiga/projects/api.py:941
 msgid "Project does already have issue due dates"
-msgstr ""
+msgstr "Project heeft al een deadline voor problemen"
 
 #: taiga/projects/api.py:1053 taiga/projects/validators.py:230
 msgid ""
 "To add members to a project, first you have to verify your email address"
 msgstr ""
+"Om leden aan een project toe te voegen, moet u eerst uw e-mailadres "
+"verifiëren"
 
 #: taiga/projects/api.py:1111
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
 msgstr ""
+"Deze gebruiker kan niet uit de volgende projecten worden verwijderd, omdat "
+"deze dan geen actieve beheerder meer zou hebben: {}."
 
 #: taiga/projects/api.py:1125
-#, fuzzy
-#| msgid "This field is required."
 msgid "Email is required"
-msgstr "Dit veld is verplicht."
+msgstr "E-mail is vereist"
 
 #: taiga/projects/api.py:1136
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
+"Het project moet een eigenaar hebben en minstens één van de gebruikers moet "
+"een actieve beheerder zijn"
 
 #: taiga/projects/api.py:1171
 msgid "You don't have permissions to see that."
-msgstr ""
+msgstr "U hebt geen toestemming om dat te zien."
 
 #: taiga/projects/attachments/api.py:46
 msgid "Partial updates are not supported"
-msgstr ""
+msgstr "Gedeeltelijke updates worden niet ondersteund"
 
 #: taiga/projects/attachments/api.py:61
 msgid "Object id issue doesn't exist"
-msgstr ""
+msgstr "Object-id-probleem bestaat niet"
 
 #: taiga/projects/attachments/api.py:64
 msgid "Project ID does not match between object and project"
-msgstr ""
+msgstr "Project-ID komt niet overeen tussen object en project"
 
 #: taiga/projects/attachments/models.py:39 taiga/projects/contact/models.py:26
 #: taiga/projects/custom_attributes/models.py:36
@@ -1836,7 +2075,7 @@ msgstr "bijgevoegd bestand"
 
 #: taiga/projects/attachments/models.py:63
 msgid "sha1"
-msgstr ""
+msgstr "sha1"
 
 #: taiga/projects/attachments/models.py:65
 msgid "is deprecated"
@@ -1844,7 +2083,7 @@ msgstr "is verouderd"
 
 #: taiga/projects/attachments/models.py:66
 msgid "from comment"
-msgstr ""
+msgstr "van commentaar"
 
 #: taiga/projects/attachments/models.py:68
 #: taiga/projects/custom_attributes/models.py:30
@@ -1864,16 +2103,20 @@ msgid ""
 "Invalid attachment id to move after. The attachment must belong to the same "
 "item (epic, userstory, task, issue or wiki page)."
 msgstr ""
+"Ongeldige bijlage-id om te verplaatsen. De bijlage moet bij hetzelfde item "
+"horen (initiatief, werkorder, taak, kwestie of wikipagina)."
 
 #: taiga/projects/attachments/validators.py:61
 msgid ""
 "Invalid attachment ids. All attachments must belong to the same item (epic, "
 "userstory, task, issue or wiki page)."
 msgstr ""
+"Ongeldige bijlage-id's. Alle bijlagen moeten bij hetzelfde item horen ("
+"initiatief, werkorder, taak, kwestie of wikipagina)."
 
 #: taiga/projects/choices.py:12
 msgid "Whereby.com"
-msgstr ""
+msgstr "whereby.com"
 
 #: taiga/projects/choices.py:13
 msgid "Jitsi"
@@ -1881,7 +2124,7 @@ msgstr "Jitsi"
 
 #: taiga/projects/choices.py:14
 msgid "Custom"
-msgstr ""
+msgstr "Aangepast"
 
 #: taiga/projects/choices.py:15
 msgid "Talky"
@@ -1889,19 +2132,19 @@ msgstr "Talky"
 
 #: taiga/projects/choices.py:24
 msgid "This project is blocked due to payment failure"
-msgstr ""
+msgstr "Dit project is geblokkeerd vanwege een mislukte betaling"
 
 #: taiga/projects/choices.py:25
 msgid "This project is blocked by admin staff"
-msgstr ""
+msgstr "Dit project is geblokkeerd door admin-personeel"
 
 #: taiga/projects/choices.py:26
 msgid "This project is blocked because the owner left"
-msgstr ""
+msgstr "Dit project is geblokkeerd omdat de eigenaar is vertrokken"
 
 #: taiga/projects/choices.py:27
 msgid "This project is blocked while it's deleted"
-msgstr ""
+msgstr "Dit project is geblokkeerd terwijl het is verwijderd"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:18
 #, python-format
@@ -1912,6 +2155,11 @@ msgid ""
 "written to %(project_name)s\n"
 "    "
 msgstr ""
+"\n"
+"        <a style=\"font-weight: bold;text-decoration:none;color:#222;\" href="
+"\"%(user_profile_url)s\" title=\"%(full_name)s\">%(full_name)s</a> heeft "
+"geschreven naar %(project_name)s\n"
+"    "
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:28
 #, python-format
@@ -1925,6 +2173,14 @@ msgid ""
 "will not be affected.\n"
 "    "
 msgstr ""
+"\n"
+"        U ontvangt dit bericht omdat u bent vermeld als beheerder van het "
+"project met de naam %(project_name)s. Als u niet wilt dat leden van de Taiga-"
+"community contact opnemen met uw project, <a href=\"%(project_settings_url)"
+"s\">werkt u uw projectinstellingen bij</a> om dergelijke contacten te "
+"voorkomen. Regelmatige communicatie tussen leden van het project wordt "
+"hierdoor niet beïnvloed.\n"
+"    "
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:9
 #, python-format
@@ -1932,6 +2188,8 @@ msgid ""
 "\n"
 "%(full_name)s has written to %(project_name)s\n"
 msgstr ""
+"\n"
+"%(full_name)s heeft geschreven naar %(project_name)s\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:15
 #, python-format
@@ -1943,6 +2201,13 @@ msgid ""
 "%(project_settings_url)s to prevent such contacts. Regular communications "
 "amongst members of the project will not be affected.\n"
 msgstr ""
+"\n"
+"U ontvangt dit bericht omdat u bent vermeld als beheerder van het project "
+"met de naam %(project_name)s. Als u niet wilt dat leden van de Taiga-"
+"community contact opnemen met uw project, werk dan uw projectinstellingen "
+"bij in %(project_settings_url)s om dergelijke contacten te voorkomen. "
+"Regelmatige communicatie tussen leden van het project wordt hierdoor niet "
+"beïnvloed.\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-subject.jinja:9
 #, python-format
@@ -1950,38 +2215,41 @@ msgid ""
 "\n"
 "[Taiga] %(full_name)s has sent a message to the project %(project_name)s\n"
 msgstr ""
+"\n"
+"[Taiga] %(full_name)s heeft een bericht gestuurd naar het project "
+"%(project_name)s\n"
 
 #: taiga/projects/custom_attributes/choices.py:21
 msgid "Text"
-msgstr ""
+msgstr "Tekst"
 
 #: taiga/projects/custom_attributes/choices.py:22
 msgid "Multi-Line Text"
-msgstr ""
+msgstr "Tekst met meerdere regels"
 
 #: taiga/projects/custom_attributes/choices.py:23
 msgid "Rich text"
-msgstr ""
+msgstr "Rijke text"
 
 #: taiga/projects/custom_attributes/choices.py:24
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: taiga/projects/custom_attributes/choices.py:25
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
 #: taiga/projects/custom_attributes/choices.py:26
 msgid "Dropdown"
-msgstr ""
+msgstr "Laten vallen"
 
 #: taiga/projects/custom_attributes/choices.py:27
 msgid "Checkbox"
-msgstr ""
+msgstr "Selectievakje"
 
 #: taiga/projects/custom_attributes/choices.py:28
 msgid "Number"
-msgstr ""
+msgstr "Nummer"
 
 #: taiga/projects/custom_attributes/models.py:29
 #: taiga/projects/issues/models.py:64
@@ -1994,7 +2262,7 @@ msgstr "waarden"
 
 #: taiga/projects/custom_attributes/models.py:103
 msgid "epic"
-msgstr ""
+msgstr "initiatief"
 
 #: taiga/projects/custom_attributes/models.py:124
 #: taiga/projects/tasks/models.py:29 taiga/projects/userstories/models.py:31
@@ -2015,15 +2283,15 @@ msgstr "Er bestaat er al één met dezelfde naam."
 
 #: taiga/projects/due_dates/models.py:14
 msgid "due date"
-msgstr ""
+msgstr "vervaldag"
 
 #: taiga/projects/due_dates/models.py:17
 msgid "reason for the due date"
-msgstr ""
+msgstr "reden voor de vervaldatum"
 
 #: taiga/projects/epics/api.py:83
 msgid "You don't have permissions to set this status to this epic."
-msgstr ""
+msgstr "Je hebt geen rechten om deze status aan dit initiatief toe te wijzen."
 
 #: taiga/projects/epics/models.py:25 taiga/projects/issues/models.py:25
 #: taiga/projects/tasks/models.py:33 taiga/projects/userstories/models.py:71
@@ -2038,7 +2306,7 @@ msgstr "status"
 
 #: taiga/projects/epics/models.py:46
 msgid "epics order"
-msgstr ""
+msgstr "initiatief volgorde"
 
 #: taiga/projects/epics/models.py:55 taiga/projects/issues/models.py:92
 #: taiga/projects/tasks/models.py:76 taiga/projects/userstories/models.py:109
@@ -2069,7 +2337,7 @@ msgstr "is requirement van het team"
 
 #: taiga/projects/epics/models.py:76
 msgid "user stories"
-msgstr ""
+msgstr "werkorders"
 
 #: taiga/projects/epics/models.py:78 taiga/projects/issues/models.py:105
 #: taiga/projects/tasks/models.py:97 taiga/projects/userstories/models.py:138
@@ -2078,15 +2346,15 @@ msgstr "externe referentie"
 
 #: taiga/projects/epics/validators.py:26
 msgid "There's no epic with that id"
-msgstr ""
+msgstr "Er is geen initiatief met dat id"
 
 #: taiga/projects/history/api.py:89
 msgid "comment is required"
-msgstr ""
+msgstr "commentaar is vereist"
 
 #: taiga/projects/history/api.py:92
 msgid "deleted comments can't be edited"
-msgstr ""
+msgstr "verwijderde opmerkingen kunnen niet worden bewerkt"
 
 #: taiga/projects/history/api.py:135
 msgid "Comment already deleted"
@@ -2177,7 +2445,7 @@ msgstr "Niet toegewezen"
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:172
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:183
 msgid "Not set"
-msgstr ""
+msgstr "Niet ingesteld"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:294
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:99
@@ -2234,7 +2502,7 @@ msgstr "geblokkeerde notitie"
 
 #: taiga/projects/history/templatetags/functions.py:17
 msgid "sprint"
-msgstr ""
+msgstr "werkplan"
 
 #: taiga/projects/issues/api.py:161
 msgid "You don't have permissions to set this sprint to this issue."
@@ -2279,11 +2547,11 @@ msgstr "datum van afwerking"
 #: taiga/projects/tasks/validators.py:165
 #: taiga/projects/userstories/validators.py:275
 msgid "The milestone isn't valid for the project"
-msgstr ""
+msgstr "De mijlpaal is niet geldig voor het project"
 
 #: taiga/projects/issues/validators.py:69
 msgid "All the issues must be from the same project"
-msgstr ""
+msgstr "Alle problemen moeten afkomstig zijn van hetzelfde project"
 
 #: taiga/projects/likes/models.py:30
 msgid "Like"
@@ -2325,12 +2593,12 @@ msgstr "The geschatte start moet vroeger zijn dan het geschatte einde."
 
 #: taiga/projects/milestones/validators.py:24
 msgid "There's no milestone with that id"
-msgstr ""
+msgstr "Er is geen mijlpaal met die id"
 
 #: taiga/projects/milestones/validators.py:55
 #: taiga/projects/userstories/validators.py:285
 msgid "All the user stories must be from the same project"
-msgstr ""
+msgstr "Alle werkorders moeten afkomstig zijn uit hetzelfde project"
 
 #: taiga/projects/mixins/blocked.py:19
 msgid "is blocked"
@@ -2338,19 +2606,20 @@ msgstr "is geblokkeerd"
 
 #: taiga/projects/mixins/by_ref.py:21
 msgid "ref param is needed"
-msgstr ""
+msgstr "ref param is nodig"
 
 #: taiga/projects/mixins/by_ref.py:24
 msgid "project or project__slug param is needed"
-msgstr ""
+msgstr "project of project__slug param is nodig"
 
 #: taiga/projects/mixins/on_destroy.py:32
 msgid "Query param 'moveTo' is required"
-msgstr ""
+msgstr "Queryparameter 'verhuizennaar' is vereist"
 
 #: taiga/projects/mixins/on_destroy.py:84
 msgid "Cannot set swimlane to None if there are available swimlanes"
 msgstr ""
+"Kan werkstrook niet op Geen instellen als er werkstrook beschikbaar zijn"
 
 #: taiga/projects/mixins/ordering.py:36
 #, python-brace-format
@@ -2363,7 +2632,7 @@ msgstr "'project' parameter is verplicht"
 
 #: taiga/projects/mixins/validators.py:29
 msgid "The user must be a project member."
-msgstr ""
+msgstr "De gebruiker moet een projectlid zijn."
 
 #: taiga/projects/models.py:86
 msgid "email"
@@ -2391,7 +2660,7 @@ msgstr "The gebruikers is al lid van het project"
 
 #: taiga/projects/models.py:127
 msgid "default epic status"
-msgstr ""
+msgstr "standaard initiatief status"
 
 #: taiga/projects/models.py:131
 msgid "default US status"
@@ -2423,11 +2692,11 @@ msgstr "standaard issue type"
 
 #: taiga/projects/models.py:156
 msgid "default swimlane"
-msgstr ""
+msgstr "standaard werkstrook"
 
 #: taiga/projects/models.py:172
 msgid "logo"
-msgstr ""
+msgstr "logo"
 
 #: taiga/projects/models.py:189
 msgid "members"
@@ -2443,11 +2712,11 @@ msgstr "totaal story points"
 
 #: taiga/projects/models.py:195 taiga/projects/models.py:998
 msgid "active contact"
-msgstr ""
+msgstr "actief contact"
 
 #: taiga/projects/models.py:197 taiga/projects/models.py:1000
 msgid "active epics panel"
-msgstr ""
+msgstr "actief initiatief-paneel"
 
 #: taiga/projects/models.py:199 taiga/projects/models.py:1002
 msgid "active backlog panel"
