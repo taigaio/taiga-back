@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-08-09 12:09+0000\n"
+"PO-Revision-Date: 2024-08-13 10:09+0000\n"
 "Last-Translator: Tobias  Peereboom <tobias@it-online.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "nl/>\n"
@@ -2740,7 +2740,7 @@ msgstr "videoconference systeem"
 
 #: taiga/projects/models.py:210 taiga/projects/models.py:1017
 msgid "videoconference extra data"
-msgstr ""
+msgstr "videoconferentie extra gegevens"
 
 #: taiga/projects/models.py:219
 msgid "creation template"
@@ -2760,23 +2760,23 @@ msgstr "gebruikers toestemmingen"
 
 #: taiga/projects/models.py:229
 msgid "is featured"
-msgstr ""
+msgstr "wordt uitgelicht"
 
 #: taiga/projects/models.py:232 taiga/projects/models.py:1010
 msgid "is looking for people"
-msgstr ""
+msgstr "is op zoek naar mensen"
 
 #: taiga/projects/models.py:234 taiga/projects/models.py:1012
 msgid "looking for people note"
-msgstr ""
+msgstr "op zoek naar mensen notitie"
 
 #: taiga/projects/models.py:248
 msgid "project transfer token"
-msgstr ""
+msgstr "project overdrachtstoken"
 
 #: taiga/projects/models.py:252
 msgid "blocked code"
-msgstr ""
+msgstr "geblokkeerde code"
 
 #: taiga/projects/models.py:255 taiga/projects/notifications/models.py:64
 msgid "updated date time"
@@ -2785,31 +2785,31 @@ msgstr "gewijzigde datum en tijd"
 #: taiga/projects/models.py:258 taiga/projects/models.py:270
 #: taiga/projects/votes/models.py:18
 msgid "count"
-msgstr ""
+msgstr "tel"
 
 #: taiga/projects/models.py:261
 msgid "fans last week"
-msgstr ""
+msgstr "fans vorige week"
 
 #: taiga/projects/models.py:264
 msgid "fans last month"
-msgstr ""
+msgstr "fans vorige maand"
 
 #: taiga/projects/models.py:267
 msgid "fans last year"
-msgstr ""
+msgstr "fans vorig jaar"
 
 #: taiga/projects/models.py:274
 msgid "activity last week"
-msgstr ""
+msgstr "activiteit vorige week"
 
 #: taiga/projects/models.py:278
 msgid "activity last month"
-msgstr ""
+msgstr "activiteit vorige maand"
 
 #: taiga/projects/models.py:282
 msgid "activity last year"
-msgstr ""
+msgstr "activiteit vorig jaar"
 
 #: taiga/projects/models.py:544
 msgid "modules config"
@@ -2830,16 +2830,16 @@ msgstr "waarde"
 #: taiga/projects/models.py:668 taiga/projects/models.py:737
 #: taiga/projects/models.py:885
 msgid "by default"
-msgstr ""
+msgstr "standaard"
 
 #: taiga/projects/models.py:672 taiga/projects/models.py:741
 #: taiga/projects/models.py:889
 msgid "days to due"
-msgstr ""
+msgstr "dagen om te leveren"
 
 #: taiga/projects/models.py:944
 msgid "user story status"
-msgstr ""
+msgstr "werkorder status"
 
 #: taiga/projects/models.py:996
 msgid "default owner's role"
@@ -2851,7 +2851,7 @@ msgstr "standaard instellingen"
 
 #: taiga/projects/models.py:1020
 msgid "epic statuses"
-msgstr ""
+msgstr "initiatief statussen"
 
 #: taiga/projects/models.py:1021
 msgid "us statuses"
@@ -2859,7 +2859,7 @@ msgstr "us statussen"
 
 #: taiga/projects/models.py:1022
 msgid "us duedates"
-msgstr ""
+msgstr "wo vervaldatums"
 
 #: taiga/projects/models.py:1023 taiga/projects/userstories/models.py:47
 #: taiga/projects/userstories/models.py:92
@@ -2872,7 +2872,7 @@ msgstr "taak statussen"
 
 #: taiga/projects/models.py:1025
 msgid "task duedates"
-msgstr ""
+msgstr "taak vervaldatums"
 
 #: taiga/projects/models.py:1026
 msgid "issue statuses"
@@ -2884,7 +2884,7 @@ msgstr "issue types"
 
 #: taiga/projects/models.py:1028
 msgid "issue duedates"
-msgstr ""
+msgstr "kwestie vervaldatums"
 
 #: taiga/projects/models.py:1029
 msgid "priorities"
@@ -2900,55 +2900,55 @@ msgstr "rollen"
 
 #: taiga/projects/models.py:1032
 msgid "epic custom attributes"
-msgstr ""
+msgstr "initiatieven aangepaste kenmerken"
 
 #: taiga/projects/models.py:1033
 msgid "us custom attributes"
-msgstr ""
+msgstr "wo aangepaste kenmerken"
 
 #: taiga/projects/models.py:1034
 msgid "task custom attributes"
-msgstr ""
+msgstr "taak aangepaste kenmerken"
 
 #: taiga/projects/models.py:1035
 msgid "issue custom attributes"
-msgstr ""
+msgstr "kwestie aangepaste kenmerken"
 
 #: taiga/projects/notifications/choices.py:19
 msgid "Involved"
-msgstr ""
+msgstr "Betrokken"
 
 #: taiga/projects/notifications/choices.py:20
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #: taiga/projects/notifications/choices.py:21
 msgid "None"
-msgstr ""
+msgstr "Geen"
 
 #: taiga/projects/notifications/choices.py:35
 msgid "Assigned"
-msgstr ""
+msgstr "Toegewezen"
 
 #: taiga/projects/notifications/choices.py:36
 msgid "Mentioned"
-msgstr ""
+msgstr "Genoemd"
 
 #: taiga/projects/notifications/choices.py:37
 msgid "Added as watcher"
-msgstr ""
+msgstr "Toegevoegd als toeschouwer"
 
 #: taiga/projects/notifications/choices.py:38
 msgid "Added as member"
-msgstr ""
+msgstr "Toegevoegd als lid"
 
 #: taiga/projects/notifications/choices.py:39
 msgid "Comment"
-msgstr ""
+msgstr "Opmerking"
 
 #: taiga/projects/notifications/choices.py:40
 msgid "Mentioned in comment"
-msgstr ""
+msgstr "Vermeld in commentaar"
 
 #: taiga/projects/notifications/models.py:62
 msgid "created date time"
@@ -2965,7 +2965,7 @@ msgstr "verwittig gebruikers"
 #: taiga/projects/notifications/models.py:109
 #: taiga/projects/notifications/models.py:110
 msgid "Watched"
-msgstr ""
+msgstr "Bekeken"
 
 #: taiga/projects/notifications/services.py:70
 #: taiga/projects/notifications/services.py:94
@@ -2976,7 +2976,7 @@ msgstr "Verwittiging bestaat voor gespecifieerde gebruiker en project"
 
 #: taiga/projects/notifications/services.py:531
 msgid "Invalid value for notify level"
-msgstr ""
+msgstr "Ongeldige waarde voor meldingsniveau"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-body-html.jinja:12
 #, python-format
@@ -2990,6 +2990,14 @@ msgid ""
 "%(subject)s\">See epic</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Epic bijgewerkt</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s heeft een epic bijgewerkt op "
+"%(project)s</p>\n"
+"<p>Epic #%(ref)s %(subject)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk Epic #%(ref)s: %(subject)"
+"s\">Bekijk epic</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-body-text.jinja:11
 #, python-format
@@ -2999,6 +3007,10 @@ msgid ""
 "Hello %(user)s, %(changer)s has updated a epic on %(project)s\n"
 "See epic #%(ref)s %(subject)s at %(url)s\n"
 msgstr ""
+"\n"
+"Epic bijgewerkt\n"
+"Hallo %(user)s, %(changer)s heeft een epic bijgewerkt op %(project)s\n"
+"Zie epic #%(ref)s %(subject)s op %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-subject.jinja:9
 #, python-format
@@ -3006,6 +3018,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] De epic #%(ref)s \"%(subject)s\" is bijgewerkt\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-html.jinja:12
 #, python-format
@@ -3020,6 +3034,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Nieuwe epic gemaakt</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een nieuwe epic gemaakt op "
+"%(project)s</p>\n"
+"<p>Epic #%(ref)s %(subject)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk Epic #%(ref)s %(subject)"
+"s\">Bekijk epic</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-text.jinja:9
 #, python-format
@@ -3032,6 +3055,13 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Nieuwe epic gemaakt\n"
+"Hallo %(user)s, %(changer)s heeft een nieuwe epic gemaakt op %(project)s\n"
+"Zie epic #%(ref)s %(subject)s op %(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-subject.jinja:9
 #, python-format
@@ -3039,6 +3069,8 @@ msgid ""
 "\n"
 "[%(project)s] Created the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Het epos #%(ref)s \"%(subject)s\" gemaakt\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-body-html.jinja:12
 #, python-format
@@ -3051,6 +3083,13 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Initiatief verwijderd</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een Initiatief verwijderd op "
+"%(project)s</p>\n"
+"<p>Initiatief #%(ref)s %(subject)s</p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-body-text.jinja:9
 #, python-format
@@ -3063,6 +3102,13 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Initiatief verwijderd\n"
+"Hallo %(user)s, %(changer)s heeft een initiatief verwijderd op %(project)s\n"
+"Initiatief #%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-subject.jinja:9
 #, python-format
@@ -3070,6 +3116,13 @@ msgid ""
 "\n"
 "[%(project)s] Deleted the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"<h1>Initiatief bijgewerkt</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s heeft een initiatief bijgewerkt op "
+"%(project)s</p>\n"
+"<p>Initiatief #%(ref)s %(subject)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk Initiatief #%(ref)s: "
+"%(subject)s\">Bekijk initiatief</a>\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-body-html.jinja:12
 #, python-format
@@ -3082,6 +3135,13 @@ msgid ""
 "%(subject)s\">See issue</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Probleem bijgewerkt op %(project)s</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s heeft een probleem bijgewerkt:</p>\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Zie probleem #%(ref)s: "
+"%(subject)s\">Zie probleem</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-body-text.jinja:11
 #, python-format
