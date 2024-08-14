@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-08-13 10:09+0000\n"
+"PO-Revision-Date: 2024-08-15 10:09+0000\n"
 "Last-Translator: Tobias  Peereboom <tobias@it-online.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "nl/>\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"X-Generator: Weblate 5.7\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -85,7 +85,7 @@ msgstr "ongeldige gebruikersnaam"
 #: taiga/auth/serializers.py:85 taiga/users/validators.py:43
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
-msgstr "Verplicht. 255 tekens of minder. Letters, nummers en  /./-/_ tekens'"
+msgstr "Verplicht. 255 tekens of minder. Letters, nummers en /./-/_ tekens'"
 
 #: taiga/auth/serializers.py:92 taiga/auth/serializers.py:95
 #: taiga/users/validators.py:56 taiga/users/validators.py:59
@@ -114,7 +114,7 @@ msgstr "Fout bij het aanmaken van een nieuwe gebruiker."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr "jti"
+msgstr "j t i"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
@@ -473,7 +473,7 @@ msgstr "Taiga"
 
 #: taiga/base/templates/emails/hero-body-html.jinja:14
 msgid "You have been Taigatized"
-msgstr "Je bent getaiganiseerd."
+msgstr "Je bent getaiganiseerd"
 
 #: taiga/base/templates/emails/hero-body-html.jinja:306
 #, python-format
@@ -536,8 +536,12 @@ msgid ""
 "                                                                    "
 msgstr ""
 "\n"
-"<h3>commentaar:</h3>\n"
-"<p>%(comment)s</p>"
+"                                                                    "
+"<h3>opmerking:</h3>\n"
+"                                                                             "
+"                                                                            "
+"<p>%(opmerking)s</p>\n"
+"                                                                    "
 
 #: taiga/base/templates/emails/updates-body-text.jinja:14
 #, python-format
@@ -689,7 +693,7 @@ msgstr "fout bij het importeren van user stories"
 
 #: taiga/export_import/services/store.py:882
 msgid "error importing epics"
-msgstr "fout bij het importeren van epics"
+msgstr "fout bij het importeren van initiatieven"
 
 #: taiga/export_import/services/store.py:886
 msgid "error importing tasks"
@@ -1786,15 +1790,15 @@ msgstr "Verwijder initiatief"
 
 #: taiga/permissions/choices.py:35
 msgid "View user story"
-msgstr "Bekijk user story"
+msgstr "Bekijk werkorder"
 
 #: taiga/permissions/choices.py:36
 msgid "Add user story"
-msgstr "Voeg user story toe"
+msgstr "Voeg werkorder toe"
 
 #: taiga/permissions/choices.py:37
 msgid "Modify user story"
-msgstr "Wijzig user story"
+msgstr "Wijzig werkorder"
 
 #: taiga/permissions/choices.py:38
 msgid "Comment user story"
@@ -1802,7 +1806,7 @@ msgstr "Commentaar op werkorder"
 
 #: taiga/permissions/choices.py:39
 msgid "Delete user story"
-msgstr "Verwijder user story"
+msgstr "Verwijder werkorder"
 
 #: taiga/permissions/choices.py:42
 msgid "Add task"
@@ -2267,7 +2271,7 @@ msgstr "initiatief"
 #: taiga/projects/custom_attributes/models.py:124
 #: taiga/projects/tasks/models.py:29 taiga/projects/userstories/models.py:31
 msgid "user story"
-msgstr "user story"
+msgstr "werkorder"
 
 #: taiga/projects/custom_attributes/models.py:145
 msgid "task"
@@ -2275,7 +2279,7 @@ msgstr "taak"
 
 #: taiga/projects/custom_attributes/models.py:166
 msgid "issue"
-msgstr "issue"
+msgstr "kwestie"
 
 #: taiga/projects/custom_attributes/validators.py:46
 msgid "Already exists one with the same name."
@@ -2537,7 +2541,7 @@ msgstr "prioriteit"
 #: taiga/projects/issues/models.py:73 taiga/projects/tasks/models.py:66
 #: taiga/projects/userstories/models.py:74
 msgid "milestone"
-msgstr "milestone"
+msgstr "mijlpaal"
 
 #: taiga/projects/issues/models.py:90 taiga/projects/tasks/models.py:74
 msgid "finished date"
@@ -2880,7 +2884,7 @@ msgstr "issue statussen"
 
 #: taiga/projects/models.py:1027
 msgid "issue types"
-msgstr "issue types"
+msgstr "probleemtypen"
 
 #: taiga/projects/models.py:1028
 msgid "issue duedates"
@@ -2991,12 +2995,12 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    <h1>Epic bijgewerkt</h1>\n"
-"<p>Hallo %(user)s, <br> %(changer)s heeft een epic bijgewerkt op "
+"    <h1>Initiatief bijgewerkt</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s heeft een intiatief bijgewerkt op "
 "%(project)s</p>\n"
-"<p>Epic #%(ref)s %(subject)s</p>\n"
-"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk Epic #%(ref)s: %(subject)"
-"s\">Bekijk epic</a>\n"
+"<p>Initiatief #%(ref)s %(subject)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk Initiatief #%(ref)s: "
+"%(subject)s\">Bekijk intiatief</a>\n"
 "    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-body-text.jinja:11
@@ -3008,9 +3012,9 @@ msgid ""
 "See epic #%(ref)s %(subject)s at %(url)s\n"
 msgstr ""
 "\n"
-"Epic bijgewerkt\n"
-"Hallo %(user)s, %(changer)s heeft een epic bijgewerkt op %(project)s\n"
-"Zie epic #%(ref)s %(subject)s op %(url)s\n"
+"Initiatief bijgewerkt\n"
+"Hallo %(user)s, %(changer)s heeft een intiatief bijgewerkt op %(project)s\n"
+"Zie intiatief #%(ref)s %(subject)s op %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-subject.jinja:9
 #, python-format
@@ -3019,7 +3023,7 @@ msgid ""
 "[%(project)s] Updated the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
 "\n"
-"[%(project)s] De epic #%(ref)s \"%(subject)s\" is bijgewerkt\n"
+"[%(project)s] De intiatief #%(ref)s \"%(subject)s\" is bijgewerkt\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-html.jinja:12
 #, python-format
@@ -3035,12 +3039,12 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    <h1>Nieuwe epic gemaakt</h1>\n"
-"<p>Hallo %(user)s,<br />%(changer)s heeft een nieuwe epic gemaakt op "
+"    <h1>Nieuwe intiatief gemaakt</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een nieuwe intiatief gemaakt op "
 "%(project)s</p>\n"
-"<p>Epic #%(ref)s %(subject)s</p>\n"
-"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk Epic #%(ref)s %(subject)"
-"s\">Bekijk epic</a>\n"
+"<p>Initiatief #%(ref)s %(subject)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk Initiatief #%(ref)s "
+"%(subject)s\">Bekijk intiatief</a>\n"
 "<p><small>%(signature)s</small></p>\n"
 "    "
 
@@ -3056,9 +3060,10 @@ msgid ""
 "%(signature)s\n"
 msgstr ""
 "\n"
-"Nieuwe epic gemaakt\n"
-"Hallo %(user)s, %(changer)s heeft een nieuwe epic gemaakt op %(project)s\n"
-"Zie epic #%(ref)s %(subject)s op %(url)s\n"
+"Nieuwe intiatief gemaakt\n"
+"Hallo %(user)s, %(changer)s heeft een nieuwe intiatief gemaakt op %(project)"
+"s\n"
+"Zie intiatief #%(ref)s %(subject)s op %(url)s\n"
 "\n"
 "---\n"
 "%(signature)s\n"
@@ -3117,12 +3122,7 @@ msgid ""
 "[%(project)s] Deleted the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
 "\n"
-"<h1>Initiatief bijgewerkt</h1>\n"
-"<p>Hallo %(user)s, <br> %(changer)s heeft een initiatief bijgewerkt op "
-"%(project)s</p>\n"
-"<p>Initiatief #%(ref)s %(subject)s</p>\n"
-"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk Initiatief #%(ref)s: "
-"%(subject)s\">Bekijk initiatief</a>\n"
+"[%(project)s] Het initiatief #%(ref)s \"%(subject)s\" is verwijderd\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-body-html.jinja:12
 #, python-format
@@ -3155,6 +3155,14 @@ msgid ""
 "\n"
 "See issue at %(url)s\n"
 msgstr ""
+"\n"
+"Probleem bijgewerkt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een probleem bijgewerkt:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Zie probleem op %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-subject.jinja:9
 #, python-format
@@ -3177,6 +3185,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Nieuw probleem aangemaakt op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een nieuw probleem aangemaakt:</p>"
+"\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Zie probleem #%(ref)s %(subject)"
+"s\">Zie probleem</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-body-text.jinja:9
 #, python-format
@@ -3193,6 +3210,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Nieuw probleem gemaakt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een nieuw probleem gemaakt:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Bekijk probleem op %(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-subject.jinja:9
 #, python-format
@@ -3213,6 +3241,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Probleem verwijderd op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een probleem verwijderd:</p>\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-delete-body-text.jinja:9
 #, python-format
@@ -3227,6 +3261,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Probleem verwijderd op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een probleem verwijderd:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-delete-subject.jinja:9
 #, python-format
@@ -3248,6 +3291,13 @@ msgid ""
 "sprint</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Sprint bijgewerkt op %(project)s</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s heeft een sprint bijgewerkt:</p>\n"
+"<p><strong>%(name)s</strong></p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Zie Sprint: %(name)s\">Zie "
+"sprint</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-change-body-text.jinja:11
 #, python-format
@@ -3261,6 +3311,14 @@ msgid ""
 "\n"
 "See sprint at %(url)s\n"
 msgstr ""
+"\n"
+"Werkplan bijgewerkt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een werkplan bijgewerkt:\n"
+"\n"
+"%(name)s\n"
+"\n"
+"Zie sprint op %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-change-subject.jinja:9
 #, python-format
@@ -3283,6 +3341,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Nieuw werkplan aangemaakt op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een nieuwe werkplan aangemaakt</p>"
+"\n"
+"<p><strong>%(name)s</strong></p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Zie werkplan %(name)s\">Zie "
+"werkplan</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-create-body-text.jinja:9
 #, python-format
@@ -3299,6 +3366,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Nieuw werkplan aangemaakt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een nieuw werkplan aangemaakt:\n"
+"\n"
+"%(name)s\n"
+"\n"
+"Zie werkplan op %(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-create-subject.jinja:9
 #, python-format
@@ -3319,6 +3397,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Werkplan verwijderd op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een werkplan verwijderd:</p>\n"
+"<p><strong>%(name)s</strong></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-delete-body-text.jinja:9
 #, python-format
@@ -3333,6 +3417,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Werkplan verwijderd op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een werkplan verwijderd:\n"
+"\n"
+"%(name)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-delete-subject.jinja:9
 #, python-format
@@ -3354,6 +3447,13 @@ msgid ""
 "%(subject)s\">See task</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Taak bijgewerkt op %(project)s</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s heeft een taak bijgewerkt:</p>\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Zie Taak #%(ref)s: %(subject)s\""
+">Zie taak</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-text.jinja:11
 #, python-format
@@ -3367,6 +3467,14 @@ msgid ""
 "\n"
 "See task at %(url)s\n"
 msgstr ""
+"\n"
+"Taak bijgewerkt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een taak bijgewerkt:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Zie taak op %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-subject.jinja:9
 #, python-format
@@ -3389,6 +3497,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Nieuwe taak aangemaakt op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een nieuwe taak aangemaakt:</p>\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Zie taak #%(ref)s %(subject)s\""
+">Zie taak</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-body-text.jinja:9
 #, python-format
@@ -3405,6 +3521,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Nieuwe taak aangemaakt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een nieuwe taak aangemaakt:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Zie taak op %(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-subject.jinja:9
 #, python-format
@@ -3425,6 +3552,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Taak verwijderd op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een taak verwijderd:</p>\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-delete-body-text.jinja:9
 #, python-format
@@ -3439,6 +3572,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Taak verwijderd op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een taak verwijderd:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-delete-subject.jinja:9
 #, python-format
@@ -3460,6 +3602,14 @@ msgid ""
 "%(subject)s\">See user story</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Gebruikersverhaal bijgewerkt op %(project)s</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s heeft een gebruikersverhaal "
+"bijgewerkt:</p>\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk gebruikersverhaal "
+"#%(ref)s: %(subject)s\">Bekijk gebruikersverhaal</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-change-body-text.jinja:11
 #, python-format
@@ -3473,6 +3623,14 @@ msgid ""
 "\n"
 "See user story at %(url)s\n"
 msgstr ""
+"\n"
+"Werkorder bijgewerkt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een werkorder bijgewerkt:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Bekijk werkorder op %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-change-subject.jinja:9
 #, python-format
@@ -3495,6 +3653,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Nieuwe werkorder aangemaakt op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een nieuwe werkorder "
+"aangemaakt:</p>\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Bekijk de werkorder #%(ref)s "
+"%(subject)s\">Bekijk de werkorder</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-create-body-text.jinja:9
 #, python-format
@@ -3511,6 +3678,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Nieuwe werkorder gemaakt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een nieuwe werkorder gemaakt:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Bekijk de werkorder op %(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-create-subject.jinja:9
 #, python-format
@@ -3531,6 +3709,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Werkorder verwijderd op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een werkorder verwijderd:</p>\n"
+"<p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-delete-body-text.jinja:9
 #, python-format
@@ -3545,6 +3729,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Werkorder verwijderd op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een werkorder verwijderd\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-delete-subject.jinja:9
 #, python-format
@@ -3566,6 +3759,13 @@ msgid ""
 "Page</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Wikipagina bijgewerkt op %(project)s</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s heeft een wikipagina bijgewerkt:</p>\n"
+"<p>%(page)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Wikipagina bekijken\""
+">Wikipagina bekijken</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-change-body-text.jinja:11
 #, python-format
@@ -3579,6 +3779,14 @@ msgid ""
 "\n"
 "See wiki page at %(url)s\n"
 msgstr ""
+"\n"
+"Wikipagina bijgewerkt op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een wikipagina bijgewerkt:\n"
+"\n"
+"%(page)s\n"
+"\n"
+"Zie wikipagina op %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-change-subject.jinja:9
 #, python-format
@@ -3601,6 +3809,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Nieuwe wikipagina aangemaakt op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een nieuwe wikipagina "
+"aangemaakt:</p>\n"
+"<p>%(page)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Wikipagina %(page)s\">Bekijk "
+"wikipagina</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-create-body-text.jinja:9
 #, python-format
@@ -3617,6 +3834,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Nieuwe wikipagina aangemaakt pagina op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een nieuwe wikipagina aangemaakt:\n"
+"\n"
+"%(page)s\n"
+"\n"
+"Zie wikipagina op %(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-create-subject.jinja:9
 #, python-format
@@ -3637,6 +3865,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Wikipagina verwijderd op %(project)s</h1>\n"
+"<p>Hallo %(user)s,<br />%(changer)s heeft een wikipagina verwijderd:</p>\n"
+"<p>%(page)s</p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-delete-body-text.jinja:9
 #, python-format
@@ -3651,6 +3885,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Wikipagina verwijderd op %(project)s\n"
+"\n"
+"Hallo %(user)s, %(changer)s heeft een wikipagina verwijderd:\n"
+"\n"
+"%(page)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-delete-subject.jinja:9
 #, python-format
@@ -3671,7 +3914,7 @@ msgstr "De versie moet een integer zijn"
 
 #: taiga/projects/occ/mixins.py:49
 msgid "The version parameter is not valid"
-msgstr ""
+msgstr "De versieparameter is niet geldig"
 
 #: taiga/projects/occ/mixins.py:65
 msgid "The version doesn't match with the current one"
@@ -3685,51 +3928,52 @@ msgstr "versie"
 msgid ""
 "You can't leave the project if you are the owner or there are no more admins"
 msgstr ""
+"Je kunt het project niet verlaten als je de eigenaar bent of als er geen "
+"beheerders meer zijn"
 
 #: taiga/projects/services/invitations.py:64
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "Token komt niet overeen met een geldige uitnodiging."
 
 #: taiga/projects/services/invitations.py:74
-#, fuzzy
-#| msgid "The project doesn't exist"
 msgid "User does not exist."
-msgstr "Het project bestaat niet"
+msgstr "Gebruiker bestaat niet."
 
 #: taiga/projects/services/invitations.py:81
 msgid "This user is already a member of the project."
 msgstr "Deze gebruiker is al lid van het project."
 
 #: taiga/projects/services/members.py:46
-#, fuzzy
-#| msgid "new email address"
 msgid "Malformed email adress."
-msgstr "nieuw e-mail adres"
+msgstr "Onjuist e-mailadres."
 
 #: taiga/projects/services/members.py:134
 #: taiga/projects/services/members.py:181
 msgid "Project without owner"
-msgstr ""
+msgstr "Project zonder eigenaar"
 
 #: taiga/projects/services/members.py:157
 #: taiga/projects/services/members.py:204
 msgid "You have reached your current limit of memberships for private projects"
 msgstr ""
+"U hebt uw huidige limiet voor lidmaatschappen voor privéprojecten bereikt"
 
 #: taiga/projects/services/members.py:160
 #: taiga/projects/services/members.py:207
 msgid "You have reached your current limit of memberships for public projects"
 msgstr ""
+"U hebt uw huidige limiet voor lidmaatschappen voor openbare projecten bereikt"
 
 #: taiga/projects/services/members.py:166
 #: taiga/projects/services/members.py:213
 msgid "You have reached the current limit of pending memberships"
 msgstr ""
+"U hebt de huidige limiet van in behandeling zijnde lidmaatschappen bereikt"
 
 #: taiga/projects/services/promote.py:39
 #, python-format
 msgid "Task #%(ref)s"
-msgstr ""
+msgstr "Taak #%(ref)s"
 
 #: taiga/projects/services/stats.py:186
 msgid "Future sprint"
@@ -3747,19 +3991,19 @@ msgstr "Token is ongeldig"
 
 #: taiga/projects/services/transfer.py:56
 msgid "Token has expired"
-msgstr ""
+msgstr "Token is verlopen"
 
 #: taiga/projects/settings/choices.py:22
 msgid "Timeline"
-msgstr ""
+msgstr "Tijdlijn"
 
 #: taiga/projects/settings/choices.py:23
 msgid "Epics"
-msgstr ""
+msgstr "Initiatieven"
 
 #: taiga/projects/settings/choices.py:24
 msgid "Backlog"
-msgstr ""
+msgstr "Werkvoorraad"
 
 #. Translators: Name of kanban project template.
 #: taiga/projects/settings/choices.py:25 taiga/projects/translations.py:24
@@ -3768,20 +4012,20 @@ msgstr "Kanban"
 
 #: taiga/projects/settings/choices.py:26
 msgid "Issues"
-msgstr ""
+msgstr "Kwesties"
 
 #: taiga/projects/settings/choices.py:27
 msgid "TeamWiki"
-msgstr ""
+msgstr "Team Wiki"
 
 #: taiga/projects/settings/validators.py:26
 msgid "You don't have access to this section"
-msgstr ""
+msgstr "U hebt geen toegang tot deze sectie"
 
 #: taiga/projects/tagging/fields.py:41
 #, python-brace-format
 msgid "Invalid tag '{value}'. The color is not a valid HEX color or null."
-msgstr ""
+msgstr "Ongeldige tag '{value}'. De kleur is geen geldige HEX-kleur of null."
 
 #: taiga/projects/tagging/fields.py:44
 #, python-brace-format
@@ -3789,11 +4033,13 @@ msgid ""
 "Invalid tag '{value}'. it must be the name or a pair '[\"name\", \"hex color/"
 "\" | null]'."
 msgstr ""
+"Ongeldige tag '{value}'. Het moet de naam of een paar '[\"name\", \"hex "
+"color/\" | null]' zijn."
 
 #: taiga/projects/tagging/fields.py:66
 #, python-brace-format
 msgid "Invalid tag '{value}'. It must be the tag name."
-msgstr ""
+msgstr "Ongeldige tag '{value}'. Het moet de tagnaam zijn."
 
 #: taiga/projects/tagging/models.py:15
 msgid "tags"
@@ -3806,31 +4052,35 @@ msgstr "tag kleuren"
 #: taiga/projects/tagging/validators.py:36
 #: taiga/projects/tagging/validators.py:63
 msgid "This tag already exists."
-msgstr ""
+msgstr "Deze tag bestaat al."
 
 #: taiga/projects/tagging/validators.py:43
 #: taiga/projects/tagging/validators.py:70
 msgid "The color is not a valid HEX color."
-msgstr ""
+msgstr "De kleur is geen geldige HEX-kleur."
 
 #: taiga/projects/tagging/validators.py:56
 #: taiga/projects/tagging/validators.py:90
 #: taiga/projects/tagging/validators.py:103
 #: taiga/projects/tagging/validators.py:110
 msgid "The tag doesn't exist."
-msgstr ""
+msgstr "De tag bestaat niet."
 
 #: taiga/projects/tasks/api.py:102 taiga/projects/tasks/api.py:111
 msgid "You don't have permissions to set this sprint to this task."
 msgstr ""
+"U beschikt niet over de rechten om deze sprint aan deze taak toe te wijzen."
 
 #: taiga/projects/tasks/api.py:105
 msgid "You don't have permissions to set this user story to this task."
 msgstr ""
+"U beschikt niet over de juiste rechten om deze werkorder aan deze taak toe "
+"te wijzen."
 
 #: taiga/projects/tasks/api.py:108
 msgid "You don't have permissions to set this status to this task."
 msgstr ""
+"U beschikt niet over de rechten om deze status aan deze taak toe te wijzen."
 
 #: taiga/projects/tasks/models.py:79
 msgid "us order"
@@ -3846,38 +4096,41 @@ msgstr "is iocaine"
 
 #: taiga/projects/tasks/validators.py:50
 msgid "Invalid milestone id."
-msgstr ""
+msgstr "Ongeldige mijlpaal-id."
 
 #: taiga/projects/tasks/validators.py:61
 msgid "Invalid task status id."
-msgstr ""
+msgstr "Ongeldige taakstatus-id."
 
 #: taiga/projects/tasks/validators.py:74
 msgid "Invalid user story id."
-msgstr ""
+msgstr "Ongeldige gebruikersverhaal-id."
 
 #: taiga/projects/tasks/validators.py:98
 msgid "Invalid task status id. The status must belong to the same project."
-msgstr ""
+msgstr "Ongeldige taakstatus-id. De status moet bij hetzelfde project horen."
 
 #: taiga/projects/tasks/validators.py:112
 msgid "Invalid user story id. The user story must belong to the same project."
 msgstr ""
+"Ongeldige werkorder-id. De werkorder moet tot hetzelfde project behoren."
 
 #: taiga/projects/tasks/validators.py:124
 #: taiga/projects/userstories/validators.py:112
 msgid "Invalid milestone id. The milestone must belong to the same project."
-msgstr ""
+msgstr "Ongeldige mijlpaal-id. De mijlpaal moet tot hetzelfde project behoren."
 
 #: taiga/projects/tasks/validators.py:141
 msgid ""
 "Invalid task ids. All tasks must belong to the same project and, if it "
 "exists, to the same status, user story and/or milestone."
 msgstr ""
+"Ongeldige taak-id's. Alle taken moeten tot hetzelfde project behoren en, "
+"indien aanwezig, tot dezelfde status, werkorder en/of mijlpaal."
 
 #: taiga/projects/tasks/validators.py:175
 msgid "All the tasks must be from the same project"
-msgstr ""
+msgstr "Alle taken moeten van hetzelfde project zijn"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:14
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:12
@@ -3894,6 +4147,13 @@ msgid ""
 "Project Management Tool. There is no cost for you to be a Taiga user.</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h2>U bent uitgenodigd voor %(product_name)s!</h2>\n"
+"<p>Hallo! %(full_name)s heeft u een uitnodiging gestuurd om deel te nemen "
+"aan project <em>%(project)s</em> in %(product_name)s.</br> Taiga is een Open "
+"Source Agile Project Management Tool. Het kost u niets om Taiga-gebruiker te "
+"zijn.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:25
 #, python-format
@@ -3904,6 +4164,11 @@ msgid ""
 "    <p><strong>%(extra)s</strong></p>\n"
 "        "
 msgstr ""
+"\n"
+"    <p><small>En nu een paar woorden van de vrolijke goede kerel of zuster<"
+"br/> die zo vriendelijk was om u uit te nodigen</small></p>\n"
+"<p><strong>%(extra)s</strong></p>\n"
+"        "
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:32
 msgid "Accept your invitation to Taiga"
@@ -3923,6 +4188,9 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p><small>%(handtekening)s</small></p>\n"
+"    "
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:14
 #, python-format
@@ -3936,6 +4204,14 @@ msgid ""
 "you to be a Taiga user.\n"
 "\n"
 msgstr ""
+"\n"
+"U, of iemand die u kent, heeft u uitgenodigd voor %(product_name)s\n"
+"\n"
+"Hallo! %(full_name)s heeft u een uitnodiging gestuurd om deel te nemen aan "
+"een project genaamd %(project)s in %(product_name)s.\n"
+"Taiga is een Open Source Agile Project Management Tool. Het kost u niets om "
+"Taiga-gebruiker te zijn.\n"
+"\n"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:22
 #, python-format
@@ -3979,6 +4255,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>U bent toegevoegd aan een project</h1>\n"
+"<p>Hallo %(full_name)s,<br />U bent toegevoegd aan het project "
+"%(project)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Ga naar%(project)s\">Ga naar "
+"project</a>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/templates/emails/membership_notification-body-text.jinja:9
 #, python-format
@@ -3993,6 +4277,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"U bent toegevoegd aan een project\n"
+"\n"
+"Hallo %(full_name)s, u bent toegevoegd aan het project %(project)s\n"
+"\n"
+"Bekijk project op %(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/templates/emails/membership_notification-subject.jinja:9
 #, python-format
@@ -4012,11 +4305,16 @@ msgid ""
 "new project owner of \"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Hallo %(old_owner_name)s,</p>\n"
+"<p>%(new_owner_name)s heeft uw aanbod geaccepteerd en wordt de nieuwe "
+"projecteigenaar van \"%(project_name)s\".</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:18
 #, python-format
 msgid "<p>%(new_owner_name)s says:</p>"
-msgstr ""
+msgstr "<p>%(new_owner_name)s zegt:</p>"
 
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:22
 msgid ""
@@ -4025,6 +4323,9 @@ msgid ""
 "p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Vanaf nu is uw nieuwe status voor dit project \"admin\".</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:9
 #, python-format
@@ -4034,17 +4335,23 @@ msgid ""
 "%(new_owner_name)s has accepted your offer and will become the new project "
 "owner of \"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Hoi %(old_owner_name)s,\n"
+"%(new_owner_name)s heeft je aanbod geaccepteerd en wordt de nieuwe "
+"projecteigenaar van \"%(project_name)s\".\n"
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:15
 #, python-format
 msgid "%(new_owner_name)s says:"
-msgstr ""
+msgstr "%(new_owner_name)s zegt:"
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:19
 msgid ""
 "\n"
 "From now on, your new status for this project will be \"admin\".\n"
 msgstr ""
+"\n"
+"Vanaf nu is uw nieuwe status voor dit project \"admin\".\n"
 
 #: taiga/projects/templates/emails/transfer_accept-subject.jinja:9
 #, python-format
@@ -4052,6 +4359,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer offer accepted!\n"
 msgstr ""
+"\n"
+"[%(project)s] Aanbod voor overdracht van projecteigendom geaccepteerd!\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:12
 #, python-format
@@ -4062,6 +4371,11 @@ msgid ""
 "new project owner of \"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Hallo %(owner_name)s,</p>\n"
+"<p>%(rejecter_name)s heeft uw aanbod afgewezen en wordt niet de nieuwe "
+"projecteigenaar van \"%(project_name)s\".</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:18
 #, python-format
@@ -4070,6 +4384,9 @@ msgid ""
 "    <p>%(rejecter_name)s says:</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p>%(rejecter_name)s zegt:</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:24
 msgid ""
@@ -4078,11 +4395,15 @@ msgid ""
 "different person.</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p>Als u wilt, kunt u nog steeds proberen het projecteigendom over te "
+"dragen aan een andere persoon.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:29
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:30
 msgid "Request transfer to a different person"
-msgstr ""
+msgstr "Verzoek om overdracht aan een andere persoon"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:9
 #, python-format
@@ -4092,11 +4413,15 @@ msgid ""
 "%(rejecter_name)s has declined your offer and will not become the new "
 "project owner of \"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Hoi %(owner_name)s,\n"
+"%(rejecter_name)s heeft je aanbod afgewezen en wordt niet de nieuwe "
+"projecteigenaar van \"%(project_name)s\".\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:15
 #, python-format
 msgid "%(rejecter_name)s says:"
-msgstr ""
+msgstr "%(rejecter_name)s zegt:"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:19
 msgid ""
@@ -4104,10 +4429,13 @@ msgid ""
 "If you want, you can still try to transfer the project ownership to a "
 "different person.\n"
 msgstr ""
+"\n"
+"Als u wilt, kunt u nog steeds proberen het projecteigendom over te dragen "
+"aan een andere persoon.\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:23
 msgid "Request transfer to a different person:"
-msgstr ""
+msgstr "Verzoek om overdracht aan een andere persoon:"
 
 #: taiga/projects/templates/emails/transfer_reject-subject.jinja:9
 #, python-format
@@ -4115,6 +4443,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer declined\n"
 msgstr ""
+"\n"
+"[%(project)s] Projecteigendomsoverdracht geweigerd\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:12
 #, python-format
@@ -4125,6 +4455,11 @@ msgid ""
 "\"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Hallo %(owner_name)s,</p>\n"
+"<p>%(requester_name)s heeft verzocht om projecteigenaar te worden van \""
+"%(project_name)s\".</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:17
 msgid ""
@@ -4133,11 +4468,15 @@ msgid ""
 "project transfer from the administration panel.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Klik op \"Doorgaan\" als u de projectoverdracht wilt starten "
+"vanuit het administratiepaneel.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:22
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:30
 msgid "Continue"
-msgstr ""
+msgstr "Doorgaan"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:9
 #, python-format
@@ -4147,6 +4486,10 @@ msgid ""
 "%(requester_name)s has requested to become the project owner of "
 "\"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Hoi %(owner_name)s,\n"
+"%(requester_name)s heeft verzocht om projecteigenaar te worden van \""
+"%(project_name)s\".\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:14
 msgid ""
@@ -4154,10 +4497,13 @@ msgid ""
 "Please, go to your project settings if you would like to start the project "
 "transfer from the administration panel.\n"
 msgstr ""
+"\n"
+"Ga naar uw projectinstellingen als u de projectoverdracht wilt starten "
+"vanuit het administratiepaneel.\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:18
 msgid "Go to your project settings:"
-msgstr ""
+msgstr "Ga naar uw projectinstellingen:"
 
 #: taiga/projects/templates/emails/transfer_request-subject.jinja:9
 #, python-format
@@ -4165,6 +4511,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer request\n"
 msgstr ""
+"\n"
+"[%(project)s] Verzoek tot overdracht van projecteigendom\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:12
 #, python-format
@@ -4175,6 +4523,11 @@ msgid ""
 "would like you to become the new project owner.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Hallo %(receiver_name)s,</p>\n"
+"<p>%(owner_name)s, de huidige projecteigenaar bij \"%(project_name)s\" wil "
+"dat jij de nieuwe projecteigenaar wordt.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:18
 #, python-format
@@ -4183,6 +4536,9 @@ msgid ""
 "        <p>%(owner_name)s says:</p>\n"
 "        "
 msgstr ""
+"\n"
+"        <p>%(owner_name)s zegt:</p>\n"
+"        "
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:25
 msgid ""
@@ -4191,6 +4547,10 @@ msgid ""
 "proposal.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Klik op \"Doorgaan\" om dit voorstel te accepteren of af te "
+"wijzen.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:9
 #, python-format
@@ -4200,11 +4560,15 @@ msgid ""
 "%(owner_name)s, the current project owner at \"%(project_name)s\" would like "
 "you to become the new project owner.\n"
 msgstr ""
+"\n"
+"Hoi %(receiver_name)s,\n"
+"%(owner_name)s, de huidige projecteigenaar bij \"%(project_name)s\" wil "
+"graag dat jij de nieuwe projecteigenaar wordt.\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:14
 #, python-format
 msgid "%(owner_name)s says:"
-msgstr ""
+msgstr "%(owner_name)s zegt:"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:19
 msgid ""
@@ -4212,10 +4576,12 @@ msgid ""
 "Please, go to the following link to either accept or reject this proposal.</"
 "p>\n"
 msgstr ""
+"\n"
+"Ga naar de volgende link om dit voorstel te accepteren of af te wijzen.</p>\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:23
 msgid "Accept or reject the project ownership transfer:"
-msgstr ""
+msgstr "Accepteer of wijs de overdracht van het projecteigendom af:"
 
 #: taiga/projects/templates/emails/transfer_start-subject.jinja:9
 #, python-format
@@ -4223,6 +4589,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer offer\n"
 msgstr ""
+"\n"
+"[%(project)s] Aanbod voor overdracht van projecteigendom\n"
 
 #. Translators: Name of scrum project template.
 #: taiga/projects/translations.py:19
@@ -4445,49 +4813,55 @@ msgstr "Design"
 #. Translators: User role
 #: taiga/projects/translations.py:165
 msgid "Front"
-msgstr "Front"
+msgstr "Voorkant"
 
 #. Translators: User role
 #: taiga/projects/translations.py:167
 msgid "Back"
-msgstr "Back"
+msgstr "Achterkant"
 
 #. Translators: User role
 #: taiga/projects/translations.py:169
 msgid "Product Owner"
-msgstr "Product Owner"
+msgstr "Product Eigenaar"
 
 #. Translators: User role
 #: taiga/projects/translations.py:171
 msgid "Stakeholder"
-msgstr "Stakeholder"
+msgstr "Belanghebbende"
 
 #: taiga/projects/userstories/api.py:190
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr ""
+"U beschikt niet over de rechten om deze sprint in te stellen voor dit "
+"gebruikersverhaal."
 
 #: taiga/projects/userstories/api.py:194
 msgid "You don't have permissions to set this status to this user story."
 msgstr ""
+"U beschikt niet over de juiste rechten om deze status aan dit "
+"gebruikersverhaal toe te wijzen."
 
 #: taiga/projects/userstories/api.py:198
 msgid "You don't have permissions to set this swimlane to this user story."
 msgstr ""
+"U beschikt niet over de juiste rechten om deze kolom in te stellen voor deze "
+"werkorder."
 
 #: taiga/projects/userstories/api.py:274
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
-msgstr ""
+msgstr "Ongeldige rol-id '{role_id}'"
 
 #: taiga/projects/userstories/api.py:281
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
-msgstr ""
+msgstr "Ongeldige punten-id '{points_id}'"
 
 #: taiga/projects/userstories/api.py:300
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
-msgstr ""
+msgstr "Het genereren van het werkorder #{ref} - {subject}"
 
 #: taiga/projects/userstories/models.py:39
 msgid "role"
@@ -4503,7 +4877,7 @@ msgstr "sprint volgorde"
 
 #: taiga/projects/userstories/models.py:99
 msgid "kanban order"
-msgstr ""
+msgstr "werkvoorraad-volgorde"
 
 #: taiga/projects/userstories/models.py:107
 msgid "finish date"
@@ -4511,7 +4885,7 @@ msgstr "afwerkdatum"
 
 #: taiga/projects/userstories/models.py:122
 msgid "assigned users"
-msgstr ""
+msgstr "toegewezen gebruikers"
 
 #: taiga/projects/userstories/models.py:131
 msgid "generated from issue"
@@ -4519,64 +4893,75 @@ msgstr "gegenereerd van issue"
 
 #: taiga/projects/userstories/models.py:135
 msgid "generated from task"
-msgstr ""
+msgstr "gegenereerd uit taak"
 
 #: taiga/projects/userstories/models.py:136
 msgid "reference from task"
-msgstr ""
+msgstr "referentie van taak"
 
 #: taiga/projects/userstories/models.py:144
 msgid "swimlane"
-msgstr ""
+msgstr "kolom"
 
 #: taiga/projects/userstories/validators.py:33
 msgid "There's no user story with that id"
-msgstr "Er is geen user story met  dat id"
+msgstr "Er is geen werkorder met dat id"
 
 #: taiga/projects/userstories/validators.py:74
 #: taiga/projects/userstories/validators.py:185
 msgid ""
 "Invalid user story status id. The status must belong to the same project."
 msgstr ""
+"Ongeldige werkorder status-id. De status moet bij hetzelfde project horen."
 
 #: taiga/projects/userstories/validators.py:87
 #: taiga/projects/userstories/validators.py:197
 msgid "Invalid swimlane id. The swimlane must belong to the same project."
-msgstr ""
+msgstr "Ongeldige kolom-id. De kolom moet tot hetzelfde project behoren."
 
 #: taiga/projects/userstories/validators.py:130
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project and milestone."
 msgstr ""
+"Ongeldige werkorder-id om na te verplaatsen. De werkorder moet tot hetzelfde "
+"project en dezelfde mijlpaal behoren."
 
 #: taiga/projects/userstories/validators.py:140
 #: taiga/projects/userstories/validators.py:226
 msgid "You can't use after and before at the same time."
-msgstr ""
+msgstr "Je kunt 'after' en 'fore' niet tegelijkertijd gebruiken."
 
 #: taiga/projects/userstories/validators.py:153
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project and milestone."
 msgstr ""
+"Ongeldige werkorder-id om eerder te verplaatsen. De werkorder moet tot "
+"hetzelfde project en dezelfde mijlpaal behoren."
 
 #: taiga/projects/userstories/validators.py:165
 #: taiga/projects/userstories/validators.py:252
 msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
+"Ongeldige werkorder-id's. Alle werkorders moeten tot hetzelfde project "
+"behoren."
 
 #: taiga/projects/userstories/validators.py:216
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"Ongeldige werkorder-id om te verplaatsen. De werkorder moet tot hetzelfde "
+"project, dezelfde status en kolom behoren."
 
 #: taiga/projects/userstories/validators.py:240
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"Ongeldige werkorder-id om eerder te verplaatsen. De werkorder moet tot "
+"hetzelfde project, dezelfde status en kolom behoren."
 
 #: taiga/projects/validators.py:52
 msgid "There's no project with that id"
@@ -4584,11 +4969,11 @@ msgstr "Er is geen project met dat is"
 
 #: taiga/projects/validators.py:165
 msgid "The user yet exists in the project"
-msgstr ""
+msgstr "De gebruiker bestaat nog niet in het project"
 
 #: taiga/projects/validators.py:170
 msgid "Invalid operation"
-msgstr ""
+msgstr "Ongeldige bewerking"
 
 #: taiga/projects/validators.py:182
 msgid "Invalid role for the project"
@@ -4596,19 +4981,20 @@ msgstr "Ongeldige rol voor project"
 
 #: taiga/projects/validators.py:197 taiga/projects/validators.py:260
 msgid "The user must be a valid contact"
-msgstr ""
+msgstr "De gebruiker moet een geldig contactpersoon zijn"
 
 #: taiga/projects/validators.py:218
 msgid "The project owner must be admin."
-msgstr ""
+msgstr "De projecteigenaar moet beheerder zijn."
 
 #: taiga/projects/validators.py:222
 msgid "At least one user must be an active admin for this project."
 msgstr ""
+"Er moet minimaal één gebruiker een actieve beheerder voor dit project zijn."
 
 #: taiga/projects/validators.py:275
 msgid "Invalid role ids. All roles must belong to the same project."
-msgstr ""
+msgstr "Ongeldige rol-id's. Alle rollen moeten tot hetzelfde project behoren."
 
 #: taiga/projects/validators.py:299
 msgid "Default options"
@@ -4673,81 +5059,75 @@ msgstr "href"
 
 #: taiga/telemetry/models.py:18
 msgid "instance id"
-msgstr ""
+msgstr "instantie-id"
 
 #: taiga/timeline/signals.py:54
 msgid "Check the history API for the exact diff"
-msgstr ""
+msgstr "Controleer de API-geschiedenis voor het exacte verschil"
 
 #: taiga/users/admin.py:31
 msgid "Project Member"
-msgstr ""
+msgstr "Projectlid"
 
 #: taiga/users/admin.py:32
 msgid "Project Members"
-msgstr ""
+msgstr "Projectleden"
 
 #: taiga/users/admin.py:41
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: taiga/users/admin.py:83
 msgid "Project Ownership"
-msgstr ""
+msgstr "Projecteigendom"
 
 #: taiga/users/admin.py:84
 msgid "Project Ownerships"
-msgstr ""
+msgstr "Projecteigendommen"
 
 #: taiga/users/admin.py:97
-#, fuzzy
-#| msgid "members"
 msgid "Memberships"
-msgstr "leden"
+msgstr "Lidmaatschappen"
 
 #: taiga/users/admin.py:141
 msgid "PERSONAL INFO"
-msgstr ""
+msgstr "PERSOONLIJKE INFORMATIE"
 
 #: taiga/users/admin.py:142
 msgid "EXTRA INFO"
-msgstr ""
+msgstr "EXTRA INFORMATIE"
 
 #: taiga/users/admin.py:144
 msgid "PERMISSIONS"
-msgstr ""
+msgstr "VERGUNNINGEN"
 
 #: taiga/users/admin.py:145
 msgid "IMPORTANT DATES"
-msgstr ""
+msgstr "BELANGRIJKE DATA"
 
 #: taiga/users/admin.py:146
 msgid "PROJECT OWNERSHIPS RESTRICTIONS"
-msgstr ""
+msgstr "BEPERKINGEN VOOR PROJECTEIGENDOMSBEZITTINGEN"
 
 #: taiga/users/admin.py:148
 msgid "PROJECT OWNERSHIPS STATS"
-msgstr ""
+msgstr "PROJECTEIGENDOMSSTATISTIEKEN"
 
 #: taiga/users/admin.py:169
-#, fuzzy
-#| msgid "Project End"
 msgid "Private projects owned"
-msgstr "Project einde"
+msgstr "Eigendom van particuliere projecten"
 
 #: taiga/users/admin.py:175
 msgid "Private memberships owned"
-msgstr ""
+msgstr "Privélidmaatschappen in bezit"
 
 #: taiga/users/admin.py:193
-#, fuzzy
-#| msgid "Project End"
 msgid "Public projects owned"
-msgstr "Project einde"
+msgstr "Project einde Publieke projecten in eigendom"
 
 #: taiga/users/admin.py:199
 msgid "Public memberships owned"
-msgstr ""
+msgstr "Publieke lidmaatschappen in bezit"
 
 #: taiga/users/api.py:123
 msgid "Duplicated email"
@@ -4755,7 +5135,7 @@ msgstr "Gedupliceerde e-mail"
 
 #: taiga/users/api.py:125
 msgid "Invalid email"
-msgstr ""
+msgstr "Ongeldig e-mailadres"
 
 #: taiga/users/api.py:163
 msgid "Invalid username or email"
@@ -4763,7 +5143,7 @@ msgstr "Ongeldige gebruikersnaam of e-mail"
 
 #: taiga/users/api.py:172
 msgid "Mail sent successfully!"
-msgstr ""
+msgstr "E-mail succesvol verzonden!"
 
 #: taiga/users/api.py:210
 msgid "Current password parameter needed"
@@ -4775,7 +5155,7 @@ msgstr "Nieuw wachtwoord parameter vereist"
 
 #: taiga/users/api.py:216
 msgid "Invalid password length at least 6 characters needed"
-msgstr ""
+msgstr "Ongeldige wachtwoordlengte, minimaal 6 tekens nodig"
 
 #: taiga/users/api.py:219
 msgid "Invalid current password"
@@ -4792,11 +5172,11 @@ msgstr "Ongeldig, weet je zeker dat het token correct is?"
 
 #: taiga/users/api.py:344
 msgid "Email address already verified"
-msgstr ""
+msgstr "E-mailadres al geverifieerd"
 
 #: taiga/users/api.py:346
 msgid "Unable to verify this email address"
-msgstr ""
+msgstr "Kan dit e-mailadres niet verifiëren"
 
 #: taiga/users/api.py:349
 msgid "Mail sended successful!"
@@ -4821,11 +5201,11 @@ msgstr "gebruikersnaam"
 #: taiga/users/models.py:121
 msgid ""
 "Required. 30 characters or fewer. Letters, numbers and /./-/_ characters"
-msgstr "Vereist. 30 of minder karakters. Letters, nummers en  /./-/_ karakters"
+msgstr "Vereist. 30 of minder karakters. Letters, nummers en /./-/_ karakters"
 
 #: taiga/users/models.py:124
 msgid "Enter a valid username."
-msgstr "Geef een geldige gebruikersnaam in"
+msgstr "Geef een geldige gebruikersnaam in."
 
 #: taiga/users/models.py:127
 msgid "active"
@@ -4836,16 +5216,16 @@ msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
-"Beduidt of deze gebruiker als actief moet  behandeld worden. Deselecteer dit "
+"Beduidt of deze gebruiker als actief moet behandeld worden. Deselecteer dit "
 "i.p.v. accounts te verwijderen."
 
 #: taiga/users/models.py:130
 msgid "staff status"
-msgstr ""
+msgstr "personeelsstatus"
 
 #: taiga/users/models.py:131
 msgid "Designates whether the user can log into this admin site."
-msgstr ""
+msgstr "Geeft aan of de gebruiker kan inloggen op deze beheersite."
 
 #: taiga/users/models.py:137
 msgid "biography"
@@ -4860,18 +5240,16 @@ msgid "date joined"
 msgstr "toetrededatum"
 
 #: taiga/users/models.py:142
-#, fuzzy
-#| msgid "date joined"
 msgid "date cancelled"
-msgstr "toetrededatum"
+msgstr "datum geannuleerd"
 
 #: taiga/users/models.py:143
 msgid "accepted terms"
-msgstr ""
+msgstr "geaccepteerde voorwaarden"
 
 #: taiga/users/models.py:144
 msgid "new terms read"
-msgstr ""
+msgstr "nieuwe voorwaarden lezen"
 
 #: taiga/users/models.py:146
 msgid "default language"
@@ -4879,7 +5257,7 @@ msgstr "standaard taal"
 
 #: taiga/users/models.py:148
 msgid "default theme"
-msgstr ""
+msgstr "standaard thema"
 
 #: taiga/users/models.py:150
 msgid "default timezone"
@@ -4899,21 +5277,25 @@ msgstr "nieuw e-mail adres"
 
 #: taiga/users/models.py:166
 msgid "max number of owned private projects"
-msgstr ""
+msgstr "maximaal aantal eigen privéprojecten"
 
 #: taiga/users/models.py:169
 msgid "max number of owned public projects"
-msgstr ""
+msgstr "maximaal aantal eigen openbare projecten"
 
 #: taiga/users/models.py:172
 msgid ""
 "max number of memberships of different users for all owned private project"
 msgstr ""
+"maximaal aantal lidmaatschappen van verschillende gebruikers voor alle eigen "
+"privéprojecten"
 
 #: taiga/users/models.py:177
 msgid ""
 "max number of memberships of different users for all owned public project"
 msgstr ""
+"maximaal aantal lidmaatschappen van verschillende gebruikers voor alle "
+"openbare projecten in eigendom"
 
 #: taiga/users/models.py:305
 msgid "permissions"
@@ -4935,6 +5317,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Uw e-mailadres wijzigen</h1>\n"
+"<p>Hallo %(full_name)s,<br />bevestig uw e-mailadres</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"E-mailadres bevestigen\">E-"
+"mailadres bevestigen</a>\n"
+"<p>U kunt dit bericht negeren als u het niet hebt aangevraagd.</p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/change_email-body-text.jinja:9
 #, python-format
@@ -4949,6 +5339,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(full_name)s, bevestig uw e-mail\n"
+"\n"
+"%(url)s\n"
+"\n"
+"U kunt dit bericht negeren als u het niet hebt aangevraagd.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/change_email-subject.jinja:9
 msgid "[Taiga] Change email"
@@ -4966,6 +5365,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Herstel uw wachtwoord</h1>\n"
+"<p>Hallo %(full_name)s, <br /> u hebt gevraagd om uw wachtwoord te "
+"herstellen</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Herstel uw wachtwoord\">Herstel "
+"uw wachtwoord</a>\n"
+"<p>U kunt dit bericht negeren als u het niet hebt aangevraagd.</p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/password_recovery-body-text.jinja:9
 #, python-format
@@ -4980,6 +5388,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(full_name)s, u hebt gevraagd om uw wachtwoord te herstellen\n"
+"\n"
+"%(url)s\n"
+"\n"
+"U kunt dit bericht negeren als u het niet hebt aangevraagd.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/password_recovery-subject.jinja:9
 msgid "[Taiga] Password recovery"
@@ -4994,6 +5411,11 @@ msgid ""
 "email\">Confirm email</a>\n"
 "            "
 msgstr ""
+"\n"
+"            <p>Bevestig uw e-mailadres</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Bevestig e-mailadres\">Bevestig "
+"e-mailadres</a>\n"
+"            "
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:21
 #, python-format
@@ -5009,6 +5431,16 @@ msgid ""
 "        </td>\n"
 "        "
 msgstr ""
+"\n"
+"            <h2>Bedankt voor uw registratie in %(product_name)s</h2>\n"
+"<p>We zijn blij dat u zich hebt aangesloten bij onze groeiende community van "
+"professionals die hun manier van werken revolutioneren en we hopen dat u "
+"ervan geniet.</p>\n"
+"<p>Heeft u een vraag? Geef ons een seintje als u ooit een helpende hand "
+"nodig hebt, we zijn te vinden op %(support_email)s.</p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"</td>\n"
+"        "
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:36
 #, python-format
@@ -5019,6 +5451,11 @@ msgid ""
 "#9dce0a\">clicking here</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <strong>U kunt uw account van deze service verwijderen</strong> <a href="
+"\"%(url)s\" title=\"Uw account verwijderen\" style=\"color: #9dce0a\">door "
+"hier te klikken</a>\n"
+"    "
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:9
 #, python-format
@@ -5029,6 +5466,12 @@ msgid ""
 "We're thrilled you've joined our growing community of professionals "
 "revolutionizing their way of working and hope you enjoy it.\n"
 msgstr ""
+"\n"
+"Bedankt voor uw registratie in %(product_name)s\n"
+"\n"
+"We zijn blij dat u zich hebt aangesloten bij onze groeiende community van "
+"professionals die hun manier van werken revolutioneren en we hopen dat u "
+"ervan geniet.\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:16
 #, python-format
@@ -5036,6 +5479,8 @@ msgid ""
 "\n"
 "Please confirm your email: %(url)s\n"
 msgstr ""
+"\n"
+"Bevestig uw e-mailadres: %(url)s\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:21
 #, python-format
@@ -5046,6 +5491,11 @@ msgid ""
 "--\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Heb je een vraag? Geef ons een seintje als je ooit een helpende hand nodig "
+"hebt, we zijn te bereiken op %(support_email)s.\n"
+"--\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:26
 #, python-format
@@ -5072,6 +5522,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Verifieer uw e-mailadres</h1>\n"
+"<p>Hallo %(full_name)s,<br />verifieer uw e-mailadres</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Verifieer e-mailadres\""
+">Verifieer e-mailadres</a>\n"
+"<p>U kunt dit bericht negeren als u het niet hebt aangevraagd.</p>\n"
+"<p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/send_verification-body-text.jinja:9
 #, python-format
@@ -5086,10 +5544,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Hallo %(full_name)s, verifieer uw e-mail\n"
+"\n"
+"%(url)s\n"
+"\n"
+"U kunt dit bericht negeren als u het niet hebt aangevraagd.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/send_verification-subject.jinja:9
 msgid "[Taiga] Verify email"
-msgstr ""
+msgstr "[Taiga] E-mail verifiëren"
 
 #: taiga/users/validators.py:38
 msgid "invalid"
@@ -5101,7 +5568,7 @@ msgstr "Ongeldige gebruikersnaam. Probeer met een andere."
 
 #: taiga/users/validators.py:76
 msgid "Read new terms has to be true'"
-msgstr ""
+msgstr "'Lees nieuwe voorwaarden deze moeten waar zijn'"
 
 #: taiga/userstorage/api.py:42
 msgid ""
@@ -5111,7 +5578,7 @@ msgstr ""
 
 #: taiga/userstorage/models.py:27
 msgid "key"
-msgstr "key"
+msgstr "sleutel"
 
 #: taiga/webhooks/models.py:24 taiga/webhooks/models.py:39
 msgid "URL"
@@ -5127,19 +5594,19 @@ msgstr "status code"
 
 #: taiga/webhooks/models.py:41
 msgid "request data"
-msgstr "request data"
+msgstr "vraag om data"
 
 #: taiga/webhooks/models.py:42
 msgid "request headers"
-msgstr "request headers"
+msgstr "verzoek headers"
 
 #: taiga/webhooks/models.py:43
 msgid "response data"
-msgstr "response data"
+msgstr "responsgegevens"
 
 #: taiga/webhooks/models.py:44
 msgid "response headers"
-msgstr "response headers"
+msgstr "antwoordheaders"
 
 #: taiga/webhooks/models.py:45
 msgid "duration"
@@ -5147,7 +5614,7 @@ msgstr "duur"
 
 #: taiga/webhooks/validators.py:32
 msgid "Not allowed IP Address"
-msgstr ""
+msgstr "Niet toegestaan IP-adres"
 
 #~ msgid "Personal info"
 #~ msgstr "Persoonlijke info"
