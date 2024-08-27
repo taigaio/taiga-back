@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-08-15 10:09+0000\n"
+"PO-Revision-Date: 2024-08-28 08:09+0000\n"
 "Last-Translator: Tobias  Peereboom <tobias@it-online.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "nl/>\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7\n"
+"X-Generator: Weblate 5.7.1-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -519,11 +519,11 @@ msgstr "Haal de code op GitHub"
 
 #: taiga/base/templates/emails/updates-body-html.jinja:14
 msgid "[Taiga] Updates"
-msgstr "[Taiga] Updates"
+msgstr "[Taiga] Up-dates"
 
 #: taiga/base/templates/emails/updates-body-html.jinja:368
 msgid "Updates"
-msgstr "Updates"
+msgstr "Up-dates"
 
 #: taiga/base/templates/emails/updates-body-html.jinja:374
 #, python-format
@@ -537,10 +537,10 @@ msgid ""
 msgstr ""
 "\n"
 "                                                                    "
-"<h3>opmerking:</h3>\n"
+"<h3>commentaar:</h3>\n"
 "                                                                             "
 "                                                                            "
-"<p>%(opmerking)s</p>\n"
+"<p>%(commentaar)s</p>\n"
 "                                                                    "
 
 #: taiga/base/templates/emails/updates-body-text.jinja:14
@@ -2061,7 +2061,7 @@ msgstr "inhoud type"
 
 #: taiga/projects/attachments/models.py:50
 msgid "object id"
-msgstr "object id"
+msgstr "object-id"
 
 #: taiga/projects/attachments/models.py:56
 #: taiga/projects/custom_attributes/models.py:43
@@ -2124,7 +2124,7 @@ msgstr "whereby.com"
 
 #: taiga/projects/choices.py:13
 msgid "Jitsi"
-msgstr "Jitsi"
+msgstr "J i t s i"
 
 #: taiga/projects/choices.py:14
 msgid "Custom"
@@ -2132,7 +2132,7 @@ msgstr "Aangepast"
 
 #: taiga/projects/choices.py:15
 msgid "Talky"
-msgstr "Talky"
+msgstr "Pratend"
 
 #: taiga/projects/choices.py:24
 msgid "This project is blocked due to payment failure"
@@ -2300,7 +2300,7 @@ msgstr "Je hebt geen rechten om deze status aan dit initiatief toe te wijzen."
 #: taiga/projects/epics/models.py:25 taiga/projects/issues/models.py:25
 #: taiga/projects/tasks/models.py:33 taiga/projects/userstories/models.py:71
 msgid "ref"
-msgstr "ref"
+msgstr "referentie"
 
 #: taiga/projects/epics/models.py:43 taiga/projects/issues/models.py:40
 #: taiga/projects/models.py:952 taiga/projects/tasks/models.py:48
@@ -4092,7 +4092,7 @@ msgstr "takenbord volgorde"
 
 #: taiga/projects/tasks/models.py:95
 msgid "is iocaine"
-msgstr "is iocaine"
+msgstr "is- iocaine"
 
 #: taiga/projects/tasks/validators.py:50
 msgid "Invalid milestone id."
@@ -5184,7 +5184,7 @@ msgstr "Mail met succes verzonden!"
 
 #: taiga/users/models.py:87
 msgid "superuser status"
-msgstr "superuser status"
+msgstr "super-user status"
 
 #: taiga/users/models.py:88
 msgid ""
