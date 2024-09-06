@@ -8,7 +8,6 @@ contributed to the product development in some way.
 We would like to thank everyone listed here for their help, whether small or
 big, to improve Taiga's overall security rating.
 
-
 ### 2019
 
 - Joshua Osabel
@@ -38,3 +37,7 @@ big, to improve Taiga's overall security rating.
 - Khurram Shoaib
 
 - Kamran Khan
+
+### 2024
+
+- G. Vishal Goud
