@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-08-06 15:09+0000\n"
-"Last-Translator: Alexander Gabilondo <alexgabi@openmailbox.org>\n"
+"PO-Revision-Date: 2024-09-09 22:09+0000\n"
+"Last-Translator: Alex Gabilondo <alexgabi@disroot.org>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "eu/>\n"
 "Language: eu\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"X-Generator: Weblate 5.8-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -160,10 +160,8 @@ msgid "Token '{}' claim has expired"
 msgstr "Token '{}' erreklamazioa iraungi da"
 
 #: taiga/auth/tokens.py:225
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is denylisted"
-msgstr "Identifikatzailea ez da baliozkoa"
+msgstr "Tokena ukatuta dago"
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
@@ -2096,16 +2094,12 @@ msgstr ""
 "istorioa, ataza, eskaera edo wiki orria)."
 
 #: taiga/projects/attachments/validators.py:61
-#, fuzzy
-#| msgid ""
-#| "Invalid task ids. All tasks must belong to the same project and, if it "
-#| "exists, to the same status, user story and/or milestone."
 msgid ""
 "Invalid attachment ids. All attachments must belong to the same item (epic, "
 "userstory, task, issue or wiki page)."
 msgstr ""
-"Baliogabeak dira atazen identifikatzaileak. Ataza  guztiak proiektu berekoa "
-"izan behar dira, eta, halakorik badago, egoera, eginkizun edo maila berekoak."
+"Eranskinen ID baliogabeak. Eranskin guztiek elementu berekoak izan behar "
+"dute (epikoa, erabiltzailearen historia, zeregina, gaia edo wiki orria)."
 
 #: taiga/projects/choices.py:12
 msgid "Whereby.com"
@@ -3430,6 +3424,13 @@ msgid ""
 "%(subject)s\">See task</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Zereginak %(project)s-en eguneratu dira</h1>\n"
+"    <p>Kaixo %(user)s, <br> %(changer)s-ek zeregin bat eguneratu du:</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Ikusi #%(ref)s ataza: "
+"%(subject)s\">Ikusi zeregina</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-text.jinja:11
 #, python-format
@@ -3443,6 +3444,14 @@ msgid ""
 "\n"
 "See task at %(url)s\n"
 msgstr ""
+"\n"
+"%(project)s-en eguneratu da zeregina\n"
+"\n"
+"Kaixo %(user)s, %(changer)s-ek zeregin bat eguneratu du:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Ikusi zeregina %(url)s helbidean\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-subject.jinja:9
 #, python-format
@@ -3465,6 +3474,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Zeregin berria sortu da %(project)s-en</h1>\n"
+"    <p>Kaixo %(user)s,<br />%(changer)s-ek zeregin berri bat sortu du:</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Ikusi ataza #%(ref)s "
+"%(subject)s\">Ikusi zeregina</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-body-text.jinja:9
 #, python-format
@@ -3481,6 +3498,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Zeregin berria sortu da %(project)s-en\n"
+"\n"
+"Kaixo %(user)s, %(changer)s-ek zeregin berri bat sortu du:\n"
+"\n"
+"#%(erref)s %(gaia)s\n"
+"\n"
+"Ikusi zeregina %(url)s helbidean\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-subject.jinja:9
 #, python-format
