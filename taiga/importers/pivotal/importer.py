@@ -477,6 +477,11 @@ class PivotalImporter:
         users_bindings = options.get('users_bindings', {})
 
         for comment in story['comments']:
+            if not comment.get('person', False):
+                print(f"Person element is missing in comment {comment['id']} of story {story['id']}, will treat as unknown")
+                comment['person'] = {}
+                comment['person']['id'] = '0'
+                comment['person']['name'] = 'unknown'
             if 'text' in comment:
                 snapshot = take_snapshot(
                     obj,
