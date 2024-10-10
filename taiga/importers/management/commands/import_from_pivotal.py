@@ -19,7 +19,7 @@ class Command(BaseCommand):
         parser.add_argument('--project-id', dest="project_id", type=str,
                             help='Project ID or full name (ex: taigaio/taiga-back)')
         parser.add_argument('--template', dest='template', default="scrum",
-                            help='template to use: scrum or scrum (default scrum)')
+                            help='template to use: scrum or kanban (default scrum)')
         parser.add_argument('--ask-for-users', dest='ask_for_users', const=True,
                             action="store_const", default=False,
                             help='Import closed data')

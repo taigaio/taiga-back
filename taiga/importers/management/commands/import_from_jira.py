@@ -28,7 +28,7 @@ class Command(BaseCommand):
         parser.add_argument('--project-type', dest="project_type", type=str,
                             help='Project type in jira: project or board')
         parser.add_argument('--template', dest='template', default="scrum",
-                            help='template to use: scrum or scrum (default scrum)')
+                            help='template to use: scrum or kanban (default scrum)')
         parser.add_argument('--ask-for-users', dest='ask_for_users', const=True,
                             action="store_const", default=False,
                             help='Import closed data')
