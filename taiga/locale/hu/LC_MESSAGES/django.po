@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-05-21 08:28+0000\n"
-"Last-Translator: Huba Gáspár <hubagaspar@gmail.com>\n"
+"PO-Revision-Date: 2024-10-28 18:25+0000\n"
+"Last-Translator: adyy01 <adyy01@icloud.com>\n"
 "Language-Team: Hungarian <https://hosted.weblate.org/projects/taiga/"
 "taiga-back/hu/>\n"
 "Language: hu\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.6-dev\n"
+"X-Generator: Weblate 5.8.2-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -25,15 +25,17 @@ msgstr "érvénytelen bejelentkezési típus"
 
 #: taiga/auth/api.py:108
 msgid "Public registration is disabled."
-msgstr ""
+msgstr "Nyilvános regisztráció nem engedélyezett ."
 
 #: taiga/auth/api.py:131
 msgid "You must accept our terms of service and privacy policy"
 msgstr ""
+"El kell fogadnod az Általános Szerződési Feltételeket és adatkezelési "
+"nyilatkozatot"
 
 #: taiga/auth/api.py:140
 msgid "invalid registration type"
-msgstr ""
+msgstr "érvénytelen regisztrációs típus"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
@@ -49,7 +51,7 @@ msgstr ""
 
 #: taiga/auth/authentication.py:147
 msgid "User not found"
-msgstr ""
+msgstr "Felhasználó nem található"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
@@ -96,11 +98,11 @@ msgstr ""
 
 #: taiga/auth/services.py:139
 msgid "Email is already in use."
-msgstr ""
+msgstr "Ezt az email címet már használják !"
 
 #: taiga/auth/services.py:172
 msgid "User is already registered."
-msgstr ""
+msgstr "A felhasználó már regisztrált !"
 
 #: taiga/auth/services.py:203
 msgid "Error while creating new user."
@@ -158,7 +160,7 @@ msgstr ""
 
 #: taiga/base/api/fields.py:283
 msgid "This field is required."
-msgstr ""
+msgstr "Ez a mező kötelező !"
 
 #: taiga/base/api/fields.py:284 taiga/base/api/relations.py:326
 msgid "Invalid value."
