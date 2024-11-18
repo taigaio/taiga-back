@@ -265,9 +265,28 @@ class PivotalImporter:
         UserStoryCustomAttribute.objects.create(
             name="Type",
             description="Story type",
-            type="text",
+            type="dropdown",
             order=2,
-            project=project
+            project=project,
+            extra=[
+                "feature",
+                "bug",
+                "chore",
+                "release"
+            ]
+        )
+        UserStoryCustomAttribute.objects.create(
+            name="Priority",
+            description="Priority",
+            type="dropdown",
+            order=3,
+            project=project,
+            extra=[
+                "Critical",
+                "High",
+                "Medium",
+                "Low"
+            ]
         )
         for user in options.get('users_bindings', {}).values():
             if user != self._user:
@@ -298,6 +317,7 @@ class PivotalImporter:
         epics = {e['label']['id']: e for e in project_data['epics']}
         due_date_field = project.userstorycustomattributes.get(name="Due date")
         story_type_field = project.userstorycustomattributes.get(name="Type")
+        story_priority_field = project.userstorycustomattributes.get(name="Priority")
         story_milestone_binding = {}
         for iteration in project_data['iterations']:
             for story in iteration['stories']:
@@ -318,6 +338,7 @@ class PivotalImporter:
                     "description",
                     "estimate",
                     "story_type",
+                    "story_priority",
                     "current_state",
                     "deadline",
                     "requested_by_id",
@@ -374,12 +395,23 @@ class PivotalImporter:
                     if watcher_user:
                         us.add_watcher(watcher_user)
 
+                custom_attributes_values = {}
                 if story.get('deadline', None):
-                    us.custom_attributes_values.attributes_values = {due_date_field.id: story['deadline']}
-                    us.custom_attributes_values.save()
+                    custom_attributes_values[due_date_field.id] = story['deadline']
                 if story.get('story_type', None):
-                    us.custom_attributes_values.attributes_values = {story_type_field.id: story['story_type']}
-                    us.custom_attributes_values.save()
+                    custom_attributes_values[story_type_field.id] = story['story_type']
+                if story.get('story_priority', None):
+                    if story['story_priority'] == "p0":
+                        priority = "Critical"
+                    if story['story_priority'] == "p1":
+                        priority = "High"
+                    if story['story_priority'] == "p2":
+                        priority = "Medium"
+                    if story['story_priority'] == "p3":
+                        priority = "Low"
+                    custom_attributes_values[story_priority_field.id] = priority
+                us.custom_attributes_values.attributes_values = custom_attributes_values
+                us.custom_attributes_values.save()
 
                 UserStory.objects.filter(id=us.id).update(
                     ref=story['id'],
@@ -571,6 +603,7 @@ class PivotalImporter:
         users_bindings = options.get('users_bindings', {})
         due_date_field = obj.project.userstorycustomattributes.get(name="Due date")
         story_type_field = obj.project.userstorycustomattributes.get(name="Type")
+        story_priority_field = obj.project.userstorycustomattributes.get(name="Priority")
 
         user = {"pk": None, "name": activity.get('performed_by', {}).get('name', None)}
         taiga_user = users_bindings.get(activity.get('performed_by', {}).get('id', None), None)
@@ -664,6 +697,23 @@ class PivotalImporter:
                         "name": "Type",
                         "value": change['new_values']['story_type'],
                         "id": story_type_field.id
+                    })
+
+                if 'story_priority' in change['new_values']:
+                    if "custom_attributes" not in result['change_old']:
+                        result['change_old']["custom_attributes"] = []
+                    if "custom_attributes" not in result['change_new']:
+                        result['change_new']["custom_attributes"] = []
+
+                    result['change_old']["custom_attributes"].append({
+                        "name": "Priority",
+                        "value": change['original_values']['story_priority'],
+                        "id": story_priority_field.id
+                    })
+                    result['change_new']["custom_attributes"].append({
+                        "name": "Priority",
+                        "value": change['new_values']['story_priority'],
+                        "id": story_priority_field.id
                     })
 
                 if 'deadline' in change['new_values']:
