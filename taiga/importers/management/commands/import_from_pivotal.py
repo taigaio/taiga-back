@@ -20,9 +20,9 @@ class Command(BaseCommand):
                             help='Project ID or full name (ex: taigaio/taiga-back)')
         parser.add_argument('--template', dest='template', default="scrum",
                             help='template to use: scrum or kanban (default scrum)')
-        parser.add_argument('--ask-for-users', dest='ask_for_users', const=True,
+        parser.add_argument('--map-users', dest='map_users', const=True,
                             action="store_const", default=False,
-                            help='Import closed data')
+                            help='Map usernames from Pivotal to Taiga. You can create users in Taiga in advance via /admin/users/user')
         parser.add_argument('--closed-data', dest='closed_data', const=True,
                             action="store_const", default=False,
                             help='Import closed data')
@@ -50,24 +50,12 @@ class Command(BaseCommand):
             project_id = input("Project id: ")
 
         users_bindings = {}
-        if options.get('ask_for_users', None):
-            print("Add the username or email for next pivotal users:")
+        if options.get('map_users', None):
             for user in importer.list_users(project_id):
                 try:
-                    users_bindings[user['id']] = User.objects.get(Q(email=user['person'].get('email', "not-valid")))
-                    break
+                    users_bindings[user['person']['id']] = User.objects.get(Q(email=user['person'].get('email', "not-valid")))
                 except User.DoesNotExist:
                     pass
-
-                while True:
-                    username_or_email = input("{}: ".format(user['person']['name']))
-                    if username_or_email == "":
-                        break
-                    try:
-                        users_bindings[user['id']] = User.objects.get(Q(username=username_or_email) | Q(email=username_or_email))
-                        break
-                    except User.DoesNotExist:
-                        print("ERROR: Invalid username or email")
 
         options = {
             "template": options.get('template'),
