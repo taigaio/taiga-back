@@ -358,8 +358,13 @@ class PivotalImporter:
                     tags.append(label['name'])
 
                 assigned_to = None
+                assigned_users = []
                 if len(story['owner_ids']) > 0:
                     assigned_to = users_bindings.get(story['owner_ids'][0], None)
+                    for assignee in story['owner_ids']:
+                        bound_user = users_bindings.get(assignee, None)
+                        if bound_user:
+                            assigned_users.append(bound_user.id)
 
                 owner = users_bindings.get(story['requested_by_id'], self._user)
 
@@ -381,6 +386,9 @@ class PivotalImporter:
                     external_reference=external_reference,
                     milestone=story_milestone_binding.get(story['id'], None)
                 )
+
+                if assigned_users:
+                    us.assigned_users.set(assigned_users)
 
                 points = Points.objects.get(project=project, value=story.get('estimate', None))
                 RolePoints.objects.filter(user_story=us, role__slug="main").update(points_id=points.id)
