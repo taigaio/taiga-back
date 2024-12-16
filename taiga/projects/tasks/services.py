@@ -7,6 +7,7 @@
 
 import csv
 import io
+import os
 import logging
 
 from collections import OrderedDict
@@ -146,6 +147,8 @@ def update_tasks_milestone_in_bulk(bulk_data: list, milestone: object):
 
 def tasks_to_csv(project, queryset):
     csv_data = io.StringIO()
+    delimiter = os.getenv("CSV_DELIMITER", ";")  # Получение разделителя из переменной окружения
+
     fieldnames = ["id", "ref", "subject", "description", "user_story", "sprint_id",
                   "sprint", "sprint_estimated_start", "sprint_estimated_finish",
                   "owner", "owner_full_name",
@@ -175,7 +178,12 @@ def tasks_to_csv(project, queryset):
     queryset = attach_total_voters_to_queryset(queryset)
     queryset = attach_watchers_to_queryset(queryset)
 
-    writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
+    def escape_newlines(value):
+        if isinstance(value, str):
+            return value.replace("\n", "\\n")
+        return value
+
+    writer = csv.DictWriter(csv_data, fieldnames=fieldnames, delimiter=delimiter)
     writer.writeheader()
     for task in queryset:
         task_data = {
@@ -208,11 +216,14 @@ def tasks_to_csv(project, queryset):
             "due_date": task.due_date,
             "due_date_reason": task.due_date_reason,
         }
+        
         for custom_attr in custom_attrs:
             if not hasattr(task, "custom_attributes_values"):
                 continue
             value = task.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             task_data[custom_attr.name] = value
+
+        task_data = {key: escape_newlines(value) for key, value in task_data.items()}
         writer.writerow(task_data)
 
     return csv_data

@@ -1,3 +1,7 @@
+## Tundra edition
+
+Добавлена переменная окружения CSV_DELIMITER, которая позволяет указать делиметр в экспортах CSV файлах.
+
 ## Taiga Backend
 
 &gt; **READ THIS FIRST!**: We recently announced Taiga plans for the future and they greatly affect how we manage this repository and the current Taiga 6 release. Check it [here](https://blog.taiga.io/announcing_taiganext.html).

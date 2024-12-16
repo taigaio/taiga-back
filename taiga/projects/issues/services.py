@@ -7,6 +7,7 @@
 
 import io
 import csv
+import os
 from collections import OrderedDict
 from operator import itemgetter
 from contextlib import closing
@@ -98,6 +99,8 @@ def update_issues_milestone_in_bulk(bulk_data: list, milestone: object):
 
 def issues_to_csv(project, queryset):
     csv_data = io.StringIO()
+    delimiter = os.getenv("CSV_DELIMITER", ";")  # Получение разделителя из переменной окружения
+
     fieldnames = ["id", "ref", "subject", "description", "sprint_id", "sprint",
                   "sprint_estimated_start", "sprint_estimated_finish", "owner",
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
@@ -120,7 +123,12 @@ def issues_to_csv(project, queryset):
     queryset = attach_total_voters_to_queryset(queryset)
     queryset = attach_watchers_to_queryset(queryset)
 
-    writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
+    def escape_newlines(value):
+        if isinstance(value, str):
+            return value.replace("\n", "\\n")
+        return value
+
+    writer = csv.DictWriter(csv_data, fieldnames=fieldnames, delimiter=delimiter)
     writer.writeheader()
     for issue in queryset:
         issue_data = {
@@ -159,9 +167,11 @@ def issues_to_csv(project, queryset):
             value = issue.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             issue_data[custom_attr.name] = value
 
+        issue_data = {key: escape_newlines(value) for key, value in issue_data.items()}
         writer.writerow(issue_data)
 
     return csv_data
+
 
 
 #####################################################

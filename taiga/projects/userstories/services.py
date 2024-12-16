@@ -9,6 +9,7 @@ from typing import List, Optional
 
 import csv
 import io
+import os
 from collections import OrderedDict
 from operator import itemgetter
 from contextlib import closing
@@ -493,6 +494,8 @@ def _recalculate_is_closed_for_milestone(milestone):
 
 def userstories_to_csv(project, queryset):
     csv_data = io.StringIO()
+    delimiter = os.getenv("CSV_DELIMITER", ";")  # Получение разделителя из переменной окружения
+
     fieldnames = ["id", "ref", "subject", "description", "sprint_id", "sprint",
                   "sprint_estimated_start", "sprint_estimated_finish", "owner",
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
@@ -501,7 +504,7 @@ def userstories_to_csv(project, queryset):
 
     roles = project.roles.filter(computable=True).order_by('slug')
     for role in roles:
-        fieldnames.append("{}-points".format(role.slug))
+        fieldnames.append(f"{role.slug}-points")
 
     fieldnames.append("total-points")
 
@@ -534,7 +537,12 @@ def userstories_to_csv(project, queryset):
     queryset = attach_total_voters_to_queryset(queryset)
     queryset = attach_watchers_to_queryset(queryset)
 
-    writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
+    def escape_newlines(value):
+        if isinstance(value, str):
+            return value.replace("\n", "\\n")
+        return value
+
+    writer = csv.DictWriter(csv_data, fieldnames=fieldnames, delimiter=delimiter)
     writer.writeheader()
     for us in queryset:
         row = {
@@ -589,7 +597,7 @@ def userstories_to_csv(project, queryset):
         us_role_points_by_role_id = {us_rp.role.id: us_rp.points.value for
                                      us_rp in us.role_points.all()}
         for role in roles:
-            row["{}-points".format(role.slug)] = \
+            row[f"{role.slug}-points"] = \
                 us_role_points_by_role_id.get(role.id, 0)
 
         row['total-points'] = us.get_total_points()
@@ -601,11 +609,10 @@ def userstories_to_csv(project, queryset):
                 str(custom_attr.id), None)
             row[custom_attr.name] = value
 
+        row = {key: escape_newlines(value) for key, value in row.items()}
         writer.writerow(row)
 
     return csv_data
-
-
 #####################################################
 # Api filter data
 #####################################################

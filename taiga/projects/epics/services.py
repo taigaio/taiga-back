@@ -7,6 +7,7 @@
 
 import csv
 import io
+import os
 from collections import OrderedDict
 from operator import itemgetter
 from contextlib import closing
@@ -159,6 +160,8 @@ def update_epic_related_userstories_order_in_bulk(bulk_data: list, epic: object)
 
 def epics_to_csv(project, queryset):
     csv_data = io.StringIO()
+    delimiter = os.getenv("CSV_DELIMITER", ";")  # Получение разделителя из переменной окружения
+
     fieldnames = ["id", "ref", "subject", "description", "owner", "owner_full_name",
                   "assigned_to", "assigned_to_full_name", "status", "epics_order",
                   "client_requirement", "team_requirement", "attachments", "tags",
@@ -180,7 +183,12 @@ def epics_to_csv(project, queryset):
     queryset = attach_total_voters_to_queryset(queryset)
     queryset = attach_watchers_to_queryset(queryset)
 
-    writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
+    def escape_newlines(value):
+        if isinstance(value, str):
+            return value.replace("\n", "\\n")
+        return value
+
+    writer = csv.DictWriter(csv_data, fieldnames=fieldnames, delimiter=delimiter)
     writer.writeheader()
     for epic in queryset:
         epic_data = {
@@ -203,7 +211,7 @@ def epics_to_csv(project, queryset):
             "created_date": epic.created_date,
             "modified_date": epic.modified_date,
             "related_user_stories": ",".join([
-                "{}#{}".format(us.project.slug, us.ref) for us in epic.user_stories.all()
+                f"{us.project.slug}#{us.ref}" for us in epic.user_stories.all()
             ]),
         }
 
@@ -213,10 +221,10 @@ def epics_to_csv(project, queryset):
             value = epic.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             epic_data[custom_attr.name] = value
 
+        epic_data = {key: escape_newlines(value) for key, value in epic_data.items()}
         writer.writerow(epic_data)
 
     return csv_data
-
 
 #####################################################
 # Api filter data
