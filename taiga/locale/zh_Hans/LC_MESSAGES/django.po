@@ -33,7 +33,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-12-28 09:29+0000\n"
+"PO-Revision-Date: 2024-12-30 06:25+0000\n"
 "Last-Translator: LiangMingJian <1312635752@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
 "projects/taiga/taiga-back/zh_Hans/>\n"
@@ -577,7 +577,7 @@ msgstr "用户故事已删除"
 
 #: taiga/events/events.py:117
 msgid "US #{} - {}"
-msgstr "用户故事 #{} - {}"
+msgstr "US #{} - {}"
 
 #: taiga/events/events.py:120
 msgid "Task created"
@@ -4731,7 +4731,7 @@ msgstr "关键"
 #. Translators: User role
 #: taiga/projects/translations.py:161
 msgid "UX"
-msgstr "用户体验"
+msgstr "UX"
 
 #. Translators: User role
 #: taiga/projects/translations.py:163
