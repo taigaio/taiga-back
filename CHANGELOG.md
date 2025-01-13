@@ -1,8 +1,12 @@
 # Changelog
 
-## 6.8.2 (unreleased)
+## 6.8.3 (unreleased)
 
 - ...
+
+## 6.8.2 (2025-01-13)
+
+- Fix: Error on load_dump when JSON is a list.
 
 ## 6.8.1 (2024-07-23)
 
