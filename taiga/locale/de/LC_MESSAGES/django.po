@@ -34,7 +34,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-04-19 12:03+0000\n"
+"PO-Revision-Date: 2025-01-26 19:01+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "de/>\n"
@@ -43,7 +43,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5-dev\n"
+"X-Generator: Weblate 5.10-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -1955,7 +1955,7 @@ msgstr "Fans"
 #: taiga/projects/userstories/models.py:84 taiga/projects/wiki/models.py:39
 #: taiga/users/admin.py:66 taiga/userstorage/models.py:20
 msgid "owner"
-msgstr "Besitzer"
+msgstr "Leiter"
 
 #: taiga/projects/admin.py:169
 msgid "Make public"
@@ -2057,7 +2057,7 @@ msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
-"Das Projekt muss einen Eigentümer haben und mindestens ein Benutzer muss ein "
+"Das Projekt muss einen Leiter haben und mindestens ein Benutzer muss ein "
 "aktiver Administrator sein"
 
 #: taiga/projects/api.py:1171
@@ -2890,7 +2890,7 @@ msgstr "Status der User-Story"
 
 #: taiga/projects/models.py:996
 msgid "default owner's role"
-msgstr "voreingestellte Besitzerrolle"
+msgstr "voreingestellte Leiterrolle"
 
 #: taiga/projects/models.py:1019
 msgid "default options"
@@ -4004,7 +4004,7 @@ msgstr "Fehlerhafte E-Mail-Adresse."
 #: taiga/projects/services/members.py:134
 #: taiga/projects/services/members.py:181
 msgid "Project without owner"
-msgstr "Projekt ohne Eigentümer"
+msgstr "Projekt ohne Leiter"
 
 #: taiga/projects/services/members.py:157
 #: taiga/projects/services/members.py:204
@@ -4885,7 +4885,7 @@ msgstr "Back"
 #. Translators: User role
 #: taiga/projects/translations.py:169
 msgid "Product Owner"
-msgstr "Projekteigentümer"
+msgstr "Projektleiter"
 
 #. Translators: User role
 #: taiga/projects/translations.py:171
@@ -5045,7 +5045,7 @@ msgstr "Der Benutzer muss ein gültiger Kontakt sein"
 
 #: taiga/projects/validators.py:218
 msgid "The project owner must be admin."
-msgstr "Der Projekteigentümer muss Administrator sein."
+msgstr "Der Projektleiter muss Administrator sein."
 
 #: taiga/projects/validators.py:222
 msgid "At least one user must be an active admin for this project."
@@ -5140,11 +5140,11 @@ msgstr "Id"
 
 #: taiga/users/admin.py:83
 msgid "Project Ownership"
-msgstr "Projekt-Besitz"
+msgstr "Projektleitung"
 
 #: taiga/users/admin.py:84
 msgid "Project Ownerships"
-msgstr "Projekt-Besitze"
+msgstr "Projektleitungen"
 
 #: taiga/users/admin.py:97
 msgid "Memberships"
@@ -5342,9 +5342,8 @@ msgid "new email address"
 msgstr "neue E-Mail Adresse"
 
 #: taiga/users/models.py:166
-#, fuzzy
 msgid "max number of owned private projects"
-msgstr "max. Anzahl persönlicher Projekte"
+msgstr "max. Anzahl geleiteter persönlicher Projekte"
 
 #: taiga/users/models.py:169
 msgid "max number of owned public projects"
@@ -5358,12 +5357,11 @@ msgstr ""
 "Projekt"
 
 #: taiga/users/models.py:177
-#, fuzzy
 msgid ""
 "max number of memberships of different users for all owned public project"
 msgstr ""
-"max. Anzahl der Mitgliedschaft verschiedener Benutzer für alle im Besitz "
-"befindlichen öffentlichen Projekte"
+"max. Anzahl der Mitgliedschaft verschiedener Benutzer für alle geleiteten "
+"öffentlichen Projekte"
 
 #: taiga/users/models.py:305
 msgid "permissions"
