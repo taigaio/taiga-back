@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
+from collections import Counter
+
 from django.db.models import Q
 from django.utils.translation import gettext as _
 
@@ -270,9 +272,16 @@ class MembersBulkValidator(ProjectExistsValidator, validators.Validator):
     def validate_bulk_memberships(self, attrs, source):
         project_id = attrs["project_id"]
         role_ids = [r["role_id"] for r in attrs["bulk_memberships"]]
+        username_members = [r["username"] for r in attrs["bulk_memberships"]]
 
         if Role.objects.filter(project_id=project_id, id__in=role_ids).count() != len(set(role_ids)):
             raise ValidationError(_("Invalid role ids. All roles must belong to the same project."))
+
+        if any(username > 1 for username in Counter(username_members).values()):
+            raise ValidationError(_("You are attempting to invite the same email address multiple times."))
+
+        if models.Membership.objects.filter(project_id=project_id, email__in=username_members).exists():
+            raise ValidationError(_("The user with this email address is already added to the project."))
 
         return attrs
 
