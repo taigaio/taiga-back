@@ -37,8 +37,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-07-17 12:09+0000\n"
-"Last-Translator: \"A. Bento\" <kyweehz@pm.me>\n"
+"PO-Revision-Date: 2025-02-12 22:02+0000\n"
+"Last-Translator: Grupo Verona <suporte5@veronasupermercados.com.br>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "taiga/taiga-back/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -46,7 +46,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"X-Generator: Weblate 5.10-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -55,7 +55,7 @@ msgstr "tipo de login inválido"
 #: taiga/auth/api.py:108
 msgid "Public registration is disabled."
 msgstr ""
-"Você deve aceitar os nossos termos do serviço e a política de privacidade"
+"Você deve aceitar os nossos termos do serviço e a política de privacidade."
 
 #: taiga/auth/api.py:131
 msgid "You must accept our terms of service and privacy policy"
@@ -110,7 +110,8 @@ msgstr "nome de usuário inválido"
 #: taiga/auth/serializers.py:85 taiga/users/validators.py:43
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
-msgstr "Obrigatório. No máximo 255 caracteres. Letras, números e /./-/_ ."
+msgstr ""
+"Obrigatório. No máximo 255 caracteres. Letras, números e /./-/_ Caracteres"
 
 #: taiga/auth/serializers.py:92 taiga/auth/serializers.py:95
 #: taiga/users/validators.py:56 taiga/users/validators.py:59
@@ -3179,6 +3180,13 @@ msgid ""
 "%(subject)s\">See task</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Tarefa Atualizada no %(project)s</h1>\n"
+"    <p>Ola %(user)s, <br> %(changer)s atualizou a tarefa:</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title="
+"\"Veja a Tarefa #%(ref)s: %(subject)s\">Veja a tarefa</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-text.jinja:11
 #, python-format
@@ -3192,6 +3200,14 @@ msgid ""
 "\n"
 "See task at %(url)s\n"
 msgstr ""
+"\n"
+"Tarefa atualizada %(project)s\n"
+"\n"
+"Ola %(user)s, %(changer)s atualizou a tarefa:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Confira! %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-subject.jinja:9
 #, python-format
