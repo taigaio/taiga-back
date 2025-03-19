@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
+
 def strip_lines(text):
     """
     Given text, try remove unnecessary spaces and
@@ -16,3 +17,12 @@ def strip_lines(text):
 def split_in_lines(text):
     """Split a block of text in lines removing unnecessary spaces from each line."""
     return (line for line in map(str.strip, text.split("\n")) if line)
+
+
+def sanitize_csv_text_value(value):
+    """Sanitize CSV data to prevent formula injection attacks."""
+    return (
+        "'" + value
+        if isinstance(value, str) and value.startswith(("=", "+", "-", "@"))
+        else value
+    )
