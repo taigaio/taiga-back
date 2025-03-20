@@ -161,10 +161,16 @@ def issues_to_csv(project, queryset):
                 issue.milestone.estimated_finish if issue.milestone else None
             ),
             "owner": issue.owner.username if issue.owner else None,
-            "owner_full_name": issue.owner.get_full_name() if issue.owner else None,
+            "owner_full_name": (
+                text.sanitize_csv_text_value(issue.owner.get_full_name())
+                if issue.owner
+                else None
+            ),
             "assigned_to": issue.assigned_to.username if issue.assigned_to else None,
             "assigned_to_full_name": (
-                issue.assigned_to.get_full_name() if issue.assigned_to else None
+                text.sanitize_csv_text_value(issue.assigned_to.get_full_name())
+                if issue.assigned_to
+                else None
             ),
             "status": issue.status.name if issue.status else None,
             "severity": issue.severity.name,

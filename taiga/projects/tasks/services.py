@@ -222,10 +222,16 @@ def tasks_to_csv(project, queryset):
                 task.milestone.estimated_finish if task.milestone else None
             ),
             "owner": task.owner.username if task.owner else None,
-            "owner_full_name": task.owner.get_full_name() if task.owner else None,
+            "owner_full_name": (
+                text.sanitize_csv_text_value(task.owner.get_full_name())
+                if task.owner
+                else None
+            ),
             "assigned_to": task.assigned_to.username if task.assigned_to else None,
             "assigned_to_full_name": (
-                task.assigned_to.get_full_name() if task.assigned_to else None
+                text.sanitize_csv_text_value(task.assigned_to.get_full_name())
+                if task.assigned_to
+                else None
             ),
             "status": task.status.name if task.status else None,
             "is_iocaine": task.is_iocaine,

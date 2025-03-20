@@ -208,10 +208,16 @@ def epics_to_csv(project, queryset):
             "subject": text.sanitize_csv_text_value(epic.subject),
             "description": text.sanitize_csv_text_value(epic.description),
             "owner": epic.owner.username if epic.owner else None,
-            "owner_full_name": epic.owner.get_full_name() if epic.owner else None,
+            "owner_full_name": (
+                text.sanitize_csv_text_value(epic.owner.get_full_name())
+                if epic.owner
+                else None
+            ),
             "assigned_to": epic.assigned_to.username if epic.assigned_to else None,
             "assigned_to_full_name": (
-                epic.assigned_to.get_full_name() if epic.assigned_to else None
+                text.sanitize_csv_text_value(epic.assigned_to.get_full_name())
+                if epic.assigned_to
+                else None
             ),
             "status": epic.status.name if epic.status else None,
             "epics_order": epic.epics_order,
