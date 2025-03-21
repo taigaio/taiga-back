@@ -6,6 +6,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos INC
 #}
 
-{% trans project=membership.project|safe %}
-[Taiga] Added to the project '{{ project }}'
+{% trans project=membership.project|safe, product_name=sr("product_name") %}
+[{{ product_name }}] Added to the project '{{ project }}'
 {% endtrans %}
