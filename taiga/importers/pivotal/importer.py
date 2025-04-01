@@ -288,6 +288,14 @@ class PivotalImporter:
                 "Low"
             ]
         )
+        UserStoryCustomAttribute.objects.create(
+            name="Pull Request",
+            description="Links to any Git pull requests associated with this story",
+            type="multiline",
+            order=4,
+            project=project
+        )
+
         for user in options.get('users_bindings', {}).values():
             if user != self._user:
                 Membership.objects.get_or_create(
@@ -318,6 +326,7 @@ class PivotalImporter:
         due_date_field = project.userstorycustomattributes.get(name="Due date")
         story_type_field = project.userstorycustomattributes.get(name="Type")
         story_priority_field = project.userstorycustomattributes.get(name="Priority")
+        pull_request_field = project.userstorycustomattributes.get(name="Pull Request")
         story_milestone_binding = {}
         for iteration in project_data['iterations']:
             for story in iteration['stories']:
@@ -350,6 +359,8 @@ class PivotalImporter:
                     "created_at",
                     "updated_at",
                     "url",
+                    "blocked_story_ids",
+                    "pull_requests(host_url,owner,repo,number)"
                 ])})
             offset += 300
             for story in stories['data']:
@@ -372,6 +383,14 @@ class PivotalImporter:
                 if options.get('keep_external_reference', False):
                     external_reference = ["pivotal", story['url']]
 
+                blocked_note_combined = ""
+                if story.get("blocked_story_ids", False):
+                    blocked = True
+                    for blockers in story['blocked_story_ids']:
+                        blocked_note_combined += f"\n{blockers}"
+                else:
+                    blocked = False
+
                 us = UserStory.objects.create(
                     project=project,
                     owner=owner,
@@ -384,7 +403,9 @@ class PivotalImporter:
                     description=story.get('description', ''),
                     tags=tags,
                     external_reference=external_reference,
-                    milestone=story_milestone_binding.get(story['id'], None)
+                    milestone=story_milestone_binding.get(story['id'], None),
+                    is_blocked = blocked,
+                    blocked_note = blocked_note_combined
                 )
 
                 if assigned_users:
@@ -418,6 +439,13 @@ class PivotalImporter:
                     if story['story_priority'] == "p3":
                         priority = "Low"
                     custom_attributes_values[story_priority_field.id] = priority
+
+                pull_requests = ""
+                if story.get('pull_requests', None):
+                    for pr in story["pull_requests"]:
+                        pull_requests += f"{pr['host_url']}{pr['owner']}/{pr['repo']}/{pr['number']}\n"
+
+                custom_attributes_values[pull_request_field.id] = pull_requests
                 us.custom_attributes_values.attributes_values = custom_attributes_values
                 us.custom_attributes_values.save()
 
