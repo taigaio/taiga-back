@@ -1,8 +1,15 @@
 # Changelog
 
-## 6.8.3 (unreleased)
+## 6.8.4 (unreleased)
 
 - ...
+
+## 6.8.3 (2025-14-14)
+
+- Fix: Pivotal importer (thanks [@mig5](https://github.com/mig5))
+- Fix: CSV injection (CVE-2024-53555)
+- Fix: Typo in regenerate.sh (thanks [@Pijatow](https://github.com/Pijatow))
+- Fix: Typo in README.md (thanks [@hactar](https://github.com/hactar))
 
 ## 6.8.2 (2025-01-13)
 
