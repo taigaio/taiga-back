@@ -48,6 +48,11 @@ def connect_userstories_signals():
                              sender=apps.get_model("userstories", "UserStory"),
                              dispatch_uid="tags_normalization_user_story")
 
+    # Notify admins on userstory feedback create/update
+    signals.post_save.connect(handlers.notify_admins_on_feedback_save,
+                              sender=apps.get_model("userstories", "UserStoryFeedback"),
+                              dispatch_uid="notify_admins_on_feedback_save")
+
 
 def connect_userstories_custom_attributes_signals():
     from taiga.projects.custom_attributes import signals as custom_attributes_handlers

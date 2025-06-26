@@ -1,0 +1,32 @@
+{#
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos INC
+#}
+
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    <h1 style="color: #4C566A; font-size: 25px;">User Story Feedback</h1>
+    <p>Feedback has been submitted{% if action == 'updated' %} and updated{% endif %} for the following user story:</p>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
+        <tr>
+            <td valign="top" class="bodyContent" style="padding: 20px;">
+                <dl>
+                    <dt><strong>User Story:</strong></dt>
+                    <dd style="margin-inline-start: 0;">{{ user_story.subject }} (ID: {{ user_story.id }})</dd>
+                    <dt><strong>Project:</strong></dt>
+                    <dd style="margin-inline-start: 0;">{{ project.name }}</dd>
+                    <dt><strong>By:</strong></dt>
+                    <dd style="margin-inline-start: 0;">{{ user.full_name or user.username }} ({{ user.email }})</dd>
+                    <dt><strong>Rating:</strong></dt>
+                    <dd style="margin-inline-start: 0;">{{ feedback_entry.rating }}</dd>
+                </dl>
+                <h3 style="margin-top: 24px; color: #4C566A;">Feedback</h3>
+                <p style="background: #f5f5f5; padding: 12px; border-radius: 4px;">{{ feedback_entry.feedback_text }}</p>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

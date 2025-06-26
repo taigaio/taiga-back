@@ -62,6 +62,37 @@ class RolePoints(models.Model):
         return self.user_story.project
 
 
+class UserStoryFeedback(models.Model):
+    RATING_CHOICES = [
+        ('poor', 'Poor'),
+        ('good', 'Good'),
+        ('excellent', 'Excellent'),
+        ('amazing', 'Amazing'),
+    ]
+    user_story = models.ForeignKey("UserStory", null=False, blank=False, related_name="feedbacks", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="userstory_feedbacks", on_delete=models.CASCADE)
+    rating = models.CharField(blank=False, null=False, max_length=10, choices=RATING_CHOICES)
+    feedback_text = models.TextField(blank=False, null=False, verbose_name=_("feedback text"))
+    project = models.ForeignKey(
+        "projects.Project",
+        null=False,
+        blank=False,
+        related_name="userstory_feedbacks",
+        verbose_name=_("project"),
+        on_delete=models.CASCADE,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user_story', 'user')
+        verbose_name = "user story feedback"
+        verbose_name_plural = "user story feedbacks"
+
+    def __str__(self):
+        return f"{self.feedback_text} ({self.rating})"
+
+
 class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, DueDateMixin, models.Model):
     NEW_BACKLOG_ORDER = timestamp_mics
     NEW_SPRINT_ORDER = timestamp_mics
@@ -143,6 +174,13 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
     swimlane = models.ForeignKey("projects.Swimlane", null=True, blank=True,
                                  related_name="user_stories", verbose_name=_("swimlane"),
                                  on_delete=models.SET_NULL)
+
+    requestors = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="requested_userstories",
+        blank=True,
+        help_text="Users allowed to give feedback"
+    )
 
     _importing = None
 

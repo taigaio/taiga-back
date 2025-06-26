@@ -163,6 +163,7 @@ from taiga.projects.epics.api import EpicWatchersViewSet
 from taiga.projects.userstories.api import UserStoryViewSet
 from taiga.projects.userstories.api import UserStoryVotersViewSet
 from taiga.projects.userstories.api import UserStoryWatchersViewSet
+from taiga.projects.userstories.api import UserStoryFeedbackViewSet
 
 from taiga.projects.tasks.api import TaskViewSet
 from taiga.projects.tasks.api import TaskVotersViewSet
@@ -197,6 +198,8 @@ router.register(r"userstories/(?P<resource_id>\d+)/voters", UserStoryVotersViewS
                 base_name="userstory-voters")
 router.register(r"userstories/(?P<resource_id>\d+)/watchers", UserStoryWatchersViewSet,
                 base_name="userstory-watchers")
+
+router.register(r"userstories-feedback", UserStoryFeedbackViewSet, base_name="userstory-feedback")
 
 router.register(r"tasks", TaskViewSet,
                 base_name="tasks")

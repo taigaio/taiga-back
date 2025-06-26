@@ -1,0 +1,10 @@
+User Story Feedback
+
+Feedback has been submitted{{ ' and updated' if action == 'updated' else '' }} for the following user story:
+- User Story: {{ user_story.subject }} (ID: {{ user_story.id }})
+- Project: {{ project.name }}
+- By: {{ user.full_name or user.username }} ({{ user.email }})
+- Rating: {{ feedback_entry.rating }}
+
+Feedback:
+{{ feedback_entry.feedback_text }}

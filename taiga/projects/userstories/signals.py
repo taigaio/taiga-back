@@ -9,6 +9,7 @@ from contextlib import suppress
 from django.core.exceptions import ObjectDoesNotExist
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.tasks.apps import connect_all_tasks_signals, disconnect_all_tasks_signals
+from taiga.base.mails import mail_builder
 
 
 # Enable tasks signals
@@ -113,3 +114,20 @@ def _try_to_close_milestone_when_delete_us(instance):
     with suppress(ObjectDoesNotExist):
         if instance.milestone_id and milestone_service.calculate_milestone_is_closed(instance.milestone):
                 milestone_service.close_milestone(instance.milestone)
+
+
+def notify_admins_on_feedback_save(sender, instance, created, **kwargs):
+    if kwargs.get('raw', False):
+        return
+    
+    notify_email = "taiga-notifications@arbisoft.com"
+    context = {
+        'feedback_entry': instance,
+        'user': instance.user,
+        'user_story': instance.user_story,
+        'project': instance.project,
+        'action': 'created' if created else 'updated',
+    }
+
+    email = mail_builder.userstory_feedback(notify_email, context)
+    email.send()

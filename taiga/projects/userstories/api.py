@@ -10,7 +10,7 @@ from django.db import transaction
 from django.db.models import Max
 
 from django.utils.translation import gettext as _
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from taiga.base import filters as base_filters
 from taiga.base import exceptions as exc
@@ -23,6 +23,8 @@ from taiga.base.api import ModelListViewSet
 from taiga.base.api.utils import get_object_or_error
 from taiga.base.utils import json
 from taiga.base.utils.db import get_object_or_none
+
+from taiga.permissions.services import is_project_admin
 
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.history.services import take_snapshot
@@ -516,3 +518,107 @@ class UserStoryVotersViewSet(VotersViewSetMixin, ModelListViewSet):
 class UserStoryWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.UserStoryWatchersPermission,)
     resource_model = models.UserStory
+
+class UserStoryFeedbackViewSet(ModelCrudViewSet):
+    queryset = models.UserStoryFeedback.objects.all()
+    serializer_class = serializers.UserStoryFeedbackSerializer
+    permission_classes = [permissions.UserStoryFeedbackPermission]
+    
+    def get_queryset(self):
+        user = self.request.user
+        project_id = self.request.GET.get("project")
+        if not project_id:
+            return models.UserStoryFeedback.objects.none()
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return models.UserStoryFeedback.objects.none()
+
+        if is_project_admin(user, project) or user.is_superuser:
+            return models.UserStoryFeedback.objects.filter(project=project)
+
+        return models.UserStoryFeedback.objects.filter(project=project, user=user)
+    
+    def create(self, request, *args, **kwargs):
+        data = request.DATA
+        user = request.user
+
+        user_story_id = data.get("user_story")
+        project_id = data.get("project")
+        rating = data.get("rating")
+        feedback_text = data.get("feedback_text")
+
+        if not all([user_story_id, project_id, rating, feedback_text]):
+            return JsonResponse({"error": "Missing required fields."}, status=400)
+
+        try:
+            user_story = models.UserStory.objects.get(id=user_story_id)
+        except models.UserStory.DoesNotExist:
+            return JsonResponse({"error": "Invalid user_story ID."}, status=404)
+
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return JsonResponse({"error": "Invalid project ID."}, status=404)
+
+        if models.UserStoryFeedback.objects.filter(user=user, user_story=user_story).exists():
+            return JsonResponse(
+                {"error": "Feedback already exists for this user and user_story."},
+                status=400
+            )
+
+        feedback = models.UserStoryFeedback.objects.create(
+            user=user,
+            user_story=user_story,
+            project=project,
+            rating=rating,
+            feedback_text=feedback_text
+        )
+
+        return JsonResponse({
+            "message": "Feedback created.",
+            "id": feedback.id
+        }, status=201)
+
+    def update(self, request, *args, **kwargs):
+        data = request.DATA
+        user = request.user
+        feedback_id = kwargs.get("pk")
+        if not feedback_id:
+            return JsonResponse({"error": "Missing feedback id."}, status=400)
+        try:
+            feedback = models.UserStoryFeedback.objects.get(id=feedback_id)
+        except models.UserStoryFeedback.DoesNotExist:
+            return JsonResponse({"error": "Feedback not found."}, status=404)
+
+        if not (feedback.user == user):
+            return JsonResponse({"error": "Permission denied."}, status=403)
+
+        updated = False
+        if "rating" in data:
+            feedback.rating = data["rating"]
+            updated = True
+        if "feedback_text" in data:
+            feedback.feedback_text = data["feedback_text"]
+            updated = True
+        if updated:
+            feedback.save()
+            return JsonResponse({"message": "Feedback updated."}, status=200)
+        else:
+            return JsonResponse({"error": "No updatable fields provided."}, status=400)
+
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+        feedback_id = kwargs.get("pk")
+        if not feedback_id:
+            return JsonResponse({"error": "Missing feedback id."}, status=400)
+        try:
+            feedback = models.UserStoryFeedback.objects.get(id=feedback_id)
+        except models.UserStoryFeedback.DoesNotExist:
+            return JsonResponse({"error": "Feedback not found."}, status=404)
+
+        if not feedback.user == user:
+            return JsonResponse({"error": "Permission denied."}, status=403)
+
+        feedback.delete()
+        return JsonResponse({"message": "Feedback deleted."}, status=204)

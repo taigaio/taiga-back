@@ -69,3 +69,16 @@ class CommentAndOrUpdatePerm(PermissionComponent):
             return True
 
         return services.user_has_perm(request.user, self.update_perm, project)
+
+class IsFeedbackOwnerAndRequestor(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        data = {}
+
+        if hasattr(request, 'body') and request.body:
+            import json as pyjson
+            try:
+                data = pyjson.loads(request.body.decode('utf-8'))
+            except Exception:
+                data = {}
+        
+        return services.is_feedback_owner_and_requestor(data, request.user)

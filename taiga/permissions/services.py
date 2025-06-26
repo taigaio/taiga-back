@@ -139,3 +139,33 @@ def set_base_permissions_for_project(project):
         anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
         project.anon_permissions = list(set((project.anon_permissions or []) + anon_permissions))
         project.public_permissions = list(set((project.public_permissions or []) + anon_permissions))
+
+def is_feedback_owner_and_requestor(feedback, user):
+    """
+    Checks if the user is allowed to create or modify feedback for a user story
+    """
+    from taiga.projects.userstories.models import UserStoryFeedback, UserStory
+
+    if feedback is None:
+        return False
+
+    user_story_id = feedback.get('user_story')
+    if user_story_id:
+        try:
+            user_story = UserStory.objects.get(id=user_story_id)
+        except UserStory.DoesNotExist:
+            return False
+    
+        if user not in user_story.requestors.all():
+            return False
+    
+    feedback_id = feedback.get('id')
+    if feedback_id:
+        try:
+            feedback_obj = UserStoryFeedback.objects.get(id=feedback_id)
+        except UserStoryFeedback.DoesNotExist:
+            return False
+        return feedback_obj.user_id == user.id
+
+    return True
+

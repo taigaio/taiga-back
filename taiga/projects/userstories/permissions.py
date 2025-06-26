@@ -6,9 +6,7 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 from taiga.base.api.permissions import TaigaResourcePermission, AllowAny, IsAuthenticated, IsSuperUser
-from taiga.permissions.permissions import HasProjectPerm, IsProjectAdmin
-
-from taiga.permissions.permissions import CommentAndOrUpdatePerm
+from taiga.permissions.permissions import CommentAndOrUpdatePerm, HasProjectPerm, IsProjectAdmin, IsFeedbackOwnerAndRequestor
 
 
 class UserStoryPermission(TaigaResourcePermission):
@@ -44,3 +42,14 @@ class UserStoryWatchersPermission(TaigaResourcePermission):
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     list_perms = HasProjectPerm('view_us')
+
+
+class UserStoryFeedbackPermission(TaigaResourcePermission):
+    enough_perms = None
+    global_perms = None
+    retrieve_perms = IsFeedbackOwnerAndRequestor() | IsProjectAdmin() | IsSuperUser()
+    create_perms = IsFeedbackOwnerAndRequestor()
+    update_perms = IsFeedbackOwnerAndRequestor()
+    partial_update_perms = IsFeedbackOwnerAndRequestor()
+    destroy_perms = IsFeedbackOwnerAndRequestor()
+    list_perms = IsFeedbackOwnerAndRequestor() | IsProjectAdmin() | IsSuperUser()

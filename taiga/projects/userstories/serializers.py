@@ -20,6 +20,9 @@ from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 from taiga.projects.history.mixins import TotalCommentsSerializerMixin
+from taiga.users.serializers import UserSerializer
+
+from .models import UserStoryFeedback
 
 
 class OriginItemSerializer(serializers.LightSerializer):
@@ -78,6 +81,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     swimlane = Field(attr="swimlane_id")
 
     assigned_users = MethodField()
+    requestors = MethodField()
 
     def get_assigned_users(self, obj):
         """Get the assigned of an object.
@@ -94,6 +98,9 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
             return None
 
         return set(assigned_users)
+
+    def get_requestors(self, obj):
+        return [user.id for user in obj.requestors.all()]
 
     def get_epic_order(self, obj):
         include_epic_order = getattr(obj, "include_epic_order", False)
@@ -230,3 +237,19 @@ class UserStoryNestedSerializer(ProjectExtraInfoSerializerMixin,
     def get_total_points(self, obj):
         assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
         return obj.total_points_attr
+
+
+class UserStoryFeedbackSerializer(serializers.LightSerializer):
+    id = Field()
+    feedback_text = Field()
+    rating = Field()
+    user_story = Field(attr="user_story_id")
+    project = Field(attr="project_id")
+    user = UserSerializer(read_only=True)
+    created_at = Field()
+    updated_at = Field()
+    
+    class Meta:
+        model = UserStoryFeedback
+        fields = ['id', 'user_story', 'user', 'rating', 'feedback_text', 'project', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'user_story', 'project', 'created_at', 'updated_at']

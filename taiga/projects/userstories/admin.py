@@ -64,5 +64,12 @@ class UserStoryAdmin(admin.ModelAdmin):
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
+class UserStoryFeedbackAdmin(admin.ModelAdmin):
+    list_display = ("id", "feedback_text", "rating", "user_story", "user", "created_at", "updated_at")
+    search_fields = ("feedback_text", "rating", "user__username", "user_story__subject")
+    list_filter = ("rating",)
+
+
 admin.site.register(models.UserStory, UserStoryAdmin)
+admin.site.register(models.UserStoryFeedback, UserStoryFeedbackAdmin)
 admin.site.register(models.RolePoints, RolePointsAdmin)
