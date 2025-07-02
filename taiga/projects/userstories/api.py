@@ -527,17 +527,20 @@ class UserStoryFeedbackViewSet(ModelCrudViewSet):
     def get_queryset(self):
         user = self.request.user
         project_id = self.request.GET.get("project")
-        if not project_id:
+        user_story_id = self.request.GET.get("user_story")
+        if not project_id or not user_story_id:
             return models.UserStoryFeedback.objects.none()
         try:
             project = Project.objects.get(id=project_id)
         except Project.DoesNotExist:
             return models.UserStoryFeedback.objects.none()
 
-        if is_project_admin(user, project) or user.is_superuser:
-            return models.UserStoryFeedback.objects.filter(project=project)
+        feedbacks = models.UserStoryFeedback.objects.filter(project=project, user_story_id=user_story_id)
 
-        return models.UserStoryFeedback.objects.filter(project=project, user=user)
+        if is_project_admin(user, project) or user.is_superuser:
+            return feedbacks
+
+        return feedbacks.filter(user=user)
     
     def create(self, request, *args, **kwargs):
         data = request.DATA
