@@ -1718,7 +1718,7 @@ msgid ""
 "%(signature)s\n"
 msgstr ""
 "\n"
-"Olá.\n"
+"Olá %(user)s\n"
 "\n"
 "O seu projeto Trello foi corretamente importado.\n"
 "\n"
@@ -1745,9 +1745,9 @@ msgid "Unauthorized: %(text)s at %(url)s"
 msgstr "Não autorizado: %(text)s em %(url)s"
 
 #: taiga/importers/trello/importer.py:63 taiga/importers/trello/importer.py:65
-#, python-format
+#, fuzzy, python-format
 msgid "Resource Unavailable: %(text)s at %(url)s"
-msgstr ""
+msgstr "Recursos Indisponíveis: %(text)s em %(url)s"
 
 #: taiga/importers/trello/tasks.py:31 taiga/importers/trello/tasks.py:32
 msgid "Error importing Trello project"
@@ -1919,7 +1919,7 @@ msgstr "Funções Admin"
 
 #: taiga/projects/admin.py:89
 msgid "Privacy"
-msgstr ""
+msgstr "Privacidade"
 
 #: taiga/projects/admin.py:100
 msgid "Modules"
@@ -1953,7 +1953,7 @@ msgstr "Tornar público"
 #: taiga/projects/admin.py:185
 #, python-brace-format
 msgid "{count} successfully made public."
-msgstr ""
+msgstr "{count} tornou-se público com sucesso."
 
 #: taiga/projects/admin.py:188
 msgid "Make private"
@@ -1962,7 +1962,7 @@ msgstr "Tornar privado"
 #: taiga/projects/admin.py:202
 #, python-brace-format
 msgid "{count} successfully made private."
-msgstr ""
+msgstr "{count} tornou-se privado com sucesso."
 
 #: taiga/projects/api.py:172 taiga/users/api.py:235
 msgid "Incomplete arguments"
@@ -1974,11 +1974,11 @@ msgstr "Formato de imagem inválida"
 
 #: taiga/projects/api.py:237
 msgid "Invalid template name"
-msgstr ""
+msgstr "Nome do modelo inválido"
 
 #: taiga/projects/api.py:240
 msgid "Invalid template description"
-msgstr ""
+msgstr "Descrição do modelo inválido"
 
 #: taiga/projects/api.py:404 taiga/projects/api.py:1093
 msgid "Invalid user id"
@@ -1990,15 +1990,17 @@ msgstr "O usuário não existe"
 
 #: taiga/projects/api.py:414
 msgid "The user must already be a project member"
-msgstr ""
+msgstr "O usuário já deve ser um membro do projeto"
 
 #: taiga/projects/api.py:678
 msgid "The default swimlane cannot be deleted."
-msgstr ""
+msgstr "A raia padrão não pode ser excluída."
 
 #: taiga/projects/api.py:708
 msgid "You can't delete the default due date status of a user story"
 msgstr ""
+"Você não pode excluir o status de data de vencimento padrão de uma história "
+"de usuário"
 
 #: taiga/projects/api.py:724
 msgid "Project does already have due dates"
