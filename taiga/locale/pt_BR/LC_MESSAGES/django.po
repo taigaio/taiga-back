@@ -1339,6 +1339,9 @@ msgid ""
 "Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema encerrado por [{user_name}]({user_url} "
+"\"Ver perfil de {user_name} na {platform}\") de [{plataforma}#{número}]({url}"
+" \"Ir para o problema\")."
 
 #: taiga/hooks/event_hooks.py:162
 #, python-brace-format
@@ -1373,7 +1376,7 @@ msgid ""
 "\n"
 "  - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
-"{user_text} alterou o status de [commit de {plataforma}]({commit_url} "
+"{user_text} alterou o status de [commit de {platform} ]({commit_url} "
 "\"Veja o commit '{commit_id} - {commit_short_message}'\")\n"
 "\n"
 "- Status: **{src_status}** → **{dst_status}**"
@@ -1385,6 +1388,9 @@ msgid ""
 "\n"
 " - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"Status alterado do commit de {platform}.\n"
+"\n"
+"- Status: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:321
 #, python-brace-format
@@ -1393,6 +1399,9 @@ msgid ""
 "({commit_url} \"See commit '{commit_id} - {commit_short_message}'\") "
 "\"{commit_message}\""
 msgstr ""
+"Este {type_name} foi mencionado por {user_text} no [commit de {platform}]"
+"({commit_url} \"Veja o commit '{commit_id} - {commit_short_message}'\") "
+"\"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:326
 #, python-brace-format
@@ -1458,6 +1467,11 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"                Ocorreu um erro, provavelmente devido a uma versão do Jira "
+"não suportada.\n"
+"                O Taiga não oferece suporte a versões do Jira a partir da "
+"versão 8.6."
 
 #: taiga/importers/jira/api.py:158
 msgid "Invalid project_type {}"
@@ -1492,6 +1506,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Projeto Asana importado</h1>\n"
+"    <p>Olá %(user)s,</p>\n"
+"    <h3>Seu projeto Asana foi importado corretamente.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title="
+"\"Go to the project %(project)s\">Ir para %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:9
 #, python-format
@@ -1508,6 +1530,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá %(user)s,\n"
+"\n"
+"Seu projeto Asana foi importado corretamente.\n"
+"\n"
+"Você pode ver o projeto %(project)s aqui:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:9
 #, python-format
