@@ -37,8 +37,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2025-07-28 02:25+0000\n"
-"Last-Translator: Moises Almeida <moisesshalon72@gmail.com>\n"
+"PO-Revision-Date: 2025-07-29 00:41+0000\n"
+"Last-Translator: Willian M Marinho <willianmmarinho@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "taiga/taiga-back/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -2149,7 +2149,7 @@ msgstr ""
 
 #: taiga/projects/choices.py:12
 msgid "Whereby.com"
-msgstr ""
+msgstr "Whereby.com"
 
 #: taiga/projects/choices.py:13
 msgid "Jitsi"
@@ -2188,6 +2188,11 @@ msgid ""
 "written to %(project_name)s\n"
 "    "
 msgstr ""
+"\n"
+"        <a style=\"font-weight: bold;text-decoration:none;color:#222;"
+"\" href=\"%(user_profile_url)s\" title=\"%(full_name)s\">%(full_name)s</a> "
+"escreveu para %(project_name)s\n"
+"    "
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:28
 #, python-format
@@ -2288,7 +2293,7 @@ msgstr "valores"
 
 #: taiga/projects/custom_attributes/models.py:103
 msgid "epic"
-msgstr ""
+msgstr "epic"
 
 #: taiga/projects/custom_attributes/models.py:124
 #: taiga/projects/tasks/models.py:29 taiga/projects/userstories/models.py:31
