@@ -37,7 +37,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2025-07-29 00:41+0000\n"
+"PO-Revision-Date: 2025-07-30 18:06+0000\n"
 "Last-Translator: Moises Almeida <moisesshalon72@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "taiga/taiga-back/pt_BR/>\n"
@@ -1643,7 +1643,7 @@ msgstr ""
 "    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-text.jinja:9
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "Hello %(user)s,\n"
@@ -1658,7 +1658,7 @@ msgid ""
 "%(signature)s\n"
 msgstr ""
 "\n"
-"Olá.\n"
+"Olá  %(user)s,\n"
 "\n"
 "O seu projecto Jira foi correctamente importado.\n"
 "\n"
@@ -2215,7 +2215,7 @@ msgid ""
 "%(full_name)s has written to %(project_name)s\n"
 msgstr ""
 "\n"
-"escreveu para %(project_name)s%(project_name)s\n"
+"%(full_name)s escreveu para %(project_name)s\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:15
 #, python-format
@@ -2265,15 +2265,15 @@ msgstr "Url"
 
 #: taiga/projects/custom_attributes/choices.py:26
 msgid "Dropdown"
-msgstr ""
+msgstr "Dropdown"
 
 #: taiga/projects/custom_attributes/choices.py:27
 msgid "Checkbox"
-msgstr ""
+msgstr "Checkbox"
 
 #: taiga/projects/custom_attributes/choices.py:28
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 #: taiga/projects/custom_attributes/models.py:29
 #: taiga/projects/issues/models.py:64
@@ -2307,7 +2307,7 @@ msgstr "Já existe um com o mesmo nome."
 
 #: taiga/projects/due_dates/models.py:14
 msgid "due date"
-msgstr ""
+msgstr "duas datas"
 
 #: taiga/projects/due_dates/models.py:17
 msgid "reason for the due date"
@@ -2370,7 +2370,7 @@ msgstr "referência externa"
 
 #: taiga/projects/epics/validators.py:26
 msgid "There's no epic with that id"
-msgstr ""
+msgstr "Não existe épico com esse id"
 
 #: taiga/projects/history/api.py:89
 msgid "comment is required"
@@ -2633,7 +2633,7 @@ msgstr "parâmetro ref é necessário"
 
 #: taiga/projects/mixins/by_ref.py:24
 msgid "project or project__slug param is needed"
-msgstr ""
+msgstr "o parâmetro project ou project__slug é necessário"
 
 #: taiga/projects/mixins/on_destroy.py:32
 msgid "Query param 'moveTo' is required"
@@ -2682,7 +2682,7 @@ msgstr "O usuário já é membro do projeto"
 
 #: taiga/projects/models.py:127
 msgid "default epic status"
-msgstr ""
+msgstr "status épico padrão"
 
 #: taiga/projects/models.py:131
 msgid "default US status"
@@ -2873,7 +2873,7 @@ msgstr "opções padrão"
 
 #: taiga/projects/models.py:1020
 msgid "epic statuses"
-msgstr ""
+msgstr "status épicos"
 
 #: taiga/projects/models.py:1021
 msgid "us statuses"
@@ -2894,7 +2894,7 @@ msgstr "status de tarefa"
 
 #: taiga/projects/models.py:1025
 msgid "task duedates"
-msgstr ""
+msgstr "datas de vencimento das tarefas"
 
 #: taiga/projects/models.py:1026
 msgid "issue statuses"
@@ -2906,7 +2906,7 @@ msgstr "tipos de problema"
 
 #: taiga/projects/models.py:1028
 msgid "issue duedates"
-msgstr ""
+msgstr "datas de vencimento das questões"
 
 #: taiga/projects/models.py:1029
 msgid "priorities"
@@ -2922,15 +2922,15 @@ msgstr "funções"
 
 #: taiga/projects/models.py:1032
 msgid "epic custom attributes"
-msgstr ""
+msgstr "atributos personalizados épicos"
 
 #: taiga/projects/models.py:1033
 msgid "us custom attributes"
-msgstr ""
+msgstr "atributos personalizados dos EUA"
 
 #: taiga/projects/models.py:1034
 msgid "task custom attributes"
-msgstr ""
+msgstr "atributos personalizados da tarefa"
 
 #: taiga/projects/models.py:1035
 msgid "issue custom attributes"
@@ -3012,6 +3012,14 @@ msgid ""
 "%(subject)s\">See epic</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1> Épico atualizado</h1>\n"
+"<p>Olá %(user)s , <br> %(changer)s atualizou uma epopeia em %(project)s </p>"
+"\n"
+"<p> Épico # %(ref)s  %(subject)s </p>\n"
+"<a class=\"button\" href=\" %(url)s \" title="
+"\"Ver épico # %(ref)s : %(subject)s \"> Ver épico </a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-body-text.jinja:11
 #, python-format
@@ -3732,11 +3740,11 @@ msgstr "Linha do tempo"
 
 #: taiga/projects/settings/choices.py:23
 msgid "Epics"
-msgstr ""
+msgstr "Épicos"
 
 #: taiga/projects/settings/choices.py:24
 msgid "Backlog"
-msgstr ""
+msgstr "Backlog"
 
 #. Translators: Name of kanban project template.
 #: taiga/projects/settings/choices.py:25 taiga/projects/translations.py:24
@@ -3749,7 +3757,7 @@ msgstr "Problemas"
 
 #: taiga/projects/settings/choices.py:27
 msgid "TeamWiki"
-msgstr ""
+msgstr "EquipeWiki"
 
 #: taiga/projects/settings/validators.py:26
 msgid "You don't have access to this section"
@@ -3891,10 +3899,9 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"    …<p><small>E agora algumas palavras do bom companheiros ou companheiras<"
+"    <p><small>E agora algumas palavras do bom companheiros ou companheiras<"
 "br/> que vieram tão gentilmente convidá-lo</small></p>\n"
-"…<p><strong>%(extra)s</strong></p>\n"
-"……\n"
+"<p><strong>%(extra)s</strong></p>\n"
 "        "
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:32
@@ -4034,6 +4041,10 @@ msgid ""
 "%(new_owner_name)s has accepted your offer and will become the new project "
 "owner of \"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Olá %(old_owner_name)s ,\n"
+"%(new_owner_name)s aceitou sua oferta e se tornará o novo proprietário do "
+"projeto \" %(project_name)s \".\n"
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:15
 #, python-format
@@ -4045,6 +4056,8 @@ msgid ""
 "\n"
 "From now on, your new status for this project will be \"admin\".\n"
 msgstr ""
+"\n"
+"A partir de agora, seu novo status para este projeto será \"admin\".\n"
 
 #: taiga/projects/templates/emails/transfer_accept-subject.jinja:9
 #, python-format
@@ -4097,6 +4110,10 @@ msgid ""
 "%(rejecter_name)s has declined your offer and will not become the new "
 "project owner of \"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Olá %(owner_name)s ,\n"
+"%(rejecter_name)s recusou sua oferta e não se tornará o novo proprietário do "
+"projeto \" %(project_name)s \".\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:15
 #, python-format
@@ -4123,6 +4140,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer declined\n"
 msgstr ""
+"\n"
+"[ %(project)s ] Transferência de propriedade do projeto recusada\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:12
 #, python-format
@@ -4231,6 +4250,9 @@ msgid ""
 "Please, go to the following link to either accept or reject this proposal.</"
 "p>\n"
 msgstr ""
+"\n"
+"Por favor, acesse o link a seguir para aceitar ou rejeitar esta proposta.</p>"
+"\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:23
 msgid "Accept or reject the project ownership transfer:"
@@ -4242,6 +4264,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer offer\n"
 msgstr ""
+"\n"
+"[ %(project)s ] Oferta de transferência de propriedade do projeto\n"
 
 #. Translators: Name of scrum project template.
 #: taiga/projects/translations.py:19
@@ -4773,10 +4797,8 @@ msgid "Private memberships owned"
 msgstr "Associações privadas de propriedade"
 
 #: taiga/users/admin.py:193
-#, fuzzy
-#| msgid "Project End"
 msgid "Public projects owned"
-msgstr "Fim do projeto"
+msgstr "Projetos públicos de propriedade"
 
 #: taiga/users/admin.py:199
 msgid "Public memberships owned"
@@ -5030,10 +5052,11 @@ msgstr ""
 "Olá %(full_name)s , você pediu para recuperar sua senha\n"
 "\n"
 "%(url)s\n"
+"\n"
 "Você pode ignorar esta mensagem se não tiver solicitado.\n"
 "\n"
 "---\n"
-"%(signature)\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/password_recovery-subject.jinja:9
 msgid "[Taiga] Password recovery"
