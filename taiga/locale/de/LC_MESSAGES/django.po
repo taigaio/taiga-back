@@ -34,7 +34,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2025-01-26 19:01+0000\n"
+"PO-Revision-Date: 2025-08-26 21:03+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "de/>\n"
@@ -43,7 +43,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10-dev\n"
+"X-Generator: Weblate 5.13\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -2687,7 +2687,7 @@ msgstr "E-Mail"
 
 #: taiga/projects/models.py:88
 msgid "create at"
-msgstr "erstellt am "
+msgstr "erstellt am"
 
 #: taiga/projects/models.py:90 taiga/users/models.py:154
 msgid "token"
@@ -5179,18 +5179,16 @@ msgid "Private projects owned"
 msgstr "Geleitete private Projekte"
 
 #: taiga/users/admin.py:175
-#, fuzzy
 msgid "Private memberships owned"
-msgstr "Persönliche Mitgliedschaften"
+msgstr "Private Mitgliedschaften im Besitz"
 
 #: taiga/users/admin.py:193
 msgid "Public projects owned"
 msgstr "Geleitete öffentliche Projekte"
 
 #: taiga/users/admin.py:199
-#, fuzzy
 msgid "Public memberships owned"
-msgstr "Öffentliche Mitgliedschaften"
+msgstr "Öffentliche Mitgliedschaften im Besitz"
 
 #: taiga/users/api.py:123
 msgid "Duplicated email"
