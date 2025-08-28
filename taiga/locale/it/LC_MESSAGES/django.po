@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-09-10 09:21+0000\n"
-"Last-Translator: Random <random-r@users.noreply.hosted.weblate.org>\n"
+"PO-Revision-Date: 2025-08-29 00:01+0000\n"
+"Last-Translator: Fabio Lutzu <fabio.lutzu@gmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "it/>\n"
 "Language: it\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0.1-dev\n"
+"X-Generator: Weblate 5.13.1-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -60,14 +60,12 @@ msgid "Token contained no recognizable user identification"
 msgstr ""
 
 #: taiga/auth/authentication.py:147
-#, fuzzy
-#| msgid "Not found"
 msgid "User not found"
-msgstr "Non trovato"
+msgstr "Utente non trovato"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "L'utente è inattivo"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
@@ -78,17 +76,13 @@ msgid "You must have cryptography installed to use {}."
 msgstr ""
 
 #: taiga/auth/backends.py:128
-#, fuzzy
-#| msgid "Invalid role for the project"
 msgid "Invalid algorithm specified"
-msgstr "Ruolo di progetto non valido"
+msgstr "Algoritmo specificato non valido"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
-#, fuzzy
-#| msgid "Token is invalid"
 msgid "Token is invalid or expired"
-msgstr "Token non valido"
+msgstr "Token non valido o scaduto"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
@@ -107,7 +101,7 @@ msgstr "Nome completo non valido"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "Nessun account attivo trovato con le credenziali fornite"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
@@ -600,67 +594,67 @@ msgstr "SU #{} - {}"
 
 #: taiga/events/events.py:120
 msgid "Task created"
-msgstr ""
+msgstr "Operazione creata"
 
 #: taiga/events/events.py:123
 msgid "Task changed"
-msgstr ""
+msgstr "Operazione cambiata"
 
 #: taiga/events/events.py:126
 msgid "Task deleted"
-msgstr ""
+msgstr "Operazione eliminata"
 
 #: taiga/events/events.py:128
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "Operazione #{} - {}"
 
 #: taiga/events/events.py:131
 msgid "Issue created"
-msgstr ""
+msgstr "Problema creato"
 
 #: taiga/events/events.py:134
 msgid "Issue changed"
-msgstr ""
+msgstr "Problema modificato"
 
 #: taiga/events/events.py:137
 msgid "Issue deleted"
-msgstr ""
+msgstr "Problema eliminato"
 
 #: taiga/events/events.py:139
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "Problema: #{} - {}"
 
 #: taiga/events/events.py:142
 msgid "Wiki Page created"
-msgstr ""
+msgstr "Pagina Wiki creata"
 
 #: taiga/events/events.py:145
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "Pagina Wiki modificata"
 
 #: taiga/events/events.py:148
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "Pagina Wiki eliminata"
 
 #: taiga/events/events.py:150
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "Pagina Wiki: {}"
 
 #: taiga/events/events.py:153
 msgid "Sprint created"
-msgstr ""
+msgstr "Sprint creato"
 
 #: taiga/events/events.py:156
 msgid "Sprint changed"
-msgstr ""
+msgstr "Sprint modificato"
 
 #: taiga/events/events.py:159
 msgid "Sprint deleted"
-msgstr ""
+msgstr "Sprint eliminato"
 
 #: taiga/events/events.py:161
 msgid "Sprint: {}"
-msgstr ""
+msgstr "Sprint : {}"
 
 #: taiga/export_import/api.py:115
 msgid "We needed at least one role"
@@ -694,6 +688,8 @@ msgstr "Errore nell'importazione della lista degli attributi di progetto"
 #: taiga/export_import/services/store.py:856
 msgid "error importing default project attribute values"
 msgstr ""
+"Errore durante l'importazione dei valori predefiniti degli attributi del "
+"progetto"
 
 #: taiga/export_import/services/store.py:867
 msgid "error importing custom attributes"
