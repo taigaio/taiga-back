@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-10-28 18:25+0000\n"
-"Last-Translator: adyy01 <adyy01@icloud.com>\n"
+"PO-Revision-Date: 2025-09-12 08:01+0000\n"
+"Last-Translator: meaelien <dezsip88@gmail.com>\n"
 "Language-Team: Hungarian <https://hosted.weblate.org/projects/taiga/"
 "taiga-back/hu/>\n"
 "Language: hu\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.8.2-dev\n"
+"X-Generator: Weblate 5.14-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -43,11 +43,11 @@ msgstr ""
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "A megadott token nem érvényes típus"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "A token nem tartalmazott felismerhető felhasználói azonosítót"
 
 #: taiga/auth/authentication.py:147
 msgid "User not found"
@@ -55,7 +55,7 @@ msgstr "Felhasználó nem található"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "A felhasználó inaktív"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
@@ -72,29 +72,29 @@ msgstr ""
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
 msgid "Token is invalid or expired"
-msgstr ""
+msgstr "A token érvénytelen vagy lejárt"
 
 #: taiga/auth/serializers.py:80 taiga/users/validators.py:37
 msgid "invalid username"
-msgstr ""
+msgstr "érvénytelen felhasználó"
 
 #: taiga/auth/serializers.py:85 taiga/users/validators.py:43
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
-msgstr ""
+msgstr "Kötelező. Legfeljebb 255 karakter. Betűk, számok és /./-/_ karakterek'"
 
 #: taiga/auth/serializers.py:92 taiga/auth/serializers.py:95
 #: taiga/users/validators.py:56 taiga/users/validators.py:59
 msgid "Invalid full name"
-msgstr ""
+msgstr "Érvénytelen név"
 
 #: taiga/auth/services.py:73
 msgid "No active account found with the given credentials"
-msgstr ""
+msgstr "Nem található aktív fiók a megadott hitelesítő adatokkal"
 
 #: taiga/auth/services.py:136
 msgid "Username is already in use."
-msgstr ""
+msgstr "A felhasználónév már használatban van."
 
 #: taiga/auth/services.py:139
 msgid "Email is already in use."
@@ -106,25 +106,25 @@ msgstr "A felhasználó már regisztrált !"
 
 #: taiga/auth/services.py:203
 msgid "Error while creating new user."
-msgstr ""
+msgstr "Hiba történt az új felhasználó létrehozásakor."
 
 #: taiga/auth/token_denylist/admin.py:103
 msgid "jti"
-msgstr ""
+msgstr "jti"
 
 #: taiga/auth/token_denylist/admin.py:110 taiga/external_apps/models.py:47
 #: taiga/projects/contact/models.py:17 taiga/projects/likes/models.py:23
 #: taiga/projects/notifications/models.py:95 taiga/projects/votes/models.py:44
 msgid "user"
-msgstr ""
+msgstr "felhasználó"
 
 #: taiga/auth/token_denylist/admin.py:117 taiga/telemetry/models.py:21
 msgid "created at"
-msgstr ""
+msgstr "létrehozva"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "lejár"
 
 #: taiga/auth/token_denylist/apps.py:74
 msgid "Token Denylist"
@@ -132,19 +132,19 @@ msgstr ""
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "Nem hozható létre token típus és élettartam nélkül"
 
 #: taiga/auth/tokens.py:127
 msgid "Token has no id"
-msgstr ""
+msgstr "A tokennek nincs azonosítója"
 
 #: taiga/auth/tokens.py:138
 msgid "Token has no type"
-msgstr ""
+msgstr "A tokennek nincs típusa"
 
 #: taiga/auth/tokens.py:141
 msgid "Token has wrong type"
-msgstr ""
+msgstr "A token típusa hibás"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
@@ -164,111 +164,127 @@ msgstr "Ez a mező kötelező !"
 
 #: taiga/base/api/fields.py:284 taiga/base/api/relations.py:326
 msgid "Invalid value."
-msgstr ""
+msgstr "Érvénytelen érték."
 
 #: taiga/base/api/fields.py:473
 #, python-format
 msgid "'%s' value must be either True or False."
-msgstr ""
+msgstr "A(z) '%s' értékének igaznak vagy hamisnak kell lennie."
 
 #: taiga/base/api/fields.py:538
 msgid ""
 "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
 msgstr ""
+"Adjon meg egy érvényes 'slug' karakterláncot, amely betűkből, számokból, "
+"aláhúzásjelekből vagy kötőjelekből állhat."
 
 #: taiga/base/api/fields.py:553
 #, python-format
 msgid "Select a valid choice. %(value)s is not one of the available choices."
 msgstr ""
+"Válasszon érvényes lehetőséget. A(z) %(value)s nem szerepel a rendelkezésre "
+"álló lehetőségek között."
 
 #: taiga/base/api/fields.py:627
 msgid "You email domain is not allowed"
-msgstr ""
+msgstr "Az e-mail domain nem engedélyezett"
 
 #: taiga/base/api/fields.py:636
 msgid "Enter a valid email address."
-msgstr ""
+msgstr "Adjon meg egy érvényes e-mail címet."
 
 #: taiga/base/api/fields.py:678
 #, python-format
 msgid "Date has wrong format. Use one of these formats instead: %s"
-msgstr ""
+msgstr "A dátum formátuma helytelen. Használja az alábbi formátumok egyikét: %s"
 
 #: taiga/base/api/fields.py:742
 #, python-format
 msgid "Datetime has wrong format. Use one of these formats instead: %s"
 msgstr ""
+"A dátum/idő formátuma helytelen. Használja az alábbi formátumok egyikét: %s"
 
 #: taiga/base/api/fields.py:812
 #, python-format
 msgid "Time has wrong format. Use one of these formats instead: %s"
-msgstr ""
+msgstr "Az idő formátuma helytelen. Használja az alábbi formátumok egyikét: %s"
 
 #: taiga/base/api/fields.py:869
 msgid "Enter a whole number."
-msgstr ""
+msgstr "Adjon meg egy egész számot."
 
 #: taiga/base/api/fields.py:870 taiga/base/api/fields.py:923
 #, python-format
 msgid "Ensure this value is less than or equal to %(limit_value)s."
 msgstr ""
+"Győződjön meg arról, hogy ez az érték kisebb vagy egyenlő, mint a "
+"%(limit_value)s."
 
 #: taiga/base/api/fields.py:871 taiga/base/api/fields.py:924
 #, python-format
 msgid "Ensure this value is greater than or equal to %(limit_value)s."
 msgstr ""
+"Győződjön meg arról, hogy ez az érték nagyobb vagy egyenlő, mint "
+"%(limit_value)s."
 
 #: taiga/base/api/fields.py:901
 #, python-format
 msgid "\"%s\" value must be a float."
-msgstr ""
+msgstr "A(z) \"%s\" értékének lebegőpontosnak (float) kell lennie."
 
 #: taiga/base/api/fields.py:922
 msgid "Enter a number."
-msgstr ""
+msgstr "Adjon meg egy számot."
 
 #: taiga/base/api/fields.py:925
 #, python-format
 msgid "Ensure that there are no more than %s digits in total."
-msgstr ""
+msgstr "Győződjön meg arról, hogy összesen legfeljebb %s számjegy van."
 
 #: taiga/base/api/fields.py:926
 #, python-format
 msgid "Ensure that there are no more than %s decimal places."
-msgstr ""
+msgstr "Győződjön meg arról, hogy nincs több, mint %s tizedesjegy."
 
 #: taiga/base/api/fields.py:927
 #, python-format
 msgid "Ensure that there are no more than %s digits before the decimal point."
 msgstr ""
+"Győződjön meg arról, hogy a tizedesvessző előtt legfeljebb %s számjegy van."
 
 #: taiga/base/api/fields.py:994
 msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
+msgstr "Nem küldtek be fájlt. Ellenőrizze a kódolás típusát az űrlapon."
 
 #: taiga/base/api/fields.py:995
 msgid "No file was submitted."
-msgstr ""
+msgstr "Nem küldtek be fájlt."
 
 #: taiga/base/api/fields.py:996
 msgid "The submitted file is empty."
-msgstr ""
+msgstr "A beküldött fájl üres."
 
 #: taiga/base/api/fields.py:997
 #, python-format
 msgid ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr ""
+"Győződjön meg róla, hogy a fájlnév legfeljebb %(max)d karakterből áll (a "
+"hossza %(length)d karakter)."
 
 #: taiga/base/api/fields.py:998
 msgid "Please either submit a file or check the clear checkbox, not both."
 msgstr ""
+"Kérlek, vagy küldj be egy fájlt, vagy pipáld ki a jelölőnégyzetet, ne "
+"mindkettőt."
 
 #: taiga/base/api/fields.py:1038
 msgid ""
 "Upload a valid image. The file you uploaded was either not an image or a "
 "corrupted image."
 msgstr ""
+"Töltsön fel egy érvényes képet. A feltöltött fájl vagy nem kép, vagy sérült "
+"kép volt."
 
 #: taiga/base/api/mixins.py:270 taiga/base/exceptions.py:200
 #: taiga/hooks/api.py:58 taiga/projects/api.py:458 taiga/projects/api.py:495
@@ -279,25 +295,25 @@ msgstr ""
 #: taiga/projects/userstories/api.py:392 taiga/projects/userstories/api.py:438
 #: taiga/projects/userstories/api.py:478 taiga/webhooks/api.py:60
 msgid "Blocked element"
-msgstr ""
+msgstr "Letiltott elem"
 
 #: taiga/base/api/pagination.py:217
 msgid "Page is not 'last', nor can it be converted to an int."
-msgstr ""
+msgstr "Az oldal nem 'utolsó', és nem is alakítható át int típusúra."
 
 #: taiga/base/api/pagination.py:221
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
+msgstr "Érvénytelen oldal (%(page_number)s): %(message)s"
 
 #: taiga/base/api/permissions.py:54
 msgid "Invalid permission definition."
-msgstr ""
+msgstr "Érvénytelen jogosultságdefiníció."
 
 #: taiga/base/api/relations.py:236
 #, python-format
 msgid "Invalid pk '%s' - object does not exist."
-msgstr ""
+msgstr "Érvénytelen csomag (PK): '%s' - nem található."
 
 #: taiga/base/api/relations.py:237
 #, python-format
@@ -311,19 +327,19 @@ msgstr ""
 
 #: taiga/base/api/relations.py:361
 msgid "Invalid hyperlink - No URL match"
-msgstr ""
+msgstr "Érvénytelen hivatkozás - Nincs egyező URL"
 
 #: taiga/base/api/relations.py:362
 msgid "Invalid hyperlink - Incorrect URL match"
-msgstr ""
+msgstr "Érvénytelen hiperhivatkozás - Hibás URL-egyezés"
 
 #: taiga/base/api/relations.py:363
 msgid "Invalid hyperlink due to configuration error"
-msgstr ""
+msgstr "Érvénytelen hiperhivatkozás konfigurációs hiba miatt"
 
 #: taiga/base/api/relations.py:364
 msgid "Invalid hyperlink - object does not exist."
-msgstr ""
+msgstr "Érvénytelen hiperhivatkozás - az objektum nem létezik."
 
 #: taiga/base/api/relations.py:365
 #, python-format
@@ -332,7 +348,7 @@ msgstr ""
 
 #: taiga/base/api/serializers.py:313
 msgid "Invalid data"
-msgstr ""
+msgstr "Hibás adat"
 
 #: taiga/base/api/serializers.py:405
 msgid "No input provided"
@@ -340,7 +356,7 @@ msgstr ""
 
 #: taiga/base/api/serializers.py:568
 msgid "Cannot create a new item, only existing items may be updated."
-msgstr ""
+msgstr "Új elem nem hozható létre, csak a meglévő elemek frissíthetők."
 
 #: taiga/base/api/serializers.py:579
 msgid "Expected a list of items."
@@ -348,35 +364,35 @@ msgstr ""
 
 #: taiga/base/api/views.py:115
 msgid "Not found"
-msgstr ""
+msgstr "Nem található"
 
 #: taiga/base/api/views.py:118
 msgid "Permission denied"
-msgstr ""
+msgstr "Engedély megtagadva"
 
 #: taiga/base/api/views.py:480
 msgid "Server application error"
-msgstr ""
+msgstr "Szerveralkalmazás-hiba"
 
 #: taiga/base/connectors/exceptions.py:15
 msgid "Connection error."
-msgstr ""
+msgstr "Csatlakozási hiba."
 
 #: taiga/base/exceptions.py:68
 msgid "Malformed request."
-msgstr ""
+msgstr "Hibás kérés."
 
 #: taiga/base/exceptions.py:73
 msgid "Incorrect authentication credentials."
-msgstr ""
+msgstr "Hibás hitelesítő adatok."
 
 #: taiga/base/exceptions.py:78
 msgid "Authentication credentials were not provided."
-msgstr ""
+msgstr "Hitelesítési adatok nem kerültek megadásra."
 
 #: taiga/base/exceptions.py:83
 msgid "You do not have permission to perform this action."
-msgstr ""
+msgstr "Nincs jogosultsága ennek a műveletnek a végrehajtására."
 
 #: taiga/base/exceptions.py:88
 #, python-format
@@ -394,7 +410,7 @@ msgstr ""
 
 #: taiga/base/exceptions.py:113
 msgid "Request was throttled."
-msgstr ""
+msgstr "A kérés vissza lett tartva."
 
 #: taiga/base/exceptions.py:114
 #, python-format
@@ -403,7 +419,7 @@ msgstr ""
 
 #: taiga/base/exceptions.py:128
 msgid "Unexpected error"
-msgstr ""
+msgstr "Váratlan hiba"
 
 #: taiga/base/exceptions.py:140
 msgid "Not found."
@@ -479,7 +495,7 @@ msgstr ""
 
 #: taiga/base/templates/emails/includes/footer.jinja:26
 msgid "Follow us on Twitter"
-msgstr ""
+msgstr "Kövess minket a X-en"
 
 #: taiga/base/templates/emails/includes/footer.jinja:28
 msgid "Get the code on GitHub"
@@ -491,7 +507,7 @@ msgstr ""
 
 #: taiga/base/templates/emails/updates-body-html.jinja:368
 msgid "Updates"
-msgstr ""
+msgstr "Frissítések"
 
 #: taiga/base/templates/emails/updates-body-html.jinja:374
 #, python-format
@@ -503,6 +519,12 @@ msgid ""
 "p>\n"
 "                                                                    "
 msgstr ""
+"\n"
+"                                                                    "
+"<h3>hozzászólás:</h3>\n"
+"                                                                    "
+"<p>%(comment)s</p>\n"
+"                                                                    "
 
 #: taiga/base/templates/emails/updates-body-text.jinja:14
 #, python-format
@@ -511,98 +533,101 @@ msgid ""
 "    Comment: %(comment)s\n"
 "        "
 msgstr ""
+"\n"
+"    Hozzászólás: %(comment)s\n"
+"        "
 
 #: taiga/base/utils/urls.py:56
 msgid "Host access error"
-msgstr ""
+msgstr "Host nem elérhető"
 
 #: taiga/base/utils/urls.py:62
 msgid "IP Address error"
-msgstr ""
+msgstr "IP-cím hiba"
 
 #: taiga/events/events.py:109
 msgid "User story created"
-msgstr ""
+msgstr "Felhasználói igény létrehozva"
 
 #: taiga/events/events.py:112
 msgid "User story changed"
-msgstr ""
+msgstr "Felhasználói igény módosítva"
 
 #: taiga/events/events.py:115
 msgid "User story deleted"
-msgstr ""
+msgstr "Felhasználói igény törölve"
 
 #: taiga/events/events.py:117
 msgid "US #{} - {}"
-msgstr ""
+msgstr "Felhasználói igény #{} - {}"
 
 #: taiga/events/events.py:120
 msgid "Task created"
-msgstr ""
+msgstr "Feladat elkészült"
 
 #: taiga/events/events.py:123
 msgid "Task changed"
-msgstr ""
+msgstr "A feladat megváltozott"
 
 #: taiga/events/events.py:126
 msgid "Task deleted"
-msgstr ""
+msgstr "Feladat törölve"
 
 #: taiga/events/events.py:128
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "Feladat #{} - {}"
 
 #: taiga/events/events.py:131
 msgid "Issue created"
-msgstr ""
+msgstr "Hibajegy elkészült"
 
 #: taiga/events/events.py:134
 msgid "Issue changed"
-msgstr ""
+msgstr "Hibajegy megváltozott"
 
 #: taiga/events/events.py:137
 msgid "Issue deleted"
-msgstr ""
+msgstr "Hibajegy törölve"
 
 #: taiga/events/events.py:139
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "Hibajegy: #{} - {}"
 
 #: taiga/events/events.py:142
 msgid "Wiki Page created"
-msgstr ""
+msgstr "Wiki Oldal elkészült"
 
 #: taiga/events/events.py:145
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "Wiki Oldal módosítva"
 
 #: taiga/events/events.py:148
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "Wiki Oldal törölve"
 
 #: taiga/events/events.py:150
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "Wiki Oldal: {}"
 
 #: taiga/events/events.py:153
 msgid "Sprint created"
-msgstr ""
+msgstr "Sprint elkészült"
 
 #: taiga/events/events.py:156
 msgid "Sprint changed"
-msgstr ""
+msgstr "Sprint módosítva"
 
 #: taiga/events/events.py:159
 msgid "Sprint deleted"
-msgstr ""
+msgstr "Sprint törölve"
 
 #: taiga/events/events.py:161
 msgid "Sprint: {}"
-msgstr ""
+msgstr "Sprint: {}"
 
 #: taiga/export_import/api.py:115
 msgid "We needed at least one role"
-msgstr ""
+msgstr "Legalább egy szerepkör szükséges"
 
 #: taiga/export_import/api.py:327
 msgid "Needed dump file"
@@ -615,11 +640,11 @@ msgstr ""
 #: taiga/export_import/services/store.py:803
 #: taiga/export_import/services/store.py:825
 msgid "error importing project data"
-msgstr ""
+msgstr "hiba a projekt importálása során"
 
 #: taiga/export_import/services/store.py:832
 msgid "error importing roles"
-msgstr ""
+msgstr "hiba a szerepkörök importálása során"
 
 #: taiga/export_import/services/store.py:837
 msgid "error importing memberships"
