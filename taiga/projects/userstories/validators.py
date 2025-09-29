@@ -50,12 +50,11 @@ class UserStoryValidator(AssignedToValidator, WatchersValidator,
     tags = TagsAndTagsColorsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     points = RolePointsField(source="role_points", required=False)
-    tribe_gig = PickledObjectField(required=False)
 
     class Meta:
         model = models.UserStory
         depth = 0
-        read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner', 'kanban_order')
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner', 'kanban_order', 'tribe_gig')
 
 
 class UserStoriesBulkValidator(ProjectExistsValidator, validators.Validator):
