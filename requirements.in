@@ -1,38 +1,45 @@
-asana
+# Main
+Django>=3.2.19,<4
+celery
+gunicorn
+psycopg2<2.10  # required by django, 2.9.10 was the latest
+
+# Third party by Kaleidos
+django-sampledatahelper>=0.5
+django-sites>=0.11
+django-sr>=0.0.4
+djmail>=2.0.0
+
+# Other third party
 bleach<5
-celery==5.2.7
-diff-match-patch==20121119
+diff-match-patch
 django-ipware==1.1.6
 django-jinja
 django-picklefield==3.1
-django-pglocks==1.0.4
-django-sampledatahelper==0.4.1
-django-sites==0.11
-django-sr==0.0.4
-djmail==2.0.0
+django-pglocks
 easy-thumbnails==2.8.5
-gunicorn==20.1.0
 netaddr<0.9
 premailer==3.0.1
-psd-tools==1.9.18
-psycopg2<2.10  # required by django
-python-dateutil==2.7.5
-python-magic==0.4.15
+psd-tools>=1.9.18,<1.10.0 # https://psd-tools.readthedocs.io/en/latest/migration.html#migrating-to-1-10
+python-dateutil
+python-magic
 pytz
 raven
 redis==4.5.3
-requests==2.27.1
+requests
 requests_oauthlib
 rudder-sdk-python==1.0.0b1
 serpy==0.1.1
-webcolors==1.9.1
-CairoSVG>=2.5.1
-Django>=3.2.19,<4
-Markdown==3.4.1
-pymdown-extensions==9.9.2
+webcolors
+cairosvg
+Markdown
+pymdown-extensions
 Pillow
-Unidecode==0.4.20
+Unidecode
 Pygments>=2.7.4
 oauthlib[signedtoken]
 html5lib
 zipp<2
+
+# Importers
+asana>=3.0,<4.0 # asana v4 is complete rewrite
