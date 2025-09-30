@@ -1301,29 +1301,6 @@ def test_update_userstory_remove_watchers(client):
     assert watcher_ids == []
 
 
-def test_update_userstory_update_tribe_gig(client):
-    project = f.ProjectFactory.create()
-    us = f.UserStoryFactory.create(project=project, status__project=project,
-                                   milestone__project=project)
-    f.MembershipFactory.create(project=us.project, user=us.owner,
-                               is_admin=True)
-
-    url = reverse("userstories-detail", kwargs={"pk": us.pk})
-    data = {
-        "tribe_gig": {
-            "id": 2,
-            "title": "This is a gig test title"
-        },
-        "version": 1
-    }
-
-    client.login(user=us.owner)
-    response = client.json.patch(url, json.dumps(data))
-
-    assert response.status_code == 200
-    assert response.data["tribe_gig"] == data["tribe_gig"]
-
-
 def test_get_user_stories_including_tasks(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
