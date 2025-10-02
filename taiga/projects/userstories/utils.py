@@ -137,7 +137,7 @@ def attach_epic_order(queryset, epic_id, as_field="epic_order"):
               WHERE "epics_relateduserstory"."user_story_id" = {tbl}.id and
                     "epics_relateduserstory"."epic_id" = {epic_id}"""
 
-    sql = sql.format(tbl=model._meta.db_table, epic_id=epic_id)
+    sql = sql.format(tbl=model._meta.db_table, epic_id=int(epic_id))
     queryset = queryset.extra(select={as_field: sql})
     return queryset
 
