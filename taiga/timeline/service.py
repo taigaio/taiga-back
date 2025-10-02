@@ -202,29 +202,27 @@ def _get_not_allowed_epic_related_query(accessing_user, namespace):
     inner join projects_project pp
     -- project of the epic's related user story
     on cast (data -> 'userstory' -> 'project' ->> 'id' as INTEGER) = pp.id
-    where 
+    where
        not (
             -- Allowed for anonymous users
             'view_us' = ANY(pp.anon_permissions)
             or
             -- Allowed for registered users
-            ('view_us' = ANY(pp.public_permissions) and {user_id} <> -1)
+            ('view_us' = ANY(pp.public_permissions) and %s <> -1)
             or
             -- Allowed for a project member with a privileged role
             exists (select * from users_role ur
             inner join projects_membership pm
             ON ur.id = pm.role_id
-            where pm.user_id = {user_id}
+            where pm.user_id = %s
             and pm.project_id = pp.id
             and 'view_us' = ANY(ur.permissions))
         )
-        and tt.namespace = '{namespace}'
+        and tt.namespace = %s
         and tt.event_type = 'epics.relateduserstory.create'
     """
     accessing_user_id = accessing_user.id or -1  # -1 just in case of anonymous user
-    sql = sql.format(user_id=accessing_user_id, namespace=namespace)
-
-    return RawSQL(sql, ())
+    return RawSQL(sql, (accessing_user_id, accessing_user_id, namespace))
 
 
 def get_profile_timeline(user, accessing_user=None):
