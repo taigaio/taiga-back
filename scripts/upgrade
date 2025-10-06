@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 if [[ -z ${VIRTUAL_ENV} ]]; then
-    echo "Please, activate first a virtualenv"
-    exit 1
+  echo "Please, activate first a virtualenv"
+  exit 1
 fi
 
 set -euxo pipefail
 cd "$(dirname "$0")/.."
+python -m pip install --upgrade pip-tools
 python -m piptools compile --upgrade requirements.in
 python -m piptools compile --upgrade requirements-devel.in
 python -m piptools sync requirements.txt requirements-devel.txt
