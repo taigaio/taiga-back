@@ -4,4 +4,4 @@ coveralls
 pytest
 pytest-django
 factory-boy
-python-jose>=3.0.0
+python-jose[cryptography]>=3.5.0
