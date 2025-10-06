@@ -3,6 +3,7 @@ Django>=3.2.19,<4
 celery
 gunicorn
 psycopg2<2.10  # required by django, 2.9.10 was the latest
+redis
 
 # Third party by Kaleidos
 django-sampledatahelper>=0.5
@@ -25,7 +26,6 @@ python-dateutil
 python-magic
 pytz
 raven
-redis==4.5.3
 requests
 requests_oauthlib
 rudder-sdk-python==1.0.0b1
@@ -39,7 +39,6 @@ Unidecode
 Pygments>=2.7.4
 oauthlib[signedtoken]
 html5lib
-zipp<2
 
 # Importers
 asana>=3.0,<4.0 # asana v4 is complete rewrite
