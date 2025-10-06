@@ -177,7 +177,7 @@ pyyaml==6.0.3
     # via pymdown-extensions
 raven==6.10.0
     # via -r requirements.in
-redis==4.5.3
+redis==6.4.0
     # via -r requirements.in
 requests==2.32.5
     # via
@@ -244,5 +244,3 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-zipp==1.2.0
-    # via -r requirements.in
