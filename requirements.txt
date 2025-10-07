@@ -14,7 +14,7 @@ asgiref==3.10.0
     # via django
 async-timeout==5.0.1
     # via redis
-attrs==25.3.0
+attrs==25.4.0
     # via psd-tools
 backoff==1.6.0
     # via rudder-sdk-python
