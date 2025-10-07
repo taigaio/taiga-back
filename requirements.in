@@ -28,7 +28,7 @@ pytz
 raven
 requests
 requests_oauthlib
-rudder-sdk-python==1.0.0b1
+rudder-sdk-python==1.0.0b1 # it is a pre-release!
 serpy
 webcolors
 cairosvg
