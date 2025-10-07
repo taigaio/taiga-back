@@ -261,6 +261,21 @@ class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
         ret = services.update_issues_milestone_in_bulk(data["bulk_issues"], milestone)
 
         return response.Ok(ret)
+    
+    @list_route(methods=["POST"])
+    def get_ai_suggestion(self, request, **kwargs):
+        validator = validators.IssueAISuggestionValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+        issue = get_object_or_error(models.Issue, request.user, pk=data["issue_id"])
+        self.check_permissions(request, "get_ai_suggestion", issue)
+
+        # TODO: Implement AI suggestion logic here
+        suggestion = "This is a placeholder for AI-generated suggestion."
+
+        return response.Ok(suggestion)
 
 
 class IssueVotersViewSet(VotersViewSetMixin, ModelListViewSet):
