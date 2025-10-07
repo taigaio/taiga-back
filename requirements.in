@@ -14,7 +14,7 @@ djmail>=2.0.0
 # Other third party
 bleach<5 # v6.0.0 has backwards incompatible changes https://github.com/mozilla/bleach/blob/main/CHANGES#L44
 diff-match-patch
-django-ipware==1.1.6
+django-ipware>7
 django-jinja
 django-picklefield<3.3.0 # 3.3.0 dropped support for Django 3.2
 django-pglocks

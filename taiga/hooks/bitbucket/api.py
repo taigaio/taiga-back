@@ -17,7 +17,7 @@ from . import event_hooks
 from netaddr import all_matching_cidrs
 from netaddr.core import AddrFormatError
 from urllib.parse import parse_qs
-from ipware.ip import get_ip
+from ipware.ip import get_client_ip
 
 
 class BitBucketViewSet(BaseWebhookApiViewSet):
@@ -46,7 +46,7 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
         bitbucket_config = project.modules_config.config.get("bitbucket", {})
         valid_origin_ips = bitbucket_config.get("valid_origin_ips",
                                                 settings.BITBUCKET_VALID_ORIGIN_IPS)
-        origin_ip = get_ip(request)
+        origin_ip, _routable = get_client_ip(request)
         matching_origin_ip = True
 
         if valid_origin_ips:

@@ -69,7 +69,7 @@ django==3.2.25
     #   django-sites
     #   django-sr
     #   easy-thumbnails
-django-ipware==1.1.6
+django-ipware==7.0.1
     # via -r requirements.in
 django-jinja==2.11.0
     # via -r requirements.in
@@ -166,6 +166,8 @@ python-dateutil==2.9.0.post0
     #   -r requirements.in
     #   celery
     #   rudder-sdk-python
+python-ipware==3.0.0
+    # via django-ipware
 python-magic==0.4.27
     # via -r requirements.in
 pytz==2025.2
