@@ -12,13 +12,13 @@ django-sr>=0.0.4
 djmail>=2.0.0
 
 # Other third party
-bleach<5
+bleach<5 # v6.0.0 has backwards incompatible changes https://github.com/mozilla/bleach/blob/main/CHANGES#L44
 diff-match-patch
 django-ipware==1.1.6
 django-jinja
 django-picklefield==3.1
 django-pglocks
-easy-thumbnails==2.8.5
+easy-thumbnails<2.9 # 2.9 released after Django 3.2 LTS EOL
 netaddr<0.9
 premailer==3.0.1
 psd-tools>=1.9.18,<1.10.0 # https://psd-tools.readthedocs.io/en/latest/migration.html#migrating-to-1-10
