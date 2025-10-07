@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 from taiga.base.api import throttling
-from ipware.ip import get_ip
+from ipware.ip import get_client_ip
 from netaddr import all_matching_cidrs
 from netaddr.core import AddrFormatError
 
@@ -20,7 +20,7 @@ class GlobalThrottlingMixin:
     logged in or not.
     """
     def get_cache_key(self, request, view):
-        ident = get_ip(request)
+        ident, _routable = get_client_ip(request)
 
         return self.cache_format % {
             "scope": self.scope,
@@ -160,7 +160,7 @@ class CommonThrottle(throttling.SimpleRateThrottle):
     def get_ident(self, request):
         if request.user.is_authenticated:
             return request.user.id
-        ident = get_ip(request)
+        ident, _routable = get_client_ip(request)
         return ident
 
     def get_cache_key(self, ident, scope, rate):

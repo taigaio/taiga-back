@@ -7,7 +7,7 @@
 
 from django.conf import settings
 
-from ipware.ip import get_ip
+from ipware.ip import get_client_ip
 
 from taiga.base.utils import json
 
@@ -45,7 +45,7 @@ class GitLabViewSet(BaseWebhookApiViewSet):
             return False
 
         valid_origin_ips = gitlab_config.get("valid_origin_ips", settings.GITLAB_VALID_ORIGIN_IPS)
-        origin_ip = get_ip(request)
+        origin_ip, _routable = get_client_ip(request)
         matching_origin_ip = True
 
         if valid_origin_ips:

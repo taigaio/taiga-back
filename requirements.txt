@@ -14,7 +14,7 @@ asgiref==3.10.0
     # via django
 async-timeout==5.0.1
     # via redis
-attrs==25.3.0
+attrs==25.4.0
     # via psd-tools
 backoff==1.6.0
     # via rudder-sdk-python
@@ -22,6 +22,8 @@ billiard==4.2.2
     # via celery
 bleach==4.1.0
     # via -r requirements.in
+cachetools==6.2.0
+    # via premailer
 cairocffi==1.7.1
     # via cairosvg
 cairosvg==2.8.2
@@ -69,13 +71,13 @@ django==3.2.25
     #   django-sites
     #   django-sr
     #   easy-thumbnails
-django-ipware==1.1.6
+django-ipware==7.0.1
     # via -r requirements.in
 django-jinja==2.11.0
     # via -r requirements.in
 django-pglocks==1.0.4
     # via -r requirements.in
-django-picklefield==3.1
+django-picklefield==3.2
     # via -r requirements.in
 django-sampledatahelper==0.5
     # via -r requirements.in
@@ -145,7 +147,7 @@ pillow==11.3.0
     #   imageio
     #   psd-tools
     #   scikit-image
-premailer==3.0.1
+premailer==3.10.0
     # via -r requirements.in
 prompt-toolkit==3.0.52
     # via click-repl
@@ -166,6 +168,8 @@ python-dateutil==2.9.0.post0
     #   -r requirements.in
     #   celery
     #   rudder-sdk-python
+python-ipware==3.0.0
+    # via django-ipware
 python-magic==0.4.27
     # via -r requirements.in
 pytz==2025.2
