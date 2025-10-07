@@ -75,7 +75,7 @@ django-jinja==2.11.0
     # via -r requirements.in
 django-pglocks==1.0.4
     # via -r requirements.in
-django-picklefield==3.1
+django-picklefield==3.2
     # via -r requirements.in
 django-sampledatahelper==0.5
     # via -r requirements.in

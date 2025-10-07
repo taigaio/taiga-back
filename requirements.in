@@ -16,7 +16,7 @@ bleach<5 # v6.0.0 has backwards incompatible changes https://github.com/mozilla/
 diff-match-patch
 django-ipware==1.1.6
 django-jinja
-django-picklefield==3.1
+django-picklefield<3.3.0 # 3.3.0 dropped support for Django 3.2
 django-pglocks
 easy-thumbnails<2.9 # 2.9 released after Django 3.2 LTS EOL
 netaddr<0.9
