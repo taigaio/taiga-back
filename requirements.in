@@ -29,7 +29,7 @@ raven
 requests
 requests_oauthlib
 rudder-sdk-python==1.0.0b1
-serpy==0.1.1
+serpy
 webcolors
 cairosvg
 Markdown

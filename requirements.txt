@@ -204,7 +204,7 @@ scipy==1.15.3
     # via
     #   psd-tools
     #   scikit-image
-serpy==0.1.1
+serpy==0.3.1
     # via -r requirements.in
 six==1.17.0
     # via
