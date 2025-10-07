@@ -22,6 +22,8 @@ billiard==4.2.2
     # via celery
 bleach==4.1.0
     # via -r requirements.in
+cachetools==6.2.0
+    # via premailer
 cairocffi==1.7.1
     # via cairosvg
 cairosvg==2.8.2
@@ -145,7 +147,7 @@ pillow==11.3.0
     #   imageio
     #   psd-tools
     #   scikit-image
-premailer==3.0.1
+premailer==3.10.0
     # via -r requirements.in
 prompt-toolkit==3.0.52
     # via click-repl

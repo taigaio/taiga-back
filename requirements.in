@@ -20,7 +20,7 @@ django-picklefield<3.3.0 # 3.3.0 dropped support for Django 3.2
 django-pglocks
 easy-thumbnails<2.9 # 2.9 released after Django 3.2 LTS EOL
 netaddr<0.9
-premailer==3.0.1
+premailer>=3.10
 psd-tools>=1.9.18,<1.10.0 # https://psd-tools.readthedocs.io/en/latest/migration.html#migrating-to-1-10
 python-dateutil
 python-magic
