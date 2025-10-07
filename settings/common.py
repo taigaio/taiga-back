@@ -25,9 +25,9 @@ DEBUG = False
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "taiga",
-        "USER": "taiga",
-        "PASSWORD": "taiga",
+        "NAME": "taigadev",
+        "USER": "taigadev",
+        "PASSWORD": "changeme",
         "HOST": "127.0.0.1"
     }
 }

@@ -69,3 +69,7 @@ class UpdateMilestoneBulkValidator(ProjectExistsValidator, validators.Validator)
             raise ValidationError(_("All the issues must be from the same project"))
 
         return attrs
+    
+
+class IssueAISuggestionValidator(validators.Validator):
+    issue_id = serializers.IntegerField()

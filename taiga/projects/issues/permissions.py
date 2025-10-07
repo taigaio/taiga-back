@@ -31,6 +31,7 @@ class IssuePermission(TaigaResourcePermission):
     watch_perms = IsAuthenticated() & HasProjectPerm('view_issues')
     unwatch_perms = IsAuthenticated() & HasProjectPerm('view_issues')
     promote_to_us_perms = IsAuthenticated() & HasProjectPerm('add_us')
+    get_ai_suggestion_perms = IsAuthenticated() & HasProjectPerm('view_issues')
 
 
 class IssueVotersPermission(TaigaResourcePermission):
