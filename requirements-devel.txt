@@ -8,6 +8,10 @@ certifi==2025.10.5
     # via
     #   -c requirements.txt
     #   requests
+cffi==2.0.0
+    # via
+    #   -c requirements.txt
+    #   cryptography
 charset-normalizer==3.4.3
     # via
     #   -c requirements.txt
@@ -18,6 +22,10 @@ coverage[toml]==7.10.7
     #   coveralls
 coveralls==4.0.1
     # via -r requirements-devel.in
+cryptography==46.0.2
+    # via
+    #   -c requirements.txt
+    #   python-jose
 docopt==0.6.2
     # via
     #   -c requirements.txt
@@ -46,6 +54,10 @@ pyasn1==0.6.1
     # via
     #   python-jose
     #   rsa
+pycparser==2.23
+    # via
+    #   -c requirements.txt
+    #   cffi
 pygments==2.19.2
     # via
     #   -c requirements.txt
@@ -56,7 +68,7 @@ pytest==8.4.2
     #   pytest-django
 pytest-django==4.11.1
     # via -r requirements-devel.in
-python-jose==3.5.0
+python-jose[cryptography]==3.5.0
     # via -r requirements-devel.in
 requests==2.32.5
     # via
@@ -75,6 +87,7 @@ tomli==2.2.1
 typing-extensions==4.15.0
     # via
     #   -c requirements.txt
+    #   cryptography
     #   exceptiongroup
 tzdata==2025.2
     # via
