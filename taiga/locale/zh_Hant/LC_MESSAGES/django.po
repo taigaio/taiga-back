@@ -16,16 +16,16 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2022-09-18 16:16+0000\n"
-"Last-Translator: Steven Huang <aiboost@proton.me>\n"
+"PO-Revision-Date: 2024-08-06 15:09+0000\n"
+"Last-Translator: Ricky From Hong Kong <lamricky11@hotmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://hosted.weblate.org/projects/"
 "taiga/taiga-back/zh_Hant/>\n"
-"Language: zh-TW\n"
+"Language: zh_Hant\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 5.7-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -325,7 +325,7 @@ msgstr "不正確類型，預期為pk值，收到%s."
 #: taiga/base/api/relations.py:325
 #, python-format
 msgid "Object with %s=%s does not exist."
-msgstr " 包含%s=%s物件不存在"
+msgstr "包含%s=%s物件不存在。"
 
 #: taiga/base/api/relations.py:361
 msgid "Invalid hyperlink - No URL match"
@@ -776,7 +776,7 @@ msgstr ""
 
 #: taiga/export_import/tasks.py:125
 msgid "  -- no detail info --"
-msgstr "-- 無資料 --"
+msgstr "  -- 無資料 --"
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:12
 #, python-format
@@ -2486,7 +2486,7 @@ msgstr "使用者權限"
 
 #: taiga/projects/models.py:229
 msgid "is featured"
-msgstr " 受矚目的"
+msgstr "受矚目的"
 
 #: taiga/projects/models.py:232 taiga/projects/models.py:1010
 msgid "is looking for people"
