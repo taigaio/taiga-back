@@ -19,7 +19,7 @@ django-jinja
 django-picklefield<3.3.0 # 3.3.0 dropped support for Django 3.2
 django-pglocks
 easy-thumbnails<2.9 # 2.9 released after Django 3.2 LTS EOL
-netaddr<0.9
+netaddr
 premailer>=3.10
 psd-tools>=1.9.18,<1.10.0 # https://psd-tools.readthedocs.io/en/latest/migration.html#migrating-to-1-10
 python-dateutil
@@ -28,8 +28,8 @@ pytz
 raven
 requests
 requests_oauthlib
-rudder-sdk-python==1.0.0b1
-serpy==0.1.1
+rudder-sdk-python==1.0.0b1 # it is a pre-release!
+serpy
 webcolors
 cairosvg
 Markdown
