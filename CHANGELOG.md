@@ -1,8 +1,12 @@
 # Changelog
 
-## 6.8.4 (unreleased)
+## 6.9.1 (unreleased)
 
 - ...
+
+## 6.9.0 (2025-10-10)
+
+- Several dependency upgrades and security fixes.
 
 ## 6.8.3 (2025-14-14)
 

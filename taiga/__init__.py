@@ -5,4 +5,4 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
-__version__ = '6.8.3'
+__version__ = '6.9.0'
