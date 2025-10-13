@@ -58,7 +58,9 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     if instance._importing:
         return
 
-    if instance.is_hidden:
+    # Allow entries with comments to appear in timeline even if marked as hidden
+    # This ensures that comments are always visible in the timeline
+    if instance.is_hidden and not instance.comment:
         return None
 
     if instance.user["pk"] is None:
