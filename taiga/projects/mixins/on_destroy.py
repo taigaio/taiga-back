@@ -84,8 +84,9 @@ class MoveOnDestroySwimlaneMixin:
                 raise exc.BadRequest(_("Cannot set swimlane to None if there are available swimlanes"))
 
             # but if it was the last swimlane,
-            # it can be deleted and all uss have now swimlane=None
-            obj.user_stories.update(swimlane_id=None)
+            # allow deletion and unlink related user stories
+            if obj.user_stories:
+                obj.user_stories.update(swimlane_id=None)
         else:
             move_item = get_object_or_404(self.model, id=move_to)
 
