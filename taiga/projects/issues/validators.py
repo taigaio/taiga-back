@@ -11,11 +11,12 @@ from django.utils.translation import gettext as _
 from taiga.base.api import serializers
 from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
-from taiga.base.fields import PgArrayField
+from taiga.base.fields import PgArrayField, ListField, JSONField
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.validators import AssignedToValidator
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
+from taiga.projects.models import Project
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
 from taiga.projects.validators import ProjectExistsValidator
 
@@ -71,5 +72,43 @@ class UpdateMilestoneBulkValidator(ProjectExistsValidator, validators.Validator)
         return attrs
     
 
-class IssueAISuggestionValidator(validators.Validator):
-    issue_id = serializers.IntegerField()
+class IssueAIAnalysisValidator(ProjectExistsValidator, validators.Validator):
+    """
+    Validator for bulk issue AI analysis.
+    """
+    project_id = serializers.IntegerField()
+    issue_ids = ListField(
+        child=serializers.IntegerField(),
+        required=True,
+    )
+    issues = ListField(
+        child=JSONField(),
+        required=True
+    )
+    async_mode = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text=_("Whether to use asynchronous mode (>50 issues recommended)")
+    )
+
+    def validate(self, attrs):
+        issue_ids_count = len(attrs.get("issue_ids", []))
+        issues_count = len(attrs.get("issues", []))
+        project_id = attrs.get("project_id")
+        issue_ids = attrs.get("issue_ids", [])
+
+        if issue_ids_count < 1:
+            raise ValidationError({"issue_ids": _("This list may not be empty.")})
+
+        if issue_ids_count > 50:
+            raise ValidationError({"issue_ids": _("Synchronous mode supports max 50 issues.")})
+
+        # Move the logic from validate_issue_ids here
+        if project_id and issue_ids:
+            if models.Issue.objects.filter(project_id=project_id, id__in=issue_ids).count() != len(issue_ids):
+                raise ValidationError(_("Some issues don't belong to this project or don't exist"))
+
+        if issue_ids_count != issues_count:
+            raise ValidationError(_("'issue_ids' and 'issues' arrays must have the same length."))
+
+        return attrs

@@ -22,4 +22,5 @@ static
 .direnv
 settings/config.py
 celerybeat-schedule
-.vscode/
+*.pdf
+.vscode/*

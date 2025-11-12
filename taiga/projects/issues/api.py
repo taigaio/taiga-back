@@ -4,6 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos INC
+from django.utils import timezone
 
 #
 from django.utils.translation import gettext as _
@@ -276,6 +277,26 @@ class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
         suggestion = "This is a placeholder for AI-generated suggestion."
 
         return response.Ok(suggestion)
+
+    @list_route(methods=["POST"])
+    def ai_analyze(self, request, **kwargs):
+        validator = validators.IssueAIAnalysisValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+        project = get_object_or_error(Project, request.user, pk=data["project_id"])
+        self.check_permissions(request, "ai_analyze", project)
+
+        results = services.analyze_issues_with_ai(data["issues"])
+
+        return response.Ok({
+            "success": True,
+            "project_id": data["project_id"],
+            "analyzed_at": timezone.now().isoformat(),
+            "total_issues": len(results),
+            "results": results
+        })
 
 
 class IssueVotersViewSet(VotersViewSetMixin, ModelListViewSet):
