@@ -241,6 +241,10 @@ zipp==1.2.0
     # via
     #   -r requirements.in
     #   importlib-metadata
+openai>=1.44.0
+
+python-dotenv>=1.0.1
+
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
