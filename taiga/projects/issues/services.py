@@ -15,7 +15,6 @@ from contextlib import closing
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from django.db import connection
-from django.conf import settings
 from django.utils.translation import gettext as _
 
 from taiga.base.utils import db, text
