@@ -717,7 +717,7 @@ def _analyze_single_issue(issue):
         # 2. Call ask_once function
         ai_text_response = ask_once(question=question, prompt=system_prompt)
         
-        # 3. 解析返回的文本
+        # 3. Parse the returned text
         analysis = _parse_ai_response(ai_text_response)
 
         return {
