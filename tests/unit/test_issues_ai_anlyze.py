@@ -2,7 +2,6 @@ import pytest
 import json
 from unittest.mock import patch
 from taiga.projects.issues import services, validators
-from taiga.base.exceptions import ValidationError
 from .. import factories as f
 
 pytestmark = pytest.mark.django_db
