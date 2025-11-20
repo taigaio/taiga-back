@@ -65,7 +65,7 @@ class TestIssueAIAnalysisValidator:
         validator = validators.IssueAIAnalysisValidator(data=data)
         assert validator.is_valid() is False
         assert "issue_ids" in validator.errors
-        assert "max 50 issues" in validator.errors["issue_ids"][0]
+        assert "Synchronous mode supports max 50 issues." in validator.errors["issue_ids"][0]
 
 
 class TestAIService:
