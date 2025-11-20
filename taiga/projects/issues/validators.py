@@ -97,7 +97,7 @@ class IssueAIAnalysisValidator(ProjectExistsValidator, validators.Validator):
         if not async_mode and issue_ids_count > 50:
             raise ValidationError({"issue_ids": _("Synchronous mode supports max 50 issues.")})
 
-        # 将长度检查移动到数据库查询之前
+        # Move length check before database query
         if issue_ids_count != issues_count:
             raise ValidationError(_("'issue_ids' and 'issues' arrays must have the same length."))
 
