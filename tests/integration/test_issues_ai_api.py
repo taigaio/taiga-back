@@ -48,7 +48,7 @@ def test_ai_analyze_api_permission_denied(client):
     project = f.ProjectFactory.create(owner=project_owner)
     issue = f.IssueFactory.create(project=project)
     
-    # 创建另一个用户，虽然是成员但没有权限
+    # Create another user who is a member but has no permissions
     user_no_perm = f.UserFactory.create()
     role_no_perm = f.RoleFactory.create(project=project, permissions=[]) # 无权限
     f.MembershipFactory.create(project=project, user=user_no_perm, role=role_no_perm)
