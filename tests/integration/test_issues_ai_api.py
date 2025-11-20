@@ -10,7 +10,7 @@ def url():
 
 def test_ai_analyze_api_permission_success(client):
     """
-    测试拥有 'view_issues' 权限的用户可以访问 API
+    Test that users with 'view_issues' permission can access the API
     """
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
