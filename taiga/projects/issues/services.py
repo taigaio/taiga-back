@@ -714,7 +714,7 @@ def _analyze_single_issue(issue):
         system_prompt = "You are a project management expert, skilled in analyzing software development issues. Your response must be a valid JSON object."
         question = _build_analysis_prompt(issue)
         
-        # 2. 调用 ask_once 函数
+        # 2. Call ask_once function
         ai_text_response = ask_once(question=question, prompt=system_prompt)
         
         # 3. 解析返回的文本
