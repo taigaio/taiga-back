@@ -9,7 +9,6 @@ import io
 import csv
 import json
 import logging
-import openai
 from collections import OrderedDict
 from operator import itemgetter
 from contextlib import closing
