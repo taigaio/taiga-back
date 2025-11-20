@@ -7,15 +7,19 @@
 
 import io
 import csv
+import json
+import logging
 from collections import OrderedDict
 from operator import itemgetter
 from contextlib import closing
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from django.db import connection
 from django.utils.translation import gettext as _
 
 from taiga.base.utils import db, text
 from taiga.events import events
+from taiga.doubai_ai import ask_once # Import ask_once function
 
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.issues.apps import connect_issues_signals, disconnect_issues_signals
@@ -23,6 +27,8 @@ from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
 
 from . import models
+
+logger = logging.getLogger(__name__)
 
 
 #####################################################
@@ -653,3 +659,133 @@ def get_issues_filters_data(project, querysets):
     )
 
     return data
+
+
+#####################################################
+# AI services
+#####################################################
+
+
+class AIServiceError(Exception):
+    """Custom exception for AI service errors."""
+    pass
+
+
+def analyze_issues_with_ai(issues, max_workers=10):
+    """
+    Analyzes a batch of issues in parallel using an AI model.
+
+    Args:
+        issues (list): A list of issue data dictionaries.
+        max_workers (int): The maximum number of threads to use.
+
+    Returns:
+        list: A list of analysis results for each issue.
+    """
+    results = []
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_issue = {executor.submit(_analyze_single_issue, issue): issue for issue in issues}
+
+        for future in as_completed(future_to_issue):
+            issue = future_to_issue[future]
+            try:
+                result = future.result()
+                results.append(result)
+            except Exception as e:
+                logger.error(f"Failed to analyze issue {issue.get('id')}: {e}")
+                results.append({
+                    "issue_id": issue.get("id"),
+                    "issue_ref": issue.get("ref"),
+                    "subject": issue.get("subject"),
+                    "analysis": _get_default_analysis(),
+                    "error": str(e)
+                })
+
+    results.sort(key=lambda x: (x["issue_id"] is None, x["issue_id"]))
+    return results
+
+
+def _analyze_single_issue(issue):
+    """
+    Analyzes a single issue using the Doubao AI API.
+    """
+    try:
+        # 1. Build Prompt and Question
+        system_prompt = "You are a project management expert, skilled in analyzing software development issues. Your response must be a valid JSON object."
+        question = _build_analysis_prompt(issue)
+        
+        # 2. Call ask_once function
+        ai_text_response = ask_once(question=question, prompt=system_prompt)
+        
+        # 3. Parse the returned text
+        analysis = _parse_ai_response(ai_text_response)
+
+        return {
+            "issue_id": issue.get("id"),
+            "issue_ref": issue.get("ref"),
+            "subject": issue.get("subject"),
+            "analysis": analysis
+        }
+    except Exception as e:
+        logger.error(f"Doubao AI analysis failed for issue {issue.get('id')}: {e}")
+        raise AIServiceError(str(e))
+
+
+def _build_analysis_prompt(issue):
+    """Builds the prompt for the AI model based on issue data."""
+    return f"""You are a project management expert, skilled in analyzing software development Issues.
+
+Please analyze the following Issue:
+- ID: {issue.get('id')}
+- Title: {issue.get('subject')}
+- Description: {issue.get('description', 'N/A')}
+- Current Type: {issue.get('type')}
+- Current Priority: {issue.get('priority')}
+- Current Severity: {issue.get('severity')}
+- Tags: {issue.get('tags', '[]')}
+
+Please provide the following analysis result in a valid JSON format:
+1.  `priority`: Recommended priority (Low/Normal/High).
+2.  `priority_reason`: Reason for the priority recommendation (1 sentence).
+3.  `type`: Recommended type (Bug/Question/Enhancement).
+4.  `severity`: Recommended severity (Wishlist/Minor/Normal/Important/Critical).
+5.  `description`: A brief analysis of the problem (2-3 sentences).
+6.  `related_modules`: A list of 2-4 potentially related software modules.
+7.  `solutions`: A list of 3-5 suggested solutions or next steps.
+8.  `confidence`: Your confidence score for this analysis (from 0.0 to 1.0).
+
+IMPORTANT:
+- Your entire response MUST be a single, valid JSON object.
+- Do not include any text or formatting outside of the JSON object.
+- Ensure all fields in the JSON object have a value.
+- The `related_modules` array should contain 2 to 4 items.
+- The `solutions` array should contain 3 to 5 items.
+- All text values in the JSON should be in English."""
+
+
+def _parse_ai_response(ai_text):
+    """Parses the JSON response from the AI, handling potential markdown code blocks."""
+    try:
+        json_start = ai_text.find('{')
+        json_end = ai_text.rfind('}') + 1
+        if json_start == -1 or json_end == 0:
+            raise ValueError("No JSON object found in AI response")
+        json_str = ai_text[json_start:json_end]
+        return json.loads(json_str)
+    except (json.JSONDecodeError, ValueError) as e:
+        logger.warning(f"Failed to parse AI response: {e}\nRaw: {ai_text}")
+        return _get_default_analysis()
+
+
+def _get_default_analysis():
+    """Returns a default analysis object for fallback cases."""
+    return {
+        "priority": "Normal",
+        "priority_reason": "AI analysis failed, using default value.",
+        "type": "Question",
+        "severity": "Normal",
+        "description": "AI service is temporarily unavailable. Please try again later or analyze manually.",
+        "related_modules": ["Unknown Module"],
+        "solutions": ["Please check the issue details manually."],
+        "confidence": 0.0
+    }
