@@ -710,7 +710,7 @@ def _analyze_single_issue(issue):
     Analyzes a single issue using the Doubao AI API.
     """
     try:
-        # 1. 构建 Prompt 和 Question
+        # 1. Build Prompt and Question
         system_prompt = "You are a project management expert, skilled in analyzing software development issues. Your response must be a valid JSON object."
         question = _build_analysis_prompt(issue)
         
