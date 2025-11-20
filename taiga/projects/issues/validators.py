@@ -84,12 +84,6 @@ class IssueAIAnalysisValidator(ProjectExistsValidator, validators.Validator):
         child=JSONField(),
         required=True
     )
-    async_mode = serializers.BooleanField(
-        required=False,
-        default=False,
-        help_text=_("Whether to use asynchronous mode (>50 issues recommended)")
-    )
-
     def validate(self, attrs):
         issue_ids_count = len(attrs.get("issue_ids", []))
         issues_count = len(attrs.get("issues", []))
