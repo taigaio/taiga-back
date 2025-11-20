@@ -701,7 +701,7 @@ def analyze_issues_with_ai(issues, max_workers=10):
                     "error": str(e)
                 })
 
-    results.sort(key=lambda x: x["issue_id"])
+    results.sort(key=lambda x: (x["issue_id"] is None, x["issue_id"]))
     return results
 
 
