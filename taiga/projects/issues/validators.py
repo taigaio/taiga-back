@@ -93,7 +93,8 @@ class IssueAIAnalysisValidator(ProjectExistsValidator, validators.Validator):
         if issue_ids_count < 1:
             raise ValidationError({"issue_ids": _("This list may not be empty.")})
 
-        if issue_ids_count > 50:
+        async_mode = attrs.get("async_mode", False)
+        if not async_mode and issue_ids_count > 50:
             raise ValidationError({"issue_ids": _("Synchronous mode supports max 50 issues.")})
 
         # 将长度检查移动到数据库查询之前
