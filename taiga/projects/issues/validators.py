@@ -16,7 +16,6 @@ from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.validators import AssignedToValidator
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
-from taiga.projects.models import Project
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
 from taiga.projects.validators import ProjectExistsValidator
 
