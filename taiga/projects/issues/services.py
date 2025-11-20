@@ -19,7 +19,7 @@ from django.utils.translation import gettext as _
 
 from taiga.base.utils import db, text
 from taiga.events import events
-from taiga.doubai_ai import ask_once # 导入 ask_once 函数
+from taiga.doubai_ai import ask_once # Import ask_once function
 
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.issues.apps import connect_issues_signals, disconnect_issues_signals
