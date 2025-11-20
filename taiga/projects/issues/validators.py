@@ -103,12 +103,13 @@ class IssueAIAnalysisValidator(ProjectExistsValidator, validators.Validator):
         if issue_ids_count > 50:
             raise ValidationError({"issue_ids": _("Synchronous mode supports max 50 issues.")})
 
+        # 将长度检查移动到数据库查询之前
+        if issue_ids_count != issues_count:
+            raise ValidationError(_("'issue_ids' and 'issues' arrays must have the same length."))
+
         # Move the logic from validate_issue_ids here
         if project_id and issue_ids:
             if models.Issue.objects.filter(project_id=project_id, id__in=issue_ids).count() != len(issue_ids):
                 raise ValidationError(_("Some issues don't belong to this project or don't exist"))
-
-        if issue_ids_count != issues_count:
-            raise ValidationError(_("'issue_ids' and 'issues' arrays must have the same length."))
 
         return attrs
