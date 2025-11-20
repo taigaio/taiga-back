@@ -42,7 +42,7 @@ def test_ai_analyze_api_permission_success(client):
 
 def test_ai_analyze_api_permission_denied(client):
     """
-    测试没有 'view_issues' 权限的用户被拒绝 (403 Forbidden)
+    Test that users without 'view_issues' permission are denied (403 Forbidden)
     """
     project_owner = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=project_owner)
