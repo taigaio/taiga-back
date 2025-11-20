@@ -28,7 +28,7 @@ def test_ai_analyze_api_permission_success(client):
         "issues": [{"id": issue.id, "subject": issue.subject}]
     }
     
-    # Mock Service 层，我们只关心 API 是否调用了 Service
+    # Mock Service layer, we only care if API called Service
     with patch("taiga.projects.issues.services.analyze_issues_with_ai") as mock_service:
         mock_service.return_value = [{"issue_id": issue.id, "analysis": "mocked"}]
         
