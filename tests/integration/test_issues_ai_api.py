@@ -1,7 +1,6 @@
 import json
 import pytest
 from unittest.mock import patch
-from django.urls import reverse
 from .. import factories as f
 
 pytestmark = pytest.mark.django_db
