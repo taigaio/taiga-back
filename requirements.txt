@@ -10,7 +10,7 @@ amqp==5.3.1
     # via kombu
 asana==3.2.3
     # via -r requirements.in
-asgiref==3.10.0
+asgiref==3.11.0
     # via django
 async-timeout==5.0.1
     # via redis
@@ -18,11 +18,11 @@ attrs==25.4.0
     # via psd-tools
 backoff==1.6.0
     # via rudder-sdk-python
-billiard==4.2.2
+billiard==4.2.3
     # via celery
 bleach==4.1.0
     # via -r requirements.in
-cachetools==6.2.0
+cachetools==6.2.2
     # via premailer
 cairocffi==1.7.1
     # via cairosvg
@@ -30,15 +30,17 @@ cairosvg==2.8.2
     # via -r requirements.in
 celery==5.5.3
     # via -r requirements.in
-certifi==2025.10.5
-    # via requests
+certifi==2025.11.12
+    # via
+    #   requests
+    #   sentry-sdk
 cffi==2.0.0
     # via
     #   cairocffi
     #   cryptography
-charset-normalizer==3.4.3
+charset-normalizer==3.4.4
     # via requests
-click==8.3.0
+click==8.3.1
     # via
     #   celery
     #   click-didyoumean
@@ -50,7 +52,7 @@ click-plugins==1.1.1.2
     # via celery
 click-repl==0.3.0
     # via celery
-cryptography==46.0.2
+cryptography==46.0.3
     # via oauthlib
 cssselect==1.3.0
     # via premailer
@@ -95,9 +97,9 @@ gunicorn==23.0.0
     # via -r requirements.in
 html5lib==1.1
     # via -r requirements.in
-idna==3.10
+idna==3.11
     # via requests
-imageio==2.37.0
+imageio==2.37.2
     # via scikit-image
 jinja2==3.1.6
     # via django-jinja
@@ -107,7 +109,7 @@ lazy-loader==0.4
     # via scikit-image
 lxml==6.0.2
     # via premailer
-markdown==3.9
+markdown==3.10
     # via
     #   -r requirements.in
     #   pymdown-extensions
@@ -139,7 +141,7 @@ packaging==25.0
     #   kombu
     #   lazy-loader
     #   scikit-image
-pillow==11.3.0
+pillow==12.0.0
     # via
     #   -r requirements.in
     #   cairosvg
@@ -153,7 +155,7 @@ prompt-toolkit==3.0.52
     # via click-repl
 psd-tools==1.9.34
     # via -r requirements.in
-psycopg2==2.9.10
+psycopg2==2.9.11
     # via -r requirements.in
 pycparser==2.23
     # via cffi
@@ -161,7 +163,7 @@ pygments==2.19.2
     # via -r requirements.in
 pyjwt==2.10.1
     # via oauthlib
-pymdown-extensions==10.16.1
+pymdown-extensions==10.17.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
@@ -179,9 +181,7 @@ pytz==2025.2
     #   sampledata
 pyyaml==6.0.3
     # via pymdown-extensions
-raven==6.10.0
-    # via -r requirements.in
-redis==6.4.0
+redis==7.1.0
     # via -r requirements.in
 requests==2.32.5
     # via
@@ -204,6 +204,8 @@ scipy==1.15.3
     # via
     #   psd-tools
     #   scikit-image
+sentry-sdk==2.45.0
+    # via -r requirements.in
 serpy==0.3.1
     # via -r requirements.in
 six==1.17.0
@@ -219,7 +221,7 @@ sqlparse==0.5.3
     # via django
 tifffile==2025.5.10
     # via scikit-image
-tinycss2==1.4.0
+tinycss2==1.5.0
     # via
     #   cairosvg
     #   cssselect2
@@ -232,7 +234,9 @@ tzdata==2025.2
 unidecode==1.4.0
     # via -r requirements.in
 urllib3==2.5.0
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk
 vine==5.1.0
     # via
     #   amqp
@@ -240,7 +244,7 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.14
     # via prompt-toolkit
-webcolors==24.11.1
+webcolors==25.10.0
     # via -r requirements.in
 webencodings==0.5.1
     # via

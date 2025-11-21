@@ -362,7 +362,6 @@ INSTALLED_APPS = [
     "django_jinja.contrib._humanize",
     "sr",
     "easy_thumbnails",
-    "raven.contrib.django.raven_compat",
 ]
 
 WSGI_APPLICATION = "taiga.wsgi.application"
