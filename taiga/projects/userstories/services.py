@@ -9,6 +9,9 @@ from typing import List, Optional
 
 import csv
 import io
+import re
+import json
+import logging
 from collections import OrderedDict
 from operator import itemgetter
 from contextlib import closing
@@ -36,6 +39,7 @@ from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.users.models import User
 from taiga.users.gravatar import get_gravatar_id
 from taiga.users.services import get_big_photo_url, get_photo_url
+from taiga.doubai_ai import ask_once
 
 from . import models
 
@@ -1288,3 +1292,170 @@ def get_userstories_filters_data(project, querysets):
     )
 
     return data
+
+# 假设 ask_once 函数和 logging, re, json 模块已正确导入和配置
+# 为了让代码可运行和演示，我们依然使用模拟的 ask_once
+
+logger = logging.getLogger(__name__)
+
+# --- 核心异常类（保持不变）---
+
+class AIServiceError(Exception):
+    """Custom exception for AI service errors."""
+    pass
+
+# --- 核心故事生成函数（函数名和返回格式变更）---
+
+def generate_single_story(requirement_text: str):
+    """
+    Generates a structured AI suggestion (Subject, Description, Tags) from a
+    single piece of natural language text for frontend consumption.
+    It applies cleaning and anonymization before building the prompt.
+
+    Args:
+        requirement_text (str): The raw natural language description of the requirement.
+
+    Returns:
+        dict: The generated suggestion structure (suggestion_subject, 
+              suggestion_description, suggestion_tags).
+              Raises AIServiceError on failure.
+    """
+    processed_text = "" # 确保在 try 块外初始化
+    try:
+        # 0. 预处理：清洁并保护输入数据
+        processed_text = preprocess(requirement_text)
+            
+        # 1. 构建 Prompt 和 Question (已修改，要求新格式)
+        system_prompt = "You are a product owner specializing in Agile user story creation. Your response must be a valid JSON object."
+        question = build_suggestion_prompt(processed_text) # 变动点 1: 调用新的 prompt 函数
+            
+        # 2. 调用 ask_once 函数 (替换为实际的 AI 调用)
+        # 假设 ai_text_response = ask_once(question=question, prompt=system_prompt)
+        # 为了演示，我们使用一个模拟的响应：
+        # 注意: 在实际运行中，您需要确保您的 ask_once 函数返回的是符合新格式的文本。
+        # 暂时使用一个模拟调用：
+        ai_text_response = ask_once(question=question, prompt=system_prompt)
+            
+        # 3. 解析返回的文本 (已修改，解析新格式)
+        suggestion_data = parse_ai_response(ai_text_response)
+
+        # 检查解析结果是否是默认的失败结构
+        # 变动点 2: 检查的键名已更改
+        if suggestion_data.get("suggestion_subject") == get_default_story().get("suggestion_subject"):
+            raise ValueError("AI response failed to parse and returned a default structure.")
+                
+        return suggestion_data
+            
+    except Exception as e:
+        # 使用 processed_text 进行日志记录，避免记录原始敏感数据
+        log_text = processed_text[:50] if processed_text else requirement_text[:50]
+        logger.error(f"AI suggestion generation failed for processed requirement: '{log_text}...': {e}")
+        # 变动点 3: 确保 raise AIServiceError 包装了原始错误
+        raise AIServiceError(str(e))
+
+# --- 预处理辅助方法（保持不变）---
+def anonymize(text: str) -> str:
+    """Anonymize sensitive data: email, phone, ID, bank card"""
+    patterns = [
+        # 1. 邮箱：最精确，冲突少
+        (r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b", "[EMAIL]"),
+        
+        # 2. 身份证：精确匹配 17 位数字 + 最后一位数字或 X/x
+        (r"\d{17}[\dXx]", "[ID]"),
+        
+        # 3. 银行卡：匹配 12 到 19 位数字。由于身份证已处理，不会再误伤。
+        # 注意：使用 \b 确保只匹配完整的数字串，避免匹配到句子中的普通数字。
+        (r"\b\d{12,19}\b", "[BANKCARD]"),
+        
+        # 4. 手机：匹配 1[3-9]开头的11位数字。
+        # 注意：使用 \b 确保是完整的 11 位数字。
+        (r"\b1[3-9]\d{9}\b", "[PHONE]"),
+    ]
+    
+    for pattern, repl in patterns:
+        text = re.sub(pattern, repl, text)
+        
+    return text
+
+def clean_text(text: str) -> str:
+    """Basic cleaning: remove HTML, URLs, extra spaces"""
+    # 移除 HTML 标签
+    text = re.sub(r"<[^>]+>", "", text)
+    # 移除 URLs
+    text = re.sub(r"http\S+|www\.\S+", "", text)
+    # 规范化空格：将多个空格替换为单个空格，并移除首尾空格
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+def preprocess(text: str) -> str:
+    """Full preprocessing pipeline: Anonymize -> Clean"""
+    result = text
+    # 1. 匿名化敏感信息
+    result = anonymize(result)
+    # 2. 基础文本清洁
+    result = clean_text(result)
+    return result
+    
+# --- 故事生成辅助方法（已修改）---
+
+# 变动点 4: 更改函数名并调整 Prompt 内容以要求新的 JSON 结构
+def build_suggestion_prompt(requirement_text):
+    """Builds the prompt for the AI model based on natural language text, 
+    requesting the specific frontend JSON structure."""
+    return f"""Analyze the following natural language requirement and transform it
+into a structured User Story in English.
+
+Requirement Text:
+"{requirement_text}"
+
+Please provide the analysis result in a valid JSON format with the following fields:
+1. 'suggestion_subject': A short, clear headline summarizing the story.
+2. 'suggestion_description': The full user story text, strictly following the template:
+   "As a <role>, I want <goal>, So that <value>".
+3. 'suggestion_tags': An array of 3 to 5 JSON objects, where each object has a single field 'name'
+   containing a relevant keyword or label (e.g., feature area, priority, user type).
+
+Target JSON Format Example:
+{{
+  "suggestion_description": "...",
+  "suggestion_subject": "...",
+  "suggestion_tags": [
+    {{ "name": "high priority" }},
+    {{ "name": "..." }}
+  ]
+}}
+
+IMPORTANT:
+- Your entire response MUST be a single, valid JSON object.
+- The 'suggestion_tags' array must contain between 3 and 5 tag objects.
+- Do not include any text or formatting outside of the JSON object.
+- The entire response should be in English."""
+
+
+# 变动点 5: 更改 parse_ai_response 函数，使其可以处理目标 JSON 格式
+def parse_ai_response(ai_text):
+    """Parses the JSON response from the AI."""
+    try:
+        json_start = ai_text.find('{')
+        json_end = ai_text.rfind('}') + 1
+        if json_start == -1 or json_end == 0:
+            raise ValueError("No JSON object found in AI response")
+            
+        json_str = ai_text[json_start:json_end]
+        return json.loads(json_str)
+    except (json.JSONDecodeError, ValueError) as e:
+        logger.warning(f"Failed to parse AI response: {e}\nRaw: {ai_text[:100]}...")
+        return get_default_story()
+
+# 变动点 6: 更改 get_default_story 函数，返回目标 JSON 格式的默认结构
+def get_default_story():
+    """Returns a default user story object for fallback cases in the new format."""
+    return {
+        "suggestion_subject": "Default Suggestion (AI Failed)",
+        "suggestion_description": "As a system administrator, I want to review this requirement, So that the correct user story can be created manually.",
+        "suggestion_tags": [
+            {"name": "manual-review"},
+            {"name": "ai-failure"},
+            {"name": "critical"}
+        ]
+    }

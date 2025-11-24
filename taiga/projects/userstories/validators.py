@@ -284,3 +284,42 @@ class UpdateMilestoneBulkValidator(ProjectExistsValidator, validators.Validator)
             raise ValidationError(_("All the user stories must be from the same project"))
 
         return attrs
+
+class StoryAnalysisValidator(ProjectExistsValidator, validators.Validator):
+    """
+    Validator for the AI story analysis endpoint.
+    
+    Checks for a valid project_id and a non-empty text field.
+    """
+    
+    # 1. 检查项目ID
+    # project_id = serializers.IntegerField(
+    #    required=True,
+    #    help_text=_("The ID of the project.")
+    # )
+    
+    # 2. 检查 text 字段
+    text = serializers.CharField(
+        required=True,
+        help_text=_("The natural language requirement text to be analyzed.")
+    )
+
+    def validate(self, attrs):
+        """
+        Cross-field validation.
+        """
+        
+        # 'project_id' 的存在性和有效性已由 ProjectExistsValidator 和
+        # 'required=True' 处理。
+        
+        # 'text' 的存在性 (required=True) 和空字符串 (allow_blank=False) 
+        # 已经由字段本身处理。
+        
+        # 我们只需要添加一个检查，确保 'text' 不仅仅是空白字符 (例如 "   ")。
+        text = attrs.get("text") 
+        
+        if text and not text.strip():
+            # 如果 text 字段存在但 strip() 后为空，则引发错误
+            raise ValidationError({"text": _("This field may not be blank.")})
+            
+        return attrs

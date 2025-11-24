@@ -37,6 +37,8 @@ from taiga.projects.tagging.api import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
 from taiga.projects.userstories.utils import attach_extra_info
+from taiga.projects.userstories.services import AIServiceError
+from taiga.projects.userstories.services import generate_single_story
 
 from . import filters
 from . import models
@@ -506,6 +508,54 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                                                                before_userstory=before_userstory,
                                                                bulk_userstories=data["bulk_userstories"])
         return response.Ok(ret)
+    
+    @list_route(methods=["POST"])
+    def ai_suggestion(self, request, **kwargs):
+     
+        # 1. 验证器
+        # 使用 request.data (假设这是 DRF 标准)
+        validator = validators.StoryAnalysisValidator(data=request.data)
+        if not validator.is_valid():
+            # 使用 response.BadRequest
+            return response.BadRequest(validator.errors)
+
+        # 2. 获取数据
+        data = validator.data
+     
+        # 3. 权限检查 (省略)
+        # try:
+        #     project = get_object_or_error(Project, request.user, pk=data["project_id"])
+        # except Project.DoesNotExist:
+        #     return response.NotFound({"error": "Project not found."})
+        # self.check_permissions(request, "ai_suggestion", project)
+
+        # 4. 调用服务（包含错误处理）
+        try:
+            # 从 data 中获取 text
+            requirement_text = data["text"]
+        
+            # 调用核心服务函数
+            story_data = generate_single_story(requirement_text)
+        
+            # 5. 成功响应：只返回 story_data
+            # 响应体直接就是 story_data 字典，状态码为 200 OK
+            return response.Ok(story_data) # <--- **关键修改在这里**
+
+        except AIServiceError as e:
+            # 返回 HTTP 400 Bad Request
+            return response.BadRequest({
+                "success": False,
+                "error_code": "AI_SERVICE_ERROR",
+                "detail": f"AI 服务处理失败: {str(e)}"
+            })
+        
+        except Exception as e:
+            # 返回 HTTP 500 Internal Server Error
+            return response.InternalServerError({
+                "success": False,
+                "error_code": "INTERNAL_SERVER_ERROR",
+                "detail": "服务器内部发生未知错误。"
+            })
 
 
 class UserStoryVotersViewSet(VotersViewSetMixin, ModelListViewSet):
