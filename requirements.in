@@ -25,10 +25,10 @@ psd-tools>=1.9.18,<1.10.0 # https://psd-tools.readthedocs.io/en/latest/migration
 python-dateutil
 python-magic
 pytz
-raven
 requests
 requests_oauthlib
 rudder-sdk-python==1.0.0b1 # it is a pre-release!
+sentry-sdk
 serpy
 webcolors
 cairosvg
