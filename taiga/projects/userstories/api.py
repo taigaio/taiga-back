@@ -546,7 +546,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             return response.BadRequest({
                 "success": False,
                 "error_code": "AI_SERVICE_ERROR",
-                "detail": f"AI 服务处理失败: {str(e)}"
+                "detail": f"AI service processing failed: {str(e)}"
             })
         
         except Exception as e:
@@ -554,7 +554,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             return response.InternalServerError({
                 "success": False,
                 "error_code": "INTERNAL_SERVER_ERROR",
-                "detail": "服务器内部发生未知错误。"
+                "detail": "An unknown error occurred within the server."
             })
 
 

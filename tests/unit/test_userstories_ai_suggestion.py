@@ -30,11 +30,14 @@ def test_generate_single_story_real_integration():
     
     此测试会发起实际的外部 API 调用。
     """
+    print("\n--------Test generate_single_story(requirement_text: str)-------")
     # 需求文本已改为英文
     requirement = "As a registered user, I want to be able to set my profile picture so that other users can better identify me."
+    print("Natural language: ", requirement)
     
     try:
         result = generate_single_story(requirement)
+        print("User Story Generated from AI:\n", result)
     except AIServiceError as e:
         # 如果 AI 服务调用失败，我们将视为配置或连接问题，测试失败
         pytest.fail(f"AI Service call failed. Please check your .env configuration (API Key, Base URL) and network connection. Error: {e}")
@@ -62,17 +65,29 @@ def test_generate_single_story_real_integration():
 def test_anonymize_all_patterns():
     """测试 anonymize 函数是否正确替换所有类型的敏感信息。"""
     raw_text = "Email: user@test.com, Phone: 13912345678, ID: 44000019900101123X, Card: 6228123412341234."
+    result = anonymize(raw_text)
     expected = "Email: [EMAIL], Phone: [PHONE], ID: [ID], Card: [BANKCARD]."
-    assert anonymize(raw_text) == expected
+    print("--------Test anonymize(text: str)-------")
+    print("Raw Text: ", raw_text)
+    print("Anonymized Text: ", result)
+    assert result == expected
 
 def test_clean_text_removal():
     """测试 clean_text 是否移除 HTML 和 URL，并规范化空格。"""
     raw_text = " <p>Check this out: http://example.com/page. </p>   Extra   spaces. "
+    result = clean_text(raw_text)
     expected = "Check this out: Extra spaces."
-    assert clean_text(raw_text) == expected
+    print("--------Test clean_text(text: str)-------")
+    print("Raw Text: ", raw_text)
+    print("Cleaned Text: ", result)
+    assert result == expected
     
 def test_preprocess_pipeline():
     """测试整个预处理流程（匿名化 -> 清洗）的组合效果。"""
     raw_text = "Contact 13912345678 via <a href='http://link.com'>link</a>."
+    result = preprocess(raw_text)
     expected = "Contact [PHONE] via link."
-    assert preprocess(raw_text) == expected
+    print("--------Test preprocess(text: str)-------")
+    print("Raw Text:", raw_text)
+    print("Preprocessed Text:", result)
+    assert result == expected
