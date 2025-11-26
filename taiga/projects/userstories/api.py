@@ -514,7 +514,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
      
         # 1. 验证器
         # 使用 request.data (假设这是 DRF 标准)
-        validator = validators.StoryAnalysisValidator(data=request.data)
+        validator = validators.StoryAnalysisValidator(data=request.DATA)
         if not validator.is_valid():
             # 使用 response.BadRequest
             return response.BadRequest(validator.errors)

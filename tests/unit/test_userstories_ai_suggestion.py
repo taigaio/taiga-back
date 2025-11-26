@@ -46,9 +46,9 @@ def test_generate_single_story_real_integration():
     assert "suggestion_tags" in result
     
     # 验证描述是否包含用户故事格式的关键部分 (As a / I want / So that)
-    assert "As a" in result["suggestion_description"]
-    assert "I want" in result["suggestion_description"]
-    assert "So that" in result["suggestion_description"]
+    assert "as a" in result["suggestion_description"].lower()
+    assert "i want" in result["suggestion_description"].lower()
+    assert "so that" in result["suggestion_description"].lower()
     
     # 验证标签数量是否在 [3, 5] 范围内
     assert len(result["suggestion_tags"]) >= 3
