@@ -250,6 +250,11 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
     blocked_code = models.CharField(null=True, blank=True, max_length=255,
                                     choices=choices.BLOCKING_CODES + settings.EXTRA_BLOCKING_CODES,
                                     default=None, verbose_name=_("blocked code"))
+
+    archived_code = models.CharField(null=True, blank=True, max_length=255,
+                                        choices=choices.ArchivedCode.choices + settings.EXTRA_ARCHIVED_CODES,
+                                        default=None,
+                                        verbose_name=_("Archived code"))
     # Totals:
     totals_updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                                    verbose_name=_("updated date time"), db_index=True)
