@@ -15,6 +15,7 @@ from django.utils import timezone
 from .. import factories as f
 
 from taiga.base.utils import json
+from taiga.projects.choices import ArchivedCode
 from taiga.projects.history import services
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.choices import HistoryType
@@ -228,6 +229,25 @@ def test_delete_comment_by_project_owner(client):
     url = "%s?id=%s" % (url, history_entry.id)
     response = client.post(url, content_type="application/json")
     assert 200 == response.status_code, response.status_code
+
+
+def test_delete_comment_is_project_archived(client):
+    project = f.create_project(archived_code=ArchivedCode.ARCHIVED_BY_STAFF)
+    us = f.create_userstory(project=project)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    key = make_key_from_model_object(us)
+    history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                 project=project,
+                                                 comment="testing",
+                                                 key=key,
+                                                 diff={},
+                                                 user={"pk": project.owner.id})
+
+    client.login(project.owner)
+    url = reverse("userstory-history-delete-comment", args=(us.id,))
+    url = "%s?id=%s" % (url, history_entry.id)
+    response = client.post(url, content_type="application/json")
+    assert 400 == response.status_code, response.status_code
 
 
 def test_edit_comment(client):
