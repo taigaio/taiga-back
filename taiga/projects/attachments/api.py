@@ -16,7 +16,7 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404, get_object_or_error
 from taiga.base.decorators import list_route
 
@@ -31,7 +31,8 @@ from . import models
 
 
 class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
-                            BlockedByProjectMixin, ModelCrudViewSet):
+                            ArchivedByProjectMixin, BlockedByProjectMixin,
+                            ModelCrudViewSet):
 
     model = models.Attachment
     serializer_class = serializers.AttachmentSerializer

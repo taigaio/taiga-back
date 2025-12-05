@@ -39,8 +39,8 @@ from . import utils as tasks_utils
 
 class TaskViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
                   HistoryResourceMixin, WatchedResourceMixin,  ByRefMixin,
-                  TaggedResourceMixin, BlockedByProjectMixin, PromoteToUserStoryMixin,
-                  ModelCrudViewSet):
+                  TaggedResourceMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
+                  PromoteToUserStoryMixin, ModelCrudViewSet):
     validator_class = validators.TaskValidator
     queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)

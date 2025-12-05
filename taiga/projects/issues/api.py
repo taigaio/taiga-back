@@ -14,7 +14,7 @@ from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base.decorators import detail_route, list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_error
 
 from taiga.projects.history.mixins import HistoryResourceMixin
@@ -40,8 +40,8 @@ from . import validators
 
 class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
                    HistoryResourceMixin, WatchedResourceMixin, ByRefMixin,
-                   TaggedResourceMixin, BlockedByProjectMixin, PromoteToUserStoryMixin,
-                   ModelCrudViewSet):
+                   TaggedResourceMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
+                   PromoteToUserStoryMixin, ModelCrudViewSet):
     validator_class = validators.IssueValidator
     queryset = models.Issue.objects.all()
     permission_classes = (permissions.IssuePermission, )

@@ -22,7 +22,7 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet, ModelUpdateRetrieveViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin, BlockeableSaveMixin, BlockeableDeleteMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin, BlockeableSaveMixin, BlockeableDeleteMixin
 from taiga.base.api.permissions import AllowAnyPermission
 from taiga.base.api.utils import get_object_or_error
 from taiga.base.api.viewsets import ViewSet
@@ -570,7 +570,7 @@ class ProjectWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
 ## Custom values for selectors
 ######################################################
 
-class EpicStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+class EpicStatusViewSet(MoveOnDestroyMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                         ModelCrudViewSet, BulkUpdateOrderMixin):
 
     model = models.EpicStatus
@@ -592,7 +592,7 @@ class EpicStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+class UserStoryStatusViewSet(MoveOnDestroyMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                              ModelCrudViewSet, BulkUpdateOrderMixin):
 
     model = models.UserStoryStatus
@@ -620,7 +620,7 @@ class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
         reset_userstories_kanban_order_in_bulk(project, bulk_userstories_ids)
 
 
-class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+class PointsViewSet(MoveOnDestroyMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                     ModelCrudViewSet, BulkUpdateOrderMixin):
 
     model = models.Points
@@ -642,7 +642,7 @@ class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class SwimlaneViewSet(MoveOnDestroySwimlaneMixin, BlockedByProjectMixin,
+class SwimlaneViewSet(MoveOnDestroySwimlaneMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                       ModelCrudViewSet, BulkUpdateOrderMixin):
 
     model = models.Swimlane
@@ -678,7 +678,7 @@ class SwimlaneViewSet(MoveOnDestroySwimlaneMixin, BlockedByProjectMixin,
             raise exc.BadRequest(_("The default swimlane cannot be deleted."))
 
 
-class SwimlaneUserStoryStatusViewSet(BlockedByProjectMixin, ModelListViewSet, ModelUpdateRetrieveViewSet):
+class SwimlaneUserStoryStatusViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelListViewSet, ModelUpdateRetrieveViewSet):
     model = models.SwimlaneUserStoryStatus
     serializer_class = serializers.SwimlaneUserStoryStatusSerializer
     validator_class = validators.SwimlaneUserStoryStatusValidator
@@ -742,7 +742,7 @@ class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         return response.Ok(serializer.data)
 
 
-class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+class TaskStatusViewSet(MoveOnDestroyMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                         ModelCrudViewSet, BulkUpdateOrderMixin):
 
     model = models.TaskStatus
@@ -764,7 +764,7 @@ class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class TaskDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+class TaskDueDateViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
 
     model = models.TaskDueDate
     serializer_class = serializers.TaskDueDateSerializer
@@ -819,7 +819,7 @@ class TaskDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         return response.Ok(serializer.data)
 
 
-class SeverityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+class SeverityViewSet(MoveOnDestroyMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                       ModelCrudViewSet, BulkUpdateOrderMixin):
 
     model = models.Severity
@@ -841,7 +841,7 @@ class SeverityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class PriorityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+class PriorityViewSet(MoveOnDestroyMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                       ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.Priority
     serializer_class = serializers.PrioritySerializer
@@ -862,7 +862,7 @@ class PriorityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class IssueTypeViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+class IssueTypeViewSet(MoveOnDestroyMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                        ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.IssueType
     serializer_class = serializers.IssueTypeSerializer
@@ -883,7 +883,7 @@ class IssueTypeViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+class IssueStatusViewSet(MoveOnDestroyMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
                          ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.IssueStatus
     serializer_class = serializers.IssueStatusSerializer
@@ -905,7 +905,7 @@ class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-class IssueDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+class IssueDueDateViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
 
     model = models.IssueDueDate
     serializer_class = serializers.IssueDueDateSerializer
@@ -978,7 +978,7 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 ## Members & Invitations
 ######################################################
 
-class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+class MembershipViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Membership
     admin_serializer_class = serializers.MembershipAdminSerializer
     serializer_class = serializers.MembershipSerializer

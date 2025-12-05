@@ -23,7 +23,7 @@ from taiga.base.utils.dicts import into_namedtuple
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
 from taiga.base.api.fields import validate_user_email_allowed_domains
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base.api.viewsets import ModelCrudViewSet
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
@@ -455,7 +455,7 @@ class UsersViewSet(ModelCrudViewSet):
 ######################################################
 # Role
 ######################################################
-class RolesViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+class RolesViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Role
     serializer_class = serializers.RoleSerializer
     validator_class = validators.RoleValidator

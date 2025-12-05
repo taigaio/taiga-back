@@ -7,7 +7,7 @@
 
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelUpdateRetrieveViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base import filters
 
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
@@ -26,7 +26,7 @@ from . import services
 # Custom Attribute ViewSets
 #######################################################
 
-class EpicCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
+class EpicCustomAttributeViewSet(BulkUpdateOrderMixin, ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.EpicCustomAttribute
     serializer_class = serializers.EpicCustomAttributeSerializer
     validator_class = validators.EpicCustomAttributeValidator
@@ -38,7 +38,7 @@ class EpicCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, Mo
     bulk_update_order_action = services.bulk_update_epic_custom_attribute_order
 
 
-class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
+class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.UserStoryCustomAttribute
     serializer_class = serializers.UserStoryCustomAttributeSerializer
     validator_class = validators.UserStoryCustomAttributeValidator
@@ -50,7 +50,7 @@ class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixi
     bulk_update_order_action = services.bulk_update_userstory_custom_attribute_order
 
 
-class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
+class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.TaskCustomAttribute
     serializer_class = serializers.TaskCustomAttributeSerializer
     validator_class = validators.TaskCustomAttributeValidator
@@ -62,7 +62,7 @@ class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, Mo
     bulk_update_order_action = services.bulk_update_task_custom_attribute_order
 
 
-class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
+class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.IssueCustomAttribute
     serializer_class = serializers.IssueCustomAttributeSerializer
     validator_class = validators.IssueCustomAttributeValidator
@@ -79,7 +79,7 @@ class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, M
 #######################################################
 
 class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                                        BlockedByProjectMixin, ModelUpdateRetrieveViewSet):
+                                        ArchivedByProjectMixin, BlockedByProjectMixin, ModelUpdateRetrieveViewSet):
     def get_object_for_snapshot(self, obj):
         return getattr(obj, self.content_object)
 
