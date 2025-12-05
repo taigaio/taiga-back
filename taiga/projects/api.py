@@ -165,6 +165,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         Change logo to this project.
         """
         self.object = get_object_or_error(self.get_queryset(), request.user, **kwargs)
+        self._raise_if_archived(self.object)
         self.check_permissions(request, "change_logo", self.object)
 
         logo = request.FILES.get('logo', None)
@@ -190,6 +191,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         """
         self.object = get_object_or_error(self.get_queryset(), request.user, **kwargs)
         self.check_permissions(request, "remove_logo", self.object)
+        self._raise_if_archived(self.object)
         self.pre_conditions_on_save(self.object)
         self.object.logo = None
         self.object.save(update_fields=["logo"])
@@ -357,6 +359,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
         else:
             self.pre_conditions_on_save(project)
+            self._raise_if_archived(project)
             modules_config.config.update(request.DATA)
             modules_config.save()
             return response.NoContent()
@@ -454,6 +457,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
     def duplicate(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "duplicate", project)
+        self._raise_if_archived(project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
@@ -494,6 +498,10 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         if self.is_blocked(project):
             raise exc.Blocked(_("Blocked element"))
 
+    def _raise_if_archived(self, project):
+        if project.is_archived:
+            raise exc.PermissionDenied(_("Archived element"))
+
     def _set_base_permissions(self, obj):
         update_permissions = False
         if not obj.id:
@@ -520,6 +528,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             if not can_create_or_update:
                 raise exc.NotEnoughSlotsForProject(obj.is_private, total_members or 1, error_message)
 
+        self._raise_if_archived(obj)
         self._set_base_permissions(obj)
         super().pre_save(obj)
 
