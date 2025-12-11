@@ -477,6 +477,9 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
+        if project.archived_code is not None:
+            raise exc.PermissionDenied(_("Archived project"))
+
         # Get status
         status = get_object_or_error(UserStoryStatus, request.user, pk=data["status_id"], project=project)
 
