@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 from django.utils.translation import gettext_lazy as _
-
+from django.db import models
 
 VIDEOCONFERENCES_CHOICES = (
     ("whereby-com", _("Whereby.com")),
@@ -26,3 +26,7 @@ BLOCKING_CODES = [
     (BLOCKED_BY_OWNER_LEAVING, _("This project is blocked because the owner left")),
     (BLOCKED_BY_DELETING, _("This project is blocked while it's deleted"))
 ]
+
+
+class ArchivedCode(models.TextChoices):
+    ARCHIVED_BY_STAFF = "archived-by-staff", _("Archived by staff")
