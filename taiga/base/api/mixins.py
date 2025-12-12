@@ -293,7 +293,7 @@ class ArchivedModelMixin:
     def is_archived(self, obj):
         raise NotImplementedError("is_archived must be overridden")
 
-    def pre_conditions_blocked(self, obj):
+    def pre_conditions_archived(self, obj):
         # Raises permission exception
         if obj is not None and self.is_archived(obj):
             raise exc.PermissionDenied(_("Archived element"))
@@ -301,13 +301,13 @@ class ArchivedModelMixin:
 class ArchivedSaveMixin(ArchivedModelMixin):
     def pre_conditions_on_save(self, obj):
         # Called on create and update calls
-        self.pre_conditions_blocked(obj)
+        self.pre_conditions_archived(obj)
         super().pre_conditions_on_save(obj)
 
 class ArchivedDeleteMixin(ArchivedModelMixin):
     def pre_conditions_on_delete(self, obj):
         # Called on destroy calls
-        self.pre_conditions_blocked(obj)
+        self.pre_conditions_archived(obj)
         super().pre_conditions_on_delete(obj)
 
 class ArchivedByProjectMixin(ArchivedSaveMixin, ArchivedDeleteMixin):

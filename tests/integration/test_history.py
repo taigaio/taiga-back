@@ -247,7 +247,7 @@ def test_delete_comment_is_project_archived(client):
     url = reverse("userstory-history-delete-comment", args=(us.id,))
     url = "%s?id=%s" % (url, history_entry.id)
     response = client.post(url, content_type="application/json")
-    assert 400 == response.status_code, response.status_code
+    assert 403 == response.status_code, response.status_code
 
 
 def test_edit_comment(client):
