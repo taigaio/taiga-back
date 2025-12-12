@@ -17,7 +17,7 @@ from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base import status
 from taiga.base.decorators import list_route
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
 from taiga.base.api.utils import get_object_or_error
@@ -49,7 +49,7 @@ from . import validators
 class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                        VotedResourceMixin, HistoryResourceMixin,
                        WatchedResourceMixin, ByRefMixin, TaggedResourceMixin,
-                       BlockedByProjectMixin, ModelCrudViewSet):
+                       ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     validator_class = validators.UserStoryValidator
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
@@ -476,6 +476,9 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         self.check_permissions(request, "bulk_update_order", project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
+
+        if project.archived_code is not None:
+            raise exc.PermissionDenied(_("Archived project"))
 
         # Get status
         status = get_object_or_error(UserStoryStatus, request.user, pk=data["status_id"], project=project)

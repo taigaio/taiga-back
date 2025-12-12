@@ -12,7 +12,7 @@ from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_error
 from taiga.base.utils.db import get_object_or_none
 
@@ -37,7 +37,8 @@ import datetime
 
 
 class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
-                       BlockedByProjectMixin, ModelCrudViewSet):
+                       ArchivedByProjectMixin, BlockedByProjectMixin,
+                       ModelCrudViewSet):
     serializer_class = serializers.MilestoneSerializer
     validator_class = validators.MilestoneValidator
     permission_classes = (permissions.MilestonePermission,)

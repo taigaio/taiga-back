@@ -466,6 +466,10 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
     def project(self):
         return self
 
+    @property
+    def is_archived(self) -> bool:
+        return self.archived_code is not None
+
     def _get_q_watchers(self):
         return Q(notify_policies__project_id=self.id) & ~Q(notify_policies__notify_level=NotifyLevel.none)
 

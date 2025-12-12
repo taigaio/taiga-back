@@ -12,7 +12,7 @@ from taiga.base import filters
 from taiga.base import response
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import list_route
 
@@ -35,7 +35,7 @@ from . import utils as wiki_utils
 
 
 class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                  BlockedByProjectMixin, ModelCrudViewSet):
+                  ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
 
     model = models.WikiPage
     serializer_class = serializers.WikiPageSerializer
@@ -88,7 +88,7 @@ class WikiWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     resource_model = models.WikiPage
 
 
-class WikiLinkViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+class WikiLinkViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.WikiLink
     serializer_class = serializers.WikiLinkSerializer
     validator_class = validators.WikiLinkValidator
