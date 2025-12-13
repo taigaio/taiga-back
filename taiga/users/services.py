@@ -362,11 +362,11 @@ def get_watched_list(for_user, from_user, type=None, q=None):
                 -- private project where the view_ permission is included in the user role for that project or in the anon permissions
                 projects_project.is_private = true
                 AND(
-                    (entities.type = 'issue' AND 'view_issues' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
-                    OR (entities.type = 'task' AND 'view_tasks' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
-                    OR (entities.type = 'userstory' AND 'view_us' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
-                    OR (entities.type = 'project' AND 'view_project' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
-                    OR (entities.type = 'epic' AND 'view_epic' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                    (entities.type = 'issue' AND 'view_issues' = ANY (users_role.permissions || projects_project.anon_permissions))
+                    OR (entities.type = 'task' AND 'view_tasks' = ANY (users_role.permissions || projects_project.anon_permissions))
+                    OR (entities.type = 'userstory' AND 'view_us' = ANY (users_role.permissions || projects_project.anon_permissions))
+                    OR (entities.type = 'project' AND 'view_project' = ANY (users_role.permissions || projects_project.anon_permissions))
+                    OR (entities.type = 'epic' AND 'view_epic' = ANY (users_role.permissions || projects_project.anon_permissions))
                 )
         ))
     -- END Permissions checking
@@ -453,7 +453,7 @@ def get_liked_list(for_user, from_user, type=None, q=None):
                 -- private project where the view_ permission is included in the user role for that project or in the anon permissions
                 projects_project.is_private = true
                 AND(
-                    'view_project' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions))
+                    'view_project' = ANY (users_role.permissions || projects_project.anon_permissions)
                 )
         ))
     -- END Permissions checking
@@ -542,10 +542,10 @@ def get_voted_list(for_user, from_user, type=None, q=None):
                 -- private project where the view_ permission is included in the user role for that project or in the anon permissions
                 projects_project.is_private = true
                 AND(
-                    (entities.type = 'issue' AND 'view_issues' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
-                    OR (entities.type = 'task' AND 'view_tasks' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
-                    OR (entities.type = 'userstory' AND 'view_us' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
-                    OR (entities.type = 'epic' AND 'view_epic' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                    (entities.type = 'issue' AND 'view_issues' = ANY (users_role.permissions || projects_project.anon_permissions))
+                    OR (entities.type = 'task' AND 'view_tasks' = ANY (users_role.permissions || projects_project.anon_permissions))
+                    OR (entities.type = 'userstory' AND 'view_us' = ANY (users_role.permissions || projects_project.anon_permissions))
+                    OR (entities.type = 'epic' AND 'view_epic' = ANY (users_role.permissions || projects_project.anon_permissions))
                 )
         ))
     -- END Permissions checking
