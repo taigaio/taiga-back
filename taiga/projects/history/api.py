@@ -72,6 +72,10 @@ class HistoryViewSet(ReadOnlyListViewSet):
     @detail_route(methods=['post'])
     def edit_comment(self, request, pk):
         obj = self.get_object()
+
+        if obj.project.is_archived:
+            return response.Forbidden({"error": _("Project is archived")})
+
         history_entry_id = request.QUERY_PARAMS.get('id', None)
         history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
         if history_entry is None:
@@ -121,6 +125,10 @@ class HistoryViewSet(ReadOnlyListViewSet):
     @detail_route(methods=['post'])
     def delete_comment(self, request, pk):
         obj = self.get_object()
+
+        if obj.project.is_archived:
+            return response.Forbidden({"error": _("Project is archived")})
+
         history_entry_id = request.QUERY_PARAMS.get('id', None)
         history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
         if history_entry is None:

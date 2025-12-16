@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 from taiga.base import status
-from taiga.base.api.mixins import CreateModelMixin, BlockedByProjectMixin
+from taiga.base.api.mixins import CreateModelMixin, ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base.api.viewsets import GenericViewSet
 
 from . import models
@@ -17,7 +17,7 @@ from . import validators
 from django.conf import settings
 
 
-class ContactViewSet(BlockedByProjectMixin, CreateModelMixin, GenericViewSet):
+class ContactViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, CreateModelMixin, GenericViewSet):
     permission_classes = (permissions.ContactPermission,)
     validator_class = validators.ContactEntryValidator
     model = models.ContactEntry

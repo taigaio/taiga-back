@@ -13,7 +13,7 @@ from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 from taiga.base.utils import json
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.milestones.models import Milestone
@@ -39,8 +39,8 @@ from . import utils as tasks_utils
 
 class TaskViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
                   HistoryResourceMixin, WatchedResourceMixin,  ByRefMixin,
-                  TaggedResourceMixin, BlockedByProjectMixin, PromoteToUserStoryMixin,
-                  ModelCrudViewSet):
+                  TaggedResourceMixin, ArchivedByProjectMixin, BlockedByProjectMixin,
+                  PromoteToUserStoryMixin, ModelCrudViewSet):
     validator_class = validators.TaskValidator
     queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)

@@ -13,7 +13,7 @@ from taiga.base import response
 from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
-from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.mixins import ArchivedByProjectMixin, BlockedByProjectMixin
 
 from taiga.base.decorators import detail_route
 
@@ -24,7 +24,7 @@ from . import permissions
 from . import tasks
 
 
-class WebhookViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+class WebhookViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Webhook
     serializer_class = serializers.WebhookSerializer
     validator_class = validators.WebhookValidator
