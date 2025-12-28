@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2025-12-28 02:00+0000\n"
+"PO-Revision-Date: 2025-12-29 03:00+0000\n"
 "Last-Translator: hanyang cheng <cinxiafortis@tutanota.de>\n"
 "Language-Team: Chinese (Traditional Han script) <https://hosted.weblate.org/"
 "projects/taiga/taiga-back/zh_Hant/>\n"
@@ -1773,7 +1773,7 @@ msgstr "修改使用者故事"
 
 #: taiga/permissions/choices.py:38
 msgid "Comment user story"
-msgstr "評論用戶故事"
+msgstr "評論使用者故事"
 
 #: taiga/permissions/choices.py:39
 msgid "Delete user story"
@@ -1944,7 +1944,7 @@ msgstr "不能刪除預設的泳道圖。"
 
 #: taiga/projects/api.py:708
 msgid "You can't delete the default due date status of a user story"
-msgstr "您不能刪除用戶故事的預設截止日期狀態"
+msgstr "您不能刪除使用者故事的預設截止日期狀態"
 
 #: taiga/projects/api.py:724
 msgid "Project does already have due dates"
@@ -2072,16 +2072,16 @@ msgid ""
 "Invalid attachment id to move after. The attachment must belong to the same "
 "item (epic, userstory, task, issue or wiki page)."
 msgstr ""
-"無效的附件 ID ，無法移動至其後。要移動的附件必須屬於同個項目（史詩故事、用戶"
-"故事、任務、議題或維基頁面）。"
+"無效的附件 ID ，無法移動至其後。要移動的附件必須屬於同個品項（史詩故事、使用"
+"者故事、任務、議題或維基頁面）。"
 
 #: taiga/projects/attachments/validators.py:61
 msgid ""
 "Invalid attachment ids. All attachments must belong to the same item (epic, "
 "userstory, task, issue or wiki page)."
 msgstr ""
-"無效的附件 ID 。所有附件必須屬於同個項目（史詩故事、用戶故事、任務、議題或維"
-"基頁面）。"
+"無效的附件 ID 。所有附件必須屬於同個項目（史詩故事、使用者故事、任務、議題或"
+"維基頁面）。"
 
 #: taiga/projects/choices.py:12
 msgid "Whereby.com"
@@ -2680,7 +2680,7 @@ msgstr ""
 
 #: taiga/projects/models.py:199 taiga/projects/models.py:1002
 msgid "active backlog panel"
-msgstr "活躍的待辦任務優先表面板"
+msgstr "活躍的待辦清單面板"
 
 #: taiga/projects/models.py:201 taiga/projects/models.py:1004
 msgid "active kanban panel"
@@ -2799,7 +2799,7 @@ msgstr ""
 
 #: taiga/projects/models.py:944
 msgid "user story status"
-msgstr ""
+msgstr "使用者故事狀態"
 
 #: taiga/projects/models.py:996
 msgid "default owner's role"
@@ -2916,7 +2916,7 @@ msgstr "創建日期時間"
 
 #: taiga/projects/notifications/models.py:66
 msgid "history entries"
-msgstr "歷史輸入"
+msgstr "歷史記錄"
 
 #: taiga/projects/notifications/models.py:69
 msgid "notify users"
@@ -3655,7 +3655,7 @@ msgstr ""
 
 #: taiga/projects/settings/choices.py:24
 msgid "Backlog"
-msgstr ""
+msgstr "待辦清單"
 
 #. Translators: Name of kanban project template.
 #: taiga/projects/settings/choices.py:25 taiga/projects/translations.py:24
@@ -4443,7 +4443,7 @@ msgstr "角色"
 
 #: taiga/projects/userstories/models.py:95
 msgid "backlog order"
-msgstr "待辦任務先後次序"
+msgstr "待辦任務優先次序"
 
 #: taiga/projects/userstories/models.py:97
 msgid "sprint order"
@@ -4523,6 +4523,8 @@ msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"無效的用戶故事 ID，無法移動至其後。要移動的用戶故事必須屬於同一個專案、狀態和"
+"泳道。"
 
 #: taiga/projects/userstories/validators.py:240
 msgid ""
