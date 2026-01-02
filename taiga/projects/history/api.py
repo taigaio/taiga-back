@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext as _
 from django.utils import timezone
 
+from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import ReadOnlyListViewSet
@@ -53,6 +54,13 @@ class HistoryViewSet(ReadOnlyListViewSet):
         submitted_mentions = notifications_services.get_mentions(obj, new_comment)
         return list(set(submitted_mentions) - set(old_mentions))
 
+    def _raise_if_project_blocked_or_archived(self, project):
+        if project.blocked_code:
+            raise exc.Blocked(_("Blocked element"))
+
+        if project.is_archived:
+            raise exc.PermissionDenied("Archived element")
+
     @detail_route(methods=['get'])
     def comment_versions(self, request, pk):
         obj = self.get_object()
@@ -73,8 +81,7 @@ class HistoryViewSet(ReadOnlyListViewSet):
     def edit_comment(self, request, pk):
         obj = self.get_object()
 
-        if obj.project.is_archived:
-            return response.Forbidden({"error": _("Project is archived")})
+        self._raise_if_project_blocked_or_archived(obj.project)
 
         history_entry_id = request.QUERY_PARAMS.get('id', None)
         history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
@@ -126,8 +133,7 @@ class HistoryViewSet(ReadOnlyListViewSet):
     def delete_comment(self, request, pk):
         obj = self.get_object()
 
-        if obj.project.is_archived:
-            return response.Forbidden({"error": _("Project is archived")})
+        self._raise_if_project_blocked_or_archived(obj.project)
 
         history_entry_id = request.QUERY_PARAMS.get('id', None)
         history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()

@@ -15,7 +15,7 @@ from django.utils import timezone
 from .. import factories as f
 
 from taiga.base.utils import json
-from taiga.projects.choices import ArchivedCode
+from taiga.projects.choices import ArchivedCode, BLOCKED_BY_STAFF
 from taiga.projects.history import services
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.choices import HistoryType
@@ -249,6 +249,23 @@ def test_delete_comment_is_project_archived(client):
     response = client.post(url, content_type="application/json")
     assert 403 == response.status_code, response.status_code
 
+def test_delete_comment_is_project_blocked(client):
+    project = f.create_project(blocked_code=BLOCKED_BY_STAFF)
+    us = f.create_userstory(project=project)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    key = make_key_from_model_object(us)
+    history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                 project=project,
+                                                 comment="testing",
+                                                 key=key,
+                                                 diff={},
+                                                 user={"pk": project.owner.id})
+
+    client.login(project.owner)
+    url = reverse("userstory-history-delete-comment", args=(us.id,))
+    url = "%s?id=%s" % (url, history_entry.id)
+    response = client.post(url, content_type="application/json")
+    assert 451 == response.status_code, response.status_code
 
 def test_edit_comment(client):
     project = f.create_project()
@@ -282,6 +299,29 @@ def test_edit_comment(client):
     assert history_entry.edit_comment_date != None
     assert history_entry.comment_versions[0]["user"]["id"] == project.owner.id
 
+def test_edit_comment_with_project_blocked(client):
+    project = f.create_project(blocked_code=BLOCKED_BY_STAFF)
+    us = f.create_userstory(project=project)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    key = make_key_from_model_object(us)
+    history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                 project=project,
+                                                 comment="testing",
+                                                 key=key,
+                                                 diff={},
+                                                 user={"pk": project.owner.id})
+
+    history_entry_created_at = history_entry.created_at
+    assert history_entry.comment_versions == None
+    assert history_entry.edit_comment_date == None
+
+    client.login(project.owner)
+    url = reverse("userstory-history-edit-comment", args=(us.id,))
+    url = "%s?id=%s" % (url, history_entry.id)
+
+    data = json.dumps({"comment": "testing update comment"})
+    response = client.post(url, data, content_type="application/json")
+    assert 451 == response.status_code, response.status_code
 
 def test_get_comment_versions(client):
     project = f.create_project()
