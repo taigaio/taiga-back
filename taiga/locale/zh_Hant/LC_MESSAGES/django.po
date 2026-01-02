@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2025-12-29 03:00+0000\n"
+"PO-Revision-Date: 2026-01-03 03:01+0000\n"
 "Last-Translator: hanyang cheng <cinxiafortis@tutanota.de>\n"
 "Language-Team: Chinese (Traditional Han script) <https://hosted.weblate.org/"
 "projects/taiga/taiga-back/zh_Hant/>\n"
@@ -1097,7 +1097,7 @@ msgstr "應用程式"
 #: taiga/external_apps/services.py:21 taiga/projects/api.py:424
 #: taiga/projects/api.py:444
 msgid "Invalid token"
-msgstr "無效的代碼"
+msgstr "無效令牌"
 
 #: taiga/feedback/models.py:14 taiga/users/models.py:134
 msgid "full name"
@@ -1433,7 +1433,7 @@ msgstr "無效的 Jira 伺服器配置。"
 #: taiga/importers/jira/api.py:233 taiga/importers/pivotal/api.py:130
 #: taiga/importers/trello/api.py:135
 msgid "Invalid or expired auth token"
-msgstr "auth token無效或過期"
+msgstr "認證令牌無效或過期"
 
 #: taiga/importers/jira/tasks.py:37 taiga/importers/jira/tasks.py:38
 msgid "Error importing Jira project"
@@ -2512,7 +2512,7 @@ msgstr "此里程碑不適用於本專案"
 
 #: taiga/projects/issues/validators.py:69
 msgid "All the issues must be from the same project"
-msgstr ""
+msgstr "所有的議題必須來自同一專案"
 
 #: taiga/projects/likes/models.py:30
 msgid "Like"
@@ -2559,7 +2559,7 @@ msgstr "此 ID 沒有對應的里程碑"
 #: taiga/projects/milestones/validators.py:55
 #: taiga/projects/userstories/validators.py:285
 msgid "All the user stories must be from the same project"
-msgstr ""
+msgstr "所有的用戶故事必須來自同一專案"
 
 #: taiga/projects/mixins/blocked.py:19
 msgid "is blocked"
@@ -2604,7 +2604,7 @@ msgstr "創建於"
 
 #: taiga/projects/models.py:90 taiga/users/models.py:154
 msgid "token"
-msgstr "代號"
+msgstr "令牌"
 
 #: taiga/projects/models.py:101
 msgid "invitation extra text"
@@ -2676,7 +2676,7 @@ msgstr ""
 
 #: taiga/projects/models.py:197 taiga/projects/models.py:1000
 msgid "active epics panel"
-msgstr ""
+msgstr "活躍的史詩故事面板"
 
 #: taiga/projects/models.py:199 taiga/projects/models.py:1002
 msgid "active backlog panel"
@@ -2692,7 +2692,7 @@ msgstr "活躍的維基面板"
 
 #: taiga/projects/models.py:205 taiga/projects/models.py:1008
 msgid "active issues panel"
-msgstr "活躍的問題面板"
+msgstr "活躍的議題面板"
 
 #: taiga/projects/models.py:208 taiga/projects/models.py:1015
 msgid "videoconference system"
@@ -2732,7 +2732,7 @@ msgstr ""
 
 #: taiga/projects/models.py:248
 msgid "project transfer token"
-msgstr ""
+msgstr "專案轉移令牌"
 
 #: taiga/projects/models.py:252
 msgid "blocked code"
@@ -3588,7 +3588,7 @@ msgstr "因為您仍然是專案所有者或專案缺少管理人員，所以您
 
 #: taiga/projects/services/invitations.py:64
 msgid "Token does not match any valid invitation."
-msgstr "代碼無法與任何有效的邀請匹配。"
+msgstr "此邀請碼與任何有效的邀請均不相符。"
 
 #: taiga/projects/services/invitations.py:74
 msgid "User does not exist."
@@ -3639,11 +3639,11 @@ msgstr "專案結束"
 #: taiga/projects/services/transfer.py:58
 #: taiga/projects/services/transfer.py:61 taiga/users/api.py:189
 msgid "Token is invalid"
-msgstr "代號無效"
+msgstr "令牌無效"
 
 #: taiga/projects/services/transfer.py:56
 msgid "Token has expired"
-msgstr ""
+msgstr "令牌已經過期"
 
 #: taiga/projects/settings/choices.py:22
 msgid "Timeline"
@@ -4002,7 +4002,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:29
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:30
 msgid "Request transfer to a different person"
-msgstr ""
+msgstr "請求轉讓給其他人"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:9
 #, python-format
@@ -4033,7 +4033,7 @@ msgstr ""
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:23
 msgid "Request transfer to a different person:"
-msgstr ""
+msgstr "請求轉讓給其他人："
 
 #: taiga/projects/templates/emails/transfer_reject-subject.jinja:9
 #, python-format
@@ -4066,6 +4066,9 @@ msgid ""
 "project transfer from the administration panel.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>如果您希望從管理面版啟動專案轉移流程，請點選「繼續」。</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:22
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:30
@@ -4090,6 +4093,8 @@ msgid ""
 "Please, go to your project settings if you would like to start the project "
 "transfer from the administration panel.\n"
 msgstr ""
+"\n"
+"如果您希望從管理面版啟動專案轉移流程，請前往您的專案設定。\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:18
 msgid "Go to your project settings:"
@@ -4137,6 +4142,9 @@ msgid ""
 "proposal.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>請點選「繼續」以接受或拒絕此提案。</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:9
 #, python-format
@@ -4162,6 +4170,8 @@ msgid ""
 "Please, go to the following link to either accept or reject this proposal.</"
 "p>\n"
 msgstr ""
+"\n"
+"請點選以下連結以接受或拒絕此提案。</p>\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:23
 msgid "Accept or reject the project ownership transfer:"
@@ -4734,11 +4744,11 @@ msgstr "無效密碼"
 #: taiga/users/api.py:271
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
-msgstr "無效，請確認代號正確，之前是否曾使用過？"
+msgstr "令牌無效，請確認令牌是否正確及之前未曾註冊過？"
 
 #: taiga/users/api.py:312 taiga/users/api.py:319 taiga/users/api.py:322
 msgid "Invalid, are you sure the token is correct?"
-msgstr "無效，請確認代號是否正確？"
+msgstr "令牌無效，請確認令牌是否正確？"
 
 #: taiga/users/api.py:344
 msgid "Email address already verified"
@@ -4835,7 +4845,7 @@ msgstr "顏色標籤"
 
 #: taiga/users/models.py:157
 msgid "email token"
-msgstr "電子郵件符號　"
+msgstr "電子信箱令牌"
 
 #: taiga/users/models.py:159
 msgid "new email address"
