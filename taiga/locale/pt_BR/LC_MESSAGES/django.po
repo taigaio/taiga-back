@@ -37,8 +37,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2024-07-17 12:09+0000\n"
-"Last-Translator: \"A. Bento\" <kyweehz@pm.me>\n"
+"PO-Revision-Date: 2026-01-09 07:28+0000\n"
+"Last-Translator: Ronaldo Hoch <ronaldopintohoch@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "taiga/taiga-back/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -46,7 +46,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"X-Generator: Weblate 5.15.1\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -54,8 +54,7 @@ msgstr "tipo de login inválido"
 
 #: taiga/auth/api.py:108
 msgid "Public registration is disabled."
-msgstr ""
-"Você deve aceitar os nossos termos do serviço e a política de privacidade"
+msgstr "O registro público está desativado."
 
 #: taiga/auth/api.py:131
 msgid "You must accept our terms of service and privacy policy"
@@ -110,7 +109,8 @@ msgstr "nome de usuário inválido"
 #: taiga/auth/serializers.py:85 taiga/users/validators.py:43
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
-msgstr "Obrigatório. No máximo 255 caracteres. Letras, números e /./-/_ ."
+msgstr ""
+"Obrigatório. No máximo 255 caracteres. Letras, números e /./-/_ Caracteres"
 
 #: taiga/auth/serializers.py:92 taiga/auth/serializers.py:95
 #: taiga/users/validators.py:56 taiga/users/validators.py:59
@@ -401,7 +401,7 @@ msgstr "Erro na conexão."
 
 #: taiga/base/exceptions.py:68
 msgid "Malformed request."
-msgstr "Requisição mal-formada"
+msgstr "Requisição mal-formada."
 
 #: taiga/base/exceptions.py:73
 msgid "Incorrect authentication credentials."
@@ -418,7 +418,7 @@ msgstr "Você não possui permissão para executar esta ação."
 #: taiga/base/exceptions.py:88
 #, python-format
 msgid "Method '%s' not allowed."
-msgstr "Método '%s' não é permitido"
+msgstr "Método '%s' não é permitido."
 
 #: taiga/base/exceptions.py:96
 msgid "Could not satisfy the request's Accept header"
@@ -793,19 +793,13 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"\n"
 "Erro ao carregar arquivo de restauração por {user_full_name} <{user_email}>:"
 "\"\n"
 "\n"
 "\n"
-"\n"
-"\n"
 "MOTIVO:\n"
-"\n"
-"-------\n"
-"\n"
+"‐-------\n"
 "{reason}\n"
-"\n"
 "\n"
 "DETALHES:\n"
 "--------\n"
@@ -1074,7 +1068,7 @@ msgstr "{}=\"{}\" não encontrado nesse projeto"
 #: taiga/export_import/validators/validators.py:173
 #: taiga/projects/custom_attributes/validators.py:97
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
-msgstr "conteúdo inválido. Deve ser  {\"key\": \"value\",...}"
+msgstr "Conteúdo inválido. Deve ser {\"key\": \"value\",...}"
 
 #: taiga/export_import/validators/validators.py:188
 #: taiga/projects/custom_attributes/validators.py:112
@@ -1308,9 +1302,9 @@ msgid ""
 "Issue created by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
-"Problema criado por [{user_name}]({user_url} \"Veja o perfil  "
-"{user_name}'s{platform}} \") da [{platform}#{number}]({url} \"Ir para o "
-"problema\")."
+"Problema criado por [{user_name}]({user_url} "
+"\"Veja o perfil {user_name}'s{platform} \") da [{platform}#{number}]({url} "
+"\"Ir para o problema\")."
 
 #: taiga/hooks/event_hooks.py:138
 #, python-brace-format
@@ -1323,6 +1317,9 @@ msgid ""
 "Issue modified by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema modificado por [{user_name}]({user_url} "
+"\"{user_name} verifique seu perfil no {platform} \") de [{platform}#{number}]"
+"({url} \"vá\")."
 
 #: taiga/hooks/event_hooks.py:150
 #, python-brace-format
@@ -1335,6 +1332,9 @@ msgid ""
 "Issue closed by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema encerrado por [{user_name}]({user_url} "
+"\"Ver perfil de {user_name} na {platform}\") de [{platform}#{number}]({url} "
+"\"Ir para o problema\")."
 
 #: taiga/hooks/event_hooks.py:162
 #, python-brace-format
@@ -1347,6 +1347,9 @@ msgid ""
 "Issue reopened by [{user_name}]({user_url} \"See {user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Problema reaberto por [{user_name}]({user_url} "
+"\"Ver perfil de {user_name} na {platform}\") de [{platform}#{number}]({url} "
+"\"Ir para o problema\")."
 
 #: taiga/hooks/event_hooks.py:174
 #, python-brace-format
@@ -1369,6 +1372,10 @@ msgid ""
 "\n"
 "  - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"{user_text} alterou o status de [commit de {platform} ]({commit_url} "
+"\"Veja o commit '{commit_id} - {commit_short_message}'\")\n"
+"\n"
+"  - Status: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:303
 #, python-brace-format
@@ -1377,6 +1384,9 @@ msgid ""
 "\n"
 " - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"Status alterado do commit de {platform}.\n"
+"\n"
+" - Status: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:321
 #, python-brace-format
@@ -1385,6 +1395,9 @@ msgid ""
 "({commit_url} \"See commit '{commit_id} - {commit_short_message}'\") "
 "\"{commit_message}\""
 msgstr ""
+"Este {type_name} foi mencionado por {user_text} no [commit de {platform}]"
+"({commit_url} \"Veja o commit '{commit_id} - {commit_short_message}'\") "
+"\"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:326
 #, python-brace-format
@@ -1450,6 +1463,11 @@ msgid ""
 "version.\n"
 "                Taiga does not support Jira releases from 8.6."
 msgstr ""
+"\n"
+"                Ocorreu um erro, provavelmente devido a uma versão do Jira "
+"não suportada.\n"
+"                O Taiga não oferece suporte a versões do Jira a partir da "
+"versão 8.6."
 
 #: taiga/importers/jira/api.py:158
 msgid "Invalid project_type {}"
@@ -1484,6 +1502,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Projeto Asana importado</h1>\n"
+"    <p>Olá %(user)s,</p>\n"
+"    <h3>Seu projeto Asana foi importado corretamente.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title="
+"\"Go to the project %(project)s\">Ir para %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:9
 #, python-format
@@ -1500,6 +1526,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá %(user)s,\n"
+"\n"
+"Seu projeto Asana foi importado corretamente.\n"
+"\n"
+"Você pode ver o projeto %(project)s aqui:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:9
 #, python-format
@@ -1518,6 +1555,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Projeto do GitHub importado</h1>\n"
+"    <p>Olá %(user)s,</p>\n"
+"    <h3>Seu projeto do GitHub foi importado corretamente.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title="
+"\"Go to the project %(project)s\">Ir para %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/github_import_success-body-text.jinja:9
 #, python-format
@@ -1534,6 +1579,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá.\n"
+"\n"
+"Seu projeto GitHub foi corretamente importado.\n"
+"\n"
+"Você pode ver o projeto %(project)s aqui:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"-...\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:9
 #, python-format
@@ -1554,9 +1610,19 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"<p> Olá %(user)s,</p>\n"
+"<p> Seu projeto não foi importado corretamente.</p>\n"
+"<p> Os administradores do sistema %(product_name)s foram informados.<br/> "
+"Por favor, tente novamente ou entre em contato com a equipe de suporte em\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>]\n"
+"<p><small>%(signature)s</small></p>]\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-html.jinja:12
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "    <h1>Jira Project imported</h1>\n"
@@ -1567,6 +1633,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1> Projeto Jira importado</h1>\n"
+"<p> Olá %(user)s,</p>\n"
+"<h3> Seu projeto Jira foi corretamente importado.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s\""
+">%(project)s\"> Ir para %(project)s</a>\n"
+"<p><small>%(signature)s</small></p>]\n"
+"    "
 
 #: taiga/importers/templates/emails/jira_import_success-body-text.jinja:9
 #, python-format
@@ -1583,6 +1657,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá  %(user)s,\n"
+"\n"
+"O seu projecto Jira foi correctamente importado.\n"
+"\n"
+"Você pode ver o projeto %(project)s aqui:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"-...\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/jira_import_success-subject.jinja:9
 #, python-format
@@ -1601,6 +1686,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Projeto do Trello importado</h1>\n"
+"    <p>Olá %(user)s,</p>\n"
+"    <h3>Seu projeto do Trello foi importado corretamente.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title="
+"\"Go to the project %(project)s\">Ir para %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/importers/templates/emails/trello_import_success-body-text.jinja:9
 #, python-format
@@ -1617,6 +1710,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá %(user)s\n"
+"\n"
+"O seu projeto Trello foi corretamente importado.\n"
+"\n"
+"Você pode ver o projeto %(project)s aqui:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"-...\n"
+"%(signature)s\n"
 
 #: taiga/importers/templates/emails/trello_import_success-subject.jinja:9
 #, python-format
@@ -1634,9 +1738,9 @@ msgid "Unauthorized: %(text)s at %(url)s"
 msgstr "Não autorizado: %(text)s em %(url)s"
 
 #: taiga/importers/trello/importer.py:63 taiga/importers/trello/importer.py:65
-#, python-format
+#, fuzzy, python-format
 msgid "Resource Unavailable: %(text)s at %(url)s"
-msgstr ""
+msgstr "Recursos Indisponíveis: %(text)s em %(url)s"
 
 #: taiga/importers/trello/tasks.py:31 taiga/importers/trello/tasks.py:32
 msgid "Error importing Trello project"
@@ -1808,7 +1912,7 @@ msgstr "Funções Admin"
 
 #: taiga/projects/admin.py:89
 msgid "Privacy"
-msgstr ""
+msgstr "Privacidade"
 
 #: taiga/projects/admin.py:100
 msgid "Modules"
@@ -1842,7 +1946,7 @@ msgstr "Tornar público"
 #: taiga/projects/admin.py:185
 #, python-brace-format
 msgid "{count} successfully made public."
-msgstr ""
+msgstr "{count} tornou-se público com sucesso."
 
 #: taiga/projects/admin.py:188
 msgid "Make private"
@@ -1851,7 +1955,7 @@ msgstr "Tornar privado"
 #: taiga/projects/admin.py:202
 #, python-brace-format
 msgid "{count} successfully made private."
-msgstr ""
+msgstr "{count} tornou-se privado com sucesso."
 
 #: taiga/projects/api.py:172 taiga/users/api.py:235
 msgid "Incomplete arguments"
@@ -1863,11 +1967,11 @@ msgstr "Formato de imagem inválida"
 
 #: taiga/projects/api.py:237
 msgid "Invalid template name"
-msgstr ""
+msgstr "Nome do modelo inválido"
 
 #: taiga/projects/api.py:240
 msgid "Invalid template description"
-msgstr ""
+msgstr "Descrição do modelo inválido"
 
 #: taiga/projects/api.py:404 taiga/projects/api.py:1093
 msgid "Invalid user id"
@@ -1879,46 +1983,54 @@ msgstr "O usuário não existe"
 
 #: taiga/projects/api.py:414
 msgid "The user must already be a project member"
-msgstr ""
+msgstr "O usuário já deve ser um membro do projeto"
 
 #: taiga/projects/api.py:678
 msgid "The default swimlane cannot be deleted."
-msgstr ""
+msgstr "A raia padrão não pode ser excluída."
 
 #: taiga/projects/api.py:708
 msgid "You can't delete the default due date status of a user story"
 msgstr ""
+"Você não pode excluir o status de data de vencimento padrão de uma história "
+"de usuário"
 
 #: taiga/projects/api.py:724
 msgid "Project does already have due dates"
-msgstr ""
+msgstr "Projeto já tem datas de entrega"
 
 #: taiga/projects/api.py:784
 msgid "You can't delete the default due date status of a task"
 msgstr ""
+"Você não pode excluir o status de data de vencimento padrão de uma tarefa"
 
 #: taiga/projects/api.py:800
 msgid "Project does already have task due dates"
-msgstr ""
+msgstr "O projeto já possui datas de entrega das tarefas"
 
 #: taiga/projects/api.py:925
 msgid "You can't delete the default due date status of an issue"
 msgstr ""
+"Você não pode excluir o status de data de vencimento padrão de um problema"
 
 #: taiga/projects/api.py:941
 msgid "Project does already have issue due dates"
-msgstr ""
+msgstr "O projeto já possui datas de entrega de edições"
 
 #: taiga/projects/api.py:1053 taiga/projects/validators.py:230
 msgid ""
 "To add members to a project, first you have to verify your email address"
 msgstr ""
+"Para adicionar membros a um projeto, primeiro você precisa verificar seu "
+"endereço de e-mail"
 
 #: taiga/projects/api.py:1111
 msgid ""
 "This user can't be removed from the following projects, because that would "
 "leave them without any active admin: {}."
 msgstr ""
+"Este usuário não pode ser removido dos seguintes projetos, porque isso o "
+"deixaria sem nenhum administrador ativo:{}."
 
 #: taiga/projects/api.py:1125
 msgid "Email is required"
@@ -1934,7 +2046,7 @@ msgstr ""
 
 #: taiga/projects/api.py:1171
 msgid "You don't have permissions to see that."
-msgstr ""
+msgstr "Você não tem permissão para ver isso."
 
 #: taiga/projects/attachments/api.py:46
 msgid "Partial updates are not supported"
@@ -1942,11 +2054,11 @@ msgstr "Atualizações parciais não são suportadas"
 
 #: taiga/projects/attachments/api.py:61
 msgid "Object id issue doesn't exist"
-msgstr ""
+msgstr "O problema de ID do objeto não existe"
 
 #: taiga/projects/attachments/api.py:64
 msgid "Project ID does not match between object and project"
-msgstr ""
+msgstr "O ID do projeto não corresponde entre o objeto e o projeto"
 
 #: taiga/projects/attachments/models.py:39 taiga/projects/contact/models.py:26
 #: taiga/projects/custom_attributes/models.py:36
@@ -2017,16 +2129,20 @@ msgid ""
 "Invalid attachment id to move after. The attachment must belong to the same "
 "item (epic, userstory, task, issue or wiki page)."
 msgstr ""
+"ID de anexo inválido para mover depois. O anexo deve pertencer ao mesmo item "
+"( épico , história de usuário, tarefa , problema ou página wiki)."
 
 #: taiga/projects/attachments/validators.py:61
 msgid ""
 "Invalid attachment ids. All attachments must belong to the same item (epic, "
 "userstory, task, issue or wiki page)."
 msgstr ""
+"IDs de anexo inválidos. Todos os anexos devem pertencer ao mesmo item ( "
+"épico , história do usuário, tarefa , problema ou página wiki)."
 
 #: taiga/projects/choices.py:12
 msgid "Whereby.com"
-msgstr ""
+msgstr "Whereby.com"
 
 #: taiga/projects/choices.py:13
 msgid "Jitsi"
@@ -2065,6 +2181,11 @@ msgid ""
 "written to %(project_name)s\n"
 "    "
 msgstr ""
+"\n"
+"        <a style=\"font-weight: bold;text-decoration:none;color:#222;"
+"\" href=\"%(user_profile_url)s\" title=\"%(full_name)s\">%(full_name)s</a> "
+"escreveu para %(project_name)s\n"
+"    "
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:28
 #, python-format
@@ -2078,6 +2199,14 @@ msgid ""
 "will not be affected.\n"
 "    "
 msgstr ""
+"\n"
+"        Você está recebendo esta mensagem porque está listado como "
+"administrador do projeto %(project_name)s . Se não quiser que membros da "
+"comunidade Taiga entrem em contato com o seu projeto, <a href="
+"\"%(project_settings_url)s\"> atualize as configurações do seu projeto </a> "
+"para impedir esse contato. A comunicação regular entre os membros do projeto "
+"não será afetada.\n"
+"    "
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:9
 #, python-format
@@ -2085,6 +2214,8 @@ msgid ""
 "\n"
 "%(full_name)s has written to %(project_name)s\n"
 msgstr ""
+"\n"
+"%(full_name)s escreveu para %(project_name)s\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:15
 #, python-format
@@ -2096,6 +2227,12 @@ msgid ""
 "%(project_settings_url)s to prevent such contacts. Regular communications "
 "amongst members of the project will not be affected.\n"
 msgstr ""
+"\n"
+"Você está recebendo esta mensagem porque está listado como administrador do "
+"projeto %(project_name)s . Se não quiser que membros da comunidade Taiga "
+"entrem em contato com o seu projeto, atualize as configurações do projeto em "
+"%(project_settings_url)s para impedir tais contatos. A comunicação regular "
+"entre os membros do projeto não será afetada.\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-subject.jinja:9
 #, python-format
@@ -2103,6 +2240,8 @@ msgid ""
 "\n"
 "[Taiga] %(full_name)s has sent a message to the project %(project_name)s\n"
 msgstr ""
+"\n"
+"[Taiga] %(full_name)s enviou uma mensagem para o projeto %(project_name)s\n"
 
 #: taiga/projects/custom_attributes/choices.py:21
 msgid "Text"
@@ -2114,7 +2253,7 @@ msgstr "Multi-linha"
 
 #: taiga/projects/custom_attributes/choices.py:23
 msgid "Rich text"
-msgstr ""
+msgstr "Texto enriquecido"
 
 #: taiga/projects/custom_attributes/choices.py:24
 msgid "Date"
@@ -2126,15 +2265,15 @@ msgstr "Url"
 
 #: taiga/projects/custom_attributes/choices.py:26
 msgid "Dropdown"
-msgstr ""
+msgstr "Dropdown"
 
 #: taiga/projects/custom_attributes/choices.py:27
 msgid "Checkbox"
-msgstr ""
+msgstr "Checkbox"
 
 #: taiga/projects/custom_attributes/choices.py:28
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 #: taiga/projects/custom_attributes/models.py:29
 #: taiga/projects/issues/models.py:64
@@ -2147,7 +2286,7 @@ msgstr "valores"
 
 #: taiga/projects/custom_attributes/models.py:103
 msgid "epic"
-msgstr ""
+msgstr "epic"
 
 #: taiga/projects/custom_attributes/models.py:124
 #: taiga/projects/tasks/models.py:29 taiga/projects/userstories/models.py:31
@@ -2168,15 +2307,15 @@ msgstr "Já existe um com o mesmo nome."
 
 #: taiga/projects/due_dates/models.py:14
 msgid "due date"
-msgstr ""
+msgstr "duas datas"
 
 #: taiga/projects/due_dates/models.py:17
 msgid "reason for the due date"
-msgstr ""
+msgstr "motivo da data de vencimento"
 
 #: taiga/projects/epics/api.py:83
 msgid "You don't have permissions to set this status to this epic."
-msgstr ""
+msgstr "Você não tem permissão para definir esse status para este épico ."
 
 #: taiga/projects/epics/models.py:25 taiga/projects/issues/models.py:25
 #: taiga/projects/tasks/models.py:33 taiga/projects/userstories/models.py:71
@@ -2191,7 +2330,7 @@ msgstr "status"
 
 #: taiga/projects/epics/models.py:46
 msgid "epics order"
-msgstr ""
+msgstr "ordem épica"
 
 #: taiga/projects/epics/models.py:55 taiga/projects/issues/models.py:92
 #: taiga/projects/tasks/models.py:76 taiga/projects/userstories/models.py:109
@@ -2231,7 +2370,7 @@ msgstr "referência externa"
 
 #: taiga/projects/epics/validators.py:26
 msgid "There's no epic with that id"
-msgstr ""
+msgstr "Não existe épico com esse id"
 
 #: taiga/projects/history/api.py:89
 msgid "comment is required"
@@ -2330,7 +2469,7 @@ msgstr "Não-atribuído"
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:172
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:183
 msgid "Not set"
-msgstr ""
+msgstr "Não definido"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:294
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:99
@@ -2431,11 +2570,11 @@ msgstr "data de término"
 #: taiga/projects/tasks/validators.py:165
 #: taiga/projects/userstories/validators.py:275
 msgid "The milestone isn't valid for the project"
-msgstr ""
+msgstr "O marco não é válido para o projeto"
 
 #: taiga/projects/issues/validators.py:69
 msgid "All the issues must be from the same project"
-msgstr ""
+msgstr "Todos os problemas devem ser do mesmo projeto"
 
 #: taiga/projects/likes/models.py:30
 msgid "Like"
@@ -2473,16 +2612,16 @@ msgstr "disponibilidade"
 
 #: taiga/projects/milestones/models.py:77
 msgid "The estimated start must be previous to the estimated finish."
-msgstr "A estimativa de inicio deve ser anterior a estimativa de encerramento"
+msgstr "A estimativa de inicio deve ser anterior a estimativa de encerramento."
 
 #: taiga/projects/milestones/validators.py:24
 msgid "There's no milestone with that id"
-msgstr ""
+msgstr "Não há marco com esse id"
 
 #: taiga/projects/milestones/validators.py:55
 #: taiga/projects/userstories/validators.py:285
 msgid "All the user stories must be from the same project"
-msgstr ""
+msgstr "Todas as histórias de usuário devem ser do mesmo projeto"
 
 #: taiga/projects/mixins/blocked.py:19
 msgid "is blocked"
@@ -2490,19 +2629,19 @@ msgstr "está bloqueado"
 
 #: taiga/projects/mixins/by_ref.py:21
 msgid "ref param is needed"
-msgstr ""
+msgstr "parâmetro ref é necessário"
 
 #: taiga/projects/mixins/by_ref.py:24
 msgid "project or project__slug param is needed"
-msgstr ""
+msgstr "o parâmetro project ou project__slug é necessário"
 
 #: taiga/projects/mixins/on_destroy.py:32
 msgid "Query param 'moveTo' is required"
-msgstr ""
+msgstr "O parâmetro de consulta 'moveTo' é obrigatório"
 
 #: taiga/projects/mixins/on_destroy.py:84
 msgid "Cannot set swimlane to None if there are available swimlanes"
-msgstr ""
+msgstr "Não é possível definir a raia como Nenhuma se houver raias disponíveis"
 
 #: taiga/projects/mixins/ordering.py:36
 #, python-brace-format
@@ -2515,7 +2654,7 @@ msgstr "'project' parametro é mandatório"
 
 #: taiga/projects/mixins/validators.py:29
 msgid "The user must be a project member."
-msgstr "O usuário deve ser um membro do projeto"
+msgstr "O usuário deve ser um membro do projeto."
 
 #: taiga/projects/models.py:86
 msgid "email"
@@ -2543,7 +2682,7 @@ msgstr "O usuário já é membro do projeto"
 
 #: taiga/projects/models.py:127
 msgid "default epic status"
-msgstr ""
+msgstr "status épico padrão"
 
 #: taiga/projects/models.py:131
 msgid "default US status"
@@ -2575,7 +2714,7 @@ msgstr "tipo padrão de problema"
 
 #: taiga/projects/models.py:156
 msgid "default swimlane"
-msgstr ""
+msgstr "raia padrão"
 
 #: taiga/projects/models.py:172
 msgid "logo"
@@ -2595,11 +2734,11 @@ msgstr "pontos totais de US"
 
 #: taiga/projects/models.py:195 taiga/projects/models.py:998
 msgid "active contact"
-msgstr ""
+msgstr "contato ativo"
 
 #: taiga/projects/models.py:197 taiga/projects/models.py:1000
 msgid "active epics panel"
-msgstr ""
+msgstr "painel de épicos ativos"
 
 #: taiga/projects/models.py:199 taiga/projects/models.py:1002
 msgid "active backlog panel"
@@ -2651,11 +2790,11 @@ msgstr "está procurando colaboradores"
 
 #: taiga/projects/models.py:234 taiga/projects/models.py:1012
 msgid "looking for people note"
-msgstr ""
+msgstr "procurando por pessoas nota"
 
 #: taiga/projects/models.py:248
 msgid "project transfer token"
-msgstr ""
+msgstr "token de transferência de projeto"
 
 #: taiga/projects/models.py:252
 msgid "blocked code"
@@ -2672,15 +2811,15 @@ msgstr "contagem"
 
 #: taiga/projects/models.py:261
 msgid "fans last week"
-msgstr ""
+msgstr "fãs na semana passada"
 
 #: taiga/projects/models.py:264
 msgid "fans last month"
-msgstr ""
+msgstr "fãs no mês passado"
 
 #: taiga/projects/models.py:267
 msgid "fans last year"
-msgstr ""
+msgstr "fãs no ano passado"
 
 #: taiga/projects/models.py:274
 msgid "activity last week"
@@ -2718,15 +2857,15 @@ msgstr "por padrão"
 #: taiga/projects/models.py:672 taiga/projects/models.py:741
 #: taiga/projects/models.py:889
 msgid "days to due"
-msgstr ""
+msgstr "dias para vencer"
 
 #: taiga/projects/models.py:944
 msgid "user story status"
-msgstr ""
+msgstr "status da história do usuário"
 
 #: taiga/projects/models.py:996
 msgid "default owner's role"
-msgstr "função padrão para dono "
+msgstr "função padrão para dono"
 
 #: taiga/projects/models.py:1019
 msgid "default options"
@@ -2734,7 +2873,7 @@ msgstr "opções padrão"
 
 #: taiga/projects/models.py:1020
 msgid "epic statuses"
-msgstr ""
+msgstr "status épicos"
 
 #: taiga/projects/models.py:1021
 msgid "us statuses"
@@ -2742,7 +2881,7 @@ msgstr "status de US"
 
 #: taiga/projects/models.py:1022
 msgid "us duedates"
-msgstr ""
+msgstr "datas de vencimento nos EUA"
 
 #: taiga/projects/models.py:1023 taiga/projects/userstories/models.py:47
 #: taiga/projects/userstories/models.py:92
@@ -2755,7 +2894,7 @@ msgstr "status de tarefa"
 
 #: taiga/projects/models.py:1025
 msgid "task duedates"
-msgstr ""
+msgstr "datas de vencimento das tarefas"
 
 #: taiga/projects/models.py:1026
 msgid "issue statuses"
@@ -2767,7 +2906,7 @@ msgstr "tipos de problema"
 
 #: taiga/projects/models.py:1028
 msgid "issue duedates"
-msgstr ""
+msgstr "datas de vencimento das questões"
 
 #: taiga/projects/models.py:1029
 msgid "priorities"
@@ -2783,15 +2922,15 @@ msgstr "funções"
 
 #: taiga/projects/models.py:1032
 msgid "epic custom attributes"
-msgstr ""
+msgstr "atributos personalizados épicos"
 
 #: taiga/projects/models.py:1033
 msgid "us custom attributes"
-msgstr ""
+msgstr "atributos personalizados dos EUA"
 
 #: taiga/projects/models.py:1034
 msgid "task custom attributes"
-msgstr ""
+msgstr "atributos personalizados da tarefa"
 
 #: taiga/projects/models.py:1035
 msgid "issue custom attributes"
@@ -2873,6 +3012,14 @@ msgid ""
 "%(subject)s\">See epic</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1> Épico atualizado</h1>\n"
+"<p>Olá %(user)s , <br> %(changer)s atualizou uma epopeia em %(project)s </p>"
+"\n"
+"<p> Épico # %(ref)s  %(subject)s </p>\n"
+"<a class=\"button\" href=\" %(url)s \" title="
+"\"Ver épico # %(ref)s : %(subject)s \"> Ver épico </a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-body-text.jinja:11
 #, python-format
@@ -2889,6 +3036,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Atualizou o Épico #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-html.jinja:12
 #, python-format
@@ -2915,6 +3064,13 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Novo épico criado.\n"
+"Olá %(user), %(changer) criou um novo épico em %(project)s\n"
+"Veja o épico #%(ref)s %(subject) em %(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-subject.jinja:9
 #, python-format
@@ -2922,6 +3078,8 @@ msgid ""
 "\n"
 "[%(project)s] Created the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Criou um épico #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-body-html.jinja:12
 #, python-format
@@ -3166,7 +3324,7 @@ msgid ""
 "[%(project)s] Deleted the Sprint \"%(milestone)s\"\n"
 msgstr ""
 "\n"
-"[%(project)s] Excpluiu o  Sprint \"%(milestone)s\"\n"
+"[%(project)s] Excluiu o Sprint \"%(milestone)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-html.jinja:12
 #, python-format
@@ -3179,6 +3337,13 @@ msgid ""
 "%(subject)s\">See task</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Tarefa Atualizada no %(project)s</h1>\n"
+"    <p>Ola %(user)s, <br> %(changer)s atualizou a tarefa:</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title="
+"\"Veja a Tarefa #%(ref)s: %(subject)s\">Veja a tarefa</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-text.jinja:11
 #, python-format
@@ -3192,6 +3357,14 @@ msgid ""
 "\n"
 "See task at %(url)s\n"
 msgstr ""
+"\n"
+"Tarefa atualizada %(project)s\n"
+"\n"
+"Ola %(user)s, %(changer)s atualizou a tarefa:\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"Confira! %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-subject.jinja:9
 #, python-format
@@ -3344,7 +3517,7 @@ msgid ""
 "[%(project)s] Created the US #%(ref)s \"%(subject)s\"\n"
 msgstr ""
 "\n"
-"[%(project)s] Criou a  US #%(ref)s \"%(subject)s\"\n"
+"[%(project)s] Criou a US #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-delete-body-html.jinja:12
 #, python-format
@@ -3515,7 +3688,7 @@ msgstr ""
 
 #: taiga/projects/services/invitations.py:64
 msgid "Token does not match any valid invitation."
-msgstr ""
+msgstr "O token não corresponde a nenhum convite válido."
 
 #: taiga/projects/services/invitations.py:74
 msgid "User does not exist."
@@ -3547,7 +3720,7 @@ msgstr "Você atingiu o seu limite atual de membros para projetos públicos"
 #: taiga/projects/services/members.py:166
 #: taiga/projects/services/members.py:213
 msgid "You have reached the current limit of pending memberships"
-msgstr ""
+msgstr "Você atingiu o limite atual de assinaturas pendentes"
 
 #: taiga/projects/services/promote.py:39
 #, python-format
@@ -3578,11 +3751,11 @@ msgstr "Linha do tempo"
 
 #: taiga/projects/settings/choices.py:23
 msgid "Epics"
-msgstr ""
+msgstr "Épicos"
 
 #: taiga/projects/settings/choices.py:24
 msgid "Backlog"
-msgstr ""
+msgstr "Backlog"
 
 #. Translators: Name of kanban project template.
 #: taiga/projects/settings/choices.py:25 taiga/projects/translations.py:24
@@ -3591,11 +3764,11 @@ msgstr "Kanban"
 
 #: taiga/projects/settings/choices.py:26
 msgid "Issues"
-msgstr ""
+msgstr "Problemas"
 
 #: taiga/projects/settings/choices.py:27
 msgid "TeamWiki"
-msgstr ""
+msgstr "EquipeWiki"
 
 #: taiga/projects/settings/validators.py:26
 msgid "You don't have access to this section"
@@ -3604,7 +3777,7 @@ msgstr "Você não tem acesso a esta seção"
 #: taiga/projects/tagging/fields.py:41
 #, python-brace-format
 msgid "Invalid tag '{value}'. The color is not a valid HEX color or null."
-msgstr ""
+msgstr "Tag inválida ' {value} '. A cor não é uma cor HEX válida ou é nula."
 
 #: taiga/projects/tagging/fields.py:44
 #, python-brace-format
@@ -3612,11 +3785,13 @@ msgid ""
 "Invalid tag '{value}'. it must be the name or a pair '[\"name\", \"hex color/"
 "\" | null]'."
 msgstr ""
+"Tag inválida ' {value} '. Deve ser o nome ou um par '"
+"[\"nome\", \"cor hexadecimal/\" | nulo]'."
 
 #: taiga/projects/tagging/fields.py:66
 #, python-brace-format
 msgid "Invalid tag '{value}'. It must be the tag name."
-msgstr ""
+msgstr "Tag inválida ' {value} '. Deve ser o nome da tag."
 
 #: taiga/projects/tagging/models.py:15
 msgid "tags"
@@ -3629,19 +3804,19 @@ msgstr "cores de tags"
 #: taiga/projects/tagging/validators.py:36
 #: taiga/projects/tagging/validators.py:63
 msgid "This tag already exists."
-msgstr ""
+msgstr "Esta tag já existe."
 
 #: taiga/projects/tagging/validators.py:43
 #: taiga/projects/tagging/validators.py:70
 msgid "The color is not a valid HEX color."
-msgstr ""
+msgstr "A cor não é uma cor HEX válida."
 
 #: taiga/projects/tagging/validators.py:56
 #: taiga/projects/tagging/validators.py:90
 #: taiga/projects/tagging/validators.py:103
 #: taiga/projects/tagging/validators.py:110
 msgid "The tag doesn't exist."
-msgstr ""
+msgstr "A tag não existe."
 
 #: taiga/projects/tasks/api.py:102 taiga/projects/tasks/api.py:111
 msgid "You don't have permissions to set this sprint to this task."
@@ -3671,38 +3846,43 @@ msgstr "é Iocaine"
 
 #: taiga/projects/tasks/validators.py:50
 msgid "Invalid milestone id."
-msgstr ""
+msgstr "ID de marco inválido."
 
 #: taiga/projects/tasks/validators.py:61
 msgid "Invalid task status id."
-msgstr ""
+msgstr "ID de status task inválido ."
 
 #: taiga/projects/tasks/validators.py:74
 msgid "Invalid user story id."
-msgstr ""
+msgstr "ID de história de usuário inválida."
 
 #: taiga/projects/tasks/validators.py:98
 msgid "Invalid task status id. The status must belong to the same project."
 msgstr ""
+"ID de status da task inválida . O status deve pertencer ao mesmo projeto."
 
 #: taiga/projects/tasks/validators.py:112
 msgid "Invalid user story id. The user story must belong to the same project."
 msgstr ""
+"ID de história de usuário inválido. A história de usuário deve pertencer ao "
+"mesmo projeto."
 
 #: taiga/projects/tasks/validators.py:124
 #: taiga/projects/userstories/validators.py:112
 msgid "Invalid milestone id. The milestone must belong to the same project."
-msgstr ""
+msgstr "ID de marco inválido. O marco deve pertencer ao mesmo projeto."
 
 #: taiga/projects/tasks/validators.py:141
 msgid ""
 "Invalid task ids. All tasks must belong to the same project and, if it "
 "exists, to the same status, user story and/or milestone."
 msgstr ""
+"IDs de task inválidos . Todas as tarefas devem pertencer ao mesmo projeto e, "
+"se existir, ao mesmo status, história de usuário e/ou marco."
 
 #: taiga/projects/tasks/validators.py:175
 msgid "All the tasks must be from the same project"
-msgstr ""
+msgstr "Todas as tarefas devem ser do mesmo projeto"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:14
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:12
@@ -3730,9 +3910,10 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"<p><small>E agora algumas palavras do bom companheiros ou companheiras<br/> "
-"que vieram tão gentilmente convidá-lo</small></p>\n"
-"<p><strong>%(extra)s</strong></p>"
+"    <p><small>E agora algumas palavras do bom companheiros ou companheiras<"
+"br/> que vieram tão gentilmente convidá-lo</small></p>\n"
+"<p><strong>%(extra)s</strong></p>\n"
+"        "
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:32
 msgid "Accept your invitation to Taiga"
@@ -3765,6 +3946,14 @@ msgid ""
 "you to be a Taiga user.\n"
 "\n"
 msgstr ""
+"\n"
+"Você, ou alguém que você conhece, o convidou para %(product_name)s\n"
+"\n"
+"Olá! %(full_name)s lhe enviou um convite para participar de um projeto "
+"chamado %(project)s em %(product_name)s .\n"
+"Taiga é uma ferramenta de gerenciamento ágil de projetos de código aberto. "
+"Ser um usuário Taiga é gratuito.\n"
+"\n"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:22
 #, python-format
@@ -3863,6 +4052,10 @@ msgid ""
 "%(new_owner_name)s has accepted your offer and will become the new project "
 "owner of \"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Olá %(old_owner_name)s ,\n"
+"%(new_owner_name)s aceitou sua oferta e se tornará o novo proprietário do "
+"projeto \" %(project_name)s \".\n"
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:15
 #, python-format
@@ -3874,6 +4067,8 @@ msgid ""
 "\n"
 "From now on, your new status for this project will be \"admin\".\n"
 msgstr ""
+"\n"
+"A partir de agora, seu novo status para este projeto será \"admin\".\n"
 
 #: taiga/projects/templates/emails/transfer_accept-subject.jinja:9
 #, python-format
@@ -3916,7 +4111,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:29
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:30
 msgid "Request transfer to a different person"
-msgstr ""
+msgstr "Solicitar transferência para outra pessoa"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:9
 #, python-format
@@ -3926,6 +4121,10 @@ msgid ""
 "%(rejecter_name)s has declined your offer and will not become the new "
 "project owner of \"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Olá %(owner_name)s ,\n"
+"%(rejecter_name)s recusou sua oferta e não se tornará o novo proprietário do "
+"projeto \" %(project_name)s \".\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:15
 #, python-format
@@ -3938,10 +4137,13 @@ msgid ""
 "If you want, you can still try to transfer the project ownership to a "
 "different person.\n"
 msgstr ""
+"\n"
+"Se quiser, você ainda pode tentar transferir a propriedade do projeto para "
+"outra pessoa.\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:23
 msgid "Request transfer to a different person:"
-msgstr ""
+msgstr "Solicitar transferência para outra pessoa:"
 
 #: taiga/projects/templates/emails/transfer_reject-subject.jinja:9
 #, python-format
@@ -3949,6 +4151,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer declined\n"
 msgstr ""
+"\n"
+"[ %(project)s ] Transferência de propriedade do projeto recusada\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:12
 #, python-format
@@ -3967,6 +4171,10 @@ msgid ""
 "project transfer from the administration panel.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Clique em \"Continuar\" se desejar iniciar a transferência do "
+"projeto a partir do painel de administração.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:22
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:30
@@ -3988,10 +4196,13 @@ msgid ""
 "Please, go to your project settings if you would like to start the project "
 "transfer from the administration panel.\n"
 msgstr ""
+"\n"
+"Acesse as configurações do seu projeto se desejar iniciar a transferência do "
+"projeto pelo painel de administração.\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:18
 msgid "Go to your project settings:"
-msgstr ""
+msgstr "Acesse as configurações do seu projeto:"
 
 #: taiga/projects/templates/emails/transfer_request-subject.jinja:9
 #, python-format
@@ -4025,6 +4236,10 @@ msgid ""
 "proposal.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Clique em \"Continuar\" para aceitar ou rejeitar esta "
+"proposta.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:9
 #, python-format
@@ -4046,10 +4261,13 @@ msgid ""
 "Please, go to the following link to either accept or reject this proposal.</"
 "p>\n"
 msgstr ""
+"\n"
+"Por favor, acesse o link a seguir para aceitar ou rejeitar esta proposta.</p>"
+"\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:23
 msgid "Accept or reject the project ownership transfer:"
-msgstr ""
+msgstr "Aceitar ou rejeitar a transferência de propriedade do projeto:"
 
 #: taiga/projects/templates/emails/transfer_start-subject.jinja:9
 #, python-format
@@ -4057,6 +4275,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer offer\n"
 msgstr ""
+"\n"
+"[ %(project)s ] Oferta de transferência de propriedade do projeto\n"
 
 #. Translators: Name of scrum project template.
 #: taiga/projects/translations.py:19
@@ -4077,7 +4297,7 @@ msgstr ""
 "pequenas descrições de todas as funcionalidades desejadas no produto. Quando "
 "se aplicada ao scrum, não é necessário começar com um longo esforço inicial "
 "para documentar todos os requisitos. O backlog permite crescer e modificar-"
-"se no processo que é compreendido sobre o produto e seus clientes."
+"se no processo que é compreendido sobre o produto e seus clientes"
 
 #. Translators: Description of kanban project template.
 #: taiga/projects/translations.py:26
@@ -4310,16 +4530,17 @@ msgstr ""
 #: taiga/projects/userstories/api.py:198
 msgid "You don't have permissions to set this swimlane to this user story."
 msgstr ""
+"Você não tem permissão para definir esta raia para esta história de usuário."
 
 #: taiga/projects/userstories/api.py:274
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
-msgstr ""
+msgstr "ID de função inválido ' {role_id} '"
 
 #: taiga/projects/userstories/api.py:281
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
-msgstr ""
+msgstr "Pontos inválidos id ' {points_id} '"
 
 #: taiga/projects/userstories/api.py:300
 #, python-brace-format
@@ -4340,7 +4561,7 @@ msgstr "ordem do sprint"
 
 #: taiga/projects/userstories/models.py:99
 msgid "kanban order"
-msgstr ""
+msgstr "Ordem Kanban"
 
 #: taiga/projects/userstories/models.py:107
 msgid "finish date"
@@ -4348,7 +4569,7 @@ msgstr "data de término"
 
 #: taiga/projects/userstories/models.py:122
 msgid "assigned users"
-msgstr ""
+msgstr "usuários atribuídos"
 
 #: taiga/projects/userstories/models.py:131
 msgid "generated from issue"
@@ -4356,15 +4577,15 @@ msgstr "Gerado do problema"
 
 #: taiga/projects/userstories/models.py:135
 msgid "generated from task"
-msgstr ""
+msgstr "gerado a partir da task"
 
 #: taiga/projects/userstories/models.py:136
 msgid "reference from task"
-msgstr ""
+msgstr "referência da task"
 
 #: taiga/projects/userstories/models.py:144
 msgid "swimlane"
-msgstr ""
+msgstr "raia"
 
 #: taiga/projects/userstories/validators.py:33
 msgid "There's no user story with that id"
@@ -4375,45 +4596,57 @@ msgstr "Não há história de usuário com esse id"
 msgid ""
 "Invalid user story status id. The status must belong to the same project."
 msgstr ""
+"ID de status da história do usuário inválida. O status deve pertencer ao "
+"mesmo projeto."
 
 #: taiga/projects/userstories/validators.py:87
 #: taiga/projects/userstories/validators.py:197
 msgid "Invalid swimlane id. The swimlane must belong to the same project."
-msgstr ""
+msgstr "ID de raia inválida. A raia deve pertencer ao mesmo projeto."
 
 #: taiga/projects/userstories/validators.py:130
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project and milestone."
 msgstr ""
+"ID de história de usuário inválida para mover. A história de usuário deve "
+"pertencer ao mesmo projeto e marco."
 
 #: taiga/projects/userstories/validators.py:140
 #: taiga/projects/userstories/validators.py:226
 msgid "You can't use after and before at the same time."
-msgstr ""
+msgstr "Você não pode usar after e before ao mesmo tempo."
 
 #: taiga/projects/userstories/validators.py:153
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project and milestone."
 msgstr ""
+"ID de história de usuário inválido para mover antes. A história de usuário "
+"deve pertencer ao mesmo projeto e marco."
 
 #: taiga/projects/userstories/validators.py:165
 #: taiga/projects/userstories/validators.py:252
 msgid "Invalid user story ids. All stories must belong to the same project."
 msgstr ""
+"IDs de história de usuário inválidos. Todas as histórias devem pertencer ao "
+"mesmo projeto."
 
 #: taiga/projects/userstories/validators.py:216
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"ID de história de usuário inválido para mover. A história de usuário deve "
+"pertencer ao mesmo projeto, status e raia."
 
 #: taiga/projects/userstories/validators.py:240
 msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
+"ID de história de usuário inválido para mover antes. A história de usuário "
+"deve pertencer ao mesmo projeto, status e raia."
 
 #: taiga/projects/validators.py:52
 msgid "There's no project with that id"
@@ -4421,11 +4654,11 @@ msgstr "Não há projeto com esse id"
 
 #: taiga/projects/validators.py:165
 msgid "The user yet exists in the project"
-msgstr ""
+msgstr "O usuário ainda existe no projeto"
 
 #: taiga/projects/validators.py:170
 msgid "Invalid operation"
-msgstr ""
+msgstr "Operação inválida"
 
 #: taiga/projects/validators.py:182
 msgid "Invalid role for the project"
@@ -4433,7 +4666,7 @@ msgstr "Função inválida para projeto"
 
 #: taiga/projects/validators.py:197 taiga/projects/validators.py:260
 msgid "The user must be a valid contact"
-msgstr ""
+msgstr "O usuário deve ser um contato válido"
 
 #: taiga/projects/validators.py:218
 msgid "The project owner must be admin."
@@ -4447,6 +4680,7 @@ msgstr ""
 #: taiga/projects/validators.py:275
 msgid "Invalid role ids. All roles must belong to the same project."
 msgstr ""
+"IDs de função inválidos. Todas as funções devem pertencer ao mesmo projeto."
 
 #: taiga/projects/validators.py:299
 msgid "Default options"
@@ -4511,7 +4745,7 @@ msgstr "href"
 
 #: taiga/telemetry/models.py:18
 msgid "instance id"
-msgstr ""
+msgstr "id da instância"
 
 #: taiga/timeline/signals.py:54
 msgid "Check the history API for the exact diff"
@@ -4543,47 +4777,43 @@ msgstr "Participações"
 
 #: taiga/users/admin.py:141
 msgid "PERSONAL INFO"
-msgstr ""
+msgstr "INFORMAÇÕES PESSOAIS"
 
 #: taiga/users/admin.py:142
 msgid "EXTRA INFO"
-msgstr ""
+msgstr "INFORMAÇÕES EXTRAS"
 
 #: taiga/users/admin.py:144
 msgid "PERMISSIONS"
-msgstr ""
+msgstr "PERMISSÕES"
 
 #: taiga/users/admin.py:145
 msgid "IMPORTANT DATES"
-msgstr ""
+msgstr "DATAS IMPORTANTES"
 
 #: taiga/users/admin.py:146
 msgid "PROJECT OWNERSHIPS RESTRICTIONS"
-msgstr ""
+msgstr "RESTRIÇÕES DE PROPRIEDADE DO PROJETO"
 
 #: taiga/users/admin.py:148
 msgid "PROJECT OWNERSHIPS STATS"
-msgstr ""
+msgstr "ESTATÍSTICAS DE PROPRIEDADE DE PROJETOS"
 
 #: taiga/users/admin.py:169
-#, fuzzy
-#| msgid "Project End"
 msgid "Private projects owned"
-msgstr "Fim do projeto"
+msgstr "Projetos privados de propriedade"
 
 #: taiga/users/admin.py:175
 msgid "Private memberships owned"
-msgstr ""
+msgstr "Associações privadas de propriedade"
 
 #: taiga/users/admin.py:193
-#, fuzzy
-#| msgid "Project End"
 msgid "Public projects owned"
-msgstr "Fim do projeto"
+msgstr "Projetos públicos de propriedade"
 
 #: taiga/users/admin.py:199
 msgid "Public memberships owned"
-msgstr ""
+msgstr "Associações públicas de propriedade"
 
 #: taiga/users/api.py:123
 msgid "Duplicated email"
@@ -4591,7 +4821,7 @@ msgstr "E-mail duplicado"
 
 #: taiga/users/api.py:125
 msgid "Invalid email"
-msgstr ""
+msgstr "Email inválido"
 
 #: taiga/users/api.py:163
 msgid "Invalid username or email"
@@ -4599,7 +4829,7 @@ msgstr "Usuário ou e-mail inválido"
 
 #: taiga/users/api.py:172
 msgid "Mail sent successfully!"
-msgstr ""
+msgstr "E-mail enviado com sucesso!"
 
 #: taiga/users/api.py:210
 msgid "Current password parameter needed"
@@ -4611,7 +4841,7 @@ msgstr "Parâmetro de nova senha necessário"
 
 #: taiga/users/api.py:216
 msgid "Invalid password length at least 6 characters needed"
-msgstr ""
+msgstr "Comprimento de senha inválido, no mínimo 6 caracteres necessários"
 
 #: taiga/users/api.py:219
 msgid "Invalid current password"
@@ -4630,15 +4860,15 @@ msgstr "Inválido, tem certeza que o token está correto?"
 
 #: taiga/users/api.py:344
 msgid "Email address already verified"
-msgstr ""
+msgstr "Endereço de e-mail já verificado"
 
 #: taiga/users/api.py:346
 msgid "Unable to verify this email address"
-msgstr ""
+msgstr "Não é possível verificar este endereço de e-mail"
 
 #: taiga/users/api.py:349
 msgid "Mail sended successful!"
-msgstr "E-mail enviado com sucesso"
+msgstr "E-mail enviado com sucesso!"
 
 #: taiga/users/models.py:87
 msgid "superuser status"
@@ -4649,8 +4879,8 @@ msgid ""
 "Designates that this user has all permissions without explicitly assigning "
 "them."
 msgstr ""
-"Designa que esse usuário tem todas as permissões sem explicitamente assiná-"
-"las"
+"Designa que esse usuário tem todas as permissões sem explicitamente "
+"assiná-las."
 
 #: taiga/users/models.py:120
 msgid "username"
@@ -4663,7 +4893,7 @@ msgstr "Requerido. 30 caracteres ou menos. Letras, números e caracteres /./-/_"
 
 #: taiga/users/models.py:124
 msgid "Enter a valid username."
-msgstr "Digite um usuário válido"
+msgstr "Digite um usuário válido."
 
 #: taiga/users/models.py:127
 msgid "active"
@@ -4679,11 +4909,11 @@ msgstr ""
 
 #: taiga/users/models.py:130
 msgid "staff status"
-msgstr ""
+msgstr "status da equipe"
 
 #: taiga/users/models.py:131
 msgid "Designates whether the user can log into this admin site."
-msgstr ""
+msgstr "Designa se o usuário pode efetuar login neste site de administração."
 
 #: taiga/users/models.py:137
 msgid "biography"
@@ -4698,18 +4928,16 @@ msgid "date joined"
 msgstr "data ingressado"
 
 #: taiga/users/models.py:142
-#, fuzzy
-#| msgid "date joined"
 msgid "date cancelled"
-msgstr "data ingressado"
+msgstr "data cancelada"
 
 #: taiga/users/models.py:143
 msgid "accepted terms"
-msgstr ""
+msgstr "termos aceitos"
 
 #: taiga/users/models.py:144
 msgid "new terms read"
-msgstr ""
+msgstr "novos termos lidos"
 
 #: taiga/users/models.py:146
 msgid "default language"
@@ -4747,11 +4975,15 @@ msgstr "número máximo de projetos públicos próprios"
 msgid ""
 "max number of memberships of different users for all owned private project"
 msgstr ""
+"número máximo de membros de diferentes usuários para todos os projetos "
+"privados de propriedade"
 
 #: taiga/users/models.py:177
 msgid ""
 "max number of memberships of different users for all owned public project"
 msgstr ""
+"número máximo de membros de diferentes usuários para todos os projetos "
+"públicos de propriedade"
 
 #: taiga/users/models.py:305
 msgid "permissions"
@@ -4759,7 +4991,7 @@ msgstr "permissões"
 
 #: taiga/users/services.py:46 taiga/users/services.py:63
 msgid "Username or password does not matches user."
-msgstr "Usuário ou senha não correspondem ao usuário"
+msgstr "Usuário ou senha não correspondem ao usuário."
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:12
 #, python-format
@@ -4787,6 +5019,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá %(full_name)s , por favor confirme seu e-mail\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Você pode ignorar esta mensagem se não tiver solicitado.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/change_email-subject.jinja:9
 msgid "[Taiga] Change email"
@@ -4818,6 +5059,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Olá %(full_name)s , você pediu para recuperar sua senha\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Você pode ignorar esta mensagem se não tiver solicitado.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/password_recovery-subject.jinja:9
 msgid "[Taiga] Password recovery"
@@ -4879,6 +5129,8 @@ msgid ""
 "\n"
 "Please confirm your email: %(url)s\n"
 msgstr ""
+"\n"
+"Por favor, confirme o seu email:%(url)s\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:21
 #, python-format
@@ -4889,6 +5141,11 @@ msgid ""
 "--\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"Tem alguma dúvida? Se precisar de ajuda, entre em contato conosco pelo e-"
+"mail %(support_email)s .\n"
+"‐‐\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:26
 #, python-format
@@ -4901,7 +5158,7 @@ msgstr ""
 
 #: taiga/users/templates/emails/registered_user-subject.jinja:9
 msgid "You've been Taigatized!"
-msgstr "Você foi  Taigatizado!"
+msgstr "Você foi Taigatizado!"
 
 #: taiga/users/templates/emails/send_verification-body-html.jinja:12
 #, python-format
@@ -4915,6 +5172,15 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    …<h1> Verifique seu e-mail </h1>\n"
+"…<p> Olá %(full_name)s , <br /> por favor verifique seu e-mail </p>\n"
+"…<a class=\"button\" href=\"%(url)s\" title=\"Verificar e-mail\"> Verificar "
+"e-mail </a>\n"
+"…<p> Você pode ignorar esta mensagem se não a solicitou. </p>\n"
+"…<p> <small> %(signature)s </small> </p>\n"
+"…\n"
+"    "
 
 #: taiga/users/templates/emails/send_verification-body-text.jinja:9
 #, python-format
@@ -4944,7 +5210,7 @@ msgstr "Usuário inválido. Tente com um diferente."
 
 #: taiga/users/validators.py:76
 msgid "Read new terms has to be true'"
-msgstr ""
+msgstr "Ler novos termos tem que ser verdade'"
 
 #: taiga/userstorage/api.py:42
 msgid ""
@@ -4990,7 +5256,7 @@ msgstr "duração"
 
 #: taiga/webhooks/validators.py:32
 msgid "Not allowed IP Address"
-msgstr ""
+msgstr "Endereço IP não permitido"
 
 #~ msgid "Personal info"
 #~ msgstr "Informação pessoal"
