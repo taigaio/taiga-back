@@ -18,10 +18,6 @@ ENV PYTHONFAULTHANDLER=1
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Get the code
-COPY . /taiga-back
-WORKDIR /taiga-back
-
 # grab gosu for easy step-down from root
 # https://github.com/tianon/gosu/blob/master/INSTALL.md
 ENV GOSU_VERSION 1.12
@@ -38,9 +34,10 @@ RUN set -eux; \
        git \
        net-tools \
        procps \
-       wget; \
+       wget;
+
     # install gosu
-    apt-get install -y --no-install-recommends ca-certificates wget; \
+RUN apt-get install -y --no-install-recommends ca-certificates wget; \
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
     wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
 	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
@@ -50,13 +47,19 @@ RUN set -eux; \
 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
 	command -v gpgconf && gpgconf --kill all || :; \
-	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc;
+
     # install Taiga dependencies
-    python -m pip install --upgrade pip; \
-    python -m pip install wheel; \
+RUN python -m pip install --upgrade pip; \
+    python -m pip install wheel \
     python -m pip install -r requirements.txt; \
-    python -m pip install -r requirements-contribs.txt; \
-    python manage.py compilemessages; \
+    python -m pip install -r requirements-contribs.txt; 
+
+    # Get the code
+COPY . /taiga-back
+WORKDIR /taiga-back
+
+RUN python manage.py compilemessages; \
     python manage.py collectstatic --no-input; \
     chmod +x docker/entrypoint.sh; \
     chmod +x docker/async_entrypoint.sh; \
