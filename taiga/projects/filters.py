@@ -48,7 +48,7 @@ class CanViewProjectObjFilterBackend(FilterBackend):
                 "project" in request.QUERY_PARAMS):
             try:
                 project_id = int(request.QUERY_PARAMS["project"])
-            except:
+            except Exception:
                 logger.error("Filtering project diferent value than an integer: {}".format(
                     request.QUERY_PARAMS["project"]
                 ))
