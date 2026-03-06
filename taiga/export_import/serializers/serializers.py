@@ -44,7 +44,6 @@ class UserStoryStatusExportSerializer(RelatedExportSerializer):
     slug = Field()
     order = Field()
     is_closed = Field()
-    is_archived = Field()
     color = Field()
     wip_limit = Field()
 
@@ -62,7 +61,6 @@ class EpicStatusExportSerializer(RelatedExportSerializer):
     slug = Field()
     order = Field()
     is_closed = Field()
-    is_archived = Field()
     color = Field()
 
 
@@ -71,7 +69,6 @@ class TaskStatusExportSerializer(RelatedExportSerializer):
     slug = Field()
     order = Field()
     is_closed = Field()
-    is_archived = Field()
     color = Field()
 
 
@@ -88,7 +85,6 @@ class IssueStatusExportSerializer(RelatedExportSerializer):
     slug = Field()
     order = Field()
     is_closed = Field()
-    is_archived = Field()
     color = Field()
 
 
