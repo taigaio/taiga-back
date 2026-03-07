@@ -261,7 +261,7 @@
             },
             {
                 "slug": "needs-info",
-                "color": "#E44057",
+                "color": "#5178D3",
                 "name": "Needs Info",
                 "order": 5,
                 "is_archived": false,
@@ -269,7 +269,7 @@
             },
             {
                 "slug": "posponed",
-                "color": "#5178D3",
+                "color": "#E44057",
                 "name": "Postponed",
                 "order": 6,
                 "is_archived": false,
