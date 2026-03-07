@@ -44,6 +44,7 @@ class UserStoryStatusExportSerializer(RelatedExportSerializer):
     slug = Field()
     order = Field()
     is_closed = Field()
+    is_archived = Field()
     color = Field()
     wip_limit = Field()
 
