@@ -441,6 +441,8 @@ class ProjectDetailSerializer(ProjectSerializer):
     issues_csv_uuid = Field()
     transfer_token = Field()
     milestones = MethodField()
+    userstories = MethodField()
+    tasks = MethodField()
 
     def get_milestones(self, obj):
         assert hasattr(obj, "milestones_attr"), "instance must have a milestones_attr attribute"
@@ -448,6 +450,22 @@ class ProjectDetailSerializer(ProjectSerializer):
             return []
 
         return obj.milestones_attr
+
+    def get_userstories(self, obj):
+        include_userstories = getattr(obj, "include_userstories", False)
+        if include_userstories:
+            assert hasattr(obj, "userstories_attr"), "instance must have a userstories_attr attribute"
+        if not include_userstories or obj.userstories_attr is None:
+            return []
+        return obj.userstories_attr
+
+    def get_tasks(self, obj):
+        include_tasks = getattr(obj, "include_tasks", False)
+        if include_tasks:
+            assert hasattr(obj, "tasks_attr"), "instance must have a tasks_attr attribute"
+        if not include_tasks or obj.tasks_attr is None:
+            return []
+        return obj.tasks_attr
 
     def to_value(self, instance):
         # Name attributes must be translated
