@@ -129,6 +129,18 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         elif order_by_field_name == "total_activity_last_year":
             qs = qs.filter(totals_updated_datetime__gte=now - relativedelta(years=1))
 
+        include_params = [
+            p.strip()
+            for p in self.request.QUERY_PARAMS.get("include", "").split(",")
+            if p.strip()
+        ]
+        if "userstories" in include_params:
+            qs = project_utils.attach_userstories_to_project(qs)
+            qs = qs.extra(select={"include_userstories": "True"})
+        if "tasks" in include_params:
+            qs = project_utils.attach_tasks_to_project(qs)
+            qs = qs.extra(select={"include_tasks": "True"})
+
         return qs
 
     def retrieve(self, request, *args, **kwargs):
