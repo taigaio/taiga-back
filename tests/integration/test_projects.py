@@ -2934,3 +2934,122 @@ def test_swimlane_userstory_statuses_creation_when_a_new_user_story_status_is_cr
 
     assert swimlane2.statuses.count() == 3
     assert swimlane2.statuses.all()[2].wip_limit is None
+
+
+######################################################
+# Tests: relational data include via ?include= param
+######################################################
+
+def test_get_project_detail_without_include_has_empty_relational_fields(client):
+    project = f.ProjectFactory.create(is_private=False,
+                                      anon_permissions=["view_project"],
+                                      public_permissions=["view_project"])
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+
+    url = reverse("projects-detail", kwargs={"pk": project.id})
+    response = client.json.get(url)
+
+    assert response.status_code == 200
+    assert response.data["userstories"] == []
+    assert response.data["tasks"] == []
+
+
+def test_get_project_detail_with_include_userstories(client):
+    project = f.ProjectFactory.create(is_private=False,
+                                      anon_permissions=["view_project"],
+                                      public_permissions=["view_project"])
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    us1 = f.UserStoryFactory.create(project=project, subject="Story One")
+    us2 = f.UserStoryFactory.create(project=project, subject="Story Two")
+
+    url = reverse("projects-detail", kwargs={"pk": project.id})
+    response = client.json.get(url, {"include": "userstories"})
+
+    assert response.status_code == 200
+    returned_ids = {us["id"] for us in response.data["userstories"]}
+    assert us1.id in returned_ids
+    assert us2.id in returned_ids
+    # Each user story entry should carry the expected fields
+    first_us = next(us for us in response.data["userstories"] if us["id"] == us1.id)
+    assert first_us["subject"] == "Story One"
+    assert "ref" in first_us
+    assert "status_id" in first_us
+    assert "is_closed" in first_us
+    # tasks field should still be empty when tasks not included
+    assert response.data["tasks"] == []
+
+
+def test_get_project_detail_with_include_tasks(client):
+    project = f.ProjectFactory.create(is_private=False,
+                                      anon_permissions=["view_project"],
+                                      public_permissions=["view_project"])
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    us = f.UserStoryFactory.create(project=project)
+    task1 = f.TaskFactory.create(project=project, user_story=us, subject="Task Alpha")
+    task2 = f.TaskFactory.create(project=project, user_story=us, subject="Task Beta")
+
+    url = reverse("projects-detail", kwargs={"pk": project.id})
+    response = client.json.get(url, {"include": "tasks"})
+
+    assert response.status_code == 200
+    returned_ids = {t["id"] for t in response.data["tasks"]}
+    assert task1.id in returned_ids
+    assert task2.id in returned_ids
+    first_task = next(t for t in response.data["tasks"] if t["id"] == task1.id)
+    assert first_task["subject"] == "Task Alpha"
+    assert "ref" in first_task
+    assert "user_story_id" in first_task
+    assert "is_closed" in first_task
+    # userstories field should still be empty when not included
+    assert response.data["userstories"] == []
+
+
+def test_get_project_detail_with_include_userstories_and_tasks(client):
+    project = f.ProjectFactory.create(is_private=False,
+                                      anon_permissions=["view_project"],
+                                      public_permissions=["view_project"])
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    us = f.UserStoryFactory.create(project=project, subject="Combined Story")
+    task = f.TaskFactory.create(project=project, user_story=us, subject="Combined Task")
+
+    url = reverse("projects-detail", kwargs={"pk": project.id})
+    response = client.json.get(url, {"include": "userstories,tasks"})
+
+    assert response.status_code == 200
+    assert any(u["id"] == us.id for u in response.data["userstories"])
+    assert any(t["id"] == task.id for t in response.data["tasks"])
+
+
+def test_get_project_detail_include_userstories_empty_project(client):
+    project = f.ProjectFactory.create(is_private=False,
+                                      anon_permissions=["view_project"],
+                                      public_permissions=["view_project"])
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+
+    url = reverse("projects-detail", kwargs={"pk": project.id})
+    response = client.json.get(url, {"include": "userstories"})
+
+    assert response.status_code == 200
+    assert response.data["userstories"] == []
+
+
+def test_get_project_detail_include_is_scoped_to_own_project(client):
+    project1 = f.ProjectFactory.create(is_private=False,
+                                       anon_permissions=["view_project"],
+                                       public_permissions=["view_project"])
+    project2 = f.ProjectFactory.create(is_private=False,
+                                       anon_permissions=["view_project"],
+                                       public_permissions=["view_project"])
+    f.MembershipFactory(user=project1.owner, project=project1, is_admin=True)
+    f.MembershipFactory(user=project2.owner, project=project2, is_admin=True)
+
+    us_in_project1 = f.UserStoryFactory.create(project=project1, subject="P1 Story")
+    us_in_project2 = f.UserStoryFactory.create(project=project2, subject="P2 Story")
+
+    url = reverse("projects-detail", kwargs={"pk": project1.id})
+    response = client.json.get(url, {"include": "userstories"})
+
+    assert response.status_code == 200
+    returned_ids = {us["id"] for us in response.data["userstories"]}
+    assert us_in_project1.id in returned_ids
+    assert us_in_project2.id not in returned_ids
