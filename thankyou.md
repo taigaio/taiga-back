@@ -41,3 +41,7 @@ big, to improve Taiga's overall security rating.
 ### 2024
 
 - G. Vishal Goud
+
+### 2026
+
+- Robert Flosbach (Neodyme AG)
