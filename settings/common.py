@@ -241,7 +241,14 @@ STATICFILES_DIRS = (
 )
 
 # Default storage
-DEFAULT_FILE_STORAGE = "taiga.base.storage.FileSystemStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "taiga.base.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 
