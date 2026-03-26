@@ -5,8 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
-from functools import wraps, partial
+from functools import partial, wraps
+
 from django.core.paginator import Paginator
+
+CHUNK_SIZE = 2000
 
 
 def as_tuple(function=None, *, remove_nulls=False):
