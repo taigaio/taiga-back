@@ -38,8 +38,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2025-06-12 08:44+0000\n"
-"Last-Translator: Alexnader Makarov <alexsnakeigt@yandex.ru>\n"
+"PO-Revision-Date: 2026-03-27 07:09+0000\n"
+"Last-Translator: alex pepper <perchibald@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "ru/>\n"
 "Language: ru\n"
@@ -47,9 +47,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || ("
-"n%100>=11 && n%100<=14)? 2 : 3);\n"
-"X-Generator: Weblate 5.12-dev\n"
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"X-Generator: Weblate 5.17-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -156,7 +156,7 @@ msgstr "создано"
 
 #: taiga/auth/token_denylist/admin.py:124
 msgid "expires at"
-msgstr ""
+msgstr "истекает"
 
 #: taiga/auth/token_denylist/apps.py:74
 #, fuzzy
@@ -166,7 +166,7 @@ msgstr "Неверный токен"
 
 #: taiga/auth/tokens.py:61
 msgid "Cannot create token with no type or lifetime"
-msgstr ""
+msgstr "Нельзя создать токен без типа или времени жизни"
 
 #: taiga/auth/tokens.py:127
 #, fuzzy
@@ -188,7 +188,7 @@ msgstr "Токен имеет неправильный тип"
 
 #: taiga/auth/tokens.py:178
 msgid "Token has no '{}' claim"
-msgstr ""
+msgstr "Токен не содержит поля '{}'"
 
 #: taiga/auth/tokens.py:182
 #, fuzzy
@@ -5135,27 +5135,27 @@ msgstr "участники"
 
 #: taiga/users/admin.py:141
 msgid "PERSONAL INFO"
-msgstr ""
+msgstr "ЛИЧНАЯ ИНФОРМАЦИЯ"
 
 #: taiga/users/admin.py:142
 msgid "EXTRA INFO"
-msgstr ""
+msgstr "ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ"
 
 #: taiga/users/admin.py:144
 msgid "PERMISSIONS"
-msgstr ""
+msgstr "ДОСТУП"
 
 #: taiga/users/admin.py:145
 msgid "IMPORTANT DATES"
-msgstr ""
+msgstr "ВАЖНЫЕ ДАТЫ"
 
 #: taiga/users/admin.py:146
 msgid "PROJECT OWNERSHIPS RESTRICTIONS"
-msgstr ""
+msgstr "ОГРАНИЧЕНИЯ НА ВЛАДЕНИЕ ПРОЕКТАМИ"
 
 #: taiga/users/admin.py:148
 msgid "PROJECT OWNERSHIPS STATS"
-msgstr ""
+msgstr "СТАТИСТИКА ВЛАДЕНИЯ ПРОЕКТАМИ"
 
 #: taiga/users/admin.py:169
 #, fuzzy
@@ -5165,7 +5165,7 @@ msgstr "Окончание проекта"
 
 #: taiga/users/admin.py:175
 msgid "Private memberships owned"
-msgstr ""
+msgstr "Участников в закрытых проектах"
 
 #: taiga/users/admin.py:193
 #, fuzzy
@@ -5175,7 +5175,7 @@ msgstr "Окончание проекта"
 
 #: taiga/users/admin.py:199
 msgid "Public memberships owned"
-msgstr ""
+msgstr "Участников в закрытых проектах"
 
 #: taiga/users/api.py:123
 msgid "Duplicated email"
