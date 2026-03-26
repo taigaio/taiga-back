@@ -2,7 +2,17 @@
 
 ## 6.9.1 (unreleased)
 
-- ...
+- Django 6+ compatibility: Update storage configuration to use STORAGES dict
+- Refactor: Replace raw SQL queries with Django ORM bulk_update operations across projects and userstories services
+- Fix: Add iterator chunk_size configuration (2000) to be compatible with new django versions
+- Fix: Correct PostgreSQL version detection in migrations using proper cursor methods
+- Fix: Simplify complex database migration by replacing raw SQL with bulk_update as its broken on new Postgres versions
+- Upgrade: psycopg to v3 for improved PostgreSQL compatibility
+- Chore: Update minimum Python requirement to 3.10+ (Django 6 requirement)
+- Chore: Update minimum PostgreSQL requirement to 12+ (Django 6 requirement)
+- CI: Upgrade GitHub Actions (checkout@v4, setup-python@v5) and Upgrade Python test version from 3.10 to 3.12
+- Chore: Update tox configuration
+- Chore: Multiple dependency updates and security fixes
 
 ## 6.9.0 (2025-10-10)
 

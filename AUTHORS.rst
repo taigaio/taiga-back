@@ -28,6 +28,7 @@ Special thanks to `Kaleidos Open Source S.L. <https://kaleidos.net/>`_ for provi
 
 And here is an inevitably incomplete list of MUCH-APPRECIATED CONTRIBUTORS, people who have submitted patches, reported bugs, added translations, helped answer newbie questions, and generally made Taiga that much better:
 
+- Ahmad Nofal <nofal.ahmad@outlook.com>
 - Alejandro Gómez <alejandro.gomez@kaleidos.net>
 - Allister Antosik <me@allisterantosik.com>
 - Alonso Torres <alonso.torres@kaleidos.net>
