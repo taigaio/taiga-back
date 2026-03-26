@@ -8,12 +8,12 @@
 from contextlib import suppress
 from operator import itemgetter
 
-from django.db import transaction, connection
 from django.core.exceptions import ObjectDoesNotExist
-from psycopg2.extras import execute_values
+from django.db import transaction
 
 from taiga.events import events
 from taiga.projects import models
+from taiga.projects.userstories.models import UserStory
 
 
 def apply_order_updates(base_orders: dict, new_orders: dict, *, remove_equal_original=False):
@@ -91,162 +91,62 @@ def update_projects_order_in_bulk(bulk_data: list, field: str, user):
 
 @transaction.atomic
 def bulk_update_epic_status_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_epicstatus set "order" = $1
-        where projects_epicstatus.id = $2 and
-              projects_epicstatus.project_id = $3;
-    """
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.execute("DEALLOCATE bulk_update_order")
-    cursor.close()
+    updates = [models.EpicStatus(id=id, order=order) for id, order in data]
+    models.EpicStatus.objects.bulk_update(updates, ['order'])
 
 
 @transaction.atomic
 def bulk_update_userstory_status_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_userstorystatus set "order" = $1
-        where projects_userstorystatus.id = $2 and
-              projects_userstorystatus.project_id = $3;
-    """
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.execute("DEALLOCATE bulk_update_order")
-    cursor.close()
+    updates = [models.UserStoryStatus(id=id, order=order) for id, order in data]
+    models.UserStoryStatus.objects.bulk_update(updates, ['order'])
 
 
 @transaction.atomic
 def bulk_update_points_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_points set "order" = $1
-        where projects_points.id = $2 and
-              projects_points.project_id = $3;
-    """
-
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.execute("DEALLOCATE bulk_update_order")
-    cursor.close()
+    updates = [models.Points(id=id, order=order) for id, order in data]
+    models.Points.objects.bulk_update(updates, ['order'])
 
 
 @transaction.atomic
 def bulk_update_task_status_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_taskstatus set "order" = $1
-        where projects_taskstatus.id = $2 and
-              projects_taskstatus.project_id = $3;
-    """
-
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.execute("DEALLOCATE bulk_update_order")
-    cursor.close()
+    updates = [models.TaskStatus(id=id, order=order) for id, order in data]
+    models.TaskStatus.objects.bulk_update(updates, ['order'])
 
 
 @transaction.atomic
 def bulk_update_issue_status_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_issuestatus set "order" = $1
-        where projects_issuestatus.id = $2 and
-              projects_issuestatus.project_id = $3;
-    """
-
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.execute("DEALLOCATE bulk_update_order")
-    cursor.close()
+    updates = [models.IssueStatus(id=id, order=order) for id, order in data]
+    models.IssueStatus.objects.bulk_update(updates, ['order'])
 
 
 @transaction.atomic
 def bulk_update_issue_type_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_issuetype set "order" = $1
-        where projects_issuetype.id = $2 and
-              projects_issuetype.project_id = $3;
-    """
-
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.execute("DEALLOCATE bulk_update_order")
-    cursor.close()
+    updates = [models.IssueType(id=id, order=order) for id, order in data]
+    models.IssueType.objects.bulk_update(updates, ['order'])
 
 
 @transaction.atomic
 def bulk_update_priority_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_priority set "order" = $1
-        where projects_priority.id = $2 and
-              projects_priority.project_id = $3;
-    """
-
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.execute("DEALLOCATE bulk_update_order")
-    cursor.close()
+    updates = [models.Priority(id=id, order=order) for id, order in data]
+    models.Priority.objects.bulk_update(updates, ['order'])
 
 
 @transaction.atomic
 def bulk_update_severity_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_severity set "order" = $1
-        where projects_severity.id = $2 and
-              projects_severity.project_id = $3;
-    """
-
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.execute("DEALLOCATE bulk_update_order")
-    cursor.close()
+    updates = [models.Severity(id=id, order=order) for id, order in data]
+    models.Severity.objects.bulk_update(updates, ['order'])
 
 
 @transaction.atomic
 def bulk_update_swimlane_order(project, user, data):
-    with connection.cursor() as curs:
-        execute_values(curs,
-                       """
-                       UPDATE projects_swimlane
-                       SET "order" = tmp.new_order
-                       FROM (VALUES %s) AS tmp (id, new_order)
-                       WHERE tmp.id = projects_swimlane.id""",
-                       data)
+    updates = [models.Swimlane(id=id, order=order) for id, order in data]
+    models.Swimlane.objects.bulk_update(updates, ['order'])
 
-        # Send event related to swimlane changes
-        swimlane_ids = tuple(map(itemgetter(0), data))
-        events.emit_event_for_ids(ids=swimlane_ids,
-                                  content_type="projects.swimlane",
-                                  projectid=project.pk)
+    # Send event related to swimlane changes
+    swimlane_ids = tuple(map(itemgetter(0), data))
+    events.emit_event_for_ids(ids=swimlane_ids,
+                              content_type="projects.swimlane",
+                              projectid=project.pk)
 
 @transaction.atomic
 def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
@@ -287,12 +187,8 @@ def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
     new_indexes = range(0, len(ordered_uss_ids))
     data = list(zip(ordered_swimlane_ids, ordered_uss_ids, new_indexes))
 
-    with connection.cursor() as curs:
-        execute_values(curs,
-                       """
-                       UPDATE userstories_userstory
-                       SET kanban_order = tmp.new_order,
-                           swimlane_id = tmp.sid
-                       FROM (VALUES %s) AS tmp (sid, ussid, new_order)
-                       WHERE tmp.ussid = userstories_userstory.id""",
-                       data)
+    updates = [
+        UserStory(id=uss_id, kanban_order=new_order, swimlane_id=swimlane_id)
+        for swimlane_id, uss_id, new_order in data
+    ]
+    UserStory.objects.bulk_update(updates, ['kanban_order', 'swimlane_id'])

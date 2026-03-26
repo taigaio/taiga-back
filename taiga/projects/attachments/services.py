@@ -6,16 +6,12 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 from typing import List, Optional, Union
-
 from urllib.parse import parse_qs, urldefrag
 
 from django.apps import apps
-from django.db import connection
 from django.conf import settings
 
-from psycopg2.extras import execute_values
-
-from taiga.base.utils.thumbnails import get_thumbnail_url, get_thumbnail
+from taiga.base.utils.thumbnails import get_thumbnail, get_thumbnail_url
 
 from . import models
 
@@ -136,15 +132,11 @@ def update_order_in_bulk(item: Union["Epic", "UserStory", "Task", "Issue", "Wiki
                      attachment_orders))
 
     # execute query for update order
-    sql = """
-    UPDATE attachments_attachment
-       SET "order" = tmp.new_order::BIGINT
-      FROM (VALUES %s) AS tmp (id, new_order)
-     WHERE tmp.id = attachments_attachment.id
-    """
-
-    with connection.cursor() as cursor:
-        execute_values(cursor, sql, data)
+    updates = [
+        item.attachments.model(id=att_id, order=new_order)
+        for att_id, new_order in data
+    ]
+    item.attachments.model.objects.bulk_update(updates, ['order'])
 
     # Generate response with modified info
     res = ({

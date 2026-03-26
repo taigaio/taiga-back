@@ -19,8 +19,6 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from psycopg2.extras import execute_values
-
 from taiga.base.utils import db, text
 from taiga.celery import app
 from taiga.events import events
@@ -128,16 +126,10 @@ def reset_userstories_kanban_order_in_bulk(
      - `bulk_userstories` should be a list of user stories IDs
     """
     base_order = models.UserStory.NEW_KANBAN_ORDER()
-    data = ((id, base_order + index) for index, id in enumerate(bulk_userstories))
+    data = [(id, base_order + index) for index, id in enumerate(bulk_userstories)]
 
-    sql = """
-    UPDATE userstories_userstory
-       SET kanban_order = tmp.new_kanban_order::BIGINT
-      FROM (VALUES %s) AS tmp (id, new_kanban_order)
-     WHERE tmp.id = userstories_userstory.id
-    """
-    with connection.cursor() as cursor:
-        execute_values(cursor, sql, data)
+    updates = [models.UserStory(id=id, kanban_order=kanban_order) for id, kanban_order in data]
+    models.UserStory.objects.bulk_update(updates, ['kanban_order'])
 
     ## Sent events of updated stories
     events.emit_event_for_ids(
@@ -222,14 +214,8 @@ def update_userstories_backlog_or_sprint_order_in_bulk(
     data = tuple(zip(user_story_ids, user_story_orders))
 
     # execute query for update milestone and backlog or sprint order
-    sql = f"""
-    UPDATE userstories_userstory
-       SET {order_param} = tmp.new_order::BIGINT
-      FROM (VALUES %s) AS tmp (id, new_order)
-     WHERE tmp.id = userstories_userstory.id
-    """
-    with connection.cursor() as cursor:
-        execute_values(cursor, sql, data)
+    updates = [models.UserStory(id=id, **{order_param: order}) for id, order in data]
+    models.UserStory.objects.bulk_update(updates, [order_param])
 
     # execute query for update milestone for user stories and its tasks
     bulk_userstories_objects = project.user_stories.filter(id__in=bulk_userstories)
@@ -348,14 +334,8 @@ def update_userstories_kanban_order_in_bulk(
     data = tuple(zip(user_story_ids, user_story_kanban_orders))
 
     # execute query for update kanban_order
-    sql = """
-    UPDATE userstories_userstory
-       SET kanban_order = tmp.new_kanban_order::BIGINT
-      FROM (VALUES %s) AS tmp (id, new_kanban_order)
-     WHERE tmp.id = userstories_userstory.id
-    """
-    with connection.cursor() as cursor:
-        execute_values(cursor, sql, data)
+    updates = [models.UserStory(id=id, kanban_order=kanban_order) for id, kanban_order in data]
+    models.UserStory.objects.bulk_update(updates, ['kanban_order'])
 
     # execute query for update status, swimlane and kanban_order
     bulk_userstories_objects = project.user_stories.filter(id__in=bulk_userstories)
