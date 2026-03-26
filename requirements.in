@@ -1,8 +1,8 @@
 # Main
-Django>=5.2,<6
+Django>=6,<6.1
 celery
 gunicorn
-psycopg2>=2.9.1  # Django 5.x requires psycopg2 >= 2.9.1
+psycopg>=3.3.3
 redis
 
 # Third party by Kaleidos
