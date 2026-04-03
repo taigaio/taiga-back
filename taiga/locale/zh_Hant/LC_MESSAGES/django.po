@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2026-01-03 03:01+0000\n"
+"PO-Revision-Date: 2026-04-04 08:09+0000\n"
 "Last-Translator: hanyang cheng <cinxiafortis@tutanota.de>\n"
 "Language-Team: Chinese (Traditional Han script) <https://hosted.weblate.org/"
 "projects/taiga/taiga-back/zh_Hant/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 5.17-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -142,7 +142,7 @@ msgstr "無法建立沒有類型或期限的令牌"
 
 #: taiga/auth/tokens.py:127
 msgid "Token has no id"
-msgstr "令牌沒有對應的 ID"
+msgstr "令牌沒有對應的 id"
 
 #: taiga/auth/tokens.py:138
 msgid "Token has no type"
@@ -417,7 +417,7 @@ msgstr "未找到。"
 
 #: taiga/base/exceptions.py:145
 msgid "Method not supported for this endpoint."
-msgstr "本 API 不支持這種請求方法。"
+msgstr "不支持這種請求方法。"
 
 #: taiga/base/exceptions.py:153 taiga/base/exceptions.py:161
 msgid "Wrong arguments."
@@ -1374,7 +1374,7 @@ msgstr "狀態不存在"
 #: taiga/importers/pivotal/api.py:35 taiga/importers/pivotal/api.py:72
 #: taiga/importers/trello/api.py:38 taiga/importers/trello/api.py:75
 msgid "The project param is needed"
-msgstr "需要project參數"
+msgstr "需要 project 參數"
 
 #: taiga/importers/asana/api.py:42 taiga/importers/asana/api.py:65
 #: taiga/importers/asana/api.py:131
@@ -1388,7 +1388,7 @@ msgstr "請求Asana API失敗"
 
 #: taiga/importers/asana/api.py:121 taiga/importers/github/api.py:115
 msgid "Code param needed"
-msgstr "需要code參數"
+msgstr "需要 code 參數"
 
 #: taiga/importers/asana/tasks.py:31 taiga/importers/asana/tasks.py:32
 msgid "Error importing Asana project"
@@ -1409,7 +1409,7 @@ msgstr "匯入GitHub專案失敗"
 #: taiga/importers/jira/api.py:54 taiga/importers/jira/api.py:89
 #: taiga/importers/jira/api.py:109 taiga/importers/jira/api.py:182
 msgid "The url param is needed"
-msgstr "需要url參數"
+msgstr "需要 url 參數"
 
 #: taiga/importers/jira/api.py:61
 msgid ""
@@ -1928,7 +1928,7 @@ msgstr "無效的範本描述"
 
 #: taiga/projects/api.py:404 taiga/projects/api.py:1093
 msgid "Invalid user id"
-msgstr "無效的使用者 ID"
+msgstr "無效的使用者 id"
 
 #: taiga/projects/api.py:410 taiga/projects/api.py:1099
 msgid "The user doesn't exist"
@@ -1997,7 +1997,7 @@ msgstr "不支援部份更新"
 
 #: taiga/projects/attachments/api.py:61
 msgid "Object id issue doesn't exist"
-msgstr "物件 ID 的議題不存在"
+msgstr "物件 id 的議題不存在"
 
 #: taiga/projects/attachments/api.py:64
 msgid "Project ID does not match between object and project"
@@ -2026,7 +2026,7 @@ msgstr "內容類型"
 
 #: taiga/projects/attachments/models.py:50
 msgid "object id"
-msgstr "物件ID"
+msgstr "物件id"
 
 #: taiga/projects/attachments/models.py:56
 #: taiga/projects/custom_attributes/models.py:43
@@ -2072,7 +2072,7 @@ msgid ""
 "Invalid attachment id to move after. The attachment must belong to the same "
 "item (epic, userstory, task, issue or wiki page)."
 msgstr ""
-"無效的附件 ID ，無法移動至其後。要移動的附件必須屬於同個品項（史詩故事、使用"
+"無效的附件 id ，無法移動至其後。要移動的附件必須屬於同個品項（史詩故事、使用"
 "者故事、任務、議題或維基頁面）。"
 
 #: taiga/projects/attachments/validators.py:61
@@ -2080,7 +2080,7 @@ msgid ""
 "Invalid attachment ids. All attachments must belong to the same item (epic, "
 "userstory, task, issue or wiki page)."
 msgstr ""
-"無效的附件 ID 。所有附件必須屬於同個項目（史詩故事、使用者故事、任務、議題或"
+"無效的附件 id 。所有附件必須屬於同個項目（史詩故事、使用者故事、任務、議題或"
 "維基頁面）。"
 
 #: taiga/projects/choices.py:12
@@ -2309,7 +2309,7 @@ msgstr "外部參考"
 
 #: taiga/projects/epics/validators.py:26
 msgid "There's no epic with that id"
-msgstr "此 ID 無對應的史詩故事"
+msgstr "此 id 無對應的史詩故事"
 
 #: taiga/projects/history/api.py:89
 msgid "comment is required"
@@ -2554,7 +2554,7 @@ msgstr "預估的開始日期必須早於完成日期。"
 
 #: taiga/projects/milestones/validators.py:24
 msgid "There's no milestone with that id"
-msgstr "此 ID 沒有對應的里程碑"
+msgstr "此 id 沒有對應的里程碑"
 
 #: taiga/projects/milestones/validators.py:55
 #: taiga/projects/userstories/validators.py:285
@@ -2567,19 +2567,19 @@ msgstr "已封鎖"
 
 #: taiga/projects/mixins/by_ref.py:21
 msgid "ref param is needed"
-msgstr ""
+msgstr "需要 ref 參數"
 
 #: taiga/projects/mixins/by_ref.py:24
 msgid "project or project__slug param is needed"
-msgstr ""
+msgstr "需要 project 或 project__slug 參數"
 
 #: taiga/projects/mixins/on_destroy.py:32
 msgid "Query param 'moveTo' is required"
-msgstr ""
+msgstr "查詢參數 ‘moveTo’ 為必填項"
 
 #: taiga/projects/mixins/on_destroy.py:84
 msgid "Cannot set swimlane to None if there are available swimlanes"
-msgstr ""
+msgstr "如果還有可用的泳道，則無法將泳道設置為 None"
 
 #: taiga/projects/mixins/ordering.py:36
 #, python-brace-format
@@ -2592,7 +2592,7 @@ msgstr "'project'參數為必要"
 
 #: taiga/projects/mixins/validators.py:29
 msgid "The user must be a project member."
-msgstr ""
+msgstr "該使用者必須是專案成員。"
 
 #: taiga/projects/models.py:86
 msgid "email"
@@ -2620,7 +2620,7 @@ msgstr "使用者已是專案成員"
 
 #: taiga/projects/models.py:127
 msgid "default epic status"
-msgstr ""
+msgstr "預設史詩狀態"
 
 #: taiga/projects/models.py:131
 msgid "default US status"
@@ -2652,7 +2652,7 @@ msgstr "預設議題類型"
 
 #: taiga/projects/models.py:156
 msgid "default swimlane"
-msgstr ""
+msgstr "預設泳道"
 
 #: taiga/projects/models.py:172
 msgid "logo"
@@ -2672,7 +2672,7 @@ msgstr "全部故事點數"
 
 #: taiga/projects/models.py:195 taiga/projects/models.py:998
 msgid "active contact"
-msgstr ""
+msgstr "活躍聯絡人"
 
 #: taiga/projects/models.py:197 taiga/projects/models.py:1000
 msgid "active epics panel"
@@ -2728,7 +2728,7 @@ msgstr "正在找人"
 
 #: taiga/projects/models.py:234 taiga/projects/models.py:1012
 msgid "looking for people note"
-msgstr ""
+msgstr "尋找他人注釋"
 
 #: taiga/projects/models.py:248
 msgid "project transfer token"
@@ -2736,7 +2736,7 @@ msgstr "專案轉移令牌"
 
 #: taiga/projects/models.py:252
 msgid "blocked code"
-msgstr ""
+msgstr "封鎖代碼"
 
 #: taiga/projects/models.py:255 taiga/projects/notifications/models.py:64
 msgid "updated date time"
@@ -2790,7 +2790,7 @@ msgstr "價值"
 #: taiga/projects/models.py:668 taiga/projects/models.py:737
 #: taiga/projects/models.py:885
 msgid "by default"
-msgstr ""
+msgstr "預設"
 
 #: taiga/projects/models.py:672 taiga/projects/models.py:741
 #: taiga/projects/models.py:889
@@ -3742,7 +3742,7 @@ msgstr "挑戰全新任務"
 
 #: taiga/projects/tasks/validators.py:50
 msgid "Invalid milestone id."
-msgstr "無效的里程碑 ID。"
+msgstr "無效的里程碑 id。"
 
 #: taiga/projects/tasks/validators.py:61
 msgid "Invalid task status id."
@@ -3754,23 +3754,23 @@ msgstr ""
 
 #: taiga/projects/tasks/validators.py:98
 msgid "Invalid task status id. The status must belong to the same project."
-msgstr ""
+msgstr "無效的任務狀態 id。該狀態必須屬於同一項專案。"
 
 #: taiga/projects/tasks/validators.py:112
 msgid "Invalid user story id. The user story must belong to the same project."
-msgstr ""
+msgstr "無效的用戶故事 id。該用戶故事必須屬於同一項專案。"
 
 #: taiga/projects/tasks/validators.py:124
 #: taiga/projects/userstories/validators.py:112
 msgid "Invalid milestone id. The milestone must belong to the same project."
-msgstr "無效的里程碑 ID，用戶故事和里程碑必須屬於同一項專案。"
+msgstr "無效的里程碑 id，該里程碑必須屬於同一項專案。"
 
 #: taiga/projects/tasks/validators.py:141
 msgid ""
 "Invalid task ids. All tasks must belong to the same project and, if it "
 "exists, to the same status, user story and/or milestone."
 msgstr ""
-"無效的任務 ID，所有任務必須屬於同一項專案，也必須屬於同個狀態、用戶故事或里程"
+"無效的任務 id，所有任務必須屬於同一項專案，也必須屬於同個狀態、用戶故事或里程"
 "碑，如果有的話。"
 
 #: taiga/projects/tasks/validators.py:175
@@ -3792,6 +3792,12 @@ msgid ""
 "Project Management Tool. There is no cost for you to be a Taiga user.</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h2>您已被邀請加入 %(product_name) ！</h2>\n"
+"<p>您好！%(full_name) 已邀請您加入 %(product_name) 中的專案 <em>%(project)</"
+"em>。</br> Taiga 是一款開源的敏捷專案管理工具。成為 Taiga 使用者完全免費。</"
+"p>\n"
+"    "
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:25
 #, python-format
@@ -3838,6 +3844,12 @@ msgid ""
 "you to be a Taiga user.\n"
 "\n"
 msgstr ""
+"\n"
+"您或您認識的人已邀請您加入 %(product_name)s\n"
+"\n"
+"您好！%(full_name)s 已邀請您加入 %(product_name)s 中的 %(project)s 專案。\n"
+"Taiga 是一款開源的敏捷專案管理工具。成為 Taiga 使用者完全免費。\n"
+"\n"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:22
 #, python-format
@@ -4430,7 +4442,7 @@ msgstr "您無權更動此使用者故事的狀態。"
 
 #: taiga/projects/userstories/api.py:198
 msgid "You don't have permissions to set this swimlane to this user story."
-msgstr ""
+msgstr "您無權設置此使用者故事中的泳道。"
 
 #: taiga/projects/userstories/api.py:274
 #, python-brace-format
@@ -4485,29 +4497,29 @@ msgstr ""
 
 #: taiga/projects/userstories/models.py:144
 msgid "swimlane"
-msgstr ""
+msgstr "泳道"
 
 #: taiga/projects/userstories/validators.py:33
 msgid "There's no user story with that id"
-msgstr "該ID無相關使用者故事"
+msgstr "該 id 無相關使用者故事"
 
 #: taiga/projects/userstories/validators.py:74
 #: taiga/projects/userstories/validators.py:185
 msgid ""
 "Invalid user story status id. The status must belong to the same project."
-msgstr ""
+msgstr "無效的用戶故事狀態 id。該狀態必須屬於同一項專案。"
 
 #: taiga/projects/userstories/validators.py:87
 #: taiga/projects/userstories/validators.py:197
 msgid "Invalid swimlane id. The swimlane must belong to the same project."
-msgstr ""
+msgstr "無效的泳道 id。該泳道必須屬於同一項專案。"
 
 #: taiga/projects/userstories/validators.py:130
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project and milestone."
 msgstr ""
-"無效的用戶故事 ID，無法移動至其後。要移動的用戶故事必須屬於同一個專案和里程碑"
+"無效的用戶故事 id，無法移動至其後。要移動的用戶故事必須屬於同一個專案和里程碑"
 "。"
 
 #: taiga/projects/userstories/validators.py:140
@@ -4520,20 +4532,20 @@ msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project and milestone."
 msgstr ""
-"無效的用戶故事 ID，無法移動至其前。要移動的用戶故事必須屬於同一個專案和里程碑"
+"無效的用戶故事 id，無法移動至其前。要移動的用戶故事必須屬於同一個專案和里程碑"
 "。"
 
 #: taiga/projects/userstories/validators.py:165
 #: taiga/projects/userstories/validators.py:252
 msgid "Invalid user story ids. All stories must belong to the same project."
-msgstr ""
+msgstr "無效的用戶故事 id。所有用戶故事必須屬於同一項專案。"
 
 #: taiga/projects/userstories/validators.py:216
 msgid ""
 "Invalid user story id to move after. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
-"無效的用戶故事 ID，無法移動至其後。要移動的用戶故事必須屬於同一個專案、狀態和"
+"無效的用戶故事 id，無法移動至其後。要移動的用戶故事必須屬於同一個專案、狀態和"
 "泳道。"
 
 #: taiga/projects/userstories/validators.py:240
@@ -4541,12 +4553,12 @@ msgid ""
 "Invalid user story id to move before. The user story must belong to the same "
 "project, status and swimlane."
 msgstr ""
-"無效的用戶故事 ID，無法移動至其前。要移動的用戶故事必須屬於同一個專案、狀態和"
+"無效的用戶故事 id，無法移動至其前。要移動的用戶故事必須屬於同一個專案、狀態和"
 "泳道。"
 
 #: taiga/projects/validators.py:52
 msgid "There's no project with that id"
-msgstr "該ID無相關專案"
+msgstr "該 id 無相關專案"
 
 #: taiga/projects/validators.py:165
 msgid "The user yet exists in the project"
@@ -4562,7 +4574,7 @@ msgstr "專案無效的角色"
 
 #: taiga/projects/validators.py:197 taiga/projects/validators.py:260
 msgid "The user must be a valid contact"
-msgstr ""
+msgstr "使用者必須是有效的聯絡人"
 
 #: taiga/projects/validators.py:218
 msgid "The project owner must be admin."
@@ -4574,7 +4586,7 @@ msgstr ""
 
 #: taiga/projects/validators.py:275
 msgid "Invalid role ids. All roles must belong to the same project."
-msgstr ""
+msgstr "無效的角色 id。所有角色必須屬於同一項專案。"
 
 #: taiga/projects/validators.py:299
 msgid "Default options"
@@ -4963,6 +4975,15 @@ msgid ""
 "        </td>\n"
 "        "
 msgstr ""
+"\n"
+"            <h2>感謝您註冊 %(product_name)s</h2>\n"
+"            <p>我們非常高興您加入了我們不斷壯大的專業人士社群，這群人正致力於"
+"革新工作方式，希望您會喜歡這裡。</p>\n"
+"            <p>有任何問題嗎？如果您需要協助，請隨時聯絡我們，我們的電子郵件地"
+"址是 %(support_email)s。</p>\n"
+"            <p><small>%(signature)s</small></p>\n"
+"        </td>\n"
+"        "
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:36
 #, python-format
