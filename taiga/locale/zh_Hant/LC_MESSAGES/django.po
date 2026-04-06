@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2026-04-04 08:09+0000\n"
+"PO-Revision-Date: 2026-04-06 10:09+0000\n"
 "Last-Translator: hanyang cheng <cinxiafortis@tutanota.de>\n"
 "Language-Team: Chinese (Traditional Han script) <https://hosted.weblate.org/"
 "projects/taiga/taiga-back/zh_Hant/>\n"
@@ -662,7 +662,7 @@ msgstr "匯入專案預設屬性值時發生錯誤"
 
 #: taiga/export_import/services/store.py:867
 msgid "error importing custom attributes"
-msgstr "滙入客制性屬出錯"
+msgstr "匯入自訂屬性出錯"
 
 #: taiga/export_import/services/store.py:870
 msgid "error importing sprints"
@@ -805,8 +805,8 @@ msgstr ""
 "    <p>您好  %(user)s ，</p>\n"
 "    <h3>您的專案：%(project)s  的備份檔案已經正確生成了。</h3>\n"
 "    <p>您可以在此下載：</p>\n"
-"    <a class=\"button\" href=\"%(url)s\" title=\"Download the dump file\">下"
-"載專案備份檔案</a>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"下載專案備份檔案\">下載專案"
+"備份檔案</a>\n"
 "    <p>本備份檔案將於  %(deletion_date)s 刪除。</p>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    "
@@ -986,8 +986,8 @@ msgstr ""
 "    <h1>成功匯入專案備份檔案</h1>\n"
 "    <p> %(user)s 您好，</p>\n"
 "    <h3>您的專案備份檔案已成功匯入</h3>\n"
-"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
-"s\">前往 %(project)s 專案</a>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"前往 %(project)s 專案\">前"
+"往 %(project)s 專案</a>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 
@@ -1512,8 +1512,8 @@ msgstr ""
 "    <h1>成功匯入 GitHub 專案</h1>\n"
 "    <p> %(user)s 您好，</p>\n"
 "    <h3>您的 GitHub 專案已經成功匯入。</h3>\n"
-"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
-"s\">前往 %(project)s 專案</a>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"前往 %(project)s 專案\">前"
+"往 %(project)s 專案</a>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 
@@ -1590,8 +1590,8 @@ msgstr ""
 "    <h1>成功匯入 Jira 專案</h1>\n"
 "    <p>%(user)s 您好，</p>\n"
 "    <h3>您的 Jira 專案已經成功匯入。</h3>\n"
-"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
-"s\"> 前往 %(project)s 專案</a>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"前往 %(project)s 專案\"> 前"
+"往 %(project)s 專案</a>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 
@@ -1643,8 +1643,8 @@ msgstr ""
 "    <h1>成功匯入 Trello 專案</h1>\n"
 "    <p> %(user)s 您好，</p>\n"
 "    <h3>您的 Trello 專案已經成功匯入。</h3>\n"
-"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)"
-"s\">前往 %(project)s 專案</a>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"前往 %(project)s 專案\">前"
+"往 %(project)s 專案</a>\n"
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 
@@ -2795,7 +2795,7 @@ msgstr "預設"
 #: taiga/projects/models.py:672 taiga/projects/models.py:741
 #: taiga/projects/models.py:889
 msgid "days to due"
-msgstr ""
+msgstr "截止天數"
 
 #: taiga/projects/models.py:944
 msgid "user story status"
@@ -2811,7 +2811,7 @@ msgstr "預設選項"
 
 #: taiga/projects/models.py:1020
 msgid "epic statuses"
-msgstr ""
+msgstr "史詩狀態"
 
 #: taiga/projects/models.py:1021
 msgid "us statuses"
@@ -2819,7 +2819,7 @@ msgstr "我們狀況"
 
 #: taiga/projects/models.py:1022
 msgid "us duedates"
-msgstr ""
+msgstr "使用者故事截止日期"
 
 #: taiga/projects/models.py:1023 taiga/projects/userstories/models.py:47
 #: taiga/projects/userstories/models.py:92
@@ -2832,7 +2832,7 @@ msgstr "任務狀況"
 
 #: taiga/projects/models.py:1025
 msgid "task duedates"
-msgstr ""
+msgstr "任務截止日期"
 
 #: taiga/projects/models.py:1026
 msgid "issue statuses"
@@ -2844,7 +2844,7 @@ msgstr "問題類型"
 
 #: taiga/projects/models.py:1028
 msgid "issue duedates"
-msgstr ""
+msgstr "議題截止日期"
 
 #: taiga/projects/models.py:1029
 msgid "priorities"
@@ -2860,19 +2860,19 @@ msgstr "角色"
 
 #: taiga/projects/models.py:1032
 msgid "epic custom attributes"
-msgstr ""
+msgstr "史詩自訂屬性"
 
 #: taiga/projects/models.py:1033
 msgid "us custom attributes"
-msgstr ""
+msgstr "使用者故事自訂屬性"
 
 #: taiga/projects/models.py:1034
 msgid "task custom attributes"
-msgstr ""
+msgstr "任務自訂屬性"
 
 #: taiga/projects/models.py:1035
 msgid "issue custom attributes"
-msgstr ""
+msgstr "議題自訂屬性"
 
 #: taiga/projects/notifications/choices.py:19
 msgid "Involved"
@@ -2888,19 +2888,19 @@ msgstr "無"
 
 #: taiga/projects/notifications/choices.py:35
 msgid "Assigned"
-msgstr ""
+msgstr "指派"
 
 #: taiga/projects/notifications/choices.py:36
 msgid "Mentioned"
-msgstr ""
+msgstr "提醒"
 
 #: taiga/projects/notifications/choices.py:37
 msgid "Added as watcher"
-msgstr ""
+msgstr "添加為關注者"
 
 #: taiga/projects/notifications/choices.py:38
 msgid "Added as member"
-msgstr ""
+msgstr "添加為成員"
 
 #: taiga/projects/notifications/choices.py:39
 msgid "Comment"
@@ -2950,6 +2950,14 @@ msgid ""
 "%(subject)s\">See epic</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>史詩更新</h1>\n"
+"    <p>%(user)s 您好， <br> %(changer)s 在 %(project)s 中更新了一個史詩：</p>"
+"\n"
+"    <p>史詩 #%(ref)s %(subject)s</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱更新後的史詩 #%(ref)s: %"
+"(subject)s\">查看史詩c</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-body-text.jinja:11
 #, python-format
@@ -2959,6 +2967,10 @@ msgid ""
 "Hello %(user)s, %(changer)s has updated a epic on %(project)s\n"
 "See epic #%(ref)s %(subject)s at %(url)s\n"
 msgstr ""
+"\n"
+"更新史詩\n"
+" %(user)s 您好， %(changer)s 在 %(project)s 中更新了一個史詩\n"
+" 在 %(url)s 查看更新後的史詩 #%(ref)s %(subject)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-subject.jinja:9
 #, python-format
@@ -2966,6 +2978,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] 更新了史詩 #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-html.jinja:12
 #, python-format
@@ -2980,6 +2994,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>新增史詩</h1>\n"
+"    <p>%(user)s 您好，<br />%(changer)s 在 %(project)s 中新增了一個史詩</p>\n"
+"    <p>史詩 #%(ref)s %(subject)s</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱新增的史詩 #%(ref)s %"
+"(subject)s\">查看史詩</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-text.jinja:9
 #, python-format
@@ -2992,6 +3014,13 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"新增了史詩\n"
+"%(user)s 您好， %(changer)s 在 %(project)s 中新增了一個史詩\n"
+" 在 %(url)s 查看新增的史詩 #%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-subject.jinja:9
 #, python-format
@@ -2999,6 +3028,8 @@ msgid ""
 "\n"
 "[%(project)s] Created the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] 新增了史詩 #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-body-html.jinja:12
 #, python-format
@@ -3011,6 +3042,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>移除史詩</h1>\n"
+"    <p> %(user)s 您好，<br />%(changer)s 在 %(project)s 中刪除了史詩</p>\n"
+"    <p>史詩 #%(ref)s %(subject)s</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-body-text.jinja:9
 #, python-format
@@ -3023,6 +3060,13 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"移除史詩\n"
+"%(user)s 您好， %(changer)s 在 %(project)s 中刪除了史詩\n"
+"史詩 #%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-subject.jinja:9
 #, python-format
@@ -3030,6 +3074,8 @@ msgid ""
 "\n"
 "[%(project)s] Deleted the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] 刪除了史詩 #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-body-html.jinja:12
 #, python-format
@@ -3042,6 +3088,13 @@ msgid ""
 "%(subject)s\">See issue</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 中更新了議題</h1>\n"
+"    <p>%(user)s 您好， <br> %(changer)s 更新了一個議題：</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱更新後的議題 #%(ref)s: %"
+"(subject)s\">查看議題</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-body-text.jinja:11
 #, python-format
@@ -3055,6 +3108,14 @@ msgid ""
 "\n"
 "See issue at %(url)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中更新了議題\n"
+"\n"
+"%(user)s 您好，%(changer)s 更新了一個議題：\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"請在 %(url)s 參閱更新後的議題\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-subject.jinja:9
 #, python-format
@@ -3077,6 +3138,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 中新增了議題</h1>\n"
+"    <p> %(user)s 您好，<br />%(changer)s 新增了一個議題：</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱新增的議題 #%(ref)s %"
+"(subject)s\">查看議題</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-body-text.jinja:9
 #, python-format
@@ -3093,6 +3162,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中新增了議題\n"
+"\n"
+"%(user)s 您好，%(changer)s 新增了一個議題：\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"在 %(url)s 參閱新增的議題\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-subject.jinja:9
 #, python-format
@@ -3113,6 +3193,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>自%(project)s 中移除了一個議題</h1>\n"
+"    <p>%(user)s 您好，<br />%(changer)s 刪除了一個議題：</p>\n"
+"    <p><strong>#%(ref)s%(subject)s</strong></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-delete-body-text.jinja:9
 #, python-format
@@ -3127,6 +3213,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中移除了議題\n"
+"\n"
+"%(user)s 您好，%(changer)s 刪除了一個議題：\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-delete-subject.jinja:9
 #, python-format
@@ -3148,6 +3243,13 @@ msgid ""
 "sprint</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 更新了衝刺任務</h1>\n"
+"    <p> %(user)s 您好， <br> %(changer)s 更新了一項衝刺任務：</p>\n"
+"    <p><strong>%(name)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱更新後的 %(name)s\">查看"
+"衝刺任務</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-change-body-text.jinja:11
 #, python-format
@@ -3161,6 +3263,14 @@ msgid ""
 "\n"
 "See sprint at %(url)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中更新了衝刺任務\n"
+"\n"
+"%(user)s 您好， %(changer)s 更新了一項衝刺任務：\n"
+"\n"
+"%(name)s\n"
+"\n"
+"請在 %(url)s 參閱更新後的衝刺任務\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-change-subject.jinja:9
 #, python-format
@@ -3183,6 +3293,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在%(project)s 新增了衝刺任務</h1>\n"
+"    <p> %(user)s 您好，<br />%(changer)s 新增了衝刺任務</p>\n"
+"    <p><strong>%(name)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱新增的衝刺任務 %(name)"
+"s\">查看衝刺任務</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-create-body-text.jinja:9
 #, python-format
@@ -3199,6 +3317,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中新增了衝刺任務\n"
+"\n"
+" %(user)s 您好，%(changer)s 新增了一項衝刺任務：\n"
+"\n"
+"%(name)s\n"
+"\n"
+"在 %(url)s 參閱新增的衝刺任務\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-create-subject.jinja:9
 #, python-format
@@ -3219,6 +3348,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>自 %(project)s 中移除了一項衝刺任務</h1>\n"
+"    <p>%(user)s 您好，<br />%(changer)s 刪除了一項衝刺任務：</p>\n"
+"    <p><strong>%(name)s</strong></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-delete-body-text.jinja:9
 #, python-format
@@ -3233,6 +3368,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中移除了衝刺任務\n"
+"\n"
+"%(user)s 您好，%(changer)s 刪除了一項衝刺任務：\n"
+"\n"
+"%(name)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-delete-subject.jinja:9
 #, python-format
@@ -3254,6 +3398,13 @@ msgid ""
 "%(subject)s\">See task</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 中更新了任務</h1>\n"
+"    <p>%(user)s 您好， <br> %(changer)s 更新了一項任務：</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱更新後的任務 #%(ref)s: %"
+"(subject)s\">查看任務</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-text.jinja:11
 #, python-format
@@ -3267,6 +3418,14 @@ msgid ""
 "\n"
 "See task at %(url)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中更新了任務\n"
+"\n"
+"%(user)s 您好，%(changer)s 更新了一項任務：\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"請在 %(url)s 參閱更新後的任務\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-subject.jinja:9
 #, python-format
@@ -3289,6 +3448,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 中新增了任務</h1>\n"
+"    <p> %(user)s 您好，<br />%(changer)s 新增了一項任務：</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱新增的任務 #%(ref)s %"
+"(subject)s\">查看任務</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-body-text.jinja:9
 #, python-format
@@ -3305,6 +3472,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中新增了任務\n"
+"\n"
+"%(user)s 您好，%(changer)s 新增了一項任務：\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"在 %(url)s 參閱新增的任務\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-subject.jinja:9
 #, python-format
@@ -3325,6 +3503,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1> 自 %(project)s 中移除了一項任務</h1>\n"
+"    <p> %(user)s 您好，<br />%(changer)s 移除了一項任務：</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-delete-body-text.jinja:9
 #, python-format
@@ -3339,6 +3523,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中移除了任務\n"
+"\n"
+"%(user)s 您好，%(changer)s 刪除了一項任務：\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-delete-subject.jinja:9
 #, python-format
@@ -3360,6 +3553,13 @@ msgid ""
 "%(subject)s\">See user story</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 中更新了使用者故事</h1>\n"
+"    <p>%(user)s 您好， <br> %(changer)s 更新了一個使用者故事：</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱更新後的使用者故事 #%"
+"(ref)s: %(subject)s\">查看使用者故事</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-change-body-text.jinja:11
 #, python-format
@@ -3373,6 +3573,14 @@ msgid ""
 "\n"
 "See user story at %(url)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中更新了使用者故事\n"
+"\n"
+"%(user)s 您好，%(changer)s 更新了一個使用者故事：\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"在 %(url)s 參閱新增的使用者故事\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-change-subject.jinja:9
 #, python-format
@@ -3395,6 +3603,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 中新增了使用者故事</h1>\n"
+"    <p>%(user)s 您好，<br />%(changer)s 新增了一個使用者故事：</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱新增的使用者故事 #%(ref)"
+"s: %(subject)s\">查看使用者故事</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-create-body-text.jinja:9
 #, python-format
@@ -3411,6 +3627,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中新增了使用者故事\n"
+"\n"
+" %(user)s 您好， %(changer)s 新增了一個使用者故事：\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"在 %(url)s 參閱新增的使用者故事\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-create-subject.jinja:9
 #, python-format
@@ -3431,6 +3658,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1> 自 %(project)s 中移除了一個使用者故事</h1>\n"
+"    <p> %(user)s 您好，<br />%(changer)s 刪除了一個使用者故事：</p>\n"
+"    <p><strong>#%(ref)s %(subject)s</strong></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-delete-body-text.jinja:9
 #, python-format
@@ -3445,6 +3678,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中移除了使用者故事\n"
+"\n"
+"%(user)s 您好，%(changer)s 刪除了一個使用者故事\n"
+"\n"
+"#%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-delete-subject.jinja:9
 #, python-format
@@ -3466,6 +3708,13 @@ msgid ""
 "Page</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 中更新了維基頁面</h1>\n"
+"    <p>%(user)s 您好， <br> %(changer)s 更新了一個維基頁面：</p>\n"
+"    <p>%(page)s</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱更新後的維基頁面\">查看"
+"維基頁面</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-change-body-text.jinja:11
 #, python-format
@@ -3479,6 +3728,14 @@ msgid ""
 "\n"
 "See wiki page at %(url)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中更新了維基頁面\n"
+"\n"
+"%(user)s 您好，%(changer)s 更新了一個維基頁面：\n"
+"\n"
+"%(page)s\n"
+"\n"
+"參閱更新後的維基頁面： %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-change-subject.jinja:9
 #, python-format
@@ -3501,6 +3758,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>在 %(project)s 中新增了維基頁面</h1>\n"
+"    <p>%(user)s 您好，<br />%(changer)s 新增了維基頁面</p>\n"
+"    <p>%(page)s</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"參閱新增的維基頁面 %(page)"
+"s\">查看維基頁面</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-create-body-text.jinja:9
 #, python-format
@@ -3517,6 +3782,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"在 %(project)s 中新增了維基頁面\n"
+"\n"
+" %(user)s 您好，%(changer)s 新增了一個維基頁面：\n"
+"\n"
+"%(page)s\n"
+"\n"
+"請在 %(url)s 參閱更新後的維基頁面\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-create-subject.jinja:9
 #, python-format
@@ -3537,6 +3813,12 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1> 自 %(project)s 中移除了一個維基頁面</h1>\n"
+"    <p> %(user)s 您好，<br />%(changer)s 刪除了一個維基頁面：</p>\n"
+"    <p>%(page)s</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-delete-body-text.jinja:9
 #, python-format
@@ -3551,6 +3833,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"自 %(project)s 中移除了維基頁面\n"
+"\n"
+"%(user)s 您好， %(changer)s 刪除了一個維基頁面：\n"
+"\n"
+"%(page)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-delete-subject.jinja:9
 #, python-format
@@ -3610,22 +3901,22 @@ msgstr "專案缺少所有者"
 #: taiga/projects/services/members.py:157
 #: taiga/projects/services/members.py:204
 msgid "You have reached your current limit of memberships for private projects"
-msgstr ""
+msgstr "您已達到目前私人專案的成員數量極限"
 
 #: taiga/projects/services/members.py:160
 #: taiga/projects/services/members.py:207
 msgid "You have reached your current limit of memberships for public projects"
-msgstr ""
+msgstr "您已達到目前公開專案的成員數量極限"
 
 #: taiga/projects/services/members.py:166
 #: taiga/projects/services/members.py:213
 msgid "You have reached the current limit of pending memberships"
-msgstr ""
+msgstr "您已達到目前待定成員的數量上限"
 
 #: taiga/projects/services/promote.py:39
 #, python-format
 msgid "Task #%(ref)s"
-msgstr ""
+msgstr "任務 #%(ref)s"
 
 #: taiga/projects/services/stats.py:186
 msgid "Future sprint"
@@ -3647,11 +3938,11 @@ msgstr "令牌已經過期"
 
 #: taiga/projects/settings/choices.py:22
 msgid "Timeline"
-msgstr ""
+msgstr "時間線"
 
 #: taiga/projects/settings/choices.py:23
 msgid "Epics"
-msgstr ""
+msgstr "史詩"
 
 #: taiga/projects/settings/choices.py:24
 msgid "Backlog"
@@ -3664,20 +3955,20 @@ msgstr "看板"
 
 #: taiga/projects/settings/choices.py:26
 msgid "Issues"
-msgstr ""
+msgstr "議題"
 
 #: taiga/projects/settings/choices.py:27
 msgid "TeamWiki"
-msgstr ""
+msgstr "團隊維基"
 
 #: taiga/projects/settings/validators.py:26
 msgid "You don't have access to this section"
-msgstr ""
+msgstr "您無權存取此部分"
 
 #: taiga/projects/tagging/fields.py:41
 #, python-brace-format
 msgid "Invalid tag '{value}'. The color is not a valid HEX color or null."
-msgstr ""
+msgstr "無效的標籤 '{value}'。 此顏色不是一個有效的十六進位色碼。"
 
 #: taiga/projects/tagging/fields.py:44
 #, python-brace-format
@@ -3685,11 +3976,13 @@ msgid ""
 "Invalid tag '{value}'. it must be the name or a pair '[\"name\", \"hex color/"
 "\" | null]'."
 msgstr ""
+"無效的標籤 '{value}'。它必須是名稱，或是 '[\"name\", \"hex color/\" | null]' "
+"這種格式。"
 
 #: taiga/projects/tagging/fields.py:66
 #, python-brace-format
 msgid "Invalid tag '{value}'. It must be the tag name."
-msgstr ""
+msgstr "無效標籤 '{value}'。它必須為標籤名稱。"
 
 #: taiga/projects/tagging/models.py:15
 msgid "tags"
@@ -3702,19 +3995,19 @@ msgstr "標籤顏色"
 #: taiga/projects/tagging/validators.py:36
 #: taiga/projects/tagging/validators.py:63
 msgid "This tag already exists."
-msgstr ""
+msgstr "該標籤已存在。"
 
 #: taiga/projects/tagging/validators.py:43
 #: taiga/projects/tagging/validators.py:70
 msgid "The color is not a valid HEX color."
-msgstr ""
+msgstr "此顏色不是一個有效的十六進位色碼。"
 
 #: taiga/projects/tagging/validators.py:56
 #: taiga/projects/tagging/validators.py:90
 #: taiga/projects/tagging/validators.py:103
 #: taiga/projects/tagging/validators.py:110
 msgid "The tag doesn't exist."
-msgstr ""
+msgstr "該標籤不存在。"
 
 #: taiga/projects/tasks/api.py:102 taiga/projects/tasks/api.py:111
 msgid "You don't have permissions to set this sprint to this task."
@@ -3746,11 +4039,11 @@ msgstr "無效的里程碑 id。"
 
 #: taiga/projects/tasks/validators.py:61
 msgid "Invalid task status id."
-msgstr ""
+msgstr "無效的任務狀態 id。"
 
 #: taiga/projects/tasks/validators.py:74
 msgid "Invalid user story id."
-msgstr ""
+msgstr "無效的使用者故事 id。"
 
 #: taiga/projects/tasks/validators.py:98
 msgid "Invalid task status id. The status must belong to the same project."
@@ -3775,7 +4068,7 @@ msgstr ""
 
 #: taiga/projects/tasks/validators.py:175
 msgid "All the tasks must be from the same project"
-msgstr ""
+msgstr "所有任務都必須來自同一專案"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:14
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:12
@@ -3793,10 +4086,10 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    <h2>您已被邀請加入 %(product_name) ！</h2>\n"
-"<p>您好！%(full_name) 已邀請您加入 %(product_name) 中的專案 <em>%(project)</"
-"em>。</br> Taiga 是一款開源的敏捷專案管理工具。成為 Taiga 使用者完全免費。</"
-"p>\n"
+"    <h2>您已被邀請加入 %(product_name)s ！</h2>\n"
+"<p>您好！%(full_name)s 已邀請您加入 %(product_name)s 中的專案 <em>%(project)"
+"s</em>。</br> Taiga 是一款開源的敏捷專案管理工具。成為 Taiga 使用者完全免費"
+"。</p>\n"
 "    "
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:25
@@ -3831,6 +4124,9 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:14
 #, python-format
@@ -3892,6 +4188,13 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>您已經成功加入專案了</h1>\n"
+"    <p> %(full_name)s 您好，<br />您已經成功加入 %(project)s 專案了</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"前往 %(project)s\">前往專"
+"案</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/projects/templates/emails/membership_notification-body-text.jinja:9
 #, python-format
@@ -3906,6 +4209,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"您已經成功加入專案了\n"
+"\n"
+"%(full_name)s 您好，您已經成功加入%(project)s 專案了\n"
+"\n"
+"請在 %(url)s 查看專案\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/projects/templates/emails/membership_notification-subject.jinja:9
 #, python-format
@@ -3943,6 +4255,9 @@ msgid ""
 "p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>從現在起，您將成為此專案的「管理人」。</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:9
 #, python-format
@@ -3967,6 +4282,8 @@ msgid ""
 "\n"
 "From now on, your new status for this project will be \"admin\".\n"
 msgstr ""
+"\n"
+"從現在起，您將成為此專案的「管理人」。\n"
 
 #: taiga/projects/templates/emails/transfer_accept-subject.jinja:9
 #, python-format
@@ -3999,6 +4316,9 @@ msgid ""
 "    <p>%(rejecter_name)s says:</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p>%(rejecter_name)s 說：</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:24
 msgid ""
@@ -4032,7 +4352,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:15
 #, python-format
 msgid "%(rejecter_name)s says:"
-msgstr ""
+msgstr "%(rejecter_name)s 說："
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:19
 msgid ""
@@ -4085,7 +4405,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:22
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:30
 msgid "Continue"
-msgstr ""
+msgstr "繼續"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:9
 #, python-format
@@ -4110,7 +4430,7 @@ msgstr ""
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:18
 msgid "Go to your project settings:"
-msgstr ""
+msgstr "前往您的專案設定："
 
 #: taiga/projects/templates/emails/transfer_request-subject.jinja:9
 #, python-format
@@ -4447,12 +4767,12 @@ msgstr "您無權設置此使用者故事中的泳道。"
 #: taiga/projects/userstories/api.py:274
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
-msgstr ""
+msgstr "無效的角色 id '{role_id}'"
 
 #: taiga/projects/userstories/api.py:281
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
-msgstr ""
+msgstr "無效的點數 id '{points_id}'"
 
 #: taiga/projects/userstories/api.py:300
 #, python-brace-format
@@ -4473,7 +4793,7 @@ msgstr "衝刺次序"
 
 #: taiga/projects/userstories/models.py:99
 msgid "kanban order"
-msgstr ""
+msgstr "看板次序"
 
 #: taiga/projects/userstories/models.py:107
 msgid "finish date"
@@ -4481,7 +4801,7 @@ msgstr "完成日期"
 
 #: taiga/projects/userstories/models.py:122
 msgid "assigned users"
-msgstr ""
+msgstr "被指派的使用者"
 
 #: taiga/projects/userstories/models.py:131
 msgid "generated from issue"
@@ -4489,11 +4809,11 @@ msgstr "産生自問題　"
 
 #: taiga/projects/userstories/models.py:135
 msgid "generated from task"
-msgstr ""
+msgstr "由任務中産生"
 
 #: taiga/projects/userstories/models.py:136
 msgid "reference from task"
-msgstr ""
+msgstr "來自任務的參考"
 
 #: taiga/projects/userstories/models.py:144
 msgid "swimlane"
@@ -4525,7 +4845,7 @@ msgstr ""
 #: taiga/projects/userstories/validators.py:140
 #: taiga/projects/userstories/validators.py:226
 msgid "You can't use after and before at the same time."
-msgstr ""
+msgstr "您不能同時使用 after 和 before 。"
 
 #: taiga/projects/userstories/validators.py:153
 msgid ""
@@ -4562,11 +4882,11 @@ msgstr "該 id 無相關專案"
 
 #: taiga/projects/validators.py:165
 msgid "The user yet exists in the project"
-msgstr ""
+msgstr "該使用者目前已經是專案成員"
 
 #: taiga/projects/validators.py:170
 msgid "Invalid operation"
-msgstr ""
+msgstr "無效操作"
 
 #: taiga/projects/validators.py:182
 msgid "Invalid role for the project"
@@ -4582,7 +4902,7 @@ msgstr "專案所有者必須為管理員。"
 
 #: taiga/projects/validators.py:222
 msgid "At least one user must be an active admin for this project."
-msgstr ""
+msgstr "此專案至少須有一位活躍的管理人。"
 
 #: taiga/projects/validators.py:275
 msgid "Invalid role ids. All roles must belong to the same project."
@@ -4651,7 +4971,7 @@ msgstr "href"
 
 #: taiga/telemetry/models.py:18
 msgid "instance id"
-msgstr ""
+msgstr "實例 id"
 
 #: taiga/timeline/signals.py:54
 msgid "Check the history API for the exact diff"
@@ -4659,15 +4979,15 @@ msgstr "檢查API過去資料以找出差異"
 
 #: taiga/users/admin.py:31
 msgid "Project Member"
-msgstr ""
+msgstr "專案成員"
 
 #: taiga/users/admin.py:32
 msgid "Project Members"
-msgstr ""
+msgstr "專案成員"
 
 #: taiga/users/admin.py:41
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: taiga/users/admin.py:83
 msgid "Project Ownership"
@@ -4683,19 +5003,19 @@ msgstr "成員"
 
 #: taiga/users/admin.py:141
 msgid "PERSONAL INFO"
-msgstr ""
+msgstr "個人資訊"
 
 #: taiga/users/admin.py:142
 msgid "EXTRA INFO"
-msgstr ""
+msgstr "額外資訊"
 
 #: taiga/users/admin.py:144
 msgid "PERMISSIONS"
-msgstr ""
+msgstr "權限"
 
 #: taiga/users/admin.py:145
 msgid "IMPORTANT DATES"
-msgstr ""
+msgstr "重要日期"
 
 #: taiga/users/admin.py:146
 msgid "PROJECT OWNERSHIPS RESTRICTIONS"
@@ -4711,7 +5031,7 @@ msgstr "擁有的私人專案"
 
 #: taiga/users/admin.py:175
 msgid "Private memberships owned"
-msgstr ""
+msgstr "擁有的私人專案成員"
 
 #: taiga/users/admin.py:193
 msgid "Public projects owned"
@@ -4719,7 +5039,7 @@ msgstr "擁有的公共專案"
 
 #: taiga/users/admin.py:199
 msgid "Public memberships owned"
-msgstr ""
+msgstr "擁有的公開專案成員"
 
 #: taiga/users/api.py:123
 msgid "Duplicated email"
@@ -4727,7 +5047,7 @@ msgstr "複製電子郵件"
 
 #: taiga/users/api.py:125
 msgid "Invalid email"
-msgstr ""
+msgstr "無效的電子信箱"
 
 #: taiga/users/api.py:163
 msgid "Invalid username or email"
@@ -4735,7 +5055,7 @@ msgstr "無效使用者或郵件"
 
 #: taiga/users/api.py:172
 msgid "Mail sent successfully!"
-msgstr ""
+msgstr "成功寄出郵件！"
 
 #: taiga/users/api.py:210
 msgid "Current password parameter needed"
@@ -4747,7 +5067,7 @@ msgstr "需要新密碼參數"
 
 #: taiga/users/api.py:216
 msgid "Invalid password length at least 6 characters needed"
-msgstr ""
+msgstr "密碼長度過短，至少需 6 個字元"
 
 #: taiga/users/api.py:219
 msgid "Invalid current password"
@@ -4764,11 +5084,11 @@ msgstr "令牌無效，請確認令牌是否正確？"
 
 #: taiga/users/api.py:344
 msgid "Email address already verified"
-msgstr ""
+msgstr "電子信箱地址已經驗證過了"
 
 #: taiga/users/api.py:346
 msgid "Unable to verify this email address"
-msgstr ""
+msgstr "無法驗證此電子信箱地址"
 
 #: taiga/users/api.py:349
 msgid "Mail sended successful!"
@@ -4809,11 +5129,11 @@ msgstr "賦予該使用者活躍角色，以不選擇取代刪除帳戶功能。
 
 #: taiga/users/models.py:130
 msgid "staff status"
-msgstr ""
+msgstr "員工狀態"
 
 #: taiga/users/models.py:131
 msgid "Designates whether the user can log into this admin site."
-msgstr ""
+msgstr "指定使用者是否可以登入此管理網站。"
 
 #: taiga/users/models.py:137
 msgid "biography"
@@ -4833,11 +5153,11 @@ msgstr "註銷日期"
 
 #: taiga/users/models.py:143
 msgid "accepted terms"
-msgstr ""
+msgstr "已接受的條款"
 
 #: taiga/users/models.py:144
 msgid "new terms read"
-msgstr ""
+msgstr "閱讀新條款"
 
 #: taiga/users/models.py:146
 msgid "default language"
@@ -4865,21 +5185,21 @@ msgstr "新電子郵件地址"
 
 #: taiga/users/models.py:166
 msgid "max number of owned private projects"
-msgstr ""
+msgstr "可擁有的私人專案最大數量"
 
 #: taiga/users/models.py:169
 msgid "max number of owned public projects"
-msgstr ""
+msgstr "可擁有的公開專案最大數量"
 
 #: taiga/users/models.py:172
 msgid ""
 "max number of memberships of different users for all owned private project"
-msgstr ""
+msgstr "在所有擁有的私人專案中，不同使用者的最大數量"
 
 #: taiga/users/models.py:177
 msgid ""
 "max number of memberships of different users for all owned public project"
-msgstr ""
+msgstr "在所有擁有的公開專案中，不同使用者的最大數量"
 
 #: taiga/users/models.py:305
 msgid "permissions"
@@ -4901,6 +5221,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>變更您的電子信箱</h1>\n"
+"    <p> %(full_name)s 您好，<br />請確認您的電子信箱地址</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"確認電子信箱\">確認電子信"
+"箱</a>\n"
+"    <p>如果您沒有提出變更請求，請忽略此訊息。</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/change_email-body-text.jinja:9
 #, python-format
@@ -4915,6 +5243,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"%(full_name)s 您好，請確認您的電子信箱地址 \n"
+"\n"
+"%(url)s\n"
+"\n"
+"如果您沒有提出變更電子信箱地址的請求，請忽略此訊息。\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/change_email-subject.jinja:9
 msgid "[Taiga] Change email"
@@ -4932,6 +5269,13 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>重設密碼</h1>\n"
+"    <p>%(full_name)s 您好 ，<br /> 您曾申請重設密碼</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"重設密碼\">重設密碼</a>\n"
+"    <p>若您沒有申請，請忽略此訊息。</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/password_recovery-body-text.jinja:9
 #, python-format
@@ -4946,6 +5290,15 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"%(full_name)s 您好，您曾要求重設密碼\n"
+"\n"
+"%(url)s\n"
+"\n"
+"若您並未提出此請求，請忽略此訊息。\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/password_recovery-subject.jinja:9
 msgid "[Taiga] Password recovery"
@@ -4960,6 +5313,11 @@ msgid ""
 "email\">Confirm email</a>\n"
 "            "
 msgstr ""
+"\n"
+"            <p>請確認您的電子信箱</p>\n"
+"            <a class=\"button\" href=\"%(url)s\" title=\"Confirm email\">確認"
+"信箱</a>\n"
+"            "
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:21
 #, python-format
@@ -4996,7 +5354,7 @@ msgid ""
 msgstr ""
 "\n"
 "    <strong>您可以由下方的服務來註銷您的帳號</strong> <a href=\"%(url)s\" "
-"title=\"Remove your account\" style=\"color: #9dce0a\">點擊此處</a>\n"
+"title=\"註銷您的帳號\" style=\"color: #9dce0a\">點擊此處</a>\n"
 "    "
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:9
@@ -5008,6 +5366,11 @@ msgid ""
 "We're thrilled you've joined our growing community of professionals "
 "revolutionizing their way of working and hope you enjoy it.\n"
 msgstr ""
+"\n"
+"感謝您註冊 %(product_name)s\n"
+"\n"
+"我們非常高興您加入了我們不斷壯大的專業人士社群，這群人正致力於革新工作方式，"
+"希望您會喜歡這裡。\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:16
 #, python-format
@@ -5015,6 +5378,8 @@ msgid ""
 "\n"
 "Please confirm your email: %(url)s\n"
 msgstr ""
+"\n"
+"請確認您的電子信箱：%(url)s\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:21
 #, python-format
@@ -5025,6 +5390,11 @@ msgid ""
 "--\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"有任何問題嗎？若您需要協助，歡迎隨時聯絡我們，我們的電子信箱是 %"
+"(support_email)s。\n"
+"--\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:26
 #, python-format
@@ -5051,6 +5421,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>驗證您的電子郵件</h1>\n"
+"    <p>%(full_name)s 您好，<br />請驗證您的電子郵件</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"驗證電子郵件\">驗證電子郵"
+"件</a>\n"
+"    <p>如果您未曾提出請求，請忽略此訊息。</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/send_verification-body-text.jinja:9
 #, python-format
@@ -5065,10 +5443,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"%(full_name)s 您好，請驗證您的電子信箱地址 \n"
+"\n"
+"%(url)s\n"
+"\n"
+"如果您並沒有提出請求，請忽略此訊息。\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/users/templates/emails/send_verification-subject.jinja:9
 msgid "[Taiga] Verify email"
-msgstr ""
+msgstr "[Taiga] 驗證電子信箱"
 
 #: taiga/users/validators.py:38
 msgid "invalid"
@@ -5080,7 +5467,7 @@ msgstr "無效使用者名稱，請嘗試其它名稱。"
 
 #: taiga/users/validators.py:76
 msgid "Read new terms has to be true'"
-msgstr ""
+msgstr "尚未閱讀新條款"
 
 #: taiga/userstorage/api.py:42
 msgid ""
@@ -5125,7 +5512,7 @@ msgstr "期間"
 
 #: taiga/webhooks/validators.py:32
 msgid "Not allowed IP Address"
-msgstr ""
+msgstr "IP 地址被禁用"
 
 #~ msgid "Personal info"
 #~ msgstr "個人資訊"
