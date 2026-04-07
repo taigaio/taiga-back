@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2026-04-06 10:09+0000\n"
+"PO-Revision-Date: 2026-04-08 03:09+0000\n"
 "Last-Translator: hanyang cheng <cinxiafortis@tutanota.de>\n"
 "Language-Team: Chinese (Traditional Han script) <https://hosted.weblate.org/"
 "projects/taiga/taiga-back/zh_Hant/>\n"
@@ -2668,7 +2668,7 @@ msgstr "全部里程碑"
 
 #: taiga/projects/models.py:193
 msgid "total story points"
-msgstr "全部故事點數"
+msgstr "總故事點數"
 
 #: taiga/projects/models.py:195 taiga/projects/models.py:998
 msgid "active contact"
@@ -4108,7 +4108,7 @@ msgstr ""
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:32
 msgid "Accept your invitation to Taiga"
-msgstr "接受您的邀請使用Taigai"
+msgstr "接受您的邀請使用 Taiga"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:32
 msgid "Accept your invitation"
