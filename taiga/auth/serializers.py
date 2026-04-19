@@ -38,7 +38,7 @@ from django.utils.translation import gettext as _
 from taiga.base.api import serializers
 from taiga.base.exceptions import ValidationError
 
-from .services import login, refresh_token, verify_token
+from .services_auth import login, refresh_token, verify_token
 
 
 class TokenObtainPairSerializer(serializers.Serializer):

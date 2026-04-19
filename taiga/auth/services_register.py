@@ -6,107 +6,19 @@
 # Copyright (c) 2021-present Kaleidos INC
 #
 
-from typing import Callable
 import uuid
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import update_last_login
 from django.db import IntegrityError
 from django.db import transaction as tx
 from django.utils.translation import gettext_lazy as _
 
 from taiga.base import exceptions as exc
 from taiga.base.mails import mail_builder
-from taiga.users.models import User
-from taiga.users.serializers import UserAdminSerializer
-from taiga.users.services import get_and_validate_user
 from taiga.projects.services.invitations import get_membership_by_token
 
-from .exceptions import AuthenticationFailed, InvalidToken, TokenError
-from .settings import api_settings
-from .tokens import RefreshToken, CancelToken, UntypedToken
+from .tokens import CancelToken
 from .signals import user_registered as user_registered_signal
-
-
-#####################
-## AUTH PLUGINS
-#####################
-
-auth_plugins = {}
-
-
-def register_auth_plugin(name: str, login_func: Callable):
-    auth_plugins[name] = {
-        "login_func": login_func,
-    }
-
-
-def get_auth_plugins():
-    return auth_plugins
-
-
-#####################
-## AUTH SERVICES
-#####################
-
-def make_auth_response_data(user):
-    serializer = UserAdminSerializer(user)
-    data = dict(serializer.data)
-
-    refresh = RefreshToken.for_user(user)
-
-    data['refresh'] = str(refresh)
-    data['auth_token'] = str(refresh.access_token)
-
-    if api_settings.UPDATE_LAST_LOGIN:
-        update_last_login(None, user)
-
-    return data
-
-
-def login(username: str, password: str):
-    try:
-        user = get_and_validate_user(username=username, password=password)
-    except exc.WrongArguments:
-        raise AuthenticationFailed(
-            _('No active account found with the given credentials'),
-            'invalid_credentials',
-        )
-
-    # Generate data
-    return make_auth_response_data(user)
-
-
-def refresh_token(refresh_token: str):
-    try:
-        refresh = RefreshToken(refresh_token)
-    except TokenError:
-        raise InvalidToken()
-
-    data = {'auth_token': str(refresh.access_token)}
-
-    if api_settings.ROTATE_REFRESH_TOKENS:
-        if api_settings.DENYLIST_AFTER_ROTATION:
-            try:
-                # Attempt to denylist the given refresh token
-                refresh.denylist()
-            except AttributeError:
-                # If denylist app not installed, `denylist` method will
-                # not be present
-                pass
-
-        refresh.set_jti()
-        refresh.set_exp()
-
-        data['refresh'] = str(refresh)
-
-    return data
-
-
-def verify_token(token: str):
-    UntypedToken(token)
-    return {}
 
 
 #####################

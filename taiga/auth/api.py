@@ -19,10 +19,10 @@ from taiga.projects.services.invitations import accept_invitation_by_existing_us
 from . import serializers
 from .authentication import AUTH_HEADER_TYPES
 from .permissions import AuthPermission
-from .services import private_register_for_new_user
-from .services import public_register
-from .services import make_auth_response_data
-from .services import get_auth_plugins
+from .services_register import private_register_for_new_user
+from .services_register import public_register
+from .services_auth import make_auth_response_data
+from .services_auth import get_auth_plugins
 from .throttling import LoginFailRateThrottle, RegisterSuccessRateThrottle
 
 
