@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
-from functools import partial
-
 from django.utils.translation import gettext as _
 from django.conf import settings
 
@@ -41,13 +39,20 @@ def _validate_data(data:dict, *, cls):
         raise exc.RequestValidationError(validator.errors)
     return validator.object
 
+def get_token(data: dict) -> dict:
+    return _validate_data(data, cls=serializers.TokenObtainPairSerializer)
 
-get_token = partial(_validate_data, cls=serializers.TokenObtainPairSerializer)
-refresh_token = partial(_validate_data, cls=serializers.TokenRefreshSerializer)
-verify_token = partial(_validate_data, cls=serializers.TokenVerifySerializer)
-parse_public_register_data = partial(_validate_data, cls=serializers.PublicRegisterSerializer)
-parse_private_register_data = partial(_validate_data, cls=serializers.PrivateRegisterSerializer)
+def refresh_token(data: dict) -> dict:
+    return _validate_data(data, cls=serializers.TokenRefreshSerializer)
 
+def verify_token(data: dict) -> dict:
+    return _validate_data(data, cls=serializers.TokenVerifySerializer)
+
+def parse_public_register_data(data: dict) -> dict:
+    return _validate_data(data, cls=serializers.PublicRegisterSerializer)
+
+def parse_private_register_data(data: dict) -> dict:
+    return _validate_data(data, cls=serializers.PrivateRegisterSerializer)
 
 class AuthViewSet(viewsets.ViewSet):
     permission_classes = (AuthPermission,)
