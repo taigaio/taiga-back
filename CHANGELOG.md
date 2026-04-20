@@ -1,8 +1,14 @@
 # Changelog
 
-## 6.9.1 (unreleased)
+## 6.11.0 (unreleased)
 
 - ...
+
+## 6.10.0 (2026-04-20)
+- Allow archiving projects.
+- Update dependencies.
+- Fix bug when filtering for US without epic.
+- Fix bug when adding existing member to project.
 
 ## 6.9.0 (2025-10-10)
 
