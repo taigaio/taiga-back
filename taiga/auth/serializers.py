@@ -35,15 +35,15 @@ import re
 from django.core import validators as core_validators
 from django.utils.translation import gettext as _
 
-from taiga.base.api import serializers
+from taiga.base.api.serializers import Serializer, CharField, EmailField
 from taiga.base.exceptions import ValidationError
 
-from .services_auth import login, refresh_token, verify_token
+from .services_auth import log_user_in, process_refresh_token, validate_token
 
 
-class TokenObtainPairSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField(write_only=True)
+class TokenObtainPairSerializer(Serializer):
+    username = CharField()
+    password = CharField(write_only=True)
 
     def validate(self, attrs):
         authenticate_kwargs = {
@@ -51,29 +51,29 @@ class TokenObtainPairSerializer(serializers.Serializer):
             'password': attrs['password'],
         }
 
-        return login(**authenticate_kwargs)
+        return log_user_in(**authenticate_kwargs)
 
 
-class TokenRefreshSerializer(serializers.Serializer):
-    refresh = serializers.CharField()
-
-    def validate(self, attrs):
-        return refresh_token(attrs['refresh'])
-
-
-class TokenVerifySerializer(serializers.Serializer):
-    token = serializers.CharField()
+class TokenRefreshSerializer(Serializer):
+    refresh = CharField()
 
     def validate(self, attrs):
-        return verify_token(attrs['token'])
+        return process_refresh_token(attrs['refresh'])
+
+
+class TokenVerifySerializer(Serializer):
+    token = CharField()
+
+    def validate(self, attrs):
+        return validate_token(attrs['token'])
 
 
 
-class BaseRegisterSerializer(serializers.Serializer):
-    full_name = serializers.CharField(max_length=36)
-    email = serializers.EmailField(max_length=255)
-    username = serializers.CharField(max_length=255)
-    password = serializers.CharField(min_length=6)
+class BaseRegisterSerializer(Serializer):
+    full_name = CharField(max_length=36)
+    email = EmailField(max_length=255)
+    username = CharField(max_length=255)
+    password = CharField(min_length=6)
 
     def validate_username(self, attrs, source):
         value = attrs[source]
@@ -102,4 +102,4 @@ class PublicRegisterSerializer(BaseRegisterSerializer):
 
 
 class PrivateRegisterSerializer(BaseRegisterSerializer):
-    token = serializers.CharField(max_length=255, required=True)
+    token = CharField(max_length=255, required=True)

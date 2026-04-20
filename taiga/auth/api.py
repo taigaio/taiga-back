@@ -18,7 +18,7 @@ from . import serializers
 from .authentication import AUTH_HEADER_TYPES
 from .permissions import AuthPermission
 from .services_register import private_register_for_new_user
-from .services_register import public_register
+from .services_register import public_register_for_new_user
 from .services_auth import make_auth_response_data
 from .services_auth import get_auth_plugins
 from .throttling import LoginFailRateThrottle, RegisterSuccessRateThrottle
@@ -114,7 +114,7 @@ class AuthViewSet(viewsets.ViewSet):
 
         try:
             data = parse_public_register_data(request.DATA)
-            user = public_register(**data)
+            user = public_register_for_new_user(**data)
         except exc.IntegrityError as e:
             raise exc.BadRequest(e.detail)
 

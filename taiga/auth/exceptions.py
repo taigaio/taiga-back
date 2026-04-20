@@ -60,11 +60,11 @@ class DetailDictMixin:
         super().__init__(detail_dict)
 
 
-class AuthenticationFailed(DetailDictMixin, exceptions.AuthenticationFailed):
+class TokenAuthenticationFailed(DetailDictMixin, exceptions.AuthenticationFailed):
     default_code = 'authentication_failed'
 
 
-class InvalidToken(AuthenticationFailed):
+class InvalidToken(TokenAuthenticationFailed):
     status_code = status.HTTP_401_UNAUTHORIZED
     default_detail = _('Token is invalid or expired')
     default_code = 'token_not_valid'

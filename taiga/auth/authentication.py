@@ -33,7 +33,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from taiga.base.api import HTTP_HEADER_ENCODING, authentication
 
-from .exceptions import AuthenticationFailed, InvalidToken, TokenError
+from .exceptions import TokenAuthenticationFailed, InvalidToken, TokenError
 from .settings import api_settings
 
 AUTH_HEADER_TYPES = api_settings.AUTH_HEADER_TYPES
@@ -106,7 +106,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
             return None
 
         if len(parts) != 2:
-            raise AuthenticationFailed(
+            raise TokenAuthenticationFailed(
                 _('Authorization header must contain two space-delimited values'),
                 code='bad_authorization_header',
             )
@@ -144,10 +144,10 @@ class JWTAuthentication(authentication.BaseAuthentication):
         try:
             user = self.user_model.objects.get(**{api_settings.USER_ID_FIELD: user_id})
         except self.user_model.DoesNotExist:
-            raise AuthenticationFailed(_('User not found'), code='user_not_found')
+            raise TokenAuthenticationFailed(_('User not found'), code='user_not_found')
 
         if not user.is_active or user.is_system:
-            raise AuthenticationFailed(_('User is inactive'), code='user_inactive')
+            raise TokenAuthenticationFailed(_('User is inactive'), code='user_inactive')
 
         return user
 

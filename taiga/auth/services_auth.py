@@ -15,7 +15,7 @@ from taiga.base import exceptions as exc
 from taiga.users.serializers import UserAdminSerializer
 from taiga.users.services import get_and_validate_user
 
-from .exceptions import AuthenticationFailed, InvalidToken, TokenError
+from .exceptions import TokenAuthenticationFailed, InvalidToken, TokenError
 from .settings import api_settings
 from .tokens import RefreshToken, UntypedToken
 
@@ -56,11 +56,11 @@ def make_auth_response_data(user):
     return data
 
 
-def login(username: str, password: str):
+def log_user_in(username: str, password: str):
     try:
         user = get_and_validate_user(username=username, password=password)
     except exc.WrongArguments:
-        raise AuthenticationFailed(
+        raise TokenAuthenticationFailed(
             _('No active account found with the given credentials'),
             'invalid_credentials',
         )
@@ -69,9 +69,9 @@ def login(username: str, password: str):
     return make_auth_response_data(user)
 
 
-def refresh_token(refresh_token: str):
+def process_refresh_token(token_string: str):
     try:
-        refresh = RefreshToken(refresh_token)
+        refresh = RefreshToken(token_string)
     except TokenError:
         raise InvalidToken()
 
@@ -95,7 +95,7 @@ def refresh_token(refresh_token: str):
     return data
 
 
-def verify_token(token: str):
-    UntypedToken(token)
+def validate_token(token_string: str):
+    UntypedToken(token_string)
     return {}
 

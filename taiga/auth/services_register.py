@@ -54,7 +54,7 @@ def is_user_already_registered(*, username:str, email:str) -> (bool, str):
 
 
 @tx.atomic
-def public_register(username:str, password:str, email:str, full_name:str):
+def public_register_for_new_user(username:str, password:str, email:str, full_name:str):
     """
     Given a parsed parameters, try register a new user
     knowing that it follows a public register flow.

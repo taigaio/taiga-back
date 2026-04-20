@@ -36,7 +36,7 @@ from importlib import reload
 
 from taiga.auth import authentication
 from taiga.auth.exceptions import (
-    AuthenticationFailed, InvalidToken,
+    TokenAuthenticationFailed, InvalidToken,
 )
 from taiga.auth.models import TokenUser
 from taiga.auth.settings import api_settings
@@ -92,10 +92,10 @@ def test_jwt_authentication_get_raw_token(backend = authentication.JWTAuthentica
     assert backend.get_raw_token(b'') is None
 
     # Should raise error if header is malformed
-    with pytest.raises(AuthenticationFailed):
+    with pytest.raises(TokenAuthenticationFailed):
         backend.get_raw_token(b'Bearer one two')
 
-    with pytest.raises(AuthenticationFailed):
+    with pytest.raises(TokenAuthenticationFailed):
         backend.get_raw_token(b'Bearer')
 
     # Otherwise, should return unvalidated token in header
@@ -159,7 +159,7 @@ def test_jwt_authentication_get_user(backend = authentication.JWTAuthentication(
     payload[api_settings.USER_ID_CLAIM] = 42
 
     # Should raise exception if user not found
-    with pytest.raises(AuthenticationFailed):
+    with pytest.raises(TokenAuthenticationFailed):
         backend.get_user(payload)
 
     u = f.UserFactory(username='markhamill')
@@ -169,7 +169,7 @@ def test_jwt_authentication_get_user(backend = authentication.JWTAuthentication(
     payload[api_settings.USER_ID_CLAIM] = getattr(u, api_settings.USER_ID_FIELD)
 
     # Should raise exception if user is inactive
-    with pytest.raises(AuthenticationFailed):
+    with pytest.raises(TokenAuthenticationFailed):
         backend.get_user(payload)
 
     u.is_active = True
