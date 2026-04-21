@@ -7,50 +7,32 @@
 FROM python:3.11-slim
 LABEL maintainer="support@taiga.io"
 
-# Avoid prompting for configuration
 ENV DEBIAN_FRONTEND=noninteractive
-
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONFAULTHANDLER=1
 
-# Use a virtualenv
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Get the code
 COPY . /taiga-back
 WORKDIR /taiga-back
 
-# grab gosu for easy step-down from root
-# https://github.com/tianon/gosu/blob/master/INSTALL.md
-ENV GOSU_VERSION 1.12
-
 RUN set -eux; \
     apt-get update; \
-    # install system dependencies
     apt-get install -y \
        build-essential \
        gettext \
-       # libpq5 needed in runtime for psycopg2
        libpq5 \
        libpq-dev \
        git \
        net-tools \
        procps \
+       ca-certificates \
        wget; \
-    # install gosu
-    apt-get install -y --no-install-recommends ca-certificates wget; \
-    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-    chmod +x /usr/local/bin/gosu; \
-    # verify gosu signature
-    export GNUPGHOME="$(mktemp -d)"; \
-	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	command -v gpgconf && gpgconf --kill all || :; \
-	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+    # install su-exec (replaces gosu, works on all architectures)
+    wget -O /usr/local/bin/su-exec "https://github.com/ncopa/su-exec/releases/download/v0.2/su-exec"; \
+    chmod +x /usr/local/bin/su-exec; \
     # install Taiga dependencies
     python -m pip install --upgrade pip; \
     python -m pip install wheel; \
@@ -61,12 +43,12 @@ RUN set -eux; \
     chmod +x docker/entrypoint.sh; \
     chmod +x docker/async_entrypoint.sh; \
     cp docker/config.py settings/config.py; \
-    #  create taiga group and user to use it and give permissions over the code (in entrypoint)
+    # create taiga group and user
     groupadd --system taiga --gid=999; \
     useradd --system --no-create-home --gid taiga --uid=999 --shell=/bin/bash taiga; \
     mkdir -p /taiga-back/media/exports; \
     chown -R taiga:taiga /taiga-back; \
-    # remove unneeded files and packages
+    # cleanup
     apt-get purge -y \
        build-essential \
        gettext \
@@ -78,7 +60,6 @@ RUN set -eux; \
     apt-get autoremove -y; \
     rm -rf /var/lib/apt/lists/*; \
     rm -rf /root/.cache; \
-    # clean taiga
     rm requirements.txt; \
     rm requirements-contribs.txt; \
     find . -name '__pycache__' -exec rm -r '{}' +; \
@@ -86,6 +67,5 @@ RUN set -eux; \
     find . -name '*po' -exec rm -r '{}' +
 
 ENV DJANGO_SETTINGS_MODULE=settings.config
-
 EXPOSE 8000
 ENTRYPOINT ["./docker/entrypoint.sh"]
