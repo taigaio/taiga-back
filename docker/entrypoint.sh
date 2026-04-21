@@ -22,7 +22,7 @@ chown -R taiga:taiga /taiga-back
 
 # Start Taiga processes
 echo Starting Taiga API...
-exec gosu taiga gunicorn taiga.wsgi:application \
+exec su-exec taiga gunicorn taiga.wsgi:application \
     --name taiga_api \
     --bind 0.0.0.0:8000 \
     --workers 3 \
