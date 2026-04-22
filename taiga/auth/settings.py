@@ -250,11 +250,8 @@ store such a value.
 from datetime import timedelta
 
 from django.conf import settings
-from django.test.signals import setting_changed
-from django.utils.translation import gettext_lazy as _
-from taiga.base.api.settings import APISettings
 
-from .utils import format_lazy
+from django.utils.module_loading import import_string
 
 USER_SETTINGS = getattr(settings, 'SIMPLE_JWT', None)
 
@@ -289,16 +286,34 @@ IMPORT_STRINGS = (
     'TOKEN_USER_CLASS',
 )
 
-api_settings = APISettings(USER_SETTINGS, DEFAULTS, IMPORT_STRINGS)
+class DynamicAPISettings:
+    """
+    A dynamic settings proxy that fetches configurations at runtime,
+    eliminating the need for global mutation or signal listeners.
+    """
+    def __init__(self, defaults, import_strings):
+        self.defaults = defaults
+        self.import_strings = import_strings
 
+    def __getattr__(self, attr):
+        if attr not in self.defaults:
+            raise AttributeError(f"Invalid API setting: '{attr}'")
 
-def reload_api_settings(*args, **kwargs):  # pragma: no cover
-    global api_settings
+        # 1. Dynamically fetch the current dictionary from Django settings
+        user_settings = getattr(settings, 'SIMPLE_JWT', {})
+        
+        # 2. Get the value (fallback to default if not provided)
+        val = user_settings.get(attr, self.defaults[attr])
 
-    setting, value = kwargs['setting'], kwargs['value']
+        # 3. Replicate the original IMPORT_STRINGS behavior
+        if attr in self.import_strings:
+            # Handle list/tuple of strings (e.g., AUTH_TOKEN_CLASSES)
+            if isinstance(val, (list, tuple)):
+                return [import_string(item) if isinstance(item, str) else item for item in val]
+            # Handle single string (e.g., TOKEN_USER_CLASS)
+            elif isinstance(val, str):
+                return import_string(val)
+                
+        return val
 
-    if setting == 'SIMPLE_JWT':
-        api_settings = APISettings(value, DEFAULTS, IMPORT_STRINGS)
-
-
-setting_changed.connect(reload_api_settings)
+api_settings = DynamicAPISettings(DEFAULTS, IMPORT_STRINGS)

@@ -346,7 +346,7 @@ def test_for_user():
     assert token[api_settings.USER_ID_CLAIM] == user_id
 
     # Test with non-int user id
-    with override_api_settings(USER_ID_FIELD='username'):
+    with patch.object(api_settings, 'USER_ID_FIELD', 'username'):
         token = MyToken.for_user(user)
 
     assert token[api_settings.USER_ID_CLAIM] == username
