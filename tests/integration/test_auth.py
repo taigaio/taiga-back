@@ -336,20 +336,6 @@ def test_get_auth_token_error_inactive_user(client, settings):
     assert response.status_code == 401, response.data
 
 
-def test_get_auth_token_error_inactive_user(client, settings):
-    settings.PUBLIC_REGISTER_ENABLED = False
-    user = factories.UserFactory(is_active=False)
-
-    auth_data = {
-        "username": user.username,
-        "password": user.username,
-        "type": "normal",
-    }
-
-    response = client.post(reverse("auth-list"), auth_data)
-
-    assert response.status_code == 401, response.data
-
 def test_get_auth_token_error_system_user(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = False
     user = factories.UserFactory(is_system=True)
