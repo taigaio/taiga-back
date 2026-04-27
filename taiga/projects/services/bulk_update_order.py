@@ -291,8 +291,8 @@ def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
         execute_values(curs,
                        """
                        UPDATE userstories_userstory
-                       SET kanban_order = tmp.new_order,
-                           swimlane_id = tmp.sid
+                       SET kanban_order = tmp.new_order::BIGINT,
+                           swimlane_id = tmp.sid::INTEGER
                        FROM (VALUES %s) AS tmp (sid, ussid, new_order)
                        WHERE tmp.ussid = userstories_userstory.id""",
                        data)
