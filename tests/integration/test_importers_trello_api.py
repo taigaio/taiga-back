@@ -17,6 +17,8 @@ from taiga.base.utils import json
 from taiga.base import exceptions as exc
 
 import taiga.importers.trello.importer
+from taiga.importers.trello.importer import TrelloImporter
+from taiga.projects.models import UserStoryStatus
 
 pytestmark = pytest.mark.django_db
 
@@ -257,3 +259,58 @@ def test_import_trello_project_with_celery_disabled(client, settings):
     assert response.status_code == 200
     assert "slug" in response.data
     assert response.data['slug'] == "imported-project"
+
+
+def test_import_project_large_list_positions_do_not_overflow(settings):
+    """
+    Trello list pos values can exceed PostgreSQL's integer max (~2.1 billion) on
+    boards that have been heavily reordered. The importer must use compact sequential
+    order values instead of passing pos directly, otherwise UserStoryStatus.objects.create
+    raises NumericValueOutOfRange and the import dies silently in the Celery worker.
+    """
+    settings.IMPORTERS = {"trello": {"api_key": "test-key", "secret_key": "test-secret"}}
+
+    user = f.UserFactory.create()
+    f.ProjectTemplateFactory.create(
+        slug="kanban",
+        roles=[{"name": "UX", "slug": "ux", "computable": True, "permissions": [], "order": 10}],
+        default_options={},
+    )
+
+    # pos values here are ~2^47, well above the PostgreSQL integer max of 2^31-1
+    board_data = {
+        "name": "Test Board",
+        "desc": "",
+        "labels": [],
+        "organization": None,
+        "lists": [
+            {"id": "aaa", "name": "To Do",      "pos": 140737488338944, "closed": False},
+            {"id": "bbb", "name": "In Progress", "pos": 140737488355328, "closed": False},
+            {"id": "ccc", "name": "Done",        "pos": 140737488371712, "closed": True},
+        ],
+        "cards": [],
+        "checklists": [],
+    }
+
+    options = {
+        "template": "kanban",
+        "name": None,
+        "description": None,
+        "is_private": False,
+        "users_bindings": {},
+        "keep_external_reference": False,
+    }
+
+    with mock.patch("taiga.importers.trello.importer.TrelloClient"):
+        importer = TrelloImporter(user, "token")
+
+    project = importer._import_project_data(board_data, options)
+
+    statuses = list(UserStoryStatus.objects.filter(project=project).order_by("order"))
+    assert len(statuses) == 3
+
+    # Relative order must match original pos ordering
+    assert [s.name for s in statuses] == ["To Do", "In Progress", "Done"]
+
+    # All order values must fit within PostgreSQL's integer range (max 2^31-1)
+    assert all(s.order < 2 ** 31 for s in statuses)

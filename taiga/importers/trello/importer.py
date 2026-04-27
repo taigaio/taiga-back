@@ -180,15 +180,16 @@ class TrelloImporter:
     def _import_project_data(self, data, options):
         board = data
         labels = board['labels']
-        statuses = board['lists']
+        # Sort by pos to preserve relative list order; Trello pos values can exceed
+        # PostgreSQL's integer max (2^31-1) on reordered boards, so we use sequential
+        # integers for order rather than the raw pos value.
+        statuses = sorted(board['lists'], key=lambda l: l['pos'])
         project_template = ProjectTemplate.objects.get(slug=options.get('template', "kanban"))
         project_template.us_statuses = []
-        counter = 0
-        for us_status in statuses:
-            if counter == 0:
+        for order, us_status in enumerate(statuses, start=1):
+            if not project_template.us_statuses:
                 project_template.default_options["us_status"] = us_status['name']
 
-            counter += 1
             if us_status['name'] not in [s['name'] for s in project_template.us_statuses]:
                 project_template.us_statuses.append({
                     "name": us_status['name'],
@@ -197,7 +198,7 @@ class TrelloImporter:
                     "is_archived": True if us_status['closed'] else False,
                     "color": "#999999",
                     "wip_limit": None,
-                    "order": us_status['pos'],
+                    "order": order,
                 })
 
         project_template.task_statuses = []
