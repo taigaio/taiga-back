@@ -5,20 +5,21 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
+import gc
+from unittest.mock import patch
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Model
 from django.test.utils import override_settings
 
-from taiga.projects.models import Project
+from taiga.base.utils.iterators import CHUNK_SIZE
 from taiga.projects.history.models import HistoryEntry
+from taiga.projects.models import Project
+
 from .models import Timeline
 from .service import _get_impl_key_from_model, _timeline_impl_map, extract_user_info
-from .signals import on_new_history_entry, _push_to_timelines
-
-from unittest.mock import patch
-
-import gc
+from .signals import _push_to_timelines, on_new_history_entry
 
 
 class BulkCreator(object):
@@ -101,7 +102,7 @@ def rebuild_timeline(initial_date, final_date, project_id):
             for membership in project.memberships.exclude(user=None).exclude(user=project.owner):
                 _push_to_timelines(project, membership.user, membership, "create", membership.created_at, refresh_totals=False)
 
-        for project in projects.iterator():
+        for project in projects.iterator(chunk_size=CHUNK_SIZE):
             print("Project:", project)
             extra_data = {
                 "values_diff": {},
@@ -112,7 +113,7 @@ def rebuild_timeline(initial_date, final_date, project_id):
                                refresh_totals=False)
             del extra_data
 
-        for historyEntry in history_entries.iterator():
+        for historyEntry in history_entries.iterator(chunk_size=CHUNK_SIZE):
             print("History entry:", historyEntry.created_at)
             try:
                 historyEntry.refresh_totals = False
@@ -120,7 +121,7 @@ def rebuild_timeline(initial_date, final_date, project_id):
             except ObjectDoesNotExist as e:
                 print("Ignoring")
 
-        for project in projects.iterator():
+        for project in projects.iterator(chunk_size=CHUNK_SIZE):
             project.refresh_totals()
 
     bulk_creator.flush()

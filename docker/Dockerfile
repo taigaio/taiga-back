@@ -32,7 +32,7 @@ RUN set -eux; \
     apt-get install -y \
        build-essential \
        gettext \
-       # libpq5 needed in runtime for psycopg2
+       # libpq5 needed in runtime for psycopg
        libpq5 \
        libpq-dev \
        git \

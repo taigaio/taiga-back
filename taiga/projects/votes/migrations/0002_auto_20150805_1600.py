@@ -8,7 +8,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from django.utils.timezone import utc
 from django.conf import settings
 import datetime
 
@@ -23,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='vote',
             name='created_date',
-            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2015, 8, 5, 16, 0, 40, 158374, tzinfo=utc), verbose_name='created date'),
+            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2015, 8, 5, 16, 0, 40, 158374, tzinfo=datetime.timezone.utc), verbose_name='created date'),
             preserve_default=False,
         ),
         migrations.AlterField(

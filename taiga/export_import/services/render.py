@@ -10,10 +10,11 @@
 
 import gc
 
-from taiga.base.utils import json
-from taiga.base.fields import MethodField
-from taiga.timeline.service import get_project_timeline
 from taiga.base.api.fields import get_component
+from taiga.base.fields import MethodField
+from taiga.base.utils import json
+from taiga.base.utils.iterators import CHUNK_SIZE
+from taiga.timeline.service import get_project_timeline
 
 from .. import serializers
 
@@ -46,12 +47,13 @@ def render_project(project, outfile, chunk_size=8190):
 
             if field_name == "issues":
                 value = value.select_related('severity', 'priority', 'type')
-            value = value.prefetch_related('history_entry', 'attachments')
+            # TODO Prefetching history_entry is currently causing errors. The actual data is fetched from history_service.get_history_queryset_by_model_instance(). Needs confirmation
+            value = value.prefetch_related('attachments')
 
             outfile.write('"{}": [\n'.format(field_name).encode())
 
             first_item = True
-            for item in value.iterator():
+            for item in value.iterator(chunk_size=CHUNK_SIZE):
                 # Avoid writing "," in the last element
                 if not first_item:
                     outfile.write(b",\n")
@@ -75,7 +77,7 @@ def render_project(project, outfile, chunk_size=8190):
     # Generate the timeline
     outfile.write(b',\n"timeline": [\n')
     first_timeline = True
-    for timeline_item in get_project_timeline(project).iterator():
+    for timeline_item in get_project_timeline(project).iterator(chunk_size=CHUNK_SIZE):
         # Avoid writing "," in the last element
         if not first_timeline:
             outfile.write(b",\n")

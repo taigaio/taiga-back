@@ -5,36 +5,31 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
-from django.urls import reverse
-from django.conf import settings
-from django.core.files import File
-from django.core import mail
-from django.core import signing
+import os.path
+from tempfile import NamedTemporaryFile
+from unittest import mock
 
-from taiga.base import exceptions as exc
+import pytest
+from django.conf import settings
+from django.core import mail, signing
+from django.core.files import File
+from django.urls import reverse
+from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
+
 from taiga.base.utils import json
-from taiga.projects.services import stats as stats_services
-from taiga.projects.history.services import take_snapshot
 from taiga.permissions.choices import ANON_PERMISSIONS
-from taiga.projects.models import Project, Swimlane
-from taiga.projects.userstories.models import UserStory
-from taiga.projects.tasks.models import Task
-from taiga.projects.issues.models import Issue
-from taiga.projects.epics.models import Epic
 from taiga.projects.choices import BLOCKED_BY_DELETING
+from taiga.projects.epics.models import Epic
+from taiga.projects.history.services import take_snapshot
+from taiga.projects.issues.models import Issue
+from taiga.projects.models import Project, Swimlane
+from taiga.projects.services import stats as stats_services
+from taiga.projects.tasks.models import Task
+from taiga.projects.userstories.models import UserStory
 from taiga.timeline.service import get_project_timeline
 
 from .. import factories as f
 from ..utils import DUMMY_BMP_DATA
-
-from tempfile import NamedTemporaryFile
-from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
-
-import os.path
-import pytest
-
-from unittest import mock
-
 
 pytestmark = pytest.mark.django_db
 
@@ -44,11 +39,26 @@ class ExpiredSigner(signing.TimestampSigner):
         super().__init__(*args, **kwargs)
         self.salt = "django.core.signing.TimestampSigner"
 
+    """
+    Matches django private internal code take from
+    django.core.signing.b62_encode
+    """
+    def b62_encode(self, s):
+        BASE62_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        if s == 0:
+            return "0"
+        sign = "-" if s < 0 else ""
+        s = abs(s)
+        encoded = ""
+        while s > 0:
+            s, remainder = divmod(s, 62)
+            encoded = BASE62_ALPHABET[remainder] + encoded
+        return sign + encoded
+
     def timestamp(self):
-        from django.utils import baseconv
         import time
         time_in_the_far_past = int(time.time()) - 24*60*60*1000
-        return baseconv.base62.encode(time_in_the_far_past)
+        return self.b62_encode(time_in_the_far_past)
 
 
 def test_get_project_detail(client):

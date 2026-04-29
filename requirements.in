@@ -1,8 +1,8 @@
 # Main
-Django>=3.2.19,<4
+Django>=6,<6.1
 celery
 gunicorn
-psycopg2<2.10  # required by django, 2.9.10 was the latest
+psycopg>=3.3.3
 redis
 
 # Third party by Kaleidos
@@ -12,13 +12,13 @@ django-sr>=0.0.4
 djmail>=2.0.0
 
 # Other third party
-bleach<5 # v6.0.0 has backwards incompatible changes https://github.com/mozilla/bleach/blob/main/CHANGES#L44
+bleach<6 # v6.0.0 removed module-level ALLOWED_TAGS/ALLOWED_ATTRIBUTES used in mdrender/service.py
 diff-match-patch
 django-ipware>7
 django-jinja
-django-picklefield<3.3.0 # 3.3.0 dropped support for Django 3.2
+django-picklefield>=3.3.0 # >=3.3.0 required; older versions only supported Django 3.2
 django-pglocks
-easy-thumbnails<2.9 # 2.9 released after Django 3.2 LTS EOL
+easy-thumbnails>=2.10 # 2.10+ required for Django 5.x support (2.9 still used removed get_storage_class)
 netaddr
 premailer>=3.10
 psd-tools>=1.9.18,<1.10.0 # https://psd-tools.readthedocs.io/en/latest/migration.html#migrating-to-1-10

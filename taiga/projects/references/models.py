@@ -5,16 +5,16 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
 
-from taiga.projects.models import Project
 from taiga.projects.epics.models import Epic
-from taiga.projects.userstories.models import UserStory
-from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
+from taiga.projects.models import Project
+from taiga.projects.tasks.models import Task
+from taiga.projects.userstories.models import UserStory
 
 from . import sequences as seq
 
@@ -104,7 +104,8 @@ def attach_sequence(sender, instance, created, **kwargs):
             # Create a reference object. This operation should be
             # used in transaction context, otherwise it can
             # create a lot of phantom reference objects.
-            refval, _ = make_reference(instance, instance.project)
+            # TODO: double check why without create=True the tests fail when doing `pytest -v -n auto`
+            refval, _ = make_reference(instance, instance.project, create=True)
 
             # Additionally, attach sequence number to instance as ref
             instance.ref = refval

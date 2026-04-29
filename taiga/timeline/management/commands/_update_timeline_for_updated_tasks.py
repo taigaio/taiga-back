@@ -5,18 +5,20 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
+from optparse import make_option
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
-from django.db.models import Prefetch, F
+from django.db.models import F, Prefetch
 from django.test.utils import override_settings
 
-from taiga.timeline.models import Timeline
-from taiga.timeline.timeline_implementations import userstory_timeline
-from optparse import make_option
+from taiga.base.utils.iterators import CHUNK_SIZE
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
+from taiga.timeline.models import Timeline
+from taiga.timeline.timeline_implementations import userstory_timeline
 
 
 def update_timeline(initial_date, final_date):
@@ -31,14 +33,14 @@ def update_timeline(initial_date, final_date):
     print("Generating tasks indexed by id dict")
     task_ids = timelines.values_list("object_id", flat=True)
 
-    tasks_iterator = Task.objects.filter(id__in=task_ids).select_related("user_story").iterator()
+    tasks_iterator = Task.objects.filter(id__in=task_ids).select_related("user_story").iterator(chunk_size=CHUNK_SIZE)
     tasks_per_id = {task.id: task for task in tasks_iterator}
     del task_ids
 
     counter = 1
     total = timelines.count()
     print("Updating timelines")
-    for timeline in timelines.iterator():
+    for timeline in timelines.iterator(chunk_size=CHUNK_SIZE):
         print("%s/%s"%(counter, total))
         task_id = timeline.object_id
         task = tasks_per_id.get(task_id, None)

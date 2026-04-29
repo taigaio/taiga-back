@@ -73,7 +73,6 @@ USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Errors report configuration
-SEND_BROKEN_LINK_EMAILS = True
 IGNORABLE_404_ENDS = (".php", ".cgi")
 IGNORABLE_404_STARTS = ("/phpmyadmin/",)
 
@@ -242,7 +241,14 @@ STATICFILES_DIRS = (
 )
 
 # Default storage
-DEFAULT_FILE_STORAGE = "taiga.base.storage.FileSystemStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "taiga.base.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 
