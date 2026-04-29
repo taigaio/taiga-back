@@ -334,9 +334,90 @@ def test_deleted_user_can_not_use_its_token(client):
     assert response.status_code == 401, response.data
 
 
-##############################
-## Cancel account
-##############################
+def test_delete_self_user_anonymizes_history_entries(client):
+    """
+    When a user cancels their account, all identifying information in
+    history entries should be anonymized (GDPR compliance, issue #96).
+    """
+    from taiga.projects.history.models import HistoryEntry
+
+    user = f.UserFactory.create(full_name="Real Username")
+    project = f.ProjectFactory.create(owner=user)
+    original_user_pk = user.pk
+
+    issue = f.create_issue(owner=user, project=project)
+    issue_key = "issues.issue:{}".format(issue.pk)
+
+    # Create history entries with the user's real name
+    entry1 = HistoryEntry.objects.create(
+        user={"pk": user.pk, "name": "Real Username"},
+        project=project,
+        type=1,
+        key=issue_key,
+        diff={},
+        values={},
+        comment="A test comment",
+        values_diff_cache={"some": "cached_data"},
+    )
+    entry2 = HistoryEntry.objects.create(
+        user={"pk": user.pk, "name": "Real Username"},
+        project=project,
+        type=1,
+        key=issue_key,
+        diff={},
+        values={},
+        delete_comment_user={"pk": user.pk, "name": "Real Username"},
+    )
+
+    # Sanity check: entries have original user name
+    assert entry1.user["name"] == "Real Username"
+    assert entry2.delete_comment_user["name"] == "Real Username"
+
+    # Cancel the user
+    user.cancel()
+
+    # Verify history entries are anonymized
+    entry1.refresh_from_db()
+    entry2.refresh_from_db()
+
+    assert entry1.user["pk"] == original_user_pk
+    assert entry1.user["name"] == "Deleted user"
+    assert entry1.values_diff_cache is None
+
+    assert entry2.user["pk"] == original_user_pk
+    assert entry2.user["name"] == "Deleted user"
+    assert entry2.delete_comment_user["pk"] == original_user_pk
+    assert entry2.delete_comment_user["name"] == "Deleted user"
+
+
+def test_delete_self_user_does_not_anonymize_other_users_history(client):
+    """
+    Cancelling one user should not affect history entries owned by other users.
+    """
+    from taiga.projects.history.models import HistoryEntry
+
+    user_to_delete = f.UserFactory.create(full_name="User To Delete")
+    other_user = f.UserFactory.create(full_name="Other User")
+    project = f.ProjectFactory.create(owner=user_to_delete)
+
+    issue = f.create_issue(owner=other_user, project=project)
+    issue_key = "issues.issue:{}".format(issue.pk)
+
+    entry = HistoryEntry.objects.create(
+        user={"pk": other_user.pk, "name": "Other User"},
+        project=project,
+        type=1,
+        key=issue_key,
+        diff={},
+        values={},
+    )
+
+    user_to_delete.cancel()
+
+    entry.refresh_from_db()
+    assert entry.user["name"] == "Other User"
+
+
 
 def test_cancel_self_user_with_valid_token(client):
     user = f.UserFactory.create()
