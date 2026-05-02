@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2025-02-17 17:02+0000\n"
+"PO-Revision-Date: 2026-05-03 22:09+0000\n"
 "Last-Translator: Alexander Gabilondo <alexgabi@openmailbox.org>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "eu/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10.1-dev\n"
+"X-Generator: Weblate 5.17.1\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -141,7 +141,7 @@ msgstr "Ezin da sortu tokena mota edo iraupena zehaztu gabe"
 
 #: taiga/auth/tokens.py:127
 msgid "Token has no id"
-msgstr "Tokenak ez du IDrik"
+msgstr "Tokenak ez du identifikadorerik"
 
 #: taiga/auth/tokens.py:138
 msgid "Token has no type"
@@ -342,7 +342,7 @@ msgstr "Baliogabeko esteka - ez dago halako objekturik."
 #: taiga/base/api/relations.py:365
 #, python-format
 msgid "Incorrect type.  Expected url string, received %s."
-msgstr "Mota ez da zuzena. Espero zen URLa, jasota %s."
+msgstr "Mota ez da zuzena. Espero zen Url-a, jasota %s."
 
 #: taiga/base/api/serializers.py:313
 msgid "Invalid data"
