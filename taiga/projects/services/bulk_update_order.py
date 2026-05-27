@@ -299,4 +299,4 @@ def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
                        FROM (VALUES %s) AS tmp (sid, ussid, new_order)
                        WHERE tmp.ussid = userstories_userstory.id""",
                        data,
-                       template="(%s::integer, %s, %s)")
+                       template="(%s::integer, %s::integer, %s::integer)")
