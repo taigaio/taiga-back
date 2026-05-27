@@ -287,6 +287,9 @@ def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
     new_indexes = range(0, len(ordered_uss_ids))
     data = list(zip(ordered_swimlane_ids, ordered_uss_ids, new_indexes))
 
+    if not data:
+        return
+
     with connection.cursor() as curs:
         execute_values(curs,
                        """
@@ -295,4 +298,5 @@ def update_order_and_swimlane(swimlane_to_be_deleted, move_to_swimlane):
                            swimlane_id = tmp.sid
                        FROM (VALUES %s) AS tmp (sid, ussid, new_order)
                        WHERE tmp.ussid = userstories_userstory.id""",
-                       data)
+                       data,
+                       template="(%s::integer, %s, %s)")
