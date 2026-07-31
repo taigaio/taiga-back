@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2022-01-07 20:55+0000\n"
-"Last-Translator: Ali Al-Ghanim <alghanim_777@hotmail.com>\n"
+"PO-Revision-Date: 2026-07-31 04:47+0000\n"
+"Last-Translator: Ibrahim Aljuhani <info@ia.sa>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "ar/>\n"
 "Language: ar\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 2026.8.dev0\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -40,35 +40,35 @@ msgstr "خطأ في نوع التسجيل"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
-msgstr ""
+msgstr "يجب أن يحتوي رأس التفويض (Authorization) على قيمتين مفصولتين بمسافة"
 
 #: taiga/auth/authentication.py:131
 msgid "Given token not valid for any token type"
-msgstr ""
+msgstr "الرمز المُعطى غير صالح لأي نوع من أنواع الرموز"
 
 #: taiga/auth/authentication.py:142 taiga/auth/authentication.py:164
 msgid "Token contained no recognizable user identification"
-msgstr ""
+msgstr "لا يحتوي الرمز على معرّف مستخدم يمكن التعرف عليه"
 
 #: taiga/auth/authentication.py:147
 msgid "User not found"
-msgstr ""
+msgstr "المستخدم غير موجود"
 
 #: taiga/auth/authentication.py:150
 msgid "User is inactive"
-msgstr ""
+msgstr "المستخدم غير مُفعّل"
 
 #: taiga/auth/backends.py:91
 msgid "Unrecognized algorithm type '{}'"
-msgstr ""
+msgstr "نوع خوارزمية غير معروف '{}'"
 
 #: taiga/auth/backends.py:94
 msgid "You must have cryptography installed to use {}."
-msgstr ""
+msgstr "يجب تثبيت مكتبة cryptography لاستخدام {}."
 
 #: taiga/auth/backends.py:128
 msgid "Invalid algorithm specified"
-msgstr ""
+msgstr "الخوارزمية المحددة غير صالحة"
 
 #: taiga/auth/backends.py:130 taiga/auth/exceptions.py:69
 #: taiga/auth/tokens.py:75
