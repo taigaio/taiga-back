@@ -47,3 +47,4 @@ big, to improve Taiga's overall security rating.
 - Robert Flosbach (Neodyme AG)
 - @geo-chen
 - Ugur Ozer (Aeon AI Risk Management)
+- Sujal Tuladhar (EvilGenSec)
