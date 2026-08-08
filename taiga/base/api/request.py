@@ -43,9 +43,10 @@ The wrapped request then offers a richer API, in particular :
 """
 from django.conf import settings
 from django.http import QueryDict
-from django.http.multipartparser import parse_header
 from django.utils.datastructures import MultiValueDict
 import six
+
+from taiga.base.api.utils.mediatypes import parse_header
 
 from taiga.base import exceptions
 
