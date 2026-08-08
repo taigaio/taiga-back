@@ -137,3 +137,94 @@ def test_remove_issue_watcher(client):
     assert response.status_code == 200
     assert response.data['watchers'] == []
     assert response.data['is_watcher'] == False
+
+
+def test_create_issue_with_watchers_via_api(client):
+    """
+    Regression test for: watchers specified at creation time via the API
+    must be persisted (bug: they were silently discarded).
+    """
+    owner = f.UserFactory.create()
+    watcher = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=owner)
+    f.MembershipFactory.create(project=project, user=owner, is_admin=True)
+    f.MembershipFactory.create(project=project, user=watcher, is_admin=True)
+    url = reverse("issues-list")
+
+    data = {
+        "subject": "Issue with watchers",
+        "project": project.id,
+        "watchers": [watcher.id],
+    }
+    client.login(owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert watcher.id in response.data['watchers']
+    assert response.data['total_watchers'] >= 1
+
+
+def test_create_issue_with_multiple_watchers_via_api(client):
+    """
+    Multiple watchers specified at creation time should all be persisted.
+    """
+    owner = f.UserFactory.create()
+    watcher1 = f.UserFactory.create()
+    watcher2 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=owner)
+    f.MembershipFactory.create(project=project, user=owner, is_admin=True)
+    f.MembershipFactory.create(project=project, user=watcher1, is_admin=True)
+    f.MembershipFactory.create(project=project, user=watcher2, is_admin=True)
+    url = reverse("issues-list")
+
+    data = {
+        "subject": "Issue with multiple watchers",
+        "project": project.id,
+        "watchers": [watcher1.id, watcher2.id],
+    }
+    client.login(owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert watcher1.id in response.data['watchers']
+    assert watcher2.id in response.data['watchers']
+
+
+def test_create_issue_without_watchers_still_works(client):
+    """
+    Regression: creating an issue without specifying watchers should still succeed.
+    """
+    owner = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=owner)
+    f.MembershipFactory.create(project=project, user=owner, is_admin=True)
+    url = reverse("issues-list")
+
+    data = {
+        "subject": "Issue without watchers",
+        "project": project.id,
+    }
+    client.login(owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert response.data['watchers'] == [] or response.data['watchers'] is not None
+
+
+def test_update_issue_watchers_still_works(client):
+    """
+    Regression: updating watchers on an existing issue via PATCH must still work.
+    """
+    owner = f.UserFactory.create()
+    watcher = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=owner)
+    f.MembershipFactory.create(project=project, user=owner, is_admin=True)
+    f.MembershipFactory.create(project=project, user=watcher, is_admin=True)
+    issue = f.create_issue(owner=owner, project=project)
+    url = reverse("issues-detail", args=(issue.id,))
+
+    client.login(owner)
+    data = {"version": issue.version, "watchers": [watcher.id]}
+    response = client.json.patch(url, json.dumps(data))
+
+    assert response.status_code == 200
+    assert watcher.id in response.data['watchers']
