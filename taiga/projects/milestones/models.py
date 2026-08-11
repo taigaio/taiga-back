@@ -72,6 +72,10 @@ class Milestone(WatchedModelMixin, models.Model):
         return "<Milestone {0}>".format(self.id)
 
     def clean(self):
+
+        if self.estimated_start and self.estimated_start.year == datetime.MAXYEAR:
+            raise ValidationError(_("Invalid estimated start year, it must be less than 9999."))
+        
         # Don't allow draft entries to have a pub_date.
         if self.estimated_start and self.estimated_finish and self.estimated_start > self.estimated_finish:
             raise ValidationError(_('The estimated start must be previous to the estimated finish.'))
