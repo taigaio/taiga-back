@@ -7,6 +7,8 @@
 
 import uuid
 import functools
+
+from django.db.models import Prefetch
 from easy_thumbnails.source_generators import pil_image
 from dateutil.relativedelta import relativedelta
 
@@ -101,6 +103,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.select_related("owner")
+        user_stories_qs = UserStory.objects.all().select_related("status", "assigned_to")
+        qs = qs.prefetch_related(Prefetch("user_stories", queryset=user_stories_qs))
         if self.request.QUERY_PARAMS.get('discover_mode', False):
             qs = project_utils.attach_members(qs)
             qs = project_utils.attach_notify_policies(qs)
