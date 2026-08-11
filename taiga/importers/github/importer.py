@@ -540,7 +540,7 @@ class GithubImporter:
         else:
             try:
                 return dict(parse_qsl(result.content))[b'access_token'].decode('utf-8')
-            except:
+            except Exception:
                 raise InvalidAuthResult()
 
 

@@ -132,7 +132,7 @@ class TrelloImporter:
                     avatar = 'https://www.gravatar.com/avatar/' + user['gravatarHash'] + '.jpg?s=50'
                 elif user['avatarHash'] is not None:
                     avatar = 'https://trello-members.s3.amazonaws.com/' +  user['id'] +  '/' + user['avatarHash'] + '/50.png'
-            except:
+            except Exception:
                 # NOTE: Sometimes this piece of code return this exception:
                 #
                 # File "/home/taiga/taiga-back/taiga/importers/trello/importer.py" in list_users
