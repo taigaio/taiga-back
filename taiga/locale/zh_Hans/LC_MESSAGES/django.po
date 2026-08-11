@@ -4323,12 +4323,12 @@ msgstr "设计"
 #. Translators: User role
 #: taiga/projects/translations.py:165
 msgid "Front"
-msgstr "字体"
+msgstr "前端开发"
 
 #. Translators: User role
 #: taiga/projects/translations.py:167
 msgid "Back"
-msgstr "后退"
+msgstr "后端开发"
 
 #. Translators: User role
 #: taiga/projects/translations.py:169
