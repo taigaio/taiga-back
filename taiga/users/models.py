@@ -289,11 +289,62 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.save()
         self.auth_data.all().delete()
 
+        # Anonymize history entries to prevent re-identification (GDPR)
+        self._anonymize_history_entries()
+
         # Blocking all owned projects
         self.owned_projects.update(blocked_code=BLOCKED_BY_OWNER_LEAVING)
 
         # Remove all memberships
         self.memberships.all().delete()
+
+    def _anonymize_history_entries(self):
+        """
+        Remove identifying information from history entries to comply with
+        GDPR requirements. Replaces the user's real name with 'Deleted user'
+        in all JSON fields that store user info, while preserving the PK
+        for internal permission checks.
+        """
+        from taiga.projects.history.models import HistoryEntry
+        from django.db import connection
+
+        anon_user = {"pk": self.pk, "name": "Deleted user"}
+
+        # Anonymize 'user' field and clear values_diff_cache (may contain
+        # cached user names)
+        HistoryEntry.objects.filter(
+            user__pk=self.pk
+        ).update(
+            user=anon_user,
+            values_diff_cache=None
+        )
+
+        # Anonymize 'delete_comment_user' field
+        HistoryEntry.objects.filter(
+            delete_comment_user__pk=self.pk
+        ).update(
+            delete_comment_user=anon_user
+        )
+
+        # Anonymize user references inside 'comment_versions' JSONB arrays.
+        # Django ORM cannot do in-place JSONB array element updates, so we
+        # use raw SQL.
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE history_historyentry
+                SET comment_versions = (
+                    SELECT jsonb_agg(
+                        CASE
+                            WHEN (elem->'user'->>'id')::int = %s
+                            THEN jsonb_set(elem, '{user}', '{"id": null}'::jsonb)
+                            ELSE elem
+                        END
+                    )
+                    FROM jsonb_array_elements(comment_versions) AS elem
+                )
+                WHERE comment_versions IS NOT NULL
+                  AND comment_versions::text LIKE %s
+            """, [self.pk, '%"id": {}%'.format(self.pk)])
 
 
 class Role(models.Model):
