@@ -15,6 +15,11 @@ from django.utils.translation import gettext as _
 
 URL_TEMPLATE = "{scheme}://{domain}/{path}"
 
+# Schemes that execute code when used as an href. Everything else is allowed:
+# app schemes (obsidian://, vscode://, zotero://...) are legitimate links and no
+# allowlist can enumerate them.
+HARMFUL_URL_SCHEMES = frozenset(("javascript", "data", "vbscript"))
+
 
 def build_url(path, scheme="http", domain="localhost"):
     return URL_TEMPLATE.format(scheme=scheme, domain=domain, path=path.lstrip("/"))
@@ -31,6 +36,14 @@ def get_absolute_url(path):
         return path
     site = sites.get_current()
     return build_url(path, scheme=site.scheme, domain=site.domain)
+
+
+def has_harmful_scheme(url):
+    """Test whether `url` uses a scheme that executes code in an href."""
+    # Browsers ignore control characters and spaces inside the scheme, so
+    # "java\tscript:alert(1)" still runs; drop them before reading it.
+    scheme, separator, _ = "".join(c for c in url if ord(c) > 0x20).lower().partition(":")
+    return bool(separator) and scheme in HARMFUL_URL_SCHEMES
 
 
 def reverse(viewname, *args, **kwargs):

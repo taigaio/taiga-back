@@ -136,6 +136,68 @@ def test_issue_custom_attributes_values_update_with_error_invalid_key(client):
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
 
+def test_issue_custom_attributes_values_update_url_type(client):
+    issue = f.IssueFactory()
+    member = f.MembershipFactory(user=issue.project.owner,
+                                 project=issue.project,
+                                 is_admin=True)
+
+    custom_attr = f.IssueCustomAttributeFactory(project=issue.project, type="url")
+    ct_id = "{}".format(custom_attr.id)
+
+    url = reverse("issue-custom-attributes-values-detail", args=[issue.id])
+
+    accepted = [
+        "obsidian://open?vault=vaultname&file=path%2Fto%2Fpage",
+        "https://example.com",
+        "mailto:someone@example.com",
+        "",
+        None,
+    ]
+    rejected = [
+        "javascript:alert(document.domain)",
+        "JaVaScRiPt:alert(1)",
+        "  javascript:alert(1)",
+        "java\tscript:alert(1)",
+        "data:text/html;base64,PHNjcmlwdD4=",
+        "vbscript:msgbox(1)",
+    ]
+
+    client.login(member.user)
+
+    for value in accepted:
+        data = {"attributes_values": {ct_id: value},
+                "version": issue.custom_attributes_values.version}
+        response = client.json.patch(url, json.dumps(data))
+        assert response.status_code == 200, "{} should be accepted".format(value)
+        issue = issue.__class__.objects.get(id=issue.id)
+
+    for value in rejected:
+        data = {"attributes_values": {ct_id: value},
+                "version": issue.custom_attributes_values.version}
+        response = client.json.patch(url, json.dumps(data))
+        assert response.status_code == 400, "{} should be rejected".format(value)
+
+
+def test_issue_custom_attributes_values_update_with_error_non_text_value(client):
+    issue = f.IssueFactory()
+    member = f.MembershipFactory(user=issue.project.owner,
+                                 project=issue.project,
+                                 is_admin=True)
+
+    custom_attr = f.IssueCustomAttributeFactory(project=issue.project)
+    ct_id = "{}".format(custom_attr.id)
+
+    url = reverse("issue-custom-attributes-values-detail", args=[issue.id])
+
+    client.login(member.user)
+    for value in [42, True, ["a"], {"a": 1}]:
+        data = {"attributes_values": {ct_id: value},
+                "version": issue.custom_attributes_values.version}
+        response = client.json.patch(url, json.dumps(data))
+        assert response.status_code == 400, "{} should be rejected".format(value)
+
+
 def test_issue_custom_attributes_values_delete_issue(client):
     issue = f.IssueFactory()
     member = f.MembershipFactory(user=issue.project.owner,

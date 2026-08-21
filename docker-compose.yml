@@ -1,0 +1,63 @@
+# ponytail: local dev only — postgres + api. No rabbitmq: celery is off and
+# events push points at a dead local port (connection refused is caught and
+# logged). Add rabbitmq when you need realtime events or async tasks.
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: taiga
+      POSTGRES_USER: taiga
+      POSTGRES_PASSWORD: taiga
+    volumes:
+      - taiga-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taiga"]
+      interval: 5s
+      retries: 10
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_DB: taiga
+      POSTGRES_USER: taiga
+      POSTGRES_PASSWORD: taiga
+      POSTGRES_HOST: db
+      TAIGA_SECRET_KEY: dev-not-secret
+      TAIGA_SITES_SCHEME: http
+      TAIGA_SITES_DOMAIN: localhost:9000
+      DEBUG: "True"
+      PUBLIC_REGISTER_ENABLED: "True"
+      ENABLE_TELEMETRY: "False"
+      CELERY_ENABLED: "False"
+      EVENTS_PUSH_BACKEND_URL: amqp://guest:guest@127.0.0.1:5672/taiga
+      SESSION_COOKIE_SECURE: "False"
+      CSRF_COOKIE_SECURE: "False"
+
+  front:
+    image: taigaio/taiga-front:latest
+    environment:
+      TAIGA_URL: http://localhost:9000
+      TAIGA_WEBSOCKETS_URL: ws://localhost:9000
+      TAIGA_SUBPATH: ""
+      # lowercase: this lands verbatim in conf.json, "True" is not valid JSON
+      PUBLIC_REGISTER_ENABLED: "true"
+
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "9000:80"
+    volumes:
+      - ./docker/dev-gateway.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - back
+      - front
+
+volumes:
+  taiga-db:

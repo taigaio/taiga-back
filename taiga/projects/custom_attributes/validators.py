@@ -10,8 +10,10 @@ from django.utils.translation import gettext_lazy as _
 from taiga.base.fields import JSONField
 from taiga.base.exceptions import ValidationError
 from taiga.base.api.validators import ModelValidator
+from taiga.base.utils.urls import has_harmful_scheme
 
 from . import models
+from .choices import URL_TYPE
 
 
 ######################################################
@@ -108,8 +110,17 @@ class BaseCustomAttributesValuesValidator(ModelValidator):
         values_ids = list(data_values.keys())
         qs = self._custom_attribute_model.objects.filter(project=project_id,
                                                          id__in=values_ids)
-        if qs.count() != len(values_ids):
+        types_by_id = {str(id): type for id, type in qs.values_list("id", "type")}
+        if len(types_by_id) != len(values_ids):
             raise ValidationError(_("It contains invalid custom fields."))
+
+        for attribute_id, value in data_values.items():
+            if value is not None and not isinstance(value, str):
+                raise ValidationError(_("Invalid content. Custom field values must be text."))
+
+            # Empty values just clear the field, there is nothing to check
+            if types_by_id[str(attribute_id)] == URL_TYPE and value and has_harmful_scheme(value):
+                raise ValidationError(_("Invalid URL in custom field."))
 
         return attrs
 
