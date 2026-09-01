@@ -2019,6 +2019,35 @@ def test_edit_tag_only_color(client, settings):
     assert epic.tags == ["tag"]
 
 
+def test_edit_tag_only_color_with_explicit_to_tag(client, settings):
+    """
+    Regression test for #205: editing only a tag's color should still
+    work even when the client explicitly sends `to_tag` equal to
+    `from_tag` (e.g. a form that always submits the full tag object).
+    """
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, tags_colors=[("tag", "#123123")])
+    user_story = f.UserStoryFactory.create(project=project, tags=["tag"])
+
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
+    url = reverse("projects-edit-tag", args=(project.id,))
+    client.login(user)
+    data = {
+        "from_tag": "tag",
+        "to_tag": "tag",
+        "color": "#AAABBB"
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 200
+    project = Project.objects.get(id=project.pk)
+    assert project.tags_colors == [["tag", "#AAABBB"]]
+    user_story = UserStory.objects.get(id=user_story.pk)
+    assert user_story.tags == ["tag"]
+
+
 def test_edit_tag(client, settings):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user, tags_colors=[("tag", "#123123")])

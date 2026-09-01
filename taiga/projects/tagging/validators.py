@@ -59,7 +59,8 @@ class EditTagTagValidator(ProjectTagValidator):
 
     def validate_to_tag(self, attrs, source):
         tag = attrs.get(source, None)
-        if services.tag_exist_for_project_elements(self.project, tag):
+        from_tag = attrs.get("from_tag", None)
+        if tag != from_tag and services.tag_exist_for_project_elements(self.project, tag):
             raise ValidationError(_("This tag already exists."))
 
         return attrs
