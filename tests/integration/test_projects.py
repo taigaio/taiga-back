@@ -2032,7 +2032,6 @@ def test_edit_tag_only_color_with_explicit_to_tag(client, settings):
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     url = reverse("projects-edit-tag", args=(project.id,))
-    client.login(user)
     data = {
         "from_tag": "tag",
         "to_tag": "tag",
