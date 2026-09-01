@@ -41,10 +41,14 @@ class EpicListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
     is_blocked = Field()
     blocked_note = Field()
     is_closed = MethodField()
+    is_archived = MethodField()
     user_stories_counts = MethodField()
 
     def get_is_closed(self, obj):
         return obj.status is not None and obj.status.is_closed
+
+    def get_is_archived(self, obj):
+        return obj.status is not None and obj.status.is_archived
 
     def get_user_stories_counts(self, obj):
         assert hasattr(obj, "user_stories_counts"), "instance must have a user_stories_counts attribute"

@@ -568,6 +568,8 @@ class EpicStatus(models.Model):
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
+    is_archived = models.BooleanField(default=False, null=False, blank=True,
+                                      verbose_name=_("is archived"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     project = models.ForeignKey(
@@ -708,6 +710,8 @@ class TaskStatus(models.Model):
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
+    is_archived = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("is archived"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     project = models.ForeignKey(
@@ -830,6 +834,8 @@ class IssueStatus(models.Model):
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
+    is_archived = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("is archived"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     project = models.ForeignKey(
@@ -1090,6 +1096,7 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 "name": epic_status.name,
                 "slug": epic_status.slug,
                 "is_closed": epic_status.is_closed,
+                "is_archived": epic_status.is_archived,
                 "color": epic_status.color,
                 "order": epic_status.order,
             })
@@ -1130,6 +1137,7 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 "name": task_status.name,
                 "slug": task_status.slug,
                 "is_closed": task_status.is_closed,
+                "is_archived": task_status.is_archived,
                 "color": task_status.color,
                 "order": task_status.order,
             })
@@ -1150,6 +1158,7 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 "name": issue_status.name,
                 "slug": issue_status.slug,
                 "is_closed": issue_status.is_closed,
+                "is_archived": issue_status.is_archived,
                 "color": issue_status.color,
                 "order": issue_status.order,
             })
@@ -1266,6 +1275,7 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 name=epic_status["name"],
                 slug=epic_status["slug"],
                 is_closed=epic_status["is_closed"],
+                is_archived=epic_status["is_archived"],
                 color=epic_status["color"],
                 order=epic_status["order"],
                 project=project
@@ -1306,6 +1316,7 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 name=task_status["name"],
                 slug=task_status["slug"],
                 is_closed=task_status["is_closed"],
+                is_archived=task_status["is_archived"],
                 color=task_status["color"],
                 order=task_status["order"],
                 project=project
@@ -1326,6 +1337,7 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 name=issue_status["name"],
                 slug=issue_status["slug"],
                 is_closed=issue_status["is_closed"],
+                is_archived=issue_status["is_archived"],
                 color=issue_status["color"],
                 order=issue_status["order"],
                 project=project
