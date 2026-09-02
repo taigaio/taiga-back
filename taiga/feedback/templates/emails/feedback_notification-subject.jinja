@@ -6,6 +6,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos INC
 #}
 
-{% trans full_name=feedback_entry.full_name|safe, email=feedback_entry.email|safe %}
-[Taiga] Feedback from {{ full_name }} <{{ email }}>
+{% trans full_name=feedback_entry.full_name|safe, email=feedback_entry.email|safe, product_name=sr("product_name") %}
+[{{ product_name }}] Feedback from {{ full_name }} <{{ email }}>
 {% endtrans %}

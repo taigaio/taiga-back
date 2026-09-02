@@ -9,11 +9,11 @@ Copyright (c) 2021-present Kaleidos INC
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans signature=sr("signature"), user=user.get_full_name(), error_message=error_message, support_email=sr("support.email"), project=project.name %}
+    {% trans signature=sr("signature"), user=user.get_full_name(), error_message=error_message, support_email=sr("support.email"), project=project.name, product_name=sr("product_name") %}
     <h1>{{ error_message }}</h1>
     <p>Hello {{ user }},</p>
     <p>Your project {{ project }} has not been exported correctly.</p>
-    <p>The Taiga system administrators have been informed.<br/> Please, try it again or contact with the support team at
+    <p>The {{ product_name }} system administrators have been informed.<br/> Please, try it again or contact with the support team at
        <a href="mailto:{{ support_email }}" title="Support email" style="color: #83EEDE">{{ support_email }}</a></p>
     <p><small>{{ signature }}</small></p>
     {% endtrans %}

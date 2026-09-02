@@ -15,7 +15,7 @@ Copyright (c) 2021-present Kaleidos INC
 You, or someone you know, has invited you to {{ product_name }}
 
 Hi! {{ full_name }} has sent you an invitation to join a project called {{ project }} in {{ product_name }}.
-Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.
+{{ product_name }} is an Open Source Agile Project Management Tool. There is no cost for you to be a {{ product_name }} user.
 
 {% endtrans %}
 {% if membership.invitation_extra_text %}
@@ -25,7 +25,7 @@ And now a few words from the jolly good fellow or sistren who thought so kindly 
 {{ extra }}
     {% endtrans %}
 {% endif %}
-{{ _("Accept your invitation to Taiga following this link:") }}
+{{ _("Accept your invitation by following this link:") }}
 {{ resolve_front_url("invitation", membership.token) }}
 
 {% trans signature=sr("signature") %}
