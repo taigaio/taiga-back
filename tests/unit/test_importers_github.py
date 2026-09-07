@@ -23,6 +23,8 @@ def test_extract_github_inline_image_urls():
     "![image](https://images.invalid/image.png)",
     "[issue](https://github.invalid/org/repo/issues/1)",
     "![image](https://github.com/user-attachments/assets/not-a-uuid)",
+    "<img data-src=\"https://github.com/user-attachments/assets/11111111-1111-1111-1111-111111111111\" src=\"https://images.invalid/image.png\">",
+    "<img-custom src=\"https://github.com/user-attachments/assets/11111111-1111-1111-1111-111111111111\">",
 ])
 def test_extract_github_inline_image_urls_ignores_unsupported_markdown(markdown):
     assert extract_github_inline_image_urls(markdown) == []

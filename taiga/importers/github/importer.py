@@ -48,7 +48,7 @@ GITHUB_INLINE_IMAGE_RE = re.compile(
     r"[0-9a-fA-F-]{36})\)"
 )
 GITHUB_INLINE_IMAGE_HTML_RE = re.compile(
-    r"<img\b[^>]*\bsrc\s*=\s*[\"'](?P<url>https://github\.com/"
+    r"<img(?=[\s/>])[^>]*?\ssrc\s*=\s*[\"'](?P<url>https://github\.com/"
     r"user-attachments/assets/[0-9a-fA-F-]{36})[\"'][^>]*>",
     re.IGNORECASE,
 )
