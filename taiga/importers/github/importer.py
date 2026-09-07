@@ -6,15 +6,23 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 import datetime
+import logging
+import mimetypes
+import os.path
 import re
 import requests
+from email.message import Message
+from html.parser import HTMLParser
 from urllib.parse import parse_qsl
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 
 from taiga.projects.models import Project, ProjectTemplate
 from taiga.projects.references.models import recalc_reference_counter
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.issues.models import Issue
+from taiga.projects.attachments.models import Attachment
+from taiga.projects.attachments.services import generate_refresh_fragment
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.history.services import (make_diff_from_dicts,
@@ -32,10 +40,23 @@ from taiga.importers.exceptions import InvalidAuthResult, FailedRequest
 from taiga.importers import services as import_service
 
 
+logger = logging.getLogger("taiga.importers.github")
+
+
 GITHUB_INLINE_IMAGE_RE = re.compile(
     r"!\[[^\]\n]*\]\((?P<url>https://github\.com/user-attachments/assets/"
     r"[0-9a-fA-F-]{36})\)"
 )
+
+
+class _ImageSourceParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.src = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "img" and self.src is None:
+            self.src = dict(attrs).get("src")
 
 
 def extract_github_inline_image_urls(markdown):
@@ -156,6 +177,80 @@ class GithubImporter:
             pass
 
         return default
+
+    def _import_inline_image_attachment(self, obj, github_url, repository_full_name, created_date):
+        rendered = self._client.render_markdown(
+            "![image]({})".format(github_url),
+            repository_full_name,
+        )
+        parser = _ImageSourceParser()
+        parser.feed(rendered)
+        if not parser.src:
+            raise ValueError("Rendered GitHub Markdown has no image source")
+
+        content, headers = self._client.download(parser.src)
+        content_type = headers.get("Content-Type", "").split(";", 1)[0].lower()
+        if not content_type.startswith("image/"):
+            raise ValueError("GitHub attachment is not an image")
+
+        disposition = Message()
+        disposition["Content-Disposition"] = headers.get("Content-Disposition", "")
+        filename = disposition.get_filename()
+        if filename:
+            filename = os.path.basename(filename)
+        if not filename:
+            attachment_id = github_url.rsplit("/", 1)[-1]
+            extension = mimetypes.guess_extension(content_type) or ".png"
+            filename = "github-attachment-{}{}".format(attachment_id, extension)
+
+        attachment = Attachment(
+            owner=obj.owner,
+            project=obj.project,
+            content_type=ContentType.objects.get_for_model(obj),
+            object_id=obj.id,
+            name=filename,
+            size=len(content),
+            created_date=created_date,
+            is_deprecated=False,
+        )
+        attachment.attached_file.save(filename, ContentFile(content), save=True)
+        return "{}#{}".format(
+            attachment.attached_file.url,
+            generate_refresh_fragment(attachment),
+        )
+
+    def _import_inline_images(self, markdown, obj, repository_full_name, created_date):
+        if not extract_github_inline_image_urls(markdown):
+            return markdown or ""
+
+        imported_urls = {}
+
+        def replace_image(match):
+            github_url = match.group("url")
+            if github_url not in imported_urls:
+                try:
+                    imported_urls[github_url] = self._import_inline_image_attachment(
+                        obj=obj,
+                        github_url=github_url,
+                        repository_full_name=repository_full_name,
+                        created_date=created_date,
+                    )
+                except Exception as error:
+                    imported_urls[github_url] = None
+                    logger.warning(
+                        "Unable to import GitHub attachment %s for %s %s (%s)",
+                        github_url.rsplit("/", 1)[-1],
+                        obj.__class__.__name__,
+                        obj.id,
+                        type(error).__name__,
+                    )
+
+            local_url = imported_urls[github_url]
+            if not local_url:
+                return match.group(0)
+            return match.group(0).replace(github_url, local_url)
+
+        return GITHUB_INLINE_IMAGE_RE.sub(replace_image, markdown or "")
 
     def import_project(self, project_full_name, options={"keep_external_reference": False, "template": "kanban", "type": "user_stories"}):
         repo = self._client.get('/repos/{}'.format(project_full_name))
@@ -306,6 +401,16 @@ class GithubImporter:
                     created_date=issue['created_at'],
                 )
 
+                description = self._import_inline_images(
+                    markdown=issue.get("body", "") or "",
+                    obj=us,
+                    repository_full_name=repo['full_name'],
+                    created_date=issue['created_at'],
+                )
+                if description != us.description:
+                    us.description = description
+                    us.save(update_fields=["description"])
+
                 assignees = issue.get('assignees', [])
                 if len(assignees) > 1:
                     for assignee in assignees:
@@ -362,6 +467,16 @@ class GithubImporter:
                     modified_date=issue['updated_at'],
                     created_date=issue['created_at'],
                 )
+
+                description = self._import_inline_images(
+                    markdown=issue.get("body", "") or "",
+                    obj=taiga_issue,
+                    repository_full_name=repo['full_name'],
+                    created_date=issue['created_at'],
+                )
+                if description != taiga_issue.description:
+                    taiga_issue.description = description
+                    taiga_issue.save(update_fields=["description"])
 
                 assignees = issue.get('assignees', [])
                 if len(assignees) > 1:
