@@ -47,6 +47,11 @@ GITHUB_INLINE_IMAGE_RE = re.compile(
     r"!\[[^\]\n]*\]\((?P<url>https://github\.com/user-attachments/assets/"
     r"[0-9a-fA-F-]{36})\)"
 )
+GITHUB_INLINE_IMAGE_HTML_RE = re.compile(
+    r"<img\b[^>]*\bsrc\s*=\s*[\"'](?P<url>https://github\.com/"
+    r"user-attachments/assets/[0-9a-fA-F-]{36})[\"'][^>]*>",
+    re.IGNORECASE,
+)
 
 
 class _ImageSourceParser(HTMLParser):
@@ -60,9 +65,10 @@ class _ImageSourceParser(HTMLParser):
 
 
 def extract_github_inline_image_urls(markdown):
-    return list(dict.fromkeys(
-        match.group("url") for match in GITHUB_INLINE_IMAGE_RE.finditer(markdown or "")
-    ))
+    urls = []
+    for pattern in (GITHUB_INLINE_IMAGE_RE, GITHUB_INLINE_IMAGE_HTML_RE):
+        urls.extend(match.group("url") for match in pattern.finditer(markdown or ""))
+    return list(dict.fromkeys(urls))
 
 
 class GithubClient:
@@ -220,7 +226,8 @@ class GithubImporter:
         )
 
     def _import_inline_images(self, markdown, obj, repository_full_name, created_date):
-        if not extract_github_inline_image_urls(markdown):
+        github_urls = extract_github_inline_image_urls(markdown)
+        if not github_urls:
             return markdown or ""
 
         imported_urls = {}
@@ -250,7 +257,8 @@ class GithubImporter:
                 return match.group(0)
             return match.group(0).replace(github_url, local_url)
 
-        return GITHUB_INLINE_IMAGE_RE.sub(replace_image, markdown or "")
+        rewritten = GITHUB_INLINE_IMAGE_RE.sub(replace_image, markdown or "")
+        return GITHUB_INLINE_IMAGE_HTML_RE.sub(replace_image, rewritten)
 
     def import_project(self, project_full_name, options={"keep_external_reference": False, "template": "kanban", "type": "user_stories"}):
         repo = self._client.get('/repos/{}'.format(project_full_name))

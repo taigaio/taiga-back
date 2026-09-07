@@ -22,11 +22,17 @@ def test_extract_github_inline_image_urls():
 @pytest.mark.parametrize("markdown", [
     "![image](https://images.invalid/image.png)",
     "[issue](https://github.invalid/org/repo/issues/1)",
-    "<img src=\"https://github.com/user-attachments/assets/11111111-1111-1111-1111-111111111111\">",
     "![image](https://github.com/user-attachments/assets/not-a-uuid)",
 ])
 def test_extract_github_inline_image_urls_ignores_unsupported_markdown(markdown):
     assert extract_github_inline_image_urls(markdown) == []
+
+
+def test_extract_github_inline_image_urls_from_html():
+    attachment_url = "https://github.com/user-attachments/assets/11111111-1111-1111-1111-111111111111"
+    html = '<img width="305" height="171" alt="Image" src="{}" />'.format(attachment_url)
+
+    assert extract_github_inline_image_urls(html) == [attachment_url]
 
 
 @mock.patch("taiga.importers.github.importer.requests.post")
@@ -99,7 +105,10 @@ def test_import_inline_image_rewrites_markdown_and_creates_attachment(
 ):
     github_url = "https://github.com/user-attachments/assets/11111111-1111-1111-1111-111111111111"
     signed_url = "https://signed.invalid/image.png?jwt=mock-token"
-    markdown = "![image]({}) ![duplicate]({})".format(github_url, github_url)
+    markdown = (
+        "![image]({}) <img width=\"305\" height=\"171\" alt=\"Image\" "
+        "src=\"{}\" />"
+    ).format(github_url, github_url)
     attached_file = SimpleNamespace(url="/media/attachments/screenshot.png", save=mock.Mock())
     attachment = SimpleNamespace(
         id=42,
@@ -133,7 +142,10 @@ def test_import_inline_image_rewrites_markdown_and_creates_attachment(
     )
 
     expected_url = "/media/attachments/screenshot.png#_taiga-refresh=issue:42"
-    assert result == "![image]({0}) ![duplicate]({0})".format(expected_url)
+    assert result == (
+        "![image]({0}) <img width=\"305\" height=\"171\" alt=\"Image\" "
+        "src=\"{0}\" />"
+    ).format(expected_url)
     client.render_markdown.assert_called_once_with(
         "![image]({})".format(github_url),
         "owner/repository",
