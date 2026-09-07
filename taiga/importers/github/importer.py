@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 import datetime
+import re
 import requests
 from urllib.parse import parse_qsl
 from django.core.files.base import ContentFile
@@ -29,6 +30,18 @@ from taiga.users.models import User, AuthData
 
 from taiga.importers.exceptions import InvalidAuthResult, FailedRequest
 from taiga.importers import services as import_service
+
+
+GITHUB_INLINE_IMAGE_RE = re.compile(
+    r"!\[[^\]\n]*\]\((?P<url>https://github\.com/user-attachments/assets/"
+    r"[0-9a-fA-F-]{36})\)"
+)
+
+
+def extract_github_inline_image_urls(markdown):
+    return list(dict.fromkeys(
+        match.group("url") for match in GITHUB_INLINE_IMAGE_RE.finditer(markdown or "")
+    ))
 
 
 class GithubClient:
@@ -59,6 +72,34 @@ class GithubClient:
             raise Exception("Resource Unavailable: %s at %s" % (response.text, url), response)
 
         return response.json()
+
+    def render_markdown(self, markdown, repository_full_name):
+        headers = {
+            "Accept": "text/html",
+            "Content-Type": "application/json",
+            "X-GitHub-Media-Type": "github.v3",
+        }
+        if self.token:
+            headers["Authorization"] = "token {}".format(self.token)
+
+        response = requests.post(
+            self.api_url.format("markdown"),
+            json={
+                "text": markdown,
+                "mode": "gfm",
+                "context": repository_full_name,
+            },
+            headers=headers,
+        )
+        if response.status_code != 200:
+            raise Exception("Markdown rendering unavailable: %s" % response.status_code)
+        return response.text
+
+    def download(self, url):
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise Exception("Attachment download unavailable: %s" % response.status_code)
+        return response.content, response.headers
 
 
 class GithubImporter:
