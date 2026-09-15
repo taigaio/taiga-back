@@ -109,6 +109,8 @@ lazy-loader==0.4
     # via scikit-image
 lxml==6.0.2
     # via premailer
+legacy-cgi==2.6.4
+    # via -r requirements.in    
 markdown==3.10
     # via
     #   -r requirements.in
