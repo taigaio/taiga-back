@@ -280,8 +280,9 @@ class UsersViewSet(ModelCrudViewSet):
         user.email = new_email
         user.new_email = None
         user.email_token = None
+        user.token = None
         user.verified_email = True
-        user.save(update_fields=["email", "new_email", "email_token", "verified_email"])
+        user.save(update_fields=["email", "new_email", "email_token", "token", "verified_email"])
 
         user_change_email_signal.send(sender=user.__class__,
                                       user=user,

@@ -235,6 +235,37 @@ def test_validate_requested_email_change(client):
     assert user.email == "new@email.com"
 
 
+def test_validate_requested_email_change_invalidates_password_recovery_token(client):
+    user = f.UserFactory.create(
+        email="old@email.com",
+        email_token="change_email_token",
+        new_email="new@email.com",
+        token="recovery-token",
+    )
+    user.set_password("current-password")
+    user.save()
+
+    client.login(user)
+    url = reverse('users-change-email')
+    data = {"email_token": "change_email_token"}
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 204
+    user.refresh_from_db()
+    assert user.email == "new@email.com"
+    assert user.email_token is None
+    assert user.token is None
+
+    recovery_url = reverse('users-change-password-from-recovery')
+    recovery_data = {"token": "recovery-token", "password": "new-password"}
+    response = client.post(recovery_url, json.dumps(recovery_data), content_type="application/json")
+
+    assert response.status_code == 400
+    user.refresh_from_db()
+    assert user.check_password("current-password")
+
+
 def test_validate_requested_email_change_for_anonymous_user(client):
     user = f.UserFactory.create(email="old@email.com", email_token="change_email_token", new_email="new@email.com")
     url = reverse('users-change-email')
