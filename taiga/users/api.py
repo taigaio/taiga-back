@@ -219,7 +219,8 @@ class UsersViewSet(ModelCrudViewSet):
             raise exc.WrongArguments(_("Invalid current password"))
 
         request.user.set_password(password)
-        request.user.save(update_fields=["password"])
+        request.user.token = None
+        request.user.save(update_fields=["password", "token"])
         return response.NoContent()
 
     @list_route(methods=["POST"])
