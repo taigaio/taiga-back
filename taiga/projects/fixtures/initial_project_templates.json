@@ -33,6 +33,7 @@
                 "color": "#70728F",
                 "name": "New",
                 "order": 1,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -40,6 +41,7 @@
                 "color": "#E44057",
                 "name": "Ready",
                 "order": 2,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -47,6 +49,7 @@
                 "color": "#E47C40",
                 "name": "In progress",
                 "order": 3,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -54,6 +57,7 @@
                 "color": "#E4CE40",
                 "name": "Ready for test",
                 "order": 4,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -61,6 +65,23 @@
                 "color": "#A8E440",
                 "name": "Done",
                 "order": 5,
+                "is_archived": false,
+                "is_closed": true
+            },
+            {
+                "slug": "posponed",
+                "color": "#5178D3",
+                "name": "Postponed",
+                "order": 6,
+                "is_archived": false,
+                "is_closed": false
+            },
+            {
+                "slug": "archived",
+                "name": "Archived",
+                "order": 7,
+                "is_archived": true,
+                "color": "#A9AABC",
                 "is_closed": true
             }
         ],
@@ -211,6 +232,7 @@
                 "color": "#70728F",
                 "name": "New",
                 "order": 1,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -218,6 +240,7 @@
                 "color": "#E47C40",
                 "name": "In progress",
                 "order": 2,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -225,6 +248,7 @@
                 "color": "#E4CE40",
                 "name": "Ready for test",
                 "order": 3,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -232,6 +256,7 @@
                 "color": "#A8E440",
                 "name": "Closed",
                 "order": 4,
+                "is_archived": false,
                 "is_closed": true
             },
             {
@@ -239,7 +264,24 @@
                 "color": "#5178D3",
                 "name": "Needs Info",
                 "order": 5,
+                "is_archived": false,
                 "is_closed": false
+            },
+            {
+                "slug": "posponed",
+                "color": "#E44057",
+                "name": "Postponed",
+                "order": 6,
+                "is_archived": false,
+                "is_closed": false
+            },
+            {
+                "slug": "archived",
+                "name": "Archived",
+                "order": 7,
+                "is_archived": true,
+                "color": "#A9AABC",
+                "is_closed": true
             }
         ],
         "task_duedates": [
@@ -271,6 +313,7 @@
                 "color": "#70728F",
                 "name": "New",
                 "order": 1,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -278,6 +321,7 @@
                 "color": "#40A8E4",
                 "name": "In progress",
                 "order": 2,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -285,6 +329,7 @@
                 "color": "#E4CE40",
                 "name": "Ready for test",
                 "order": 3,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -292,6 +337,7 @@
                 "color": "#A8E440",
                 "name": "Closed",
                 "order": 4,
+                "is_archived": false,
                 "is_closed": true
             },
             {
@@ -299,6 +345,7 @@
                 "color": "#E44057",
                 "name": "Needs Info",
                 "order": 5,
+                "is_archived": false,
                 "is_closed": false
             },
             {
@@ -306,6 +353,7 @@
                 "color": "#A9AABC",
                 "name": "Rejected",
                 "order": 6,
+                "is_archived": false,
                 "is_closed": true
             },
             {
@@ -313,7 +361,16 @@
                 "color": "#5178D3",
                 "name": "Postponed",
                 "order": 7,
+                "is_archived": false,
                 "is_closed": false
+            },
+            {
+                "slug": "archived",
+                "name": "Archived",
+                "order": 8,
+                "is_archived": true,
+                "color": "#A9AABC",
+                "is_closed": true
             }
         ],
         "issue_types": [

@@ -42,6 +42,7 @@ class EpicStatusSerializer(serializers.LightSerializer):
     slug = Field()
     order = Field()
     is_closed = Field()
+    is_archived = Field()
     color = Field()
     project = Field(attr="project_id")
 
@@ -111,6 +112,7 @@ class TaskStatusSerializer(serializers.LightSerializer):
     slug = Field()
     order = Field()
     is_closed = Field()
+    is_archived = Field()
     color = Field()
     project = Field(attr="project_id")
 
@@ -141,6 +143,7 @@ class IssueStatusSerializer(serializers.LightSerializer):
     slug = Field()
     order = Field()
     is_closed = Field()
+    is_archived = Field()
     color = Field()
     project = Field(attr="project_id")
 
