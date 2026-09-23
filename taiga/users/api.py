@@ -15,7 +15,7 @@ from django.conf import settings
 
 from taiga.auth.exceptions import TokenError
 from taiga.auth.tokens import CancelToken
-from taiga.auth.settings import api_settings as auth_settings
+from taiga.auth.settings import PASSWORD_MAX_LENGTH, api_settings as auth_settings
 from taiga.base import exceptions as exc
 from taiga.base import filters
 from taiga.base import response
@@ -214,6 +214,9 @@ class UsersViewSet(ModelCrudViewSet):
 
         if len(password) < 6:
             raise exc.WrongArguments(_("Invalid password length at least 6 characters needed"))
+
+        if len(password) > PASSWORD_MAX_LENGTH:
+            raise exc.WrongArguments(_("Invalid password length at most 128 characters allowed"))
 
         if current_password and not request.user.check_password(current_password):
             raise exc.WrongArguments(_("Invalid current password"))

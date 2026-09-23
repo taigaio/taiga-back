@@ -256,6 +256,8 @@ from taiga.base.api.settings import APISettings
 
 from .utils import format_lazy
 
+PASSWORD_MAX_LENGTH = 128
+
 USER_SETTINGS = getattr(settings, 'SIMPLE_JWT', None)
 
 DEFAULTS = {
