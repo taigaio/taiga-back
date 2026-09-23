@@ -38,6 +38,7 @@ from django.utils.translation import gettext as _
 from taiga.base.api import serializers
 from taiga.base.exceptions import ValidationError
 
+from .settings import PASSWORD_MAX_LENGTH
 from .services import login, refresh_token, verify_token
 
 
@@ -73,7 +74,7 @@ class BaseRegisterSerializer(serializers.Serializer):
     full_name = serializers.CharField(max_length=36)
     email = serializers.EmailField(max_length=255)
     username = serializers.CharField(max_length=255)
-    password = serializers.CharField(min_length=6)
+    password = serializers.CharField(min_length=6, max_length=PASSWORD_MAX_LENGTH)
 
     def validate_username(self, attrs, source):
         value = attrs[source]

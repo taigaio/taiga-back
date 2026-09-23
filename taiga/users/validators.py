@@ -10,6 +10,7 @@ import bleach
 from django.core import validators as core_validators
 from django.utils.translation import gettext_lazy as _
 
+from taiga.auth.settings import PASSWORD_MAX_LENGTH
 from taiga.base.api import serializers
 from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
@@ -80,7 +81,7 @@ class UserAdminValidator(UserValidator):
 
 class RecoveryValidator(validators.Validator):
     token = serializers.CharField(required=True, max_length=200)
-    password = serializers.CharField(required=True, min_length=6)
+    password = serializers.CharField(required=True, min_length=6, max_length=PASSWORD_MAX_LENGTH)
 
 
 class ChangeEmailValidator(validators.Validator):

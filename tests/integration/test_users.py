@@ -219,6 +219,7 @@ def test_change_password_invalidates_password_recovery_token(client):
     user.refresh_from_db()
     assert user.check_password("new-password")
 
+
 @pytest.mark.parametrize(("password_length", "status_code"), [(128, 204), (129, 400)])
 def test_change_password_max_length(client, password_length, status_code):
     user = f.UserFactory.create()
