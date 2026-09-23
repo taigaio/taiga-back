@@ -34,6 +34,18 @@ def test_respond_201_when_public_registration_is_enabled(client, settings, regis
     assert response.status_code == 201
 
 
+@pytest.mark.parametrize(("password_length", "status_code"), [(128, 201), (129, 400)])
+def test_register_password_max_length(client, settings, register_form, password_length, status_code):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    register_form["password"] = "p" * password_length
+
+    response = client.post(reverse("auth-register"), register_form)
+
+    assert response.status_code == status_code
+    if status_code == 400:
+        assert "password" in response.data
+
+
 def test_respond_400_when_public_registration_is_disabled(client, register_form, settings):
     settings.PUBLIC_REGISTER_ENABLED = False
     response = client.post(reverse("auth-register"), register_form)
@@ -492,4 +504,3 @@ def test_login_fail_throttling(client, settings):
     assert response.status_code == 429, response.data
 
     settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["login-fail"] = None
-

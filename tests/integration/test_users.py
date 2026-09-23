@@ -219,6 +219,40 @@ def test_change_password_invalidates_password_recovery_token(client):
     user.refresh_from_db()
     assert user.check_password("new-password")
 
+@pytest.mark.parametrize(("password_length", "status_code"), [(128, 204), (129, 400)])
+def test_change_password_max_length(client, password_length, status_code):
+    user = f.UserFactory.create()
+    user.set_password("current-password")
+    user.save()
+    client.login(user)
+
+    response = client.post(
+        reverse('users-change-password'),
+        json.dumps({"current_password": "current-password", "password": "p" * password_length}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == status_code
+    user.refresh_from_db()
+    assert user.check_password("p" * password_length if status_code == 204 else "current-password")
+
+
+@pytest.mark.parametrize(("password_length", "status_code"), [(128, 204), (129, 400)])
+def test_recovery_password_max_length(client, password_length, status_code):
+    user = f.UserFactory.create(token="recovery-token")
+    user.set_password("current-password")
+    user.save()
+
+    response = client.post(
+        reverse('users-change-password-from-recovery'),
+        json.dumps({"token": "recovery-token", "password": "p" * password_length}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == status_code
+    user.refresh_from_db()
+    assert user.check_password("p" * password_length if status_code == 204 else "current-password")
+
 
 def test_validate_requested_email_change(client):
     user = f.UserFactory.create(email="old@email.com", email_token="change_email_token", new_email="new@email.com")
