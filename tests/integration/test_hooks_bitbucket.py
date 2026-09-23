@@ -556,36 +556,6 @@ def test_push_event_task_bad_processing_non_existing_ref(client):
     assert len(mail.outbox) == 0
 
 
-def test_push_event_task_bad_processing_non_existing_ref(client):
-    issue_status = f.IssueStatusFactory()
-    payload = {
-        "actor": {
-            "user": {
-                "uuid": "{ce1054cd-3f43-49dc-8aea-d3085ee7ec9b}",
-                "username": "test-user",
-                "links": {"html": {"href": "http://bitbucket.com/test-user"}}
-            }
-        },
-        "push": {
-            "changes": [
-                {
-                    "commits": [
-                        { "message": "test message   test   TG-6666666    #%s   ok   bye!" % (issue_status.slug) }
-                    ]
-                }
-            ]
-        }
-    }
-    mail.outbox = []
-
-    ev_hook = event_hooks.PushEventHook(issue_status.project, payload)
-    with pytest.raises(ActionSyntaxException) as excinfo:
-        ev_hook.process_event()
-
-    assert str(excinfo.value) == "The referenced element doesn't exist"
-    assert len(mail.outbox) == 0
-
-
 def test_push_event_us_bad_processing_non_existing_status(client):
     user_story = f.UserStoryFactory.create()
     payload = {
