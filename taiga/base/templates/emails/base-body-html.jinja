@@ -11,7 +11,9 @@ Copyright (c) 2021-present Kaleidos INC
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>{{ _("Taiga") }}</title>
+        {% trans product_name=sr("product_name") %}
+        <title>{{ product_name }}</title>
+        {% endtrans %}
         <style type="text/css">
             /* /\/\/\/\/\/\/\/\/ CLIENT-SPECIFIC STYLES /\/\/\/\/\/\/\/\/ */
             #outlook a{padding:0;} /* Force Outlook to provide a "view in browser" message */
@@ -347,7 +349,9 @@ Copyright (c) 2021-present Kaleidos INC
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader"  style="background-color: #008AA8">
                                         <tr>
                                             <td valign="top" class="headerContent">
-                                                <a href="{{ resolve_front_url("home") }}" class="brand" title="Taiga">
+                                                {% trans product_name=sr("product_name") %}
+                                                <a href="{{ resolve_front_url("home") }}" class="brand" title="{{ product_name }}">
+                                                {% endtrans %}
                                                     <img src="{{ static("emails/logo-web.png") }}" />
                                                 </a>
                                             </td>
