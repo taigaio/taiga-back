@@ -163,7 +163,7 @@ pygments==2.19.2
     # via -r requirements.in
 pyjwt==2.10.1
     # via oauthlib
-pymdown-extensions==10.17.1
+pymdown-extensions==10.21.3
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
