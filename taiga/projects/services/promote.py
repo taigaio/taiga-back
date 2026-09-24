@@ -67,6 +67,56 @@ def promote_to_us(source_obj):
     return us_refs
 
 
+
+def promote_to_task(source_obj):
+    model_class = source_obj.__class__
+    queryset = model_class.objects.filter(pk=source_obj.id)
+
+    queryset = queryset.prefetch_related("attachments")
+    queryset = queryset.select_related(
+        "owner",
+        "assigned_to",
+        "project",
+        "milestone",
+    )
+
+    queryset = attach_watchers_to_queryset(queryset)
+
+    task_refs = []
+
+    for obj in queryset:
+        task = Task.objects.create(
+            project=obj.project,
+            owner=obj.owner,
+            subject=obj.subject,
+            description=obj.description,
+            tags=obj.tags,
+            milestone=obj.milestone,
+            assigned_to=obj.assigned_to,
+        )
+
+        task.due_date = obj.due_date
+        task.due_date_reason = obj.due_date_reason
+        task.is_blocked = obj.is_blocked
+        task.blocked_note = obj.blocked_note
+        task.save()
+
+        content_type = (
+            apps.get_model("contenttypes", "ContentType")
+            .objects
+            .get_for_model(task)
+        )
+
+        _import_comments(obj, task)
+        _import_attachments(obj, task, content_type)
+        _import_watchers(obj, task, content_type)
+        _import_votes(obj, task)
+
+        task_refs.append(task.ref)
+
+    return task_refs
+
+
 def _import_assigned(source_obj, target_obj):
     if source_obj.assigned_to:
         target_obj.assigned_users.add(source_obj.assigned_to)

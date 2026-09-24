@@ -20,6 +20,14 @@ from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.userstories import services, models
 
+from taiga.projects.services.promote import promote_to_task
+from taiga.projects.tasks.models import Task
+from taiga.projects.history.services import get_history_queryset_by_model_instance
+from taiga.projects.votes.services import add_vote
+from datetime import date
+from taiga.projects.notifications.utils import attach_watchers_to_queryset
+from taiga.projects.votes.models import Vote
+
 from .. import factories as f
 
 import pytest
@@ -1691,3 +1699,166 @@ def test_bug_regresion_api_by_ref_userstory_using_onlyref_serializer(client):
     response = client.json.get(url)
     assert response.status_code == 200, response.data
     assert set(response.data.keys()) != set(["id", "ref"])
+
+def test_promote_us_to_task(client):
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user_1)
+
+    f.MembershipFactory.create(
+        project=project,
+        user=user_1,
+        is_admin=True
+    )
+    f.MembershipFactory.create(
+        project=project,
+        user=user_2,
+        is_admin=False
+    )
+
+    us = f.UserStoryFactory.create(
+        project=project,
+        owner=user_1,
+        assigned_to=user_2
+    )
+
+    us.add_watcher(user_1)
+    us.add_watcher(user_2)
+
+    add_vote(us, user_1)
+    add_vote(us, user_2)
+
+    f.UserStoryAttachmentFactory(
+        project=project,
+        content_object=us,
+        owner=user_1
+    )
+
+    f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": user_1.id},
+        comment="Test comment",
+        key="userstories.userstory:{}".format(us.id),
+        is_hidden=False,
+        diff=[],
+    )
+
+    f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": user_2.id},
+        comment="Test comment 2",
+        key="userstories.userstory:{}".format(us.id),
+        is_hidden=False,
+        diff=[],
+    )
+
+    client.login(user_1)
+
+    url = reverse(
+        "userstories-promote-to-task",
+        kwargs={"pk": us.pk}
+    )
+
+    data = {"project_id": project.id}
+    promote_response = client.json.post(url, json.dumps(data))
+
+    task_ref = promote_response.data.pop()
+    task = Task.objects.get(ref=task_ref)
+
+    task_response = client.get(
+        reverse("tasks-detail", args=[task.pk]),
+        {"include_attachments": True}
+    )
+
+    assert promote_response.status_code == 200
+    assert task_response.data["subject"] == us.subject
+    assert task_response.data["description"] == us.description
+    assert task_response.data["owner"] == us.owner_id
+    assert task_response.data["assigned_to"] == us.assigned_to_id
+    assert task_response.data["total_watchers"] == 2
+    assert task_response.data["total_attachments"] == 1
+    assert task_response.data["total_comments"] == 2
+    assert task_response.data["due_date"] == us.due_date
+    assert task_response.data["is_blocked"] == us.is_blocked
+    assert task_response.data["blocked_note"] == us.blocked_note
+    assert task_response.data["total_voters"] == 2
+
+    assert not UserStory.objects.filter(pk=us.id).exists()
+
+def test_promote_us_to_task_service():
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user_1)
+    milestone = f.MilestoneFactory.create(project=project)
+
+    us = f.UserStoryFactory.create(
+        project=project,
+        owner=user_1,
+        assigned_to=user_2,
+        milestone=milestone,
+        due_date=date(2026, 9, 30),
+        due_date_reason="Test deadline",
+        is_blocked=True,
+        blocked_note="Blocked for testing",
+    )
+
+    us.add_watcher(user_1)
+    us.add_watcher(user_2)
+
+    add_vote(us, user_1)
+    add_vote(us, user_2)
+
+    f.UserStoryAttachmentFactory(
+        project=project,
+        content_object=us,
+        owner=user_1
+    )
+
+    f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": user_1.id},
+        comment="Test comment",
+        key="userstories.userstory:{}".format(us.id),
+        is_hidden=False,
+        diff=[],
+    )
+
+    f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": user_2.id},
+        comment="Test comment 2",
+        key="userstories.userstory:{}".format(us.id),
+        is_hidden=False,
+        diff=[],
+    )
+
+    task_refs = promote_to_task(us)
+
+    task = Task.objects.get(ref=task_refs[0])
+
+    assert task.subject == us.subject
+    assert task.description == us.description
+    assert task.owner == us.owner
+    assert task.assigned_to == us.assigned_to
+    assert task.project == us.project
+    assert task.milestone == us.milestone
+    assert task.due_date == us.due_date
+    assert task.due_date_reason == us.due_date_reason
+    assert task.is_blocked == us.is_blocked
+    assert task.blocked_note == us.blocked_note
+
+    task_with_watchers = attach_watchers_to_queryset(
+    Task.objects.filter(pk=task.pk)
+).get()
+
+    assert len(task_with_watchers.watchers) == 2
+    assert task.attachments.count() == 1
+
+    comments = (
+        get_history_queryset_by_model_instance(task)
+        .exclude(comment__exact="")
+    )
+    assert comments.count() == 2
+    assert Vote.objects.filter(
+    object_id=task.id
+).count() == 2
