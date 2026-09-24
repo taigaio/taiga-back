@@ -955,6 +955,78 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == epic2.id, response.data["epics"]))["count"] == 2
 
 
+def test_api_filters_data_respects_archived_status_and_other_filters(client):
+    user = f.UserFactory.create()
+    other = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+    active = f.UserStoryStatusFactory.create(project=project)
+    archived = f.UserStoryStatusFactory.create(project=project, is_archived=True)
+    f.UserStoryFactory.create(project=project, status=active,
+                              assigned_users=[user], tags=["keep"])
+    f.UserStoryFactory.create(project=project, status=archived,
+                              assigned_users=[user], tags=["keep"])
+    f.UserStoryFactory.create_batch(24, project=project, status=active,
+                                    assigned_users=[user], tags=["keep"])
+    f.UserStoryFactory.create_batch(4, project=project, status=archived,
+                                    assigned_users=[user], tags=["keep"])
+    f.UserStoryFactory.create(project=project, status=active,
+                              assigned_users=[other], tags=["other"])
+    client.login(user)
+    url = reverse("userstories-filters-data")
+
+    def count(response, category, key):
+        return next(item["count"] for item in response.data[category]
+                    if item.get("id", item.get("name")) == key)
+
+    params = {"project": project.id}
+    included = client.get(url, params)
+    excluded = client.get(url, {**params, "status__is_archived": "false"})
+    list_url = reverse("userstories-list")
+    list_params = {**params, "assigned_users": user.id}
+    assert included.status_code == excluded.status_code == 200
+    assert len(client.get(list_url, list_params).data) == 30
+    assert len(client.get(list_url, {**list_params, "status__is_archived": "false"}).data) == 25
+    assert count(included, "assigned_users", user.id) == 30
+    assert count(excluded, "assigned_users", user.id) == 25
+    assert count(included, "statuses", archived.id) == 5
+    assert count(excluded, "statuses", archived.id) == 0
+    assert count(excluded, "tags", "keep") == 25
+
+    combined = client.get(url, {**params, "status__is_archived": "false",
+                                "assigned_users": user.id, "status": active.id,
+                                "tags": "keep"})
+    assert combined.status_code == 200
+    assert count(combined, "assigned_users", user.id) == 25
+    assert count(combined, "statuses", active.id) == 25
+    assert count(combined, "tags", "keep") == 25
+    assert count(combined, "tags", "other") == 0
+
+
+def test_api_filters_data_excludes_folded_archived_status(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+    active = f.UserStoryStatusFactory.create(project=project)
+    open_archived = f.UserStoryStatusFactory.create(project=project, is_archived=True)
+    folded_archived = f.UserStoryStatusFactory.create(project=project, is_archived=True)
+    for status in (active, open_archived, folded_archived):
+        f.UserStoryFactory.create(project=project, status=status,
+                                  assigned_users=[user], tags=["keep"])
+    client.login(user)
+    params = {"project": project.id, "exclude_status": folded_archived.id}
+
+    listing = client.get(reverse("userstories-list"), params)
+    filters = client.get(reverse("userstories-filters-data"), params)
+
+    assert listing.status_code == filters.status_code == 200
+    assert len(listing.data) == 2
+    assert next(item["count"] for item in filters.data["assigned_users"]
+                if item["id"] == user.id) == 2
+    assert next(item["count"] for item in filters.data["tags"]
+                if item["name"] == "keep") == 2
+
+
 def test_api_filters_data_private_project_is_forbidden(client):
     project = f.create_project(is_private=True, anon_permissions=[], public_permissions=[])
 
