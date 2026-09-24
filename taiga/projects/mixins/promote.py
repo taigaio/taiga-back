@@ -67,16 +67,22 @@ class DemoteToTaskMixin:
                 {"project_id": _("The user story doesn't belong to the given project.")}
             )
 
-        if not obj.milestone_id and not data.get("milestone_id"):
+        has_milestone = bool(obj.milestone_id or data.get("milestone_id"))
+        has_parent_user_story = bool(data.get("user_story_id"))
+
+        if not has_milestone and not has_parent_user_story:
             return response.BadRequest(
                 {
-                    "milestone_id": _(
-                        "This user story has no milestone. Provide a milestone_id to avoid an orphaned task."
+                    "non_field_errors": _(
+                        "This user story has no milestone. Provide a milestone_id "
+                        "or a user_story_id (a parent story) to avoid an orphaned task."
                     )
                 }
             )
 
-        ret = demote_to_task(obj, milestone_id=data.get("milestone_id"))
+        ret = demote_to_task(obj, 
+                             milestone_id=data.get("milestone_id"),
+                             user_story_id=data.get("user_story_id"))
         self.persist_history_snapshot(obj=obj)
 
         # delete source UserStory if required
