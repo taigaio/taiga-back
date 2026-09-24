@@ -42,7 +42,7 @@ class WatchedResourceMixin:
     """
 
     _not_notify = False
-    _old_watchers = None
+    _old_watchers = []
     _old_mentions = []
 
     @detail_route(methods=["POST"])
@@ -294,8 +294,14 @@ class EditableWatchedResourceSerializer(serializers.ModelSerializer):
         new_watcher_ids = attrs.pop("watchers", None)
         obj = super(EditableWatchedResourceSerializer, self).restore_object(attrs, instance)
 
-        # A partial update can exclude the watchers field or if the new instance can still not be saved
-        if instance is None or new_watcher_ids is None:
+        # A partial update can exclude the watchers field
+        if new_watcher_ids is None:
+            return obj
+
+        # On creation the object hasn't been persisted yet so M2M relations can't be set.
+        # Defer watcher assignment to save().
+        if instance is None:
+            self._pending_watcher_ids = list(new_watcher_ids)
             return obj
 
         new_watcher_ids = set(new_watcher_ids)
@@ -330,6 +336,15 @@ class EditableWatchedResourceSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         obj = super(EditableWatchedResourceSerializer, self).save(**kwargs)
+
+        # Apply watchers that were deferred during object creation (when instance was None)
+        pending_watcher_ids = getattr(self, '_pending_watcher_ids', None)
+        if pending_watcher_ids is not None:
+            adding_users = get_user_model().objects.filter(id__in=pending_watcher_ids)
+            for user in adding_users:
+                services.add_watcher(obj, user)
+            self._pending_watcher_ids = None
+
         self.fields["watchers"] = WatchersField(required=False)
         obj.watchers = [user.id for user in obj.get_watchers()]
         return obj
