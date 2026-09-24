@@ -60,6 +60,11 @@ class DemoteToTaskMixin:
 
         obj = self.get_object()
 
+        if obj.project_id != project.id:
+            return response.BadRequest(
+                {"project_id": ("The user story doesn't belong to the given project.")}
+            )
+
         if not obj.milestone_id and not data.get("milestone_id"):
             return response.BadRequest(
                 {

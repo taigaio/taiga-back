@@ -11,6 +11,7 @@ from taiga.base.api import validators, serializers
 from taiga.base.exceptions import ValidationError
 from taiga.projects.models import Membership
 from taiga.projects.validators import ProjectExistsValidator
+from taiga.projects.milestones.models import Milestone
 
 
 class AssignedToValidator:
@@ -39,3 +40,22 @@ class DemoteToTaskValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
     # fallback milestone when the source user story has none, to avoid an orphaned task
     milestone_id = serializers.IntegerField(required=False)
+
+    def validate_milestone_id(self, attrs, source):
+        milestone_id = attrs.get(source, None)
+
+        if milestone_id:
+            filters = {
+                "project__id": attrs["project_id"],
+                "id": milestone_id,
+            }
+
+            if not Milestone.objects.filter(**filters).exists():
+                raise ValidationError(
+                    _(
+                        "Invalid milestone id. The milestone must belong "
+                        "to the same project."
+                    )
+                )
+
+        return attrs
