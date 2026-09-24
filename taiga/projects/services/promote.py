@@ -147,3 +147,16 @@ def _import_votes(source_obj, target_obj):
             .filter(content_type=source_content_type, object_id=source_obj.id)
             .update(content_type=target_content_type, object_id=target_obj.id)
     )
+
+
+def demote_to_task(source_obj, milestone_id=None):
+    # TODO: will be replaced by riya
+    from taiga.projects.tasks.models import Task
+
+    return [
+        Task.objects.create(
+            project=source_obj.project,
+            subject=source_obj.subject,
+            milestone_id=milestone_id or source_obj.milestone_id,
+        ).ref
+    ]

@@ -33,3 +33,9 @@ class AssignedToValidator:
 
 class PromoteToUserStoryValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
+
+
+class DemoteToTaskValidator(ProjectExistsValidator, validators.Validator):
+    project_id = serializers.IntegerField()
+    # fallback milestone when the source user story has none, to avoid an orphaned task
+    milestone_id = serializers.IntegerField(required=False)
