@@ -30,6 +30,7 @@ class UserStoryPermission(TaigaResourcePermission):
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_us')
     watch_perms = IsAuthenticated() & HasProjectPerm('view_us')
     unwatch_perms = IsAuthenticated() & HasProjectPerm('view_us')
+    demote_to_task_perms = IsAuthenticated() & HasProjectPerm('view_us')
 
 
 class UserStoryVotersPermission(TaigaResourcePermission):
