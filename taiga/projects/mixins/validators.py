@@ -53,8 +53,7 @@ class DemoteToTaskValidator(ProjectExistsValidator, validators.Validator):
             if not Milestone.objects.filter(**filters).exists():
                 raise ValidationError(
                     _(
-                        "Invalid milestone id. The milestone must belong "
-                        "to the same project."
+                        "Invalid milestone id. The milestone must belong to the same project."
                     )
                 )
 

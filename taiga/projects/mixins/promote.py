@@ -6,6 +6,8 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 #
+from django.utils.translation import gettext as _
+
 from taiga.base import response
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import detail_route
@@ -62,15 +64,14 @@ class DemoteToTaskMixin:
 
         if obj.project_id != project.id:
             return response.BadRequest(
-                {"project_id": ("The user story doesn't belong to the given project.")}
+                {"project_id": _("The user story doesn't belong to the given project.")}
             )
 
         if not obj.milestone_id and not data.get("milestone_id"):
             return response.BadRequest(
                 {
-                    "milestone_id": (
-                        "This user story has no milestone. "
-                        "Provide a milestone_id to avoid an orphaned task."
+                    "milestone_id": _(
+                        "This user story has no milestone. Provide a milestone_id to avoid an orphaned task."
                     )
                 }
             )
