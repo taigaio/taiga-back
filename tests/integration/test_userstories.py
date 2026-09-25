@@ -20,7 +20,6 @@ from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.userstories import services, models
 
-from taiga.projects.services.promote import promote_to_task
 from taiga.projects.tasks.models import Task
 from taiga.projects.history.services import get_history_queryset_by_model_instance
 from taiga.projects.votes.services import add_vote
@@ -1701,9 +1700,15 @@ def test_bug_regresion_api_by_ref_userstory_using_onlyref_serializer(client):
     assert set(response.data.keys()) != set(["id", "ref"])
 
 def test_demote_us_to_task(client):
+    # happy path test for demoting a userstory to a task
+
+    # region set up user data
     user_1 = f.UserFactory.create()
     user_2 = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user_1)
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.default_points = f.PointsFactory.create(project=project, value=2)
+    project.save()
 
     f.MembershipFactory.create(
         project=project,
@@ -1716,11 +1721,24 @@ def test_demote_us_to_task(client):
         is_admin=False
     )
 
+    # UR2: target parent user story, in the same project as the source
+    parent_us = f.UserStoryFactory.create(project=project)
+
     us = f.UserStoryFactory.create(
         project=project,
         owner=user_1,
-        assigned_to=user_2
+        assigned_to=user_2,
+        tags=["backend", "urgent"],
     )
+
+    # UR6: story points (auto-attached via project.default_points) and
+    # multiple assigned users have no equivalent on a task and cannot be
+    # carried over.
+    us.assigned_users.add(user_1, user_2)
+
+    # UR11: any existing task(s) of the source user story must be moved to the
+    # target parent, not lost, before the source is deleted.
+    existing_task = f.TaskFactory.create(project=project, user_story=us)
 
     us.add_watcher(user_1)
     us.add_watcher(user_2)
@@ -1751,18 +1769,19 @@ def test_demote_us_to_task(client):
         is_hidden=False,
         diff=[],
     )
+    # endregion
 
     client.login(user_1)
 
     url = reverse(
-        "userstories-promote-to-task",
+        "userstories-demote-to-task",
         kwargs={"pk": us.pk}
     )
 
-    data = {"project_id": project.id}
-    promote_response = client.json.post(url, json.dumps(data))
+    data = {"project_id": project.id, "user_story_id": parent_us.id}
+    demote_response = client.json.post(url, json.dumps(data))
 
-    task_ref = promote_response.data.pop()
+    task_ref = demote_response.data.pop()
     task = Task.objects.get(ref=task_ref)
 
     task_response = client.get(
@@ -1770,19 +1789,158 @@ def test_demote_us_to_task(client):
         {"include_attachments": True}
     )
 
-    assert promote_response.status_code == 200
+    # UR10: the response is the new task's ref
+    assert demote_response.status_code == 200, demote_response.data
+    assert task.ref == task_ref
+
+    # UR4: core content preserved
     assert task_response.data["subject"] == us.subject
     assert task_response.data["description"] == us.description
-    assert task_response.data["owner"] == us.owner_id
+    assert task_response.data["tags"] == us.tags
     assert task_response.data["assigned_to"] == us.assigned_to_id
+    assert task_response.data["owner"] == us.owner_id
+
+    # UR5: collaboration history preserved
     assert task_response.data["total_watchers"] == 2
     assert task_response.data["total_attachments"] == 1
     assert task_response.data["total_comments"] == 2
+    assert task_response.data["total_voters"] == 2
+
+    # UR6: no story points / multiple-assignee fields exist on a task, so
+    # there is nothing for them to be carried over into
+    assert "points" not in task_response.data
+    assert "assigned_users" not in task_response.data
+
+    # UR7: default task status
+    assert task_response.data["status"] == project.default_task_status_id
+
     assert task_response.data["due_date"] == us.due_date
     assert task_response.data["due_date_reason"] == us.due_date_reason
     assert task_response.data["milestone"] == us.milestone_id
     assert task_response.data["is_blocked"] == us.is_blocked
     assert task_response.data["blocked_note"] == us.blocked_note
-    assert task_response.data["total_voters"] == 2
 
+    # UR2 + UR11: the new task is parented under the given target user story,
+    # and the source's pre-existing task moved along with it
+    assert task_response.data["user_story"] == parent_us.id
+    existing_task.refresh_from_db()
+    assert existing_task.user_story_id == parent_us.id
+
+    # UR8: the source user story is gone, and only after its own tasks were
+    # handled
     assert not models.UserStory.objects.filter(pk=us.id).exists()
+
+
+def test_demote_us_to_task_without_milestone_or_parent_is_rejected(client):
+    # UR3: with no target parent, conversion is only accepted when the
+    # source user story already belongs to a sprint (milestone).
+    user_1 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user_1)
+    project.default_points = f.PointsFactory.create(project=project)
+    project.save()
+    f.MembershipFactory.create(project=project, user=user_1, is_admin=True)
+
+    us = f.UserStoryFactory.create(project=project, owner=user_1, milestone=None)
+
+    client.login(user_1)
+
+    url = reverse("userstories-demote-to-task", kwargs={"pk": us.pk})
+    data = {"project_id": project.id}
+    demote_response = client.json.post(url, json.dumps(data))
+
+    assert demote_response.status_code == 400, demote_response.data
+    assert models.UserStory.objects.filter(pk=us.id).exists()
+
+
+def test_demote_us_to_task_without_parent_keeps_existing_tasks_storyless(client):
+    # UR11: without a target parent, the source's existing tasks remain in
+    # the source's sprint as storyless tasks rather than being orphaned.
+    user_1 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user_1)
+    project.default_points = f.PointsFactory.create(project=project)
+    project.save()
+    f.MembershipFactory.create(project=project, user=user_1, is_admin=True)
+
+    us = f.UserStoryFactory.create(project=project, owner=user_1)
+    existing_task = f.TaskFactory.create(
+        project=project, user_story=us, milestone=us.milestone
+    )
+
+    client.login(user_1)
+
+    url = reverse("userstories-demote-to-task", kwargs={"pk": us.pk})
+    data = {"project_id": project.id}
+    demote_response = client.json.post(url, json.dumps(data))
+
+    assert demote_response.status_code == 200, demote_response.data
+
+    existing_task.refresh_from_db()
+    assert existing_task.user_story_id is None
+    assert existing_task.milestone_id == us.milestone_id
+
+
+def test_demote_us_to_task_rejects_self_as_parent(client):
+    user_1 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user_1)
+    project.default_points = f.PointsFactory.create(project=project)
+    project.save()
+    f.MembershipFactory.create(project=project, user=user_1, is_admin=True)
+
+    us = f.UserStoryFactory.create(project=project, owner=user_1)
+
+    client.login(user_1)
+
+    url = reverse("userstories-demote-to-task", kwargs={"pk": us.pk})
+    data = {"project_id": project.id, "user_story_id": us.id}
+    demote_response = client.json.post(url, json.dumps(data))
+
+    # UR2: a demoted user story cannot be its own parent.
+    assert demote_response.status_code == 400, demote_response.data
+    assert models.UserStory.objects.filter(pk=us.id).exists()
+
+
+def test_demote_us_to_task_rejects_parent_from_another_project(client):
+    user_1 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user_1)
+    project.default_points = f.PointsFactory.create(project=project)
+    project.save()
+    other_project = f.ProjectFactory.create(owner=user_1)
+    f.MembershipFactory.create(project=project, user=user_1, is_admin=True)
+
+    us = f.UserStoryFactory.create(project=project, owner=user_1)
+    other_us = f.UserStoryFactory.create(project=other_project)
+
+    client.login(user_1)
+
+    url = reverse("userstories-demote-to-task", kwargs={"pk": us.pk})
+    data = {"project_id": project.id, "user_story_id": other_us.id}
+    demote_response = client.json.post(url, json.dumps(data))
+
+    # UR2: a target parent from another project is rejected.
+    assert demote_response.status_code == 400, demote_response.data
+    assert models.UserStory.objects.filter(pk=us.id).exists()
+
+
+def test_demote_us_to_task_permission_denied(client):
+    # UR9: only users with permission to both modify user stories and
+    # create tasks in the project may perform the conversion.
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user_1)
+    project.default_points = f.PointsFactory.create(project=project)
+    project.save()
+    f.MembershipFactory.create(project=project, user=user_1, is_admin=True)
+
+    role = f.RoleFactory.create(project=project, permissions=["view_us"])
+    f.MembershipFactory.create(project=project, user=user_2, role=role, is_admin=False)
+
+    us = f.UserStoryFactory.create(project=project, owner=user_1)
+
+    client.login(user_2)
+
+    url = reverse("userstories-demote-to-task", kwargs={"pk": us.pk})
+    data = {"project_id": project.id}
+    demote_response = client.json.post(url, json.dumps(data))
+
+    assert demote_response.status_code == 403, demote_response.data
+    assert models.UserStory.objects.filter(pk=us.id).exists()
