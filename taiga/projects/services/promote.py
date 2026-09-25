@@ -68,7 +68,7 @@ def promote_to_us(source_obj):
 
 
 
-def promote_to_task(source_obj):
+def demote_to_task(source_obj, milestone_id=None):
     model_class = source_obj.__class__
     queryset = model_class.objects.filter(pk=source_obj.id)
 
@@ -91,7 +91,7 @@ def promote_to_task(source_obj):
             subject=obj.subject,
             description=obj.description,
             tags=obj.tags,
-            milestone=obj.milestone,
+            milestone_id=milestone_id or obj.milestone_id,
             assigned_to=obj.assigned_to,
         )
 
