@@ -1779,6 +1779,8 @@ def test_demote_us_to_task(client):
     assert task_response.data["total_attachments"] == 1
     assert task_response.data["total_comments"] == 2
     assert task_response.data["due_date"] == us.due_date
+    assert task_response.data["due_date_reason"] == us.due_date_reason
+    assert task_response.data["milestone"] == us.milestone_id
     assert task_response.data["is_blocked"] == us.is_blocked
     assert task_response.data["blocked_note"] == us.blocked_note
     assert task_response.data["total_voters"] == 2
