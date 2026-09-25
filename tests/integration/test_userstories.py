@@ -1783,7 +1783,7 @@ def test_demote_us_to_task(client):
     assert task_response.data["blocked_note"] == us.blocked_note
     assert task_response.data["total_voters"] == 2
 
-    assert not UserStory.objects.filter(pk=us.id).exists()
+    assert not models.UserStory.objects.filter(pk=us.id).exists()
 
 def test_promote_us_to_task_service():
     user_1 = f.UserFactory.create()
