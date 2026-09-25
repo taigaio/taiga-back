@@ -1700,7 +1700,7 @@ def test_bug_regresion_api_by_ref_userstory_using_onlyref_serializer(client):
     assert response.status_code == 200, response.data
     assert set(response.data.keys()) != set(["id", "ref"])
 
-def test_promote_us_to_task(client):
+def test_demote_us_to_task(client):
     user_1 = f.UserFactory.create()
     user_2 = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user_1)
