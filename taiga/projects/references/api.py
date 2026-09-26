@@ -77,7 +77,7 @@ class ResolverViewSet(viewsets.ViewSet):
                     issue = project.issues.filter(ref=value).first()
                     if issue:
                         result["issue"] = issue.pk
-            except:
+            except Exception:
                 value = data["ref"]
 
                 if user_has_perm(request.user, "view_wiki_pages", project):
