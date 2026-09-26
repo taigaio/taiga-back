@@ -163,6 +163,9 @@ class UsersViewSet(ModelCrudViewSet):
             raise exc.WrongArguments(_("Invalid username or email"))
 
         user = get_user_by_username_or_email(username_or_email)
+        if not user.has_usable_password()
+            raise exc.BadRequest(_("Password recovery not allowed for this user"))
+
         user.token = str(uuid.uuid4())
         user.save(update_fields=["token"])
 
