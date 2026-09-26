@@ -4758,7 +4758,7 @@ msgid "permissions"
 msgstr "permissões"
 
 #: taiga/users/services.py:46 taiga/users/services.py:63
-msgid "Username or password does not matches user."
+msgid "Username or password does not match user."
 msgstr "Usuário ou senha não correspondem ao usuário"
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:12
