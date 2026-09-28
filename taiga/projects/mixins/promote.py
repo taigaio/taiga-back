@@ -67,6 +67,11 @@ class DemoteToTaskMixin:
                 {"project_id": _("The user story doesn't belong to the given project.")}
             )
 
+        if data.get("user_story_id") == obj.id:
+            return response.BadRequest(
+                {"user_story_id": _("A user story cannot be its own parent.")}
+            )
+
         has_milestone = bool(obj.milestone_id or data.get("milestone_id"))
         has_parent_user_story = bool(data.get("user_story_id"))
 

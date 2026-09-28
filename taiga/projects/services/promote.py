@@ -113,8 +113,7 @@ def demote_to_task(source_obj, milestone_id=None, user_story_id=None):
         _import_watchers(obj, task, content_type)
         _import_votes(obj, task)
 
-        if user_story_id:
-            obj.tasks.update(user_story_id=user_story_id)
+        obj.tasks.exclude(pk=task.pk).update(user_story_id=user_story_id)
 
         task_refs.append(task.ref)
 
