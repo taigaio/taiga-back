@@ -7,6 +7,7 @@
 
 import pytest
 import datetime
+from unittest.mock import patch
 from tempfile import NamedTemporaryFile
 
 from django.conf import settings
@@ -14,6 +15,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.core.files import File
 from django.core.cache import cache as default_cache
+from django.utils import timezone
 
 from .. import factories as f
 from ..utils import DUMMY_BMP_DATA
@@ -241,6 +243,7 @@ def test_change_password_max_length(client, password_length, status_code):
 @pytest.mark.parametrize(("password_length", "status_code"), [(128, 204), (129, 400)])
 def test_recovery_password_max_length(client, password_length, status_code):
     user = f.UserFactory.create(token="recovery-token")
+    user.token_expires_at = timezone.now() + datetime.timedelta(hours=1)
     user.set_password("current-password")
     user.save()
 
@@ -253,6 +256,139 @@ def test_recovery_password_max_length(client, password_length, status_code):
     assert response.status_code == status_code
     user.refresh_from_db()
     assert user.check_password("p" * password_length if status_code == 204 else "current-password")
+
+
+def test_change_password_from_recovery_accepts_recent_token_and_clears_it(client):
+    now = timezone.now()
+    user = f.UserFactory.create(token="recent-token")
+    user.token_expires_at = now + datetime.timedelta(minutes=1)
+    user.set_password("current-password")
+    user.save()
+
+    with patch("django.utils.timezone.now", return_value=now):
+        response = client.post(
+            reverse("users-change-password-from-recovery"),
+            json.dumps({"token": "recent-token", "password": "new-password"}),
+            content_type="application/json",
+        )
+
+    assert response.status_code == 204
+    user.refresh_from_db()
+    assert user.check_password("new-password")
+    assert user.token is None
+    assert user.token_expires_at is None
+
+    response = client.post(
+        reverse("users-change-password-from-recovery"),
+        json.dumps({"token": "recent-token", "password": "another-password"}),
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+    user.refresh_from_db()
+    assert user.check_password("new-password")
+
+
+@pytest.mark.parametrize("expiration_delta", [datetime.timedelta(seconds=-1), datetime.timedelta(0)])
+def test_change_password_from_recovery_rejects_expired_token_without_mutation(client, expiration_delta):
+    now = timezone.now()
+    user = f.UserFactory.create(token="expired-token")
+    user.token_expires_at = now + expiration_delta
+    user.set_password("current-password")
+    user.save()
+    url = reverse("users-change-password-from-recovery")
+
+    with patch("django.utils.timezone.now", return_value=now):
+        response = client.post(
+            url,
+            json.dumps({"token": "expired-token", "password": "new-password"}),
+            content_type="application/json",
+        )
+    unknown_response = client.post(
+        url,
+        json.dumps({"token": "unknown-token", "password": "new-password"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == unknown_response.status_code == 400
+    assert response.data["_error_message"] == unknown_response.data["_error_message"]
+    user.refresh_from_db()
+    assert user.check_password("current-password")
+    assert user.token == "expired-token"
+    assert user.token_expires_at == now + expiration_delta
+
+
+def test_change_password_from_recovery_rejects_legacy_token_like_unknown_token(client):
+    legacy_user = f.UserFactory.create(token="legacy-token")
+    legacy_user.set_password("current-password")
+    legacy_user.save()
+    unknown_response = client.post(
+        reverse("users-change-password-from-recovery"),
+        json.dumps({"token": "unknown-token", "password": "new-password"}),
+        content_type="application/json",
+    )
+
+    response = client.post(
+        reverse("users-change-password-from-recovery"),
+        json.dumps({"token": "legacy-token", "password": "new-password"}),
+        content_type="application/json",
+    )
+
+    assert unknown_response.status_code == 400
+    assert response.status_code == 400
+    assert response.data["_error_message"] == unknown_response.data["_error_message"]
+    legacy_user.refresh_from_db()
+    assert legacy_user.token == "legacy-token"
+    assert legacy_user.check_password("current-password")
+
+
+def test_password_recovery_sets_configured_expiration(client):
+    user = f.UserFactory.create(username="recovery-user")
+    now = timezone.now()
+
+    with patch("django.utils.timezone.now", return_value=now):
+        response = client.post(
+            reverse("users-password-recovery"),
+            json.dumps({"username": user.username}),
+            content_type="application/json",
+        )
+
+    assert response.status_code == 200
+    user.refresh_from_db()
+    assert user.token is not None
+    assert user.token_expires_at == now + settings.PASSWORD_RECOVERY_TOKEN_LIFETIME
+
+
+def test_password_recovery_replaces_token_and_expiration(client):
+    user = f.UserFactory.create(username="recovery-user")
+    url = reverse("users-password-recovery")
+    data = json.dumps({"username": user.username})
+    first_now = timezone.now()
+
+    with patch("django.utils.timezone.now", return_value=first_now):
+        assert client.post(url, data, content_type="application/json").status_code == 200
+    user.refresh_from_db()
+    first_token = user.token
+    first_expiration = user.token_expires_at
+
+    second_now = first_now + datetime.timedelta(seconds=1)
+    with patch("django.utils.timezone.now", return_value=second_now):
+        assert client.post(url, data, content_type="application/json").status_code == 200
+    user.refresh_from_db()
+    assert user.token != first_token
+    assert user.token_expires_at != first_expiration
+
+    response = client.post(
+        reverse("users-change-password-from-recovery"),
+        json.dumps({"token": first_token, "password": "new-password"}),
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+    response = client.post(
+        reverse("users-change-password-from-recovery"),
+        json.dumps({"token": user.token, "password": "new-password"}),
+        content_type="application/json",
+    )
+    assert response.status_code == 204
 
 
 def test_validate_requested_email_change(client):

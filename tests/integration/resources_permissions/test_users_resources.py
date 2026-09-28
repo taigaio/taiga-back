@@ -7,7 +7,9 @@
 
 from tempfile import NamedTemporaryFile
 
+from django.conf import settings
 from django.urls import reverse
+from django.utils import timezone
 
 from taiga.base.utils import json
 from taiga.users.serializers import UserAdminSerializer
@@ -241,10 +243,14 @@ def test_user_action_remove_avatar(client, data):
 def test_user_action_change_password_from_recovery(client, data):
     url = reverse('users-change-password-from-recovery')
 
-    new_user = f.UserFactory(token="test-token")
+    new_user = f.UserFactory(
+        token="test-token",
+        token_expires_at=timezone.now() + settings.PASSWORD_RECOVERY_TOKEN_LIFETIME,
+    )
 
     def reset_token():
         new_user.token = "test-token"
+        new_user.token_expires_at = timezone.now() + settings.PASSWORD_RECOVERY_TOKEN_LIFETIME
         new_user.save()
 
     users = [

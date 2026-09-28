@@ -12,6 +12,7 @@ from django.utils.translation import gettext as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.utils import timezone
 
 from taiga.auth.exceptions import TokenError
 from taiga.auth.tokens import CancelToken
@@ -164,7 +165,8 @@ class UsersViewSet(ModelCrudViewSet):
 
         user = get_user_by_username_or_email(username_or_email)
         user.token = str(uuid.uuid4())
-        user.save(update_fields=["token"])
+        user.token_expires_at = timezone.now() + settings.PASSWORD_RECOVERY_TOKEN_LIFETIME
+        user.save(update_fields=["token", "token_expires_at"])
 
         email = mail_builder.password_recovery(user, {"user": user})
         email.send()
@@ -188,9 +190,13 @@ class UsersViewSet(ModelCrudViewSet):
         except models.User.DoesNotExist:
             raise exc.WrongArguments(_("Token is invalid"))
 
+        if user.token_expires_at is None or timezone.now() >= user.token_expires_at:
+            raise exc.WrongArguments(_("Token is invalid"))
+
         user.set_password(validator.data["password"])
         user.token = None
-        user.save(update_fields=["password", "token"])
+        user.token_expires_at = None
+        user.save(update_fields=["password", "token", "token_expires_at"])
 
         return response.NoContent()
 

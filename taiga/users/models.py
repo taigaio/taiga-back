@@ -152,6 +152,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                         verbose_name=_("colorize tags"))
     token = models.CharField(max_length=200, null=True, blank=True, default=None,
                              verbose_name=_("token"))
+    token_expires_at = models.DateTimeField(null=True, blank=True, default=None)
 
     email_token = models.CharField(max_length=200, null=True, blank=True, default=None,
                          verbose_name=_("email token"))

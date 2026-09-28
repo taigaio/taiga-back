@@ -453,6 +453,8 @@ SIMPLE_JWT = {
     'CANCEL_TOKEN_LIFETIME': timedelta(days=100),
 }
 
+PASSWORD_RECOVERY_TOKEN_LIFETIME = timedelta(hours=1)
+
 FLUSH_REFRESHED_TOKENS_PERIODICITY = 3 * 24 * 3600 # seconds
 
 FORMAT_MODULE_PATH = "taiga.base.formats"
