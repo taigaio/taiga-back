@@ -68,7 +68,7 @@ def promote_to_us(source_obj):
 
 
 
-def demote_to_task(source_obj, milestone_id=None):
+def demote_to_task(source_obj, milestone_id=None, user_story_id=None):
     model_class = source_obj.__class__
     queryset = model_class.objects.filter(pk=source_obj.id)
 
@@ -93,6 +93,7 @@ def demote_to_task(source_obj, milestone_id=None):
             tags=obj.tags,
             milestone_id=milestone_id or obj.milestone_id,
             assigned_to=obj.assigned_to,
+            user_story_id=user_story_id,
         )
 
         task.due_date = obj.due_date
@@ -111,6 +112,9 @@ def demote_to_task(source_obj, milestone_id=None):
         _import_attachments(obj, task, content_type)
         _import_watchers(obj, task, content_type)
         _import_votes(obj, task)
+
+        if user_story_id:
+            obj.tasks.update(user_story_id=user_story_id)
 
         task_refs.append(task.ref)
 
