@@ -1,0 +1,338 @@
+[
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.userstorage",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [models]; [validators]; [serializers]; [api]; [permissions]; [filters]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.importers.management.commands",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [import_from_jira]; [import_from_pivotal]; [import_from_asana]; [import_from_trello]; [import_from_github]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.auth",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services; tokens]; [compat]; [models]; [serializers]; [throttling]; [api]; [backends; state]; [utils]; [authentication]; [settings]; [permissions]; [exceptions]. LCC (Lack of Component Cohesion) = 0.87"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [models]; [validators]; [serializers]; [translations]; [throttling]; [apps]; [api]; [admin]; [utils]; [permissions]; [choices]; [filters]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.settings",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [services]; [models]; [validators]; [serializers]; [api]; [utils]; [permissions]; [choices]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.migrations",
+        "Smell": "God component",
+        "Description": "The component contains a large number of classes. Number of classes in the component are: 68"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0059_auto_20170116_1633]; [0005_membership_invitation_extra_text]; [0021_auto_20150504_1524]; [0025_auto_20150901_1600]; [0033_text_search_indexes]; [0057_auto_20161129_0945]; [0062_auto_20190826_0920]; [0004_auto_20141002_2337]; [0051_auto_20160729_0802]; [0017_fix_is_private_for_projects]; [0060_auto_20180614_1338]; [0012_auto_20141210_1009]; [0037_auto_20160208_1751]; [0018_auto_20150219_1606]; [0044_auto_20160531_1150]; [0052_epic_status]; [0013_auto_20141210_1040]; [0032_auto_20151202_1151]; [0049_auto_20160629_1443]; [0061_auto_20180918_1355]; [0063_auto_20200615_0811]; [0065_swimlaneuserstorystatus]; [0020_membership_user_order]; [0009_auto_20141024_1037]; [0042_auto_20160525_0911]; [0029_project_is_looking_for_people]; [0053_auto_20160927_0741]; [0046_triggers_to_update_tags_colors]; [0039_auto_20160322_1157]; [0066_project_default_swimlane]; [0050_project_epics_csv_uuid]; [0022_auto_20150701_0924]; [0058_auto_20161215_1347]; [0034_project_looking_for_people_note]; [0067_auto_20201230_1237]; [0019_auto_20150311_0821]; [0006_auto_20141029_1040]; [0038_auto_20160215_1133]; [0024_auto_20150810_1247]; [0011_auto_20141028_2057]; [0016_fix_json_field_not_null]; [0031_project_logo]; [0035_project_blocked_code]; [0026_auto_20150911_1237]; [0055_json_to_jsonb]; [0001_initial]; [0054_auto_20160928_0540]; [0041_auto_20160519_1058]; [0027_auto_20150916_1302]; [0056_auto_20161110_1518]; [0023_auto_20150721_1511]; [0003_auto_20140913_1710]; [0002_auto_20140903_0920]; [0028_project_is_featured]; [0015_auto_20141230_1212]; [0010_project_modules_config]; [0045_merge]; [0007_auto_20141024_1011]; [0036_project_transfer_token]; [0030_auto_20151128_0757]; [0014_userstorystatus_is_archived]; [0040_remove_memberships_of_cancelled_users_acounts]; [0043_auto_20160530_1004]; [0008_auto_20141024_1012]; [0048_auto_20160615_1508]; [0047_auto_20160614_1201]; [0064_swimlane]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.contact",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [services]; [models]; [validators]; [api]; [admin]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.tasks",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [validators]; [serializers]; [apps]; [api]; [admin]; [utils]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.tasks.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0002_tasks_order_fields]; [0008_remove_task_watchers]; [0010_auto_20160614_1201]; [0013_auto_20200615_0811]; [0004_auto_20141210_1107]; [0007_auto_20150629_1556]; [0012_add_due_date]; [0006_auto_20150623_1923]; [0003_task_external_reference]; [0001_initial]; [0011_auto_20160928_0755]; [0005_auto_20150114_0954]; [0009_auto_20151104_1131]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.mixins",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [by_ref]; [blocked]; [validators]; [serializers]; [promote]; [ordering]; [on_destroy]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.references",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [sequences]; [services]; [models]; [validators]; [api]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.custom_attributes",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [validators]; [serializers]; [api]; [admin]; [permissions]; [choices]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.custom_attributes.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0007_auto_20160208_1751]; [0014_auto_20181025_0711]; [0008_auto_20160728_0540]; [0006_auto_20151014_1645]; [0015_auto_20200615_0811]; [0013_auto_20181022_1624]; [0002_issuecustomattributesvalues_taskcustomattributesvalues_userstorycustomattributesvalues]; [0005_auto_20150505_1639]; [0009_auto_20160728_1002]; [0012_auto_20161201_1628]; [0010_auto_20160928_0540]; [0011_json_to_jsonb]; [0001_initial]; [0003_triggers_on_delete_customattribute]; [0004_create_empty_customattributesvalues_for_existen_object]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.wiki",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [models]; [validators]; [serializers]; [apps]; [api]; [admin]; [utils]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.wiki.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0005_auto_20161201_1628]; [0003_auto_20160615_0721]; [0002_remove_wikipage_watchers]; [0004_auto_20160928_0540]; [0001_initial]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.votes",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [services]; [models]; [serializers]; [admin]; [utils]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.tagging",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [fields]; [validators]; [serializers]; [api]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.history",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [mixins]; [services]; [models]; [serializers]; [freeze_impl]; [api]; [utils]; [permissions]; [choices]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.history.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0008_auto_20150508_1028]; [0010_historyentry_project]; [0009_auto_20160512_1110]; [0012_auto_20160629_1036]; [0007_set_bloked_note_and_is_blocked_in_snapshots]; [0011_auto_20160629_1036]; [0014_json_to_jsonb]; [0003_auto_20140917_1405]; [0001_initial]; [0002_auto_20140916_0936]; [0005_auto_20141120_1119]; [0006_fix_json_field_not_null]; [0013_historyentry_values_diff_cache]; [0004_historyentry_is_hidden]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.milestones",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [validators]; [serializers]; [apps]; [api]; [admin]; [utils]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.userstories",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [validators]; [serializers]; [apps]; [api]; [admin]; [utils]; [permissions]; [filters]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.userstories.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0020_userstory_swimlane]; [0008_auto_20141210_1107]; [0017_userstory_generated_from_task]; [0010_remove_userstory_watchers]; [0019_userstory_from_task_ref]; [0005_auto_20141009_1656]; [0015_add_due_date]; [0007_userstory_external_reference]; [0006_auto_20141014_1524]; [0004_auto_20141001_1817]; [0012_auto_20160614_1201]; [0016_userstory_assigned_users]; [0011_userstory_tribe_gig]; [0009_remove_userstory_is_archived]; [0003_userstory_order_fields]; [0013_auto_20160722_1018]; [0001_initial]; [0021_auto_20201202_0850]; [0002_auto_20140903_1301]; [0014_auto_20160928_0540]; [0018_auto_20200615_0811]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.attachments",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [services]; [models]; [validators]; [serializers]; [apps]; [api]; [admin]; [utils]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.attachments.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0005_attachment_sha1]; [0007_attachment_from_comment]; [0002_add_size_and_name_fields]; [0003_auto_20150114_0954]; [0001_initial]; [0006_auto_20160617_1233]; [0008_auto_20170201_1053]; [0004_auto_20150508_1141]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.epics",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [services]; [models]; [validators]; [serializers]; [apps]; [api]; [admin]; [utils]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.epics.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0002_epic_color]; [0005_epic_external_reference]; [0003_auto_20160901_1021]; [0004_auto_20160928_0540]; [0001_initial]; [0006_auto_20200615_0811]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.issues",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [validators]; [serializers]; [apps]; [api]; [admin]; [utils]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.issues.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0006_remove_issue_watchers]; [0005_auto_20150623_1923]; [0009_auto_20200615_0811]; [0004_auto_20150114_0954]; [0002_issue_external_reference]; [0001_initial]; [0003_auto_20141210_1108]; [0008_add_due_date]; [0007_auto_20160614_1201]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.notifications",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [mixins]; [services]; [tasks]; [models]; [validators]; [serializers]; [apps]; [api]; [admin]; [utils]; [squashing]; [permissions]; [choices]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.notifications.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0002_historychangenotification]; [0009_auto_20200615_0811]; [0008_auto_20181010_1124]; [0006_auto_20151103_0954]; [0007_notifypolicy_live_notify_level]; [0003_auto_20141029_1143]; [0001_initial]; [0004_watched]; [0005_auto_20151005_1357]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.projects.services",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [bulk_update_order]; [members]; [promote]; [logo]; [transfer]; [modules_config]; [stats]; [invitations]; [projects]; [filters]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.feedback",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [services]; [models]; [validators]; [apps]; [api]; [admin]; [permissions]; [routers]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.mdrender.extensions",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [emojify]; [refresh_attachment]; [target_link]; [references]; [autolink]; [automail]; [strikethrough]; [wikilinks]; [spaced_link]; [mentions]; [semi_sane_lists]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.hooks.gitlab",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [apps]; [api]; [event_hooks]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.hooks.github",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [apps]; [api]; [event_hooks]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.users",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [services]; [models]; [validators]; [serializers]; [throttling]; [gravatar]; [forms]; [api]; [admin]; [utils]; [permissions]; [filters]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.users.migrations",
+        "Smell": "God component",
+        "Description": "The component contains a large number of classes. Number of classes in the component are: 34"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.users.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0033_auto_20211110_1526]; [0002_auto_20140903_0916]; [0029_user_verified_email]; [0011_user_theme]; [0014_auto_20151005_1357]; [0025_user_uuid]; [0027_auto_20180610_2011]; [0023_json_to_jsonb]; [0012_auto_20150812_1142]; [0013_auto_20150901_1600]; [0007_auto_20150209_1611]; [0030_auto_20201119_1031]; [0024_auto_20170406_0727]; [0031_auto_20210108_1430]; [0005_alter_user_photo]; [0015_auto_20160120_1409]; [0016_auto_20160204_1050]; [0003_auto_20140903_0925]; [0010_auto_20150414_0936]; [0017_auto_20160208_1751]; [0006_auto_20141030_1132]; [0019_auto_20160519_1058]; [0022_auto_20160629_1443]; [0026_auto_20180514_1513]; [0018_remove_vote_issues_in_roles_permissions_field]; [0020_auto_20160525_1229]; [0008_auto_20150213_1701]; [0028_auto_20200615_0811]; [0009_auto_20150326_1241]; [0001_initial]; [0021_auto_20160614_1201]; [0032_user_date_cancelled]; [0004_auto_20140913_1914]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.export_import",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [mixins]; [tasks]; [models]; [throttling]; [renderers]; [api]; [permissions]; [exceptions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.external_apps",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [services]; [models]; [validators]; [serializers]; [auth_backends]; [api]; [admin]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.webhooks",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [tasks]; [models]; [validators]; [serializers]; [apps]; [api]; [permissions]; [signal_handlers]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.webhooks.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0006_json_to_jsonb]; [0004_auto_20150202_0834]; [0003_auto_20150122_1021]; [0005_auto_20150505_1639]; [0002_webhook_name]; [0001_initial]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.timeline",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [signals]; [service]; [models]; [serializers]; [apps]; [api]; [timeline_implementations]; [rebuilder]; [permissions]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.timeline.migrations",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [0006_json_to_jsonb]; [0003_auto_20150410_0829]; [0004_auto_20150603_1312]; [0007_auto_20170406_0615]; [0002_auto_20150327_1056]; [0008_auto_20190606_1528]; [0001_initial]; [0005_auto_20160706_0723]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.base",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [fields]; [neighbors]; [throttling]; [response]; [mails]; [apps]; [storage]; [monkey]; [exceptions]; [routers]; [filters]; [status]; [decorators]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.base.utils",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [functions]; [time]; [signals]; [files]; [db]; [collections]; [logs]; [text]; [iterators]; [diff]; [contenttypes]; [urls]; [dicts]; [json]; [thumbnails]; [slug]; [colors]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.base.api",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [mixins]; [fields; serializers; relations]; [reverse]; [validators]; [viewsets]; [request]; [throttling]; [parsers]; [renderers]; [urlpatterns]; [authentication]; [settings]; [permissions]; [pagination]; [generics]; [negotiation]; [views]. LCC (Lack of Component Cohesion) = 0.89"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.taiga.stats",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [services]; [apps]; [api]; [permissions]; [routers]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.tests",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [conftest]; [config]; [models]; [factories]; [utils]; [fixtures]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.tests.unit",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [test_due_date_serializers]; [test_attachments_services]; [test_notifications_squashing]; [test_utils]; [test_order_updates]; [test_serializer_mixins]; [test_base_api_permissions]; [test_timeline]; [test_mdrender]; [test_import]; [test_milestones]; [test_common_throttle]; [test_slug]; [test_export]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.tests.unit.auth",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [test_token_denylist]; [test_authentication; utils]; [test_backends]; [test_tokens]. LCC (Lack of Component Cohesion) = 0.8"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.tests.integration",
+        "Smell": "God component",
+        "Description": "The component contains a large number of classes. Number of classes in the component are: 75"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.tests.integration",
+        "Smell": "God component",
+        "Description": "The component is excessively large in terms of LOC (Lines Of Code). The total LOC of the component: 20000"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.tests.integration",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [test_tasks_tags]; [test_feedback]; [test_vote_userstories]; [test_application_tokens]; [test_watch_wikipages]; [test_webhooks_wikipages]; [test_stats]; [test_webhooks_userstories]; [test_hooks_gogs]; [test_searches]; [test_userstories_update_kanban_order]; [test_references_sequences]; [test_hooks_gitlab]; [test_webhooks_signals]; [test_auth]; [test_totals_projects]; [test_watch_milestones]; [test_userstories_update_backlog_order]; [test_vote_tasks]; [test_custom_attributes_epics]; [test_custom_attributes_user_stories]; [test_issues_tags]; [test_exporter_api]; [test_custom_attributes_tasks]; [test_project_settings]; [test_hooks_bitbucket]; [test_occ]; [test_userstories]; [test_webhooks_tasks]; [test_userstories_tags]; [test_webhooks_epics]; [test_timeline]; [test_userstorage_api]; [test_webhooks]; [test_mdrender]; [test_fan_projects]; [test_importers_trello_api]; [test_webhooks_issues]; [test_epics_tags]; [test_notifications]; [test_issues]; [test_importers_github_api]; [test_webhook_serializers]; [test_milestones]; [test_vote_issues]; [test_projects]; [test_importer_api]; [test_sitemaps]; [test_epics]; [test_watch_userstories]; [test_tasks]; [test_webhooks_milestones]; [test_memberships]; [test_users]; [test_notifications_custom]; [test_hooks_github]; [test_roles]; [test_models]; [test_importers_jira_api]; [test_us_autoclosing]; [test_importers_asana_api]; [test_attachments]; [test_wikilinks]; [test_watch_projects]; [test_contact]; [test_watch_issues]; [test_history]; [test_emails]; [test_neighbors]; [test_watch_tasks]; [test_permissions]; [test_throwttling]; [test_votes]; [test_custom_attributes_issues]. LCC (Lack of Component Cohesion) = 1.0"
+    },
+    {
+        "Project": "taiga-back-fork",
+        "Package": "taiga-back-fork.tests.integration.resources_permissions",
+        "Smell": "Feature concentration",
+        "Description": "The component realizes more than one architectural concern/feature. Independent sets of related modules within this component are: [test_feedback]; [test_resolver_resources]; [test_epics_resources]; [test_attachment_resources]; [test_milestones_resources]; [test_webhooks_resources]; [test_epics_custom_attributes_resource]; [test_issues_resources]; [test_projects_resource]; [test_storage_resources]; [test_issues_custom_attributes_resource]; [test_wiki_resources]; [test_tasks_resources]; [test_auth_resources]; [test_history_resources]; [test_userstories_custom_attributes_resource]; [test_application_tokens_resources]; [test_epics_related_userstories_resources]; [test_timelines_resources]; [test_tasks_custom_attributes_resource]; [test_search_resources]; [test_contact]; [test_projects_choices_resources]; [test_users_resources]; [test_userstories_resources]; [test_modules_resources]. LCC (Lack of Component Cohesion) = 1.0"
+    }
+]

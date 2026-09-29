@@ -9,7 +9,7 @@ from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
 
 
-class EpicSearchResultsSerializer(serializers.LightSerializer):
+class BaseSearchResultsSerializer(serializers.LightSerializer):
     id = Field()
     ref = Field()
     subject = Field()
@@ -17,11 +17,11 @@ class EpicSearchResultsSerializer(serializers.LightSerializer):
     assigned_to = Field(attr="assigned_to_id")
 
 
-class UserStorySearchResultsSerializer(serializers.LightSerializer):
-    id = Field()
-    ref = Field()
-    subject = Field()
-    status = Field(attr="status_id")
+class EpicSearchResultsSerializer(BaseSearchResultsSerializer):
+    pass
+
+
+class UserStorySearchResultsSerializer(BaseSearchResultsSerializer):
     total_points = MethodField()
     milestone_name = MethodField()
     milestone_slug = MethodField()
@@ -39,20 +39,12 @@ class UserStorySearchResultsSerializer(serializers.LightSerializer):
         return obj.total_points_attr
 
 
-class TaskSearchResultsSerializer(serializers.LightSerializer):
-    id = Field()
-    ref = Field()
-    subject = Field()
-    status = Field(attr="status_id")
-    assigned_to = Field(attr="assigned_to_id")
+class TaskSearchResultsSerializer(BaseSearchResultsSerializer):
+    pass
 
 
-class IssueSearchResultsSerializer(serializers.LightSerializer):
-    id = Field()
-    ref = Field()
-    subject = Field()
-    status = Field(attr="status_id")
-    assigned_to = Field(attr="assigned_to_id")
+class IssueSearchResultsSerializer(BaseSearchResultsSerializer):
+    pass
 
 
 class WikiPageSearchResultsSerializer(serializers.LightSerializer):
