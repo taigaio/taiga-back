@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 #
+from django.db import transaction
 from django.utils.translation import gettext as _
 
 from taiga.base import response
@@ -85,13 +86,14 @@ class DemoteToTaskMixin:
                 }
             )
 
-        ret = demote_to_task(obj, 
-                             milestone_id=data.get("milestone_id"),
-                             user_story_id=data.get("user_story_id"))
-        self.persist_history_snapshot(obj=obj)
+        with transaction.atomic():
+            ret = demote_to_task(obj,
+                                 milestone_id=data.get("milestone_id"),
+                                 user_story_id=data.get("user_story_id"))
+            self.persist_history_snapshot(obj=obj)
 
-        # delete source UserStory if required
-        if isinstance(obj, UserStory):
-            obj.delete()
+            # delete source UserStory if required
+            if isinstance(obj, UserStory):
+                obj.delete()
 
         return response.Ok(ret)

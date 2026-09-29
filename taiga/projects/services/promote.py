@@ -67,7 +67,6 @@ def promote_to_us(source_obj):
     return us_refs
 
 
-
 def demote_to_task(source_obj, milestone_id=None, user_story_id=None):
     model_class = source_obj.__class__
     queryset = model_class.objects.filter(pk=source_obj.id)
