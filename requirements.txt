@@ -64,7 +64,7 @@ defusedxml==0.7.1
     # via cairosvg
 diff-match-patch==20241021
     # via -r requirements.in
-django==3.2.25
+django==5.2.1
     # via
     #   -r requirements.in
     #   django-jinja
@@ -79,7 +79,7 @@ django-jinja==2.11.0
     # via -r requirements.in
 django-pglocks==1.0.4
     # via -r requirements.in
-django-picklefield==3.2
+django-picklefield==3.3.0
     # via -r requirements.in
 django-sampledatahelper==0.5
     # via -r requirements.in
@@ -91,7 +91,7 @@ djmail==2.0.0
     # via -r requirements.in
 docopt==0.6.2
     # via psd-tools
-easy-thumbnails==2.8.5
+easy-thumbnails==2.10.1
     # via -r requirements.in
 gunicorn==23.0.0
     # via -r requirements.in
@@ -156,7 +156,7 @@ prompt-toolkit==3.0.52
 psd-tools==1.9.34
     # via -r requirements.in
 psycopg2==2.9.11
-    # via -r requirements.in
+    # via -r requirements.in (Django 5.x requires >= 2.9.1)
 pycparser==2.23
     # via cffi
 pygments==2.19.2

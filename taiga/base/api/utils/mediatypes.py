@@ -36,9 +36,24 @@ Handling of media types, as found in HTTP Content-Type and Accept headers.
 
 See http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7
 """
-from django.http.multipartparser import parse_header
-
 from taiga.base.api import HTTP_HEADER_ENCODING
+
+from email.message import Message as _Message
+
+
+def parse_header(line):
+    """Parse a Content-Type-like header into (main_value, params dict).
+
+    Replaces django.http.multipartparser.parse_header which was removed in Django 5.0.
+    """
+    if isinstance(line, bytes):
+        line = line.decode("latin-1")
+    msg = _Message()
+    msg["content-type"] = line
+    params = msg.get_params()
+    if not params:
+        return line.split(";")[0].strip(), {}
+    return params[0][0], {k: v for k, v in params[1:]}
 
 
 def media_type_matches(lhs, rhs):
