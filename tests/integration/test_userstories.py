@@ -667,6 +667,27 @@ def test_api_filter_by_finish_date(client):
     assert response.data[0]["subject"] == userstory_to_finish.subject
 
 
+def test_api_filter_by_due_date__isnull(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_later = timezone.now() + timedelta(days=1)
+
+    userstory_with_due_date = f.create_userstory(owner=user, subject="test", due_date=one_day_later)
+    userstory_without_due_date = f.create_userstory(owner=user, due_date=None)
+
+    assert userstory_with_due_date.due_date
+    assert userstory_without_due_date.due_date is None
+
+    url = reverse("userstories-list") + "?due_date=" + str(one_day_later)
+
+    client.login(user)
+    response = client.get(url)
+    number_of_userstories = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_userstories == 1
+    assert response.data[0]["subject"] == userstory_with_due_date.subject
+
+
 def test_api_filter_by_assigned_users(client):
     user = f.UserFactory(is_superuser=True)
     user2 = f.UserFactory(is_superuser=True)
