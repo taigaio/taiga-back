@@ -606,6 +606,10 @@ class FinishDateFilter(BaseDateFilter):
     filter_name_base = "finish_date"
 
 
+class DueDateFilter(BaseDateFilter):
+    filter_name_base = "due_date"
+
+
 class EstimatedStartFilter(BaseDateFilter):
     filter_name_base = "estimated_start"
 
