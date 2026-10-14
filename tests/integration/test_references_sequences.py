@@ -48,6 +48,13 @@ def test_sequences(seq):
     seq.alter(seqname, 4)
     assert seq.next_value(seqname) == 5
 
+    # set_max never decreases the sequence: nextval consumes 6, GREATEST(6, 8) = 8
+    assert seq.set_max(seqname, 8) == 8
+    assert seq.next_value(seqname) == 9
+    # nextval consumes 10, GREATEST(10, 3) = 10: lower values never win
+    assert seq.set_max(seqname, 3) == 10
+    assert seq.next_value(seqname) == 11
+
     # Delete after alter
     seq.delete(seqname)
     assert not seq.exists(seqname)

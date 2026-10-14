@@ -787,6 +787,26 @@ def test_project_list_with_search_query_order_by_ranking(client):
     assert response.data[2]["id"] == project1.id
 
 
+def test_project_list_with_search_query_prefix_and_operators(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project1 = f.create_project(name="prefixword alpha", description="", tags=[])
+    project2 = f.create_project(name="other", description="", tags=["prefixword"])
+    f.create_project(name="unrelated", description="", tags=[])
+
+    url = reverse("projects-list")
+
+    client.login(user)
+
+    # to_tsquery builds a prefix query: 'prefix':*
+    response = client.json.get(url, {"q": "prefix"})
+    assert response.status_code == 200
+    assert [p["id"] for p in response.data] == [project1.id, project2.id]
+
+    response = client.json.get(url, {"q": "prefixword and not alpha"})
+    assert response.status_code == 200
+    assert [p["id"] for p in response.data] == [project2.id]
+
+
 ####################################################################################
 # Test transfer project ownership
 ####################################################################################
