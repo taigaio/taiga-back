@@ -12,6 +12,7 @@ from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.urls import reverse
 from django.core.files import File
 from django.core.cache import cache as default_cache
@@ -356,6 +357,7 @@ def test_password_recovery_sets_configured_expiration(client):
     user.refresh_from_db()
     assert user.token is not None
     assert user.token_expires_at == now + settings.PASSWORD_RECOVERY_TOKEN_LIFETIME
+    assert len(mail.outbox) == 1
 
 
 def test_password_recovery_replaces_token_and_expiration(client):
@@ -389,6 +391,40 @@ def test_password_recovery_replaces_token_and_expiration(client):
         content_type="application/json",
     )
     assert response.status_code == 204
+
+
+def test_password_recovery_returns_200_for_unknown_username(client):
+    response = client.post(
+        reverse("users-password-recovery"),
+        json.dumps({"username": "unknown-user"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.data == {"detail": "Mail sent successfully!"}
+    assert len(mail.outbox) == 0
+
+
+def test_password_recovery_returns_200_for_unknown_email(client):
+    response = client.post(
+        reverse("users-password-recovery"),
+        json.dumps({"username": "unknown@email.com"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.data == {"detail": "Mail sent successfully!"}
+    assert len(mail.outbox) == 0
+
+
+def test_password_recovery_without_username_returns_400(client):
+    response = client.post(
+        reverse("users-password-recovery"),
+        json.dumps({}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400
 
 
 def test_validate_requested_email_change(client):
