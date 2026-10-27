@@ -401,7 +401,10 @@ def test_password_recovery_returns_200_for_unknown_username(client):
     )
 
     assert response.status_code == 200
-    assert response.data == {"detail": "Mail sent successfully!"}
+    assert response.data == {
+        "detail": "If an account exists for the given username or email, "
+        "you'll receive an email with a link to set a new password."
+    }
     assert len(mail.outbox) == 0
 
 
@@ -413,7 +416,10 @@ def test_password_recovery_returns_200_for_unknown_email(client):
     )
 
     assert response.status_code == 200
-    assert response.data == {"detail": "Mail sent successfully!"}
+    assert response.data == {
+        "detail": "If an account exists for the given username or email, "
+        "you'll receive an email with a link to set a new password."
+    }
     assert len(mail.outbox) == 0
 
 

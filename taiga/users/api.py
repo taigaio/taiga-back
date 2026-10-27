@@ -163,7 +163,10 @@ class UsersViewSet(ModelCrudViewSet):
         if not username_or_email:
             raise exc.WrongArguments(_("Invalid username or email"))
 
-        success_message = _("Mail sent successfully!")
+        success_message = _(
+            "If an account exists for the given username or email, "
+            "you'll receive an email with a link to set a new password."
+        )
 
         try:
             user = get_user_by_username_or_email(username_or_email)
