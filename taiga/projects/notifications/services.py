@@ -367,7 +367,7 @@ def send_sync_notifications(notification_id):
 
     for user in notification.notify_users.distinct():
         context["user"] = user
-        context["lang"] = user.lang or settings.LANGUAGE_CODE
+        context.pop("lang", None)
         try:
             email.send(user.email, context, headers=headers)
         except Exception:

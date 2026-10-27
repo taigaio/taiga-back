@@ -11,6 +11,7 @@ from django.contrib import admin
 from django.urls import path
 
 from .routers import router
+from taiga.instance_settings.api import AdminInstanceDefaultsView, PublicInstanceDefaultsView
 
 
 ##############################################
@@ -18,6 +19,10 @@ from .routers import router
 ##############################################
 
 urlpatterns = [
+    path('api/v1/instance-defaults', PublicInstanceDefaultsView.as_view(),
+         name='instance-defaults-public'),
+    path('api/v1/instance-defaults/admin', AdminInstanceDefaultsView.as_view(),
+         name='instance-defaults-admin'),
     path('api/v1/', include(router.urls)),
     path('admin/', admin.site.urls),
 ]
