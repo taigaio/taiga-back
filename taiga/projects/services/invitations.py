@@ -5,16 +5,31 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
+import datetime
+import uuid
+
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction as tx
 from django.db import IntegrityError
+from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from taiga.base import exceptions as exc
 
 from taiga.base.mails import mail_builder
+
+INVITATION_VALID_PERIOD = datetime.timedelta(days=7)
+
+
+def generate_invitation_token():
+    """Returns (token, expires_at) for a new invitation.
+
+    Every issuer must use this helper so the token and its
+    expiration date are always issued together.
+    """
+    return str(uuid.uuid1()), timezone.now() + INVITATION_VALID_PERIOD
 
 
 def send_invitation(invitation):
@@ -59,7 +74,10 @@ def get_membership_by_token(token:str):
     is raised.
     """
     membership_model = apps.get_model("projects", "Membership")
-    qs = membership_model.objects.filter(token=token)
+    qs = membership_model.objects.filter(
+        token=token,
+        token_expires_at__gt=timezone.now(),
+    )
     if len(qs) == 0:
         raise exc.NotFound(_("Token does not match any valid invitation."))
     return qs[0]

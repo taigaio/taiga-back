@@ -25,6 +25,7 @@ from taiga.projects.references import sequences as seq
 from taiga.projects.references import models as refs
 from taiga.projects.userstories.models import RolePoints
 from taiga.projects.services import find_invited_user
+from taiga.projects.services.invitations import generate_invitation_token
 from taiga.timeline.service import build_project_namespace
 
 from .. import exceptions as err
@@ -191,7 +192,9 @@ def _store_membership(project, membership):
     if validator.is_valid():
         validator.object.project = project
         validator.object._importing = True
-        validator.object.token = str(uuid.uuid1())
+        token, token_expires_at = generate_invitation_token()
+        validator.object.token = token
+        validator.object.token_expires_at = token_expires_at
         validator.object.user = find_invited_user(validator.object.email,
                                                   default=validator.object.user)
         try:

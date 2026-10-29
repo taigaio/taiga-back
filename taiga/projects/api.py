@@ -53,6 +53,7 @@ from . import permissions
 from . import serializers
 from . import validators
 from . import services
+from .services import invitations
 from . import utils as project_utils
 from . import throttling
 
@@ -1093,6 +1094,13 @@ class MembershipViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrud
         self.check_permissions(request, 'resend_invitation', invitation.project)
         self.pre_conditions_on_save(invitation)
 
+        # Rotate the token so old links become invalid and the
+        # invitation gets a fresh expiration date
+        token, token_expires_at = invitations.generate_invitation_token()
+        invitation.token = token
+        invitation.token_expires_at = token_expires_at
+        invitation.save(update_fields=["token", "token_expires_at"])
+
         services.send_invitation(invitation=invitation)
         return response.NoContent()
 
@@ -1156,7 +1164,9 @@ class MembershipViewSet(ArchivedByProjectMixin, BlockedByProjectMixin, ModelCrud
         obj.user = services.find_invited_user(obj.email, default=obj.user)
 
         if not obj.token and not obj.user:
-            obj.token = str(uuid.uuid1())
+            token, token_expires_at = invitations.generate_invitation_token()
+            obj.token = token
+            obj.token_expires_at = token_expires_at
 
         super().pre_save(obj)
 
@@ -1174,10 +1184,16 @@ class InvitationViewSet(ModelListViewSet):
     """
     Only used by front for get invitation by it token.
     """
-    queryset = models.Membership.objects.filter(user__isnull=True)
     serializer_class = serializers.MembershipSerializer
     lookup_field = "token"
     permission_classes = (AllowAnyPermission,)
+
+    def get_queryset(self):
+        # Same validity period as the invitation token
+        return models.Membership.objects.filter(
+            user__isnull=True,
+            token_expires_at__gt=timezone.now(),
+        )
 
     def list(self, *args, **kwargs):
         raise exc.PermissionDenied(_("You don't have permissions to see that."))

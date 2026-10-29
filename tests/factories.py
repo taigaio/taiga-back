@@ -9,6 +9,8 @@ import uuid
 import threading
 from datetime import date, timedelta
 
+from django.utils import timezone
+
 from django.conf import settings
 
 from .utils import DUMMY_BMP_DATA
@@ -204,6 +206,8 @@ class MembershipFactory(Factory):
         strategy = factory.CREATE_STRATEGY
 
     token = factory.LazyAttribute(lambda obj: str(uuid.uuid1()))
+    token_expires_at = factory.LazyAttribute(
+        lambda obj: timezone.now() + timedelta(days=7))
     project = factory.SubFactory("tests.factories.ProjectFactory")
     role = factory.SubFactory("tests.factories.RoleFactory")
     user = factory.SubFactory("tests.factories.UserFactory")
@@ -215,6 +219,8 @@ class InvitationFactory(Factory):
         strategy = factory.CREATE_STRATEGY
 
     token = factory.LazyAttribute(lambda obj: str(uuid.uuid1()))
+    token_expires_at = factory.LazyAttribute(
+        lambda obj: timezone.now() + timedelta(days=7))
     project = factory.SubFactory("tests.factories.ProjectFactory")
     role = factory.SubFactory("tests.factories.RoleFactory")
     email = factory.Sequence(lambda n: "user{}@email.com".format(n))
