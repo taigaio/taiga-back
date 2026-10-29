@@ -2,7 +2,8 @@
 
 ## 6.10.3 (unreleased)
 
-- ...
+- fix: update the dependencies with known vulnerabilities (Pillow 13, psd-tools 1.25, PyJWT, cryptography, lxml, sqlparse, requests, urllib3...); the requirements are compiled and tested with Python 3.11, the version of the Docker image
+- fix(docker): upgrade the system packages and leave pip, setuptools and wheel out of the image
 
 ## 6.10.2 (2026-07-02)
 - fix: enforce permission check on create_default due date endpoints

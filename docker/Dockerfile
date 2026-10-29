@@ -24,6 +24,7 @@ COPY requirements.txt requirements-contribs.txt ./
 
 RUN set -eux; \
     apt-get update; \
+    apt-get upgrade -y; \
     apt-get install -y --no-install-recommends \
         build-essential \
         ca-certificates \
@@ -35,10 +36,13 @@ RUN set -eux; \
         git \
         net-tools \
         procps; \
-    python -m pip install --upgrade pip; \
-    python -m pip install wheel; \
+    python -m pip install --upgrade pip setuptools wheel; \
     python -m pip install -r requirements.txt; \
     python -m pip install -r requirements-contribs.txt; \
+    # pip, setuptools and wheel are only needed to install the dependencies, and pip bundles packages
+    # with known vulnerabilities: remove them from the virtualenv and from the system Python
+    python -m pip uninstall -y pip setuptools wheel; \
+    /usr/local/bin/python -m pip uninstall -y setuptools wheel pip; \
     apt-get purge -y \
         build-essential \
         git \
