@@ -88,6 +88,8 @@ class Membership(models.Model):
                                       verbose_name=_("create at"))
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
+    token_expires_at = models.DateTimeField(null=True, blank=True, default=None,
+                                            verbose_name=_("token expires at"))
 
     invited_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
