@@ -34,6 +34,7 @@ And here is an inevitably incomplete list of MUCH-APPRECIATED CONTRIBUTORS, peop
 - Andrea Stagi <stagi.andrea@gmail.com>
 - Andrés Moya <andres.moya@kaleidos.net>
 - Andrey Alekseenko <al42and@gmail.com>
+- Baptiste Gosselin <baptiste.gosselin@unxwares.com>
 - Brett Profitt <brett.profitt@gmail.com>
 - Bruno Clermont <bruno@robotinfra.com>
 - Chris Wilson <chris.wilson@aridhia.com>

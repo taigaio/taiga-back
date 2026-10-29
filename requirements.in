@@ -21,7 +21,7 @@ django-pglocks
 easy-thumbnails<2.9 # 2.9 released after Django 3.2 LTS EOL
 netaddr
 premailer>=3.10
-psd-tools>=1.9.18,<1.10.0 # https://psd-tools.readthedocs.io/en/latest/migration.html#migrating-to-1-10
+psd-tools[composite]>=1.17.4 # 1.10 renamed PSDImage.compose() to composite() and made aggdraw and scipy an extra
 python-dateutil
 python-magic
 pytz

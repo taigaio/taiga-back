@@ -52,7 +52,7 @@ Image.init()
 # PSD thumbnail generator
 def psd_image_factory(data, *args):
     try:
-        return PSDImage.open(data).compose()
+        return PSDImage.open(data).composite()
     except Exception:
         raise TypeError
 
