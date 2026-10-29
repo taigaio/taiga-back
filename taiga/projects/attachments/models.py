@@ -73,7 +73,9 @@ class Attachment(models.Model):
         verbose_name = "attachment"
         verbose_name_plural = "attachments"
         ordering = ["project", "created_date", "id"]
-        index_together = [("content_type", "object_id")]
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
 
     def __init__(self, *args, **kwargs):
         super(Attachment, self).__init__(*args, **kwargs)
