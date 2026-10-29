@@ -5,10 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
+import datetime
+
 import pytest
 
 from django.urls import reverse
 from django.core import mail
+from django.utils import timezone
 
 from .. import factories
 
@@ -306,6 +309,28 @@ def test_get_auth_token_with_project_invitation(client, settings):
     assert "auth_token" in response.data and response.data["auth_token"]
     assert "refresh" in response.data and response.data["refresh"]
     assert membership.user == user
+
+
+def test_get_auth_token_with_expired_project_invitation(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
+    user = factories.UserFactory()
+    membership = factories.MembershipFactory(
+        user=None,
+        token_expires_at=timezone.now() - datetime.timedelta(days=1),
+    )
+
+    auth_data = {
+        "username": user.username,
+        "password": user.username,
+        "type": "normal",
+        "invitation_token": membership.token,
+    }
+
+    response = client.post(reverse("auth-list"), auth_data)
+    membership.refresh_from_db()
+
+    assert response.status_code == 404, response.data
+    assert membership.user == None
 
 
 def test_get_auth_token_error_invalid_credentials(client, settings):
