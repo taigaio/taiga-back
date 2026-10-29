@@ -163,7 +163,17 @@ class UsersViewSet(ModelCrudViewSet):
         if not username_or_email:
             raise exc.WrongArguments(_("Invalid username or email"))
 
-        user = get_user_by_username_or_email(username_or_email)
+        success_message = _(
+            "If an account exists for the given username or email, "
+            "you'll receive an email with a link to set a new password."
+        )
+
+        try:
+            user = get_user_by_username_or_email(username_or_email)
+        except exc.WrongArguments:
+            # Do not reveal whether the account exists
+            return response.Ok({"detail": success_message})
+
         user.token = str(uuid.uuid4())
         user.token_expires_at = timezone.now() + settings.PASSWORD_RECOVERY_TOKEN_LIFETIME
         user.save(update_fields=["token", "token_expires_at"])
@@ -171,7 +181,7 @@ class UsersViewSet(ModelCrudViewSet):
         email = mail_builder.password_recovery(user, {"user": user})
         email.send()
 
-        return response.Ok({"detail": _("Mail sent successfully!")})
+        return response.Ok({"detail": success_message})
 
     @list_route(methods=["POST"])
     def change_password_from_recovery(self, request, pk=None):
