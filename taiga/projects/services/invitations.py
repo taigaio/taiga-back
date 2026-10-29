@@ -67,17 +67,28 @@ def find_invited_user(email, default=None):
 
 def get_membership_by_token(token:str):
     """
-    Given an invitation token, returns a membership instance
+    Given an invitation token, returns a pending membership instance
     that matches with specified token.
+
+    Only pending invitations are matched, so already accepted tokens
+    can not be reused to reassign the membership.
+
+    The row is locked to prevent two concurrent requests from
+    accepting the same invitation.
 
     If not matches with any membership NotFound exception
     is raised.
     """
     membership_model = apps.get_model("projects", "Membership")
-    qs = membership_model.objects.filter(
-        token=token,
-        token_expires_at__gt=timezone.now(),
-    )
+    # of=("self",): only lock the membership row; locking the
+    # nullable users_user join is not allowed by PostgreSQL
+    qs = (membership_model.objects
+          .select_for_update(of=("self",))
+          .filter(
+              token=token,
+              user_id__isnull=True,
+              token_expires_at__gt=timezone.now(),
+          ))
     if len(qs) == 0:
         raise exc.NotFound(_("Token does not match any valid invitation."))
     return qs[0]
@@ -94,7 +105,10 @@ def accept_invitation_by_existing_user(token:str, user_id:int):
     membership = get_membership_by_token(token)
     try:
         membership.user = user
-        membership.save(update_fields=["user"])
+        # Single use: consume the token so it can not be reused
+        membership.token = None
+        membership.token_expires_at = None
+        membership.save(update_fields=["user", "token", "token_expires_at"])
     except IntegrityError:
         raise exc.IntegrityError(_("This user is already a member of the project."))
     return user

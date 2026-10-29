@@ -204,7 +204,10 @@ def private_register_for_new_user(token:str, username:str, email:str,
 
     membership = get_membership_by_token(token)
     membership.user = user
-    membership.save(update_fields=["user"])
+    # Single use: consume the token so it can not be reused
+    membership.token = None
+    membership.token_expires_at = None
+    membership.save(update_fields=["user", "token", "token_expires_at"])
     send_register_email(user)
     user_registered_signal.send(sender=user.__class__, user=user)
 
