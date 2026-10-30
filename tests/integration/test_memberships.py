@@ -6,7 +6,10 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 from unittest import mock
+import datetime
+
 from django.urls import reverse
+from django.utils import timezone
 
 from taiga.projects import services
 from taiga.base.utils import json
@@ -549,12 +552,62 @@ def test_api_resend_invitation(client, outbox):
     f.MembershipFactory(project=invitation.project, user=invitation.project.owner, is_admin=True)
     url = reverse("memberships-resend-invitation", kwargs={"pk": invitation.pk})
 
+    old_token = invitation.token
+    old_expires_at = invitation.token_expires_at
+
     client.login(invitation.project.owner)
     response = client.post(url)
 
     assert response.status_code == 204
     assert len(outbox) == 1
     assert outbox[0].to == [invitation.email]
+
+    # Resending rotates the token and refreshes its expiration,
+    # so the invitation gets a new validity period
+    invitation.refresh_from_db()
+    assert invitation.token != old_token
+    assert invitation.token_expires_at > old_expires_at
+
+
+def test_api_resend_expired_invitation_makes_it_valid_again(client, outbox):
+    invitation = f.create_invitation(
+        user=None,
+        token_expires_at=timezone.now() - datetime.timedelta(days=1),
+    )
+    f.MembershipFactory(project=invitation.project, user=invitation.project.owner, is_admin=True)
+    url = reverse("memberships-resend-invitation", kwargs={"pk": invitation.pk})
+
+    client.login(invitation.project.owner)
+    response = client.post(url)
+
+    assert response.status_code == 204
+
+    # After resending, login with the new token must work
+    invitation.refresh_from_db()
+    user = f.UserFactory()
+    auth_data = {
+        "username": user.username,
+        "password": user.username,
+        "type": "normal",
+        "invitation_token": invitation.token,
+    }
+    response = client.post(reverse("auth-list"), auth_data)
+    invitation.refresh_from_db()
+
+    assert response.status_code == 200, response.data
+    assert invitation.user == user
+
+
+def test_invitation_detail_with_expired_token_is_rejected(client):
+    membership = f.MembershipFactory(
+        user=None,
+        token_expires_at=timezone.now() - datetime.timedelta(days=1),
+    )
+
+    url = reverse("invitations-detail", kwargs={"token": membership.token})
+    response = client.get(url)
+
+    assert response.status_code == 404, response.data
 
 
 def test_api_invite_existing_user(client, outbox):

@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
-import uuid
 
 from taiga.base.exceptions import ValidationError, WrongArguments
 from taiga.base.utils import db
@@ -17,6 +16,7 @@ from django.core.validators import validate_email
 from django.utils.translation import gettext as _
 
 from .. import models
+from .invitations import generate_invitation_token
 
 
 def get_members_from_bulk(bulk_data, **additional_fields):
@@ -46,7 +46,9 @@ def get_members_from_bulk(bulk_data, **additional_fields):
                 raise WrongArguments(_("Malformed email adress."))
 
             if "token" not in data_copy.keys():
-                data_copy["token"] = str(uuid.uuid1())
+                token, token_expires_at = generate_invitation_token()
+                data_copy["token"] = token
+                data_copy["token_expires_at"] = token_expires_at
 
         data_copy.update(additional_fields)
 
