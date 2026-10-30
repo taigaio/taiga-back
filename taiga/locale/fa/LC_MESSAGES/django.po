@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2023-04-04 06:36+0000\n"
-"Last-Translator: Amin <Amin_seven_sky@yahoo.com>\n"
+"PO-Revision-Date: 2025-10-22 14:04+0000\n"
+"Last-Translator: Arash Azarmir <arashazarmir@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "fa/>\n"
 "Language: fa\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.17-dev\n"
+"X-Generator: Weblate 5.14-dev\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -33,11 +33,11 @@ msgstr "ثبت‌نام عمومی غیرفعال است."
 
 #: taiga/auth/api.py:131
 msgid "You must accept our terms of service and privacy policy"
-msgstr "شما باید موارد سرویس و سیاست های امنیت ما را قبول کنید."
+msgstr "شما باید موارد سرویس و سیاست های امنیت ما را قبول کنید"
 
 #: taiga/auth/api.py:140
 msgid "invalid registration type"
-msgstr "ثبت نام نا معتبر"
+msgstr "ثبت نام نامعتبر"
 
 #: taiga/auth/authentication.py:110
 msgid "Authorization header must contain two space-delimited values"
@@ -801,6 +801,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>فایل رونوشت پروژه ایجاد شد</h1>\n"
+"    <p>سلام %(user)s،</p>\n"
+"    <h3>فایل رونوشت شما از پروژه %(project)s به درستی ایجاد شد.</h3>\n"
+"    <p>می‌توانید آن را از اینجا دانلود کنید:</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"دانلود فایل رونوشت\">فایل "
+"رونوشت را دانلود کنید</a>\n"
+"    <p>این فایل در تاریخ %(deletion_date)s حذف خواهد شد.</p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/dump_project-body-text.jinja:9
 #, python-format
@@ -818,6 +828,18 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"سلام %(user)s،\n"
+"\n"
+"فایل رونوشت شما از پروژه %(project)s به درستی ایجاد شده است. می‌توانید آن را "
+"از اینجا دانلود کنید:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"این فایل در %(deletion_date)s حذف خواهد شد.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:9
 #, python-format
@@ -838,6 +860,16 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>سلام %(user)s،</p>\n"
+"    <p>پروژه %(project)s شما به درستی صادر نشده است.</p>\n"
+"    <p>مدیران سیستم Taiga مطلع شده‌اند.<br/> لطفاً دوباره امتحان کنید یا با "
+"تیم پشتیبانی در\n"
+"    <a href=\"mailto:%(support_email)s\" title=\"ایمیل پشتیبانی\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/export_error-body-text.jinja:9
 #, python-format
@@ -855,6 +887,19 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"سلام %(user)s،\n"
+"\n"
+"%(error_message)s\n"
+"پروژه %(project)s شما به درستی صادر نشده است.\n"
+"\n"
+"به مدیران سیستم Taiga اطلاع داده شده است.\n"
+"\n"
+"لطفاً دوباره امتحان کنید یا با تیم پشتیبانی از طریق %(support_email)s تماس "
+"بگیرید.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:9
 #, python-format
@@ -877,6 +922,18 @@ msgid ""
 "    <pre>%(details)s</pre>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>%(error_message)s</h1>\n"
+"    <p>سلام %(user)s،</p>\n"
+"    <p>پروژه شما به درستی وارد نشده است.</p>\n"
+"    <p>به مدیران سیستم %(product_name)s اطلاع داده شده است.<br/> لطفاً دوباره "
+"امتحان کنید یا با تیم پشتیبانی از طریق\n"
+"    <a href=\"mailto:%(support_email)s\" title=\"Support email\" style="
+"\"color: #83EEDE\">%(support_email)s</a></p>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    <h2>جزئیات خطا</h2>\n"
+"    <pre>%(details)s</pre>\n"
+"    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-body-text.jinja:9
@@ -896,6 +953,20 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"سلام %(user)s،\n"
+"\n"
+"%(error_message)s\n"
+"\n"
+"پروژه شما به درستی وارد نشده است.\n"
+"\n"
+"به مدیران سیستم %(product_name)s اطلاع داده شده است.\n"
+"\n"
+"لطفاً دوباره امتحان کنید یا با تیم پشتیبانی از طریق %(support_email)s تماس "
+"بگیرید.\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:9
 #: taiga/importers/templates/emails/importer_import_error-subject.jinja:9
@@ -915,6 +986,14 @@ msgid ""
 "    <p><small>%(signature)s</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>فایل پروژه وارد شد</h1>\n"
+"    <p>سلام %(user)s،</p>\n"
+"    <h3>فایل پروژه شما به درستی وارد شد.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"برو به پروژه %(project)s\""
+">برو به %(project)s</a>\n"
+"    <p><small>%(signature)s</small></p>\n"
+"    "
 
 #: taiga/export_import/templates/emails/load_dump-body-text.jinja:9
 #, python-format
@@ -931,6 +1010,17 @@ msgid ""
 "---\n"
 "%(signature)s\n"
 msgstr ""
+"\n"
+"سلام %(user)s،\n"
+"\n"
+"فایل پروژه شما به درستی وارد شده است.\n"
+"\n"
+"شما می‌توانید پروژه %(project)s را اینجا ببینید:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"%(signature)s\n"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:9
 #, python-format
@@ -949,12 +1039,12 @@ msgstr "محتوای نامعتبر. می‌بایست {\"key\": \"value\",...} 
 #: taiga/export_import/validators/validators.py:188
 #: taiga/projects/custom_attributes/validators.py:112
 msgid "It contains invalid custom fields."
-msgstr ""
+msgstr "حاوی فیلدهای سفارشی نامعتبر است."
 
 #: taiga/export_import/validators/validators.py:268
 #: taiga/projects/validators.py:43
 msgid "Duplicated name"
-msgstr ""
+msgstr "نام تکراری"
 
 #: taiga/export_import/validators/validators.py:303
 #, python-format
@@ -962,6 +1052,8 @@ msgid ""
 "An Epic has a related story from an external project (%(project)s) and "
 "cannot be imported"
 msgstr ""
+"یک حماسه دارای یک داستان مرتبط از یک پروژه خارجی(%(project)s) است و نمی‌توان "
+"آن را وارد کرد"
 
 #: taiga/external_apps/api.py:32 taiga/external_apps/api.py:59
 #: taiga/external_apps/api.py:71
@@ -3520,8 +3612,8 @@ msgid ""
 "Invalid tag '{value}'. it must be the name or a pair '[\"name\", \"hex color/"
 "\" | null]'."
 msgstr ""
-"تگ نامعتبر '{value}'. می‌بایست نام یا یک جفت  '[\"name\", \"hex color/\" | "
-"null]' باشد."
+"تگ نامعتبر '{value}'. می‌بایست نام یا یک جفت '"
+"[\"name\", \"hex color/\" | null]' باشد."
 
 #: taiga/projects/tagging/fields.py:66
 #, python-brace-format
@@ -4400,7 +4492,7 @@ msgstr "مالک پروژه می‌بایست ادمین باشد."
 
 #: taiga/projects/validators.py:222
 msgid "At least one user must be an active admin for this project."
-msgstr "حداقل یک کاربر  می‌بایست ادمین فعال پروژه باشد."
+msgstr "حداقل یک کاربر می‌بایست ادمین فعال پروژه باشد."
 
 #: taiga/projects/validators.py:275
 msgid "Invalid role ids. All roles must belong to the same project."
