@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
-import uuid
 
 from taiga.base.exceptions import ValidationError, WrongArguments
 from taiga.base.utils import db

@@ -9,7 +9,6 @@
 # is not the baddest practice ;)
 
 import os
-import uuid
 
 from unidecode import unidecode
 

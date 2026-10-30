@@ -29,7 +29,7 @@ def generate_invitation_token():
     Every issuer must use this helper so the token and its
     expiration date are always issued together.
     """
-    return str(uuid.uuid1()), timezone.now() + INVITATION_VALID_PERIOD
+    return str(uuid.uuid4()), timezone.now() + INVITATION_VALID_PERIOD
 
 
 def send_invitation(invitation):

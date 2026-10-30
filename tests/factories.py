@@ -205,7 +205,7 @@ class MembershipFactory(Factory):
         model = "projects.Membership"
         strategy = factory.CREATE_STRATEGY
 
-    token = factory.LazyAttribute(lambda obj: str(uuid.uuid1()))
+    token = factory.LazyAttribute(lambda obj: str(uuid.uuid4()))
     token_expires_at = factory.LazyAttribute(
         lambda obj: timezone.now() + timedelta(days=7))
     project = factory.SubFactory("tests.factories.ProjectFactory")
@@ -218,7 +218,7 @@ class InvitationFactory(Factory):
         model = "projects.Membership"
         strategy = factory.CREATE_STRATEGY
 
-    token = factory.LazyAttribute(lambda obj: str(uuid.uuid1()))
+    token = factory.LazyAttribute(lambda obj: str(uuid.uuid4()))
     token_expires_at = factory.LazyAttribute(
         lambda obj: timezone.now() + timedelta(days=7))
     project = factory.SubFactory("tests.factories.ProjectFactory")
