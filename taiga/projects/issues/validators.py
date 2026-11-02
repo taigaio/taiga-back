@@ -59,7 +59,7 @@ class UpdateMilestoneBulkValidator(ProjectExistsValidator, validators.Validator)
             raise ValidationError(_("The milestone isn't valid for the project"))
         return attrs
 
-    def validate_bulk_tasks(self, attrs, source):
+    def validate_bulk_issues(self, attrs, source):
         filters = {
             "project__id": attrs["project_id"],
             "id__in": [issue["issue_id"] for issue in attrs[source]]

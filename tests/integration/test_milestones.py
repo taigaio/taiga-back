@@ -375,3 +375,29 @@ def test_api_move_issues_to_another_sprint_close_previous(client):
     assert project.milestones.get(id=milestone1.id).issues.count() == 1
     assert project.milestones.get(id=milestone2.id).issues.count() == 1
     assert project.milestones.get(id=milestone1.id).closed
+
+
+def test_api_move_issues_to_sprint_does_not_allow_issues_of_other_project(client):
+    project1 = f.create_project()
+    f.MembershipFactory.create(project=project1, user=project1.owner, is_admin=True)
+    milestone1 = f.MilestoneFactory(project=project1)
+
+    project2 = f.create_project()
+    issue2 = f.create_issue(project=project2)
+    issue2_milestone_id = issue2.milestone_id
+
+    url = reverse("milestones-move-issues-to-sprint", kwargs={"pk": milestone1.pk})
+    data = {
+        "project_id": project1.id,
+        "milestone_id": milestone1.id,
+        "bulk_issues": [{"issue_id": issue2.id, "order": 2}]
+    }
+    client.login(project1.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400, response.data
+    assert "bulk_issues" in response.data
+
+    issue2.refresh_from_db()
+    assert issue2.milestone_id == issue2_milestone_id
