@@ -68,6 +68,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                        base_filters.CreatedDateFilter,
                        base_filters.ModifiedDateFilter,
                        base_filters.FinishDateFilter,
+                       base_filters.DueDateFilter,
                        base_filters.MilestoneEstimatedStartFilter,
                        base_filters.MilestoneEstimatedFinishFilter,
                        base_filters.OrderByFilterMixin)
