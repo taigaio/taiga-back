@@ -883,6 +883,34 @@ def test_api_update_milestone_in_bulk_invalid_milestone(client):
     assert "milestone_id" in response.data
 
 
+def test_api_update_milestone_in_bulk_does_not_allow_issues_of_other_project(client):
+    project1 = f.create_project()
+    f.MembershipFactory.create(project=project1, user=project1.owner, is_admin=True)
+    milestone1 = f.MilestoneFactory(project=project1)
+
+    project2 = f.create_project()
+    issue2 = f.create_issue(project=project2)
+    issue2_milestone_id = issue2.milestone_id
+
+    url = reverse("issues-bulk-update-milestone")
+    data = {
+        "project_id": project1.id,
+        "milestone_id": milestone1.id,
+        "bulk_issues": [
+            {"issue_id": issue2.id}
+        ]
+    }
+
+    client.login(project1.owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400, response.data
+    assert "bulk_issues" in response.data
+
+    issue2.refresh_from_db()
+    assert issue2.milestone_id == issue2_milestone_id
+
+
 def test_get_issues(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
