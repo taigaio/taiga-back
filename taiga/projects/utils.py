@@ -621,3 +621,78 @@ def attach_basic_info(queryset, user=None):
     queryset = attach_my_homepage(queryset, user)
 
     return queryset
+
+
+def attach_userstories_to_project(queryset, as_field="userstories_attr"):
+    """Attach a json user stories representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the user stories as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """
+             SELECT json_agg(row_to_json(t))
+               FROM (
+                        SELECT userstories_userstory.id,
+                               userstories_userstory.ref,
+                               userstories_userstory.subject,
+                               userstories_userstory.status_id,
+                               userstories_userstory.is_closed,
+                               userstories_userstory.created_date,
+                               userstories_userstory.modified_date,
+                               userstories_userstory.finish_date,
+                               userstories_userstory.backlog_order,
+                               userstories_userstory.sprint_order,
+                               userstories_userstory.kanban_order,
+                               userstories_userstory.milestone_id,
+                               userstories_userstory.assigned_to_id,
+                               userstories_userstory.is_blocked
+                          FROM userstories_userstory
+                         WHERE userstories_userstory.project_id = {tbl}.id
+                      ORDER BY userstories_userstory.backlog_order,
+                               userstories_userstory.ref
+                    ) t
+          """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
+def attach_tasks_to_project(queryset, as_field="tasks_attr"):
+    """Attach a json tasks representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the tasks as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """
+             SELECT json_agg(row_to_json(t))
+               FROM (
+                        SELECT tasks_task.id,
+                               tasks_task.ref,
+                               tasks_task.subject,
+                               tasks_task.status_id,
+                               tasks_task.is_blocked,
+                               tasks_task.is_iocaine,
+                               tasks_task.user_story_id,
+                               tasks_task.milestone_id,
+                               tasks_task.assigned_to_id,
+                               tasks_task.created_date,
+                               tasks_task.modified_date,
+                               projects_taskstatus.is_closed
+                          FROM tasks_task
+                    INNER JOIN projects_taskstatus
+                            ON projects_taskstatus.id = tasks_task.status_id
+                         WHERE tasks_task.project_id = {tbl}.id
+                      ORDER BY tasks_task.us_order, tasks_task.ref
+                    ) t
+          """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
