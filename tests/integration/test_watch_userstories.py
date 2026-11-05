@@ -135,3 +135,28 @@ def test_remove_user_story_watcher(client):
     assert response.status_code == 200
     assert response.data['watchers'] == []
     assert response.data['is_watcher'] == False
+
+
+def test_create_userstory_with_watchers_via_api(client):
+    """
+    Regression test: watchers specified at user story creation time via the API
+    must be persisted (same root bug as issues).
+    """
+    owner = f.UserFactory.create()
+    watcher = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=owner)
+    f.MembershipFactory.create(project=project, user=owner, is_admin=True)
+    f.MembershipFactory.create(project=project, user=watcher, is_admin=True)
+    url = reverse("userstories-list")
+
+    data = {
+        "subject": "User story with watchers",
+        "project": project.id,
+        "watchers": [watcher.id],
+    }
+    client.login(owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert watcher.id in response.data['watchers']
+    assert response.data['total_watchers'] >= 1
