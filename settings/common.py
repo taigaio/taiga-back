@@ -86,7 +86,7 @@ USE_I18N = True
 USE_L10N = True
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 # Languages we provide translations for, out of the box.
 LANGUAGES = [
@@ -322,6 +322,7 @@ INSTALLED_APPS = [
     "taiga.base",
     "taiga.base.api",
     "taiga.locale",
+    "taiga.instance_settings",
     "taiga.events",
     "taiga.front",
     "taiga.users",

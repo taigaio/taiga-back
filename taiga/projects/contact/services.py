@@ -29,6 +29,6 @@ def send_contact_email(contact_entry_id):
     }
     admins = contact_entry.project.get_users(with_admin_privileges=True).exclude(id=contact_entry.user_id)
     for admin in admins:
-        email = mail_builder.contact_notification(admin.email, ctx)
+        email = mail_builder.contact_notification(admin, ctx)
         email.extra_headers["Reply-To"] = contact_entry.user.email
         email.send()
