@@ -12,8 +12,9 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 20:31+0000\n"
-"PO-Revision-Date: 2026-05-03 22:09+0000\n"
-"Last-Translator: Alexander Gabilondo <alexgabi@openmailbox.org>\n"
+"PO-Revision-Date: 2026-11-14 07:50+0000\n"
+"Last-Translator: Alexander Gabilondo "
+"<alexgab@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/taiga/taiga-back/"
 "eu/>\n"
 "Language: eu\n"
@@ -21,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.12.dev0\n"
 
 #: taiga/auth/api.py:79
 msgid "invalid login type"
@@ -2032,7 +2033,7 @@ msgstr "Zatikako eguneratzeak ezin dira egin"
 
 #: taiga/projects/attachments/api.py:61
 msgid "Object id issue doesn't exist"
-msgstr "Eskaeraren ID zenbakia ez existitzen"
+msgstr "Eskaeraren identifikazio zenbakia ez existitzen"
 
 #: taiga/projects/attachments/api.py:64
 msgid "Project ID does not match between object and project"
@@ -2107,17 +2108,18 @@ msgid ""
 "Invalid attachment id to move after. The attachment must belong to the same "
 "item (epic, userstory, task, issue or wiki page)."
 msgstr ""
-"Mugitu beharreko fitxategi erantsiaren IDa ez da baliozkoa. Erantsitako "
-"fitxategiak elementu berekoa izan behar du (eginkizuna, erabiltzailearen-"
-"istorioa, ataza, eskaera edo wiki orria)."
+"Mugitu beharreko fitxategi erantsiaren identifikadorea ez da baliozkoa. "
+"Erantsitako fitxategiak elementu berekoa izan behar du (eginkizuna, "
+"erabiltzailearen-istorioa, ataza, eskaera edo wiki orria)."
 
 #: taiga/projects/attachments/validators.py:61
 msgid ""
 "Invalid attachment ids. All attachments must belong to the same item (epic, "
 "userstory, task, issue or wiki page)."
 msgstr ""
-"Eranskinen ID baliogabeak. Eranskin guztiek elementu berekoak izan behar "
-"dute (epikoa, erabiltzailearen historia, zeregina, gaia edo wiki orria)."
+"Eranskinen identifikadore baliogabeak. Eranskin guztiek elementu berekoak "
+"izan behar dute (epikoa, erabiltzailearen historia, zeregina, gaia edo wiki "
+"orria)."
 
 #: taiga/projects/choices.py:12
 msgid "Whereby.com"
