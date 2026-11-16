@@ -9,9 +9,10 @@ Copyright (c) 2021-present Kaleidos INC
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans full_name=feedback_entry.full_name, email=feedback_entry.email %}
+    {% trans full_name=feedback_entry.full_name, email=feedback_entry.email, product_name=sr("product_name") %}
+
     <h1>Feedback</h1>
-    <p>Taiga has received feedback from {{ full_name }} <{{ email }}></p>
+    <p>{{ product_name }} has received feedback from {{ full_name }} <{{ email }}></p>
     {% endtrans %}
 
     {% trans comment=feedback_entry.comment|linebreaksbr %}

@@ -12,10 +12,10 @@ width="100%" id="templateFooter">
     <tr>
         <td valign="top">
             {% block footer %}
-                {% trans unsubscribe_url=resolve_front_url("settings-mail-notifications"), support_url=sr("support.url"), support_email=sr("support.email") %}
+                {% trans unsubscribe_url=resolve_front_url("settings-mail-notifications"), support_url=sr("support.url"), support_email=sr("support.email"), product_name=sr("product_name") %}
                 <a href="{{ unsubscribe_url }}">Configure email notifications or unsubscribe</a>
                 &nbsp;&bull;&nbsp;
-                <a href="{{ support_url }}">Taiga Support</a>
+                <a href="{{ support_url }}">{{ product_name }} Support</a>
                 &nbsp;&bull;&nbsp;
                 <a href="mailto:{{ support_email }}" >Contact us</a>
                 {% endtrans %}
