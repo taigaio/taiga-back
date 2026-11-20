@@ -12,6 +12,8 @@ Currently, we have authored three main documentation hubs:
 - **[Documentation](https://docs.taiga.io/)**: If you need to install Taiga on your own server, this is the place to find some guides.
 - **[Taiga Resources](https://community.taiga.io/)**: This page is intended to be the support reference page for the users.
 
+PostgreSQL 13 and 18 are tested in CI. See the [PostgreSQL upgrade guide](docs/postgresql-upgrade.md).
+
 ## Bug reports
 
 If you **find a bug** in Taiga you can always report it:

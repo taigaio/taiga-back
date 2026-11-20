@@ -14,12 +14,14 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         python-version: [ '3.10' ]
+        postgres-version: [ '13', '18' ]
 
     services:
       postgres:
-        image: postgres:13
+        image: postgres:${{ matrix.postgres-version }}
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -35,7 +37,7 @@ jobs:
         # needed because the rabbitmq container does not provide a healthcheck
         options: '--health-cmd "rabbitmqctl status" --health-interval 5s --health-timeout 5s --health-retries 6 --health-start-period 20s'
 
-    name: Test on Python ${{ matrix.python-version }}
+    name: Test on Python ${{ matrix.python-version }} / PostgreSQL ${{ matrix.postgres-version }}
 
     steps:
     - uses: actions/checkout@v2
@@ -66,4 +68,4 @@ jobs:
       uses: AndreMiras/coveralls-python-action@develop
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        flag-name: python-${{ matrix.python-version }}
+        flag-name: python-${{ matrix.python-version }}-pg${{ matrix.postgres-version }}
