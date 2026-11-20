@@ -143,7 +143,7 @@ class PermissionBasedFilterBackend(FilterBackend):
                 "project" in request.QUERY_PARAMS):
             try:
                 project_id = int(request.QUERY_PARAMS["project"])
-            except:
+            except Exception:
                 logger.error("Filtering project diferent value than an integer: {}".format(
                     request.QUERY_PARAMS["project"]
                 ))
@@ -268,7 +268,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
         if "project" in request.QUERY_PARAMS:
             try:
                 project_id = int(request.QUERY_PARAMS["project"])
-            except:
+            except Exception:
                 logger.error("Filtering project diferent value than an integer: {}".format(
                     request.QUERY_PARAMS["project"]))
                 raise exc.BadRequest(_("'project' must be an integer value."))
@@ -388,7 +388,7 @@ class BaseRelatedFieldsFilter(FilterBackend):
         def _transform_value(value):
             try:
                 return int(value)
-            except:
+            except Exception:
                 if value in self._special_values_dict:
                     return self._special_values_dict[value]
             raise exc.BadRequest()
