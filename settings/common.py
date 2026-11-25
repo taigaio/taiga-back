@@ -505,7 +505,7 @@ REST_FRAMEWORK = {
     "MAX_PAGINATE_BY": 1000,
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z"
 }
-# Only login-fail trusts forwarded client IPs, and only from configured peers.
+# Immediate proxies trusted by login-fail to forward the client IP.
 AUTH_THROTTLE_TRUSTED_PROXIES = []
 
 # Extra expose header related to Taiga APP (see taiga.base.middleware.cors=)

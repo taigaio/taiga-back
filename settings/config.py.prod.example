@@ -154,7 +154,8 @@ PUBLIC_REGISTER_ENABLED = False
 # Existing reverse-proxy deployments must configure exact immediate peer IPs here to
 # retain per-client login quotas. Each proxy must overwrite X-Forwarded-For with exactly
 # one client IP; malformed or multiple values use the proxy quota, without a whitelist
-# exemption. This setting affects login only.
+# exemption. The whitelist should contain client IPs, and the proxy IPs belong
+# in AUTH_THROTTLE_TRUSTED_PROXIES. This setting affects login only.
 #AUTH_THROTTLE_TRUSTED_PROXIES = []
 
 # LIMIT ALLOWED DOMAINS FOR REGISTER AND INVITE
