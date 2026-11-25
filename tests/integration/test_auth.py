@@ -27,6 +27,17 @@ def register_form():
             "accepted_terms": True,
             "type": "public"}
 
+
+@pytest.fixture
+def isolated_auth_throttle_cache(settings, request):
+    settings.CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": request.node.nodeid,
+        }
+    }
+    settings.AUTH_THROTTLE_TRUSTED_PROXIES = []
+
 #################
 # registration
 #################
@@ -113,9 +124,10 @@ def test_respond_400_if_username_or_email_is_duplicate(client, settings, registe
     assert response.status_code == 400
 
 
-def test_register_success_throttling(client, settings):
+def test_register_success_throttling(client, settings, monkeypatch, isolated_auth_throttle_cache):
     settings.PUBLIC_REGISTER_ENABLED = True
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["register-success"] = "1/minute"
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "register-success", "1/minute")
+    monkeypatch.setitem(settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_WHITELIST", ["127.0.0.1"])
 
     register_form = {"username": "valid_username_register_success",
                      "password": "valid_password",
@@ -153,7 +165,6 @@ def test_register_success_throttling(client, settings):
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 429
 
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["register-success"] = None
 
 
 INVALID_NAMES = [
@@ -519,9 +530,9 @@ def test_auth_uppercase_ignore(client, settings):
     assert response.status_code == 401
 
 
-def test_login_fail_throttling(client, settings):
+def test_login_fail_throttling(client, settings, monkeypatch, isolated_auth_throttle_cache):
     settings.PUBLIC_REGISTER_ENABLED = True
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["login-fail"] = "1/minute"
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
 
     register_form = {"username": "valid_username_login_fail",
                      "password": "valid_password",
@@ -559,4 +570,96 @@ def test_login_fail_throttling(client, settings):
     response = client.post(reverse("auth-list"), login_form)
     assert response.status_code == 429, response.data
 
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["login-fail"] = None
+
+def test_login_fail_throttling_uses_a_fresh_quota_after_whitelist_removal(client, settings, monkeypatch, isolated_auth_throttle_cache):
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
+    monkeypatch.setitem(settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_WHITELIST", ["127.0.0.1"])
+    login_form = {"type": "normal", "username": "invalid", "password": "invalid"}
+
+    assert client.post(reverse("auth-list"), login_form).status_code == 401
+    assert client.post(reverse("auth-list"), login_form).status_code == 401
+
+    monkeypatch.setitem(settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_WHITELIST", [])
+    assert client.post(reverse("auth-list"), login_form).status_code == 401
+    assert client.post(reverse("auth-list"), login_form).status_code == 429
+
+
+def test_login_fail_throttling_keeps_independent_peer_quotas(client, settings, monkeypatch, isolated_auth_throttle_cache):
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
+    login_form = {"type": "normal", "username": "invalid", "password": "invalid"}
+
+    assert client.post(reverse("auth-list"), login_form, REMOTE_ADDR="192.0.2.10").status_code == 401
+    assert client.post(reverse("auth-list"), login_form, REMOTE_ADDR="192.0.2.10").status_code == 429
+    assert client.post(reverse("auth-list"), login_form, REMOTE_ADDR="192.0.2.11").status_code == 401
+    assert client.post(reverse("auth-list"), login_form, REMOTE_ADDR="192.0.2.11").status_code == 429
+
+
+def test_login_throttling_keeps_independent_forwarded_client_quotas(client, settings, monkeypatch, isolated_auth_throttle_cache):
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
+    monkeypatch.setattr(settings, "AUTH_THROTTLE_TRUSTED_PROXIES", ["10.0.0.2"])
+    login_form = {"type": "normal", "username": "invalid", "password": "invalid"}
+
+    for client_ip in ("192.0.2.20", "192.0.2.21"):
+        request_meta = {"REMOTE_ADDR": "10.0.0.2", "HTTP_X_FORWARDED_FOR": client_ip}
+        assert client.post(reverse("auth-list"), login_form, **request_meta).status_code == 401
+        assert client.post(reverse("auth-list"), login_form, **request_meta).status_code == 429
+
+
+def test_login_fail_throttling_counts_bad_request_responses(client, settings, monkeypatch, isolated_auth_throttle_cache):
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
+    url = reverse("auth-list")
+
+    assert client.post(url, {}, REMOTE_ADDR="192.0.2.12").status_code == 400
+    assert client.post(url, {"type": "normal", "username": "invalid", "password": "invalid"}, REMOTE_ADDR="192.0.2.12").status_code == 429
+
+
+def test_login_throttling_ignores_forwarded_header_from_direct_client(client, settings, monkeypatch, isolated_auth_throttle_cache):
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
+    monkeypatch.setitem(settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_WHITELIST", ["203.0.113.7", "203.0.113.8"])
+    login_form = {"type": "normal", "username": "invalid", "password": "invalid"}
+
+    assert client.post(reverse("auth-list"), login_form, REMOTE_ADDR="192.0.2.13", HTTP_X_FORWARDED_FOR="203.0.113.7").status_code == 401
+    assert client.post(reverse("auth-list"), login_form, REMOTE_ADDR="192.0.2.13", HTTP_X_FORWARDED_FOR="203.0.113.8").status_code == 429
+
+
+@pytest.mark.parametrize("remote_addr", ["", "not-an-ip"])
+def test_login_throttling_does_not_whitelist_missing_or_invalid_peer(client, settings, monkeypatch, isolated_auth_throttle_cache, remote_addr):
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
+    monkeypatch.setitem(settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_WHITELIST", ["127.0.0.1"])
+    login_form = {"type": "normal", "username": "invalid", "password": "invalid"}
+
+    assert client.post(reverse("auth-list"), login_form, REMOTE_ADDR=remote_addr).status_code == 401
+    assert client.post(reverse("auth-list"), login_form, REMOTE_ADDR=remote_addr).status_code == 429
+
+
+@pytest.mark.parametrize(
+    ("forwarded_ip", "whitelist"),
+    [
+        ("192.168.1.23", "192.168.1.0/24"),
+        ("2001:db8::23", "2001:db8::/32"),
+        ("::ffff:192.168.1.23", "192.168.1.0/24"),
+    ],
+)
+def test_login_throttling_uses_single_forwarded_ip_from_trusted_proxy(client, settings, monkeypatch, isolated_auth_throttle_cache, forwarded_ip, whitelist):
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
+    monkeypatch.setitem(settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_WHITELIST", [whitelist])
+    monkeypatch.setattr(settings, "AUTH_THROTTLE_TRUSTED_PROXIES", ["10.0.0.2"], raising=False)
+    login_form = {"type": "normal", "username": "invalid", "password": "invalid"}
+
+    for _ in range(2):
+        response = client.post(reverse("auth-list"), login_form, REMOTE_ADDR="10.0.0.2", HTTP_X_FORWARDED_FOR=forwarded_ip)
+        assert response.status_code == 401
+
+
+@pytest.mark.parametrize("forwarded_ip", [None, "invalid", "192.0.2.1, 192.0.2.2"])
+def test_login_throttling_uses_proxy_quota_for_unusable_forwarded_ip(client, settings, monkeypatch, isolated_auth_throttle_cache, forwarded_ip):
+    monkeypatch.setitem(settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "login-fail", "1/minute")
+    monkeypatch.setitem(settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_WHITELIST", ["10.0.0.2"])
+    monkeypatch.setattr(settings, "AUTH_THROTTLE_TRUSTED_PROXIES", ["10.0.0.2"], raising=False)
+    login_form = {"type": "normal", "username": "invalid", "password": "invalid"}
+    request_meta = {"REMOTE_ADDR": "10.0.0.2"}
+    if forwarded_ip is not None:
+        request_meta["HTTP_X_FORWARDED_FOR"] = forwarded_ip
+
+    assert client.post(reverse("auth-list"), login_form, **request_meta).status_code == 401
+    assert client.post(reverse("auth-list"), login_form, **request_meta).status_code == 429
