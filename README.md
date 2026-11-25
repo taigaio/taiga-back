@@ -12,6 +12,24 @@ Currently, we have authored three main documentation hubs:
 - **[Documentation](https://docs.taiga.io/)**: If you need to install Taiga on your own server, this is the place to find some guides.
 - **[Taiga Resources](https://community.taiga.io/)**: This page is intended to be the support reference page for the users.
 
+### Shared throttle cache
+
+By default, throttle state uses Django's local memory cache. The default cache
+alias remains the throttle cache, so existing custom `CACHES["default"]`
+configurations continue to work. For multiple backend workers, configure the
+optional `throttling` cache in [`settings/config.py.prod.example`](settings/config.py.prod.example)
+and set `THROTTLE_CACHE_ALIAS = "throttling"`. Apply the same snippet to the
+source configuration or `/taiga-back/settings/config.py` in the Docker image.
+Install `django-redis==5.4.0` in both source and Docker builds, and provide
+`TAIGA_THROTTLE_REDIS_URL` through your deployment's secret environment
+configuration. Every worker for a Taiga instance must use the same writable
+Redis primary and `KEY_PREFIX`. Use a unique `KEY_PREFIX` if Redis is shared by
+multiple Taiga instances.
+
+Redis errors surface as HTTP 500 responses. Throttle requests do not fall back
+to a local cache. Throttle history uses a non-atomic read and write, so
+concurrent requests can be undercounted. Atomic updates are future work.
+
 ## Bug reports
 
 If you **find a bug** in Taiga you can always report it:

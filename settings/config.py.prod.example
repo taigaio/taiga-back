@@ -26,6 +26,21 @@ DATABASES = {
 
 SECRET_KEY = "changeme"
 
+# Optional shared cache for throttle state across backend workers. Install
+# django-redis==5.4.0 in the source and Docker images before enabling it.
+# Leave THROTTLE_CACHE_ALIAS at "default" to keep local per-process caching.
+# THROTTLE_CACHE_ALIAS = "throttling"
+# CACHES["throttling"] = {
+#     "BACKEND": "django_redis.cache.RedisCache",
+#     "LOCATION": os.environ["TAIGA_THROTTLE_REDIS_URL"],
+#     "KEY_PREFIX": "taiga-throttle",
+#     "OPTIONS": {
+#         "IGNORE_EXCEPTIONS": False,
+#         "SOCKET_CONNECT_TIMEOUT": 2,
+#         "SOCKET_TIMEOUT": 2,
+#     },
+# }
+
 TAIGA_SITES_SCHEME = "https"
 TAIGA_SITES_DOMAIN = "example.com"
 FORCE_SCRIPT_NAME = ""
