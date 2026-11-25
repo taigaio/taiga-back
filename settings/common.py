@@ -41,6 +41,7 @@ CACHES = {
         "LOCATION": "unique-snowflake"
     }
 }
+THROTTLE_CACHE_ALIAS = "default"
 
 INSTANCE_TYPE = "SRC"
 

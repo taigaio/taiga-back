@@ -35,7 +35,8 @@
 Provides various throttling policies.
 """
 
-from django.core.cache import cache as default_cache
+from django.conf import settings
+from django.core.cache import caches
 from django.core.exceptions import ImproperlyConfigured
 
 from .settings import api_settings
@@ -80,11 +81,14 @@ class SimpleRateThrottle(BaseThrottle):
     Previous request information used for throttling is stored in the cache.
     """
 
-    cache = default_cache
     timer = time.time
     cache_format = "throttle_%(scope)s_%(ident)s"
     scope = None
     THROTTLE_RATES = api_settings.DEFAULT_THROTTLE_RATES
+
+    @property
+    def cache(self):
+        return caches[settings.THROTTLE_CACHE_ALIAS]
 
     def __init__(self):
         if not getattr(self, "rate", None):
