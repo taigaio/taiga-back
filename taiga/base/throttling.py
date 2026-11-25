@@ -14,6 +14,19 @@ from netaddr import all_matching_cidrs
 from netaddr.core import AddrFormatError
 
 
+def is_whitelisted(ident):
+    for whitelisted in settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST']:
+        if isinstance(whitelisted, int) and whitelisted == ident:
+            return True
+        elif isinstance(whitelisted, str):
+            try:
+                if all_matching_cidrs(ident, [whitelisted]) != []:
+                    return True
+            except(AddrFormatError, ValueError):
+                pass
+    return False
+
+
 class GlobalThrottlingMixin:
     """
     Define the cache key based on the user IP independently if the user is
@@ -62,16 +75,7 @@ class CommonThrottle(throttling.SimpleRateThrottle):
         return False
 
     def is_whitelisted(self, ident):
-        for whitelisted in settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST']:
-            if isinstance(whitelisted, int) and whitelisted == ident:
-                return True
-            elif isinstance(whitelisted, str):
-                try:
-                    if all_matching_cidrs(ident, [whitelisted]) != []:
-                        return True
-                except(AddrFormatError, ValueError):
-                    pass
-        return False
+        return is_whitelisted(ident)
 
     def allow_request(self, request, view):
         scope = self.get_scope(request)

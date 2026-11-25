@@ -146,10 +146,16 @@ PUBLIC_REGISTER_ENABLED = False
 #    "user-update": None,
 #}
 
-# This list should contain:
-#  - Taiga users IDs
-#  - Valid clients IP addresses (X-Forwarded-For header)
+# This list may contain Taiga user IDs and IP addresses for CommonThrottle.
+# Login-fail also honors IP/CIDR entries here; register-success is never exempt.
 #REST_FRAMEWORK["DEFAULT_THROTTLE_WHITELIST"] = []
+
+# Direct deployments can leave this empty: login throttling ignores forwarded headers.
+# Existing reverse-proxy deployments must configure exact immediate peer IPs here to
+# retain per-client login quotas. Each proxy must overwrite X-Forwarded-For with exactly
+# one client IP; malformed or multiple values use the proxy quota, without a whitelist
+# exemption. This setting affects login only.
+#AUTH_THROTTLE_TRUSTED_PROXIES = []
 
 # LIMIT ALLOWED DOMAINS FOR REGISTER AND INVITE
 # None or [] values in USER_EMAIL_ALLOWED_DOMAINS means allow any domain
