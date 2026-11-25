@@ -6,7 +6,6 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 from types import SimpleNamespace
-import uuid
 
 import pytest
 from django.core.cache import caches
@@ -37,18 +36,22 @@ def test_default_throttle_cache_is_usable(settings, rf):
         cache.delete("throttle-default-cache-compatibility")
 
 
-def test_throttle_resolves_alias_lazily_when_disabled(settings, rf, monkeypatch):
-    monkeypatch.setattr(LoginFailRateThrottle, "THROTTLE_RATES", {"login-fail": None})
+def test_throttle_resolves_alias_lazily_when_disabled(settings, rf):
+    class DisabledThrottle(LoginFailRateThrottle):
+        rate = None
+
     settings.THROTTLE_CACHE_ALIAS = "missing"
-    throttle = LoginFailRateThrottle()
+    throttle = DisabledThrottle()
 
     assert throttle.allow_request(rf.post("/"), SimpleNamespace(action="create"))
 
 
-def test_active_throttle_does_not_fall_back_for_invalid_alias(settings, rf, monkeypatch):
-    monkeypatch.setattr(LoginFailRateThrottle, "THROTTLE_RATES", {"login-fail": "1/min"})
+def test_active_throttle_does_not_fall_back_for_invalid_alias(settings, rf):
+    class ActiveThrottle(LoginFailRateThrottle):
+        rate = "1/min"
+
     settings.THROTTLE_CACHE_ALIAS = "missing"
-    throttle = LoginFailRateThrottle()
+    throttle = ActiveThrottle()
 
     with pytest.raises(ImproperlyConfigured):
         throttle.allow_request(rf.post("/"), SimpleNamespace(action="create"))
@@ -63,26 +66,25 @@ def test_derived_throttle_can_override_cache(settings):
     assert isinstance(CustomCacheThrottle().cache, LocMemCache)
 
 
-def test_throttle_history_expires_with_controlled_timer(settings, rf, monkeypatch):
+def test_throttle_history_expires_with_controlled_timer(settings, rf, tmp_path):
     class TimedThrottle(LoginFailRateThrottle):
         rate = "1/s"
 
     settings.CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "default-throttle-expiry-test",
+            "LOCATION": str(tmp_path / "default"),
         },
         "throttling": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "throttling-expiry-test",
+            "LOCATION": str(tmp_path / "throttling"),
         },
     }
     settings.THROTTLE_CACHE_ALIAS = "throttling"
-    monkeypatch.setattr(TimedThrottle, "THROTTLE_RATES", {"login-fail": "1/s"})
     throttle = TimedThrottle()
     now = [10]
     throttle.timer = lambda: now[0]
-    request = rf.post("/", REMOTE_ADDR="198.51.100.%d" % (uuid.uuid4().int % 254 + 1))
+    request = rf.post("/")
     view = SimpleNamespace(action="create")
 
     try:
