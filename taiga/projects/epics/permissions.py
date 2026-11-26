@@ -37,7 +37,7 @@ class EpicRelatedUserStoryPermission(TaigaResourcePermission):
     update_perms = HasProjectPerm('modify_epic')
     partial_update_perms = HasProjectPerm('modify_epic')
     destroy_perms = HasProjectPerm('modify_epic')
-    list_perms = AllowAny()
+    list_perms = HasProjectPerm('view_epics')
     bulk_create_perms = HasProjectPerm('modify_epic')
 
 

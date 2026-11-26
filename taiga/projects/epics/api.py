@@ -215,6 +215,11 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
     permission_classes = (permissions.EpicRelatedUserStoryPermission,)
     lookup_field = "user_story"
 
+    def list(self, request, *args, **kwargs):
+        epic = get_object_or_error(models.Epic, request.user, id=kwargs["epic"])
+        self.check_permissions(request, "list", epic)
+        return super().list(request, *args, **kwargs)
+
     """
     Updating the order attribute can affect the ordering of another userstories in the epic
     This method generate a key for the userstory and can be used to be compared before and after
@@ -225,9 +230,10 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
         return "{}-{}".format(obj.user_story.project_id, obj.order)
 
     def pre_save(self, obj):
-        if not obj.id:
-            obj.epic_id = self.kwargs["epic"]
-        else:
+        if obj.epic_id != int(self.kwargs["epic"]):
+            raise exc.WrongArguments(_("The epic must match the URL."))
+
+        if obj.id:
             self._old_order_key = self._order_key(self.get_object())
 
         super().pre_save(obj)
@@ -255,8 +261,10 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
         super().post_save(obj, created)
 
     def create(self, request, *args, **kwargs):
-        epic_id = request.DATA.get("epic", 0)
-        with advisory_lock("epic-related-user-stories-creation-{}".format(epic_id)):
+        epic = get_object_or_error(models.Epic, request.user, id=kwargs["epic"])
+        self.check_permissions(request, "create", epic)
+
+        with advisory_lock("epic-related-user-stories-creation-{}".format(epic.pk)):
             return super().create(request, *args, **kwargs)
 
     @list_route(methods=["POST"])
@@ -270,7 +278,9 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
         epic = get_object_or_error(models.Epic, request.user, id=kwargs["epic"])
         project = Project.objects.get(pk=data.get('project_id'))
 
+        self.check_permissions(request, 'bulk_create', epic)
         self.check_permissions(request, 'bulk_create', project)
+        self.pre_conditions_on_save(epic)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 

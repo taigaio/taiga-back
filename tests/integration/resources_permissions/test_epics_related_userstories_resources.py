@@ -171,6 +171,10 @@ def test_epic_related_userstories_list(client, data):
     assert len(related_uss_data) == 1
     assert response.status_code == 200
 
+    url = reverse('epics-related-userstories-list', args=[data.private_epic2.pk])
+    response = client.get(url)
+    assert response.status_code == 401
+
     client.login(data.registered_user)
 
     url = reverse('epics-related-userstories-list', args=[data.private_epic1.pk])
@@ -178,6 +182,10 @@ def test_epic_related_userstories_list(client, data):
     related_uss_data = json.loads(response.content.decode('utf-8'))
     assert len(related_uss_data) == 1
     assert response.status_code == 200
+
+    url = reverse('epics-related-userstories-list', args=[data.private_epic2.pk])
+    response = client.get(url)
+    assert response.status_code == 403
 
     client.login(data.project_member_with_perms)
 
@@ -231,7 +239,7 @@ def test_epic_related_userstories_create(client, data):
 
     create_data = json.dumps({
         "user_story": f.UserStoryFactory(project=data.public_project).id,
-        "epic": data.public_epic.id
+        "epic": str(data.public_epic.id)
     })
     url = reverse('epics-related-userstories-list', args=[data.public_epic.pk])
     results = helper_test_http_method(client, 'post', url, create_data, users)
@@ -260,6 +268,38 @@ def test_epic_related_userstories_create(client, data):
     url = reverse('epics-related-userstories-list', args=[data.blocked_epic.pk])
     results = helper_test_http_method(client, 'post', url, create_data, users)
     assert results == [401, 403, 403, 451, 451]
+
+
+def test_epic_related_userstories_create_rejects_mismatched_epic(client, data):
+    client.login(data.project_member_with_perms)
+    story = f.UserStoryFactory(project=data.private_project2)
+    url = reverse('epics-related-userstories-list', args=[data.private_epic1.pk])
+    body = json.dumps({"user_story": story.pk, "epic": str(data.private_epic2.pk)})
+
+    response = client.post(url, body, content_type='application/json')
+
+    assert response.status_code == 400
+    assert not data.private_epic1.relateduserstory_set.filter(user_story=story).exists()
+    assert not data.private_epic2.relateduserstory_set.filter(user_story=story).exists()
+
+
+def test_epic_related_userstories_create_checks_url_epic_permission_first(client, data):
+    user = f.UserFactory()
+    f.MembershipFactory(
+        project=data.public_project,
+        user=user,
+        role__project=data.public_project,
+        role__permissions=['modify_epic'])
+    story = f.UserStoryFactory(project=data.public_project)
+    client.login(user)
+    url = reverse('epics-related-userstories-list', args=[data.private_epic2.pk])
+    body = json.dumps({"user_story": story.pk, "epic": data.public_epic.pk})
+
+    response = client.post(url, body, content_type='application/json')
+
+    assert response.status_code == 403
+    assert not data.private_epic2.relateduserstory_set.filter(user_story=story).exists()
+    assert not data.public_epic.relateduserstory_set.filter(user_story=story).exists()
 
 
 def test_epic_related_userstories_put_update(client, data):
@@ -330,6 +370,31 @@ def test_epic_related_userstories_patch_update(client, data):
     assert results == [401, 403, 403, 451, 451]
 
 
+@pytest.mark.parametrize("method", ["put", "patch"])
+def test_epic_related_userstory_update_rejects_epic_change(client, data, method):
+    user = f.UserFactory()
+    f.MembershipFactory(
+        project=data.private_project1,
+        user=user,
+        role__project=data.private_project1,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    client.login(user)
+
+    related_us = data.private_related_us1
+    original_order = related_us.order
+    body = EpicRelatedUserStorySerializer(related_us).data if method == "put" else {}
+    body.update({"epic": data.private_epic2.pk})
+    url = reverse('epics-related-userstories-detail', args=[data.private_epic1.pk, data.private_us1.pk])
+    response = getattr(client, method)(url, json.dumps(body), content_type='application/json')
+
+    assert response.status_code == 400
+    related_us.refresh_from_db()
+    assert related_us.epic_id == data.private_epic1.pk
+    assert related_us.user_story_id == data.private_us1.pk
+    assert related_us.order == original_order
+    assert not data.private_epic2.relateduserstory_set.filter(user_story=data.private_us1).exists()
+
+
 def test_epic_related_userstories_delete(client, data):
     public_url = reverse('epics-related-userstories-detail', args=[data.public_epic.pk, data.public_us.pk])
     private_url1 = reverse('epics-related-userstories-detail', args=[data.private_epic1.pk, data.private_us1.pk])
@@ -393,3 +458,62 @@ def test_bulk_create_related_userstories(client, data):
     })
     results = helper_test_http_method(client, 'post', blocked_url, bulk_data, users)
     assert results == [401, 403, 403, 451, 451]
+
+
+@pytest.mark.parametrize("authorized_side", ["epic", "stories"])
+def test_bulk_create_requires_permissions_on_epic_and_story_project(client, data, authorized_side):
+    user = f.UserFactory()
+    authorized_project = data.private_project1 if authorized_side == "epic" else data.private_project2
+    f.MembershipFactory(
+        project=authorized_project,
+        user=user,
+        role__project=authorized_project,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    client.login(user)
+    url = reverse('epics-related-userstories-bulk-create', args=[data.private_epic1.pk])
+    body = json.dumps({"bulk_userstories": "cross-project story", "project_id": data.private_project2.pk})
+    story_count = data.private_project2.user_stories.count()
+    relation_count = data.private_epic1.relateduserstory_set.count()
+
+    response = client.post(url, body, content_type='application/json')
+
+    assert response.status_code == 403
+    assert data.private_project2.user_stories.count() == story_count
+    assert data.private_epic1.relateduserstory_set.count() == relation_count
+
+
+def test_bulk_create_related_userstories_cross_project(client, data):
+    client.login(data.project_member_with_perms)
+    url = reverse('epics-related-userstories-bulk-create', args=[data.private_epic1.pk])
+    body = json.dumps({"bulk_userstories": "cross-project story", "project_id": data.private_project2.pk})
+    existing_relations = set(data.private_epic1.relateduserstory_set.values_list('pk', flat=True))
+
+    response = client.post(url, body, content_type='application/json')
+
+    assert response.status_code == 200
+    story = data.private_project2.user_stories.get(subject="cross-project story")
+    relation = data.private_epic1.relateduserstory_set.get(user_story=story)
+    assert relation.user_story.project_id == data.private_project2.pk
+    assert existing_relations <= set(data.private_epic1.relateduserstory_set.values_list('pk', flat=True))
+
+
+@pytest.mark.parametrize(
+    "epic_fixture, project_fixture, expected_status",
+    [("blocked_epic", "blocked_project", 451), ("private_epic1", "private_project1", 403)])
+def test_bulk_create_rejects_blocked_or_archived_epic(client, data, epic_fixture, project_fixture, expected_status):
+    epic = getattr(data, epic_fixture)
+    project = getattr(data, project_fixture)
+    if project_fixture == "private_project1":
+        project.archived_code = "test"
+        project.save(update_fields=["archived_code"])
+    client.login(data.project_member_with_perms)
+    url = reverse('epics-related-userstories-bulk-create', args=[epic.pk])
+    body = json.dumps({"bulk_userstories": "disallowed epic story", "project_id": data.public_project.pk})
+    story_count = data.public_project.user_stories.count()
+    relation_count = epic.relateduserstory_set.count()
+
+    response = client.post(url, body, content_type='application/json')
+
+    assert response.status_code == expected_status
+    assert data.public_project.user_stories.count() == story_count
+    assert epic.relateduserstory_set.count() == relation_count
