@@ -239,7 +239,7 @@ def test_epic_related_userstories_create(client, data):
 
     create_data = json.dumps({
         "user_story": f.UserStoryFactory(project=data.public_project).id,
-        "epic": str(data.public_epic.id)
+        "epic": data.public_epic.id
     })
     url = reverse('epics-related-userstories-list', args=[data.public_epic.pk])
     results = helper_test_http_method(client, 'post', url, create_data, users)
@@ -274,7 +274,7 @@ def test_epic_related_userstories_create_rejects_mismatched_epic(client, data):
     client.login(data.project_member_with_perms)
     story = f.UserStoryFactory(project=data.private_project2)
     url = reverse('epics-related-userstories-list', args=[data.private_epic1.pk])
-    body = json.dumps({"user_story": story.pk, "epic": str(data.private_epic2.pk)})
+    body = json.dumps({"user_story": story.pk, "epic": data.private_epic2.pk})
 
     response = client.post(url, body, content_type='application/json')
 
