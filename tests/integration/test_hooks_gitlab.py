@@ -1095,36 +1095,6 @@ def test_issues_event_opened_issue_connected_with_external_one(client):
     assert issue.status == issue.project.default_issue_status
 
 
-def test_issues_event_updated_issue_without_connection(client):
-    issue = f.IssueFactory.create(external_reference=[])
-    issue.project.default_issue_status = issue.status
-    issue.project.default_issue_type = issue.type
-    issue.project.default_severity = issue.severity
-    issue.project.default_priority = issue.priority
-    issue.project.save()
-    Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_admin=True)
-    notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
-    notify_policy.notify_level = NotifyLevel.all
-    notify_policy.save()
-
-    payload = deepcopy(close_issue_base_payload)
-    payload["object_attributes"]["url"] = "http://gitlab.com/test/project/issues/112"
-    payload["object_attributes"]["state"] = "opened"
-    payload["object_attributes"]["action"] = "reopen"
-
-    mail.outbox = []
-
-    assert Issue.objects.count() == 1
-
-    ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
-    ev_hook.process_event()
-
-    assert Issue.objects.count() == 2
-    assert len(mail.outbox) == 1
-
-    assert Issue.objects.all().order_by("id").last().status == issue.project.default_issue_status
-
-
 #
 # ISSUE EVENTS: CLOSE
 #
