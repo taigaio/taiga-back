@@ -55,9 +55,9 @@ def get_object_or_error(queryset, user, *filter_args, **filter_kwargs):
     (if the user is not logged in).
 
     """
+    if not user.is_authenticated:
+        raise NotAuthenticated
     try:
         return _get_object_or_404(queryset, *filter_args, **filter_kwargs)
     except (Http404, TypeError, ValueError):
-        if not user.is_authenticated:
-            raise NotAuthenticated
         raise Http404
