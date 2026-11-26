@@ -295,6 +295,23 @@ def test_milestone_create(client, data):
     assert results == [401, 403, 403, 451, 451]
 
 
+def test_milestone_create_invalid_dates(client, data):
+    url = reverse('milestones-list')
+
+    user = data.project_owner
+    create_data = json.dumps({
+        "name": "test",
+        "estimated_start": "9999-12-10",
+        "estimated_finish": "9999-12-24",
+        "project": data.public_project.pk,
+    })
+
+    client.login(user)
+    
+    response = client.post(url, create_data, content_type="application/json")
+    assert response.status_code == 400 
+    assert response.data["__all__"][0] == "Invalid estimated start year, it must be less than 9999."
+
 def test_milestone_patch(client, data):
     public_url = reverse('milestones-detail', kwargs={"pk": data.public_milestone.pk})
     private_url1 = reverse('milestones-detail', kwargs={"pk": data.private_milestone1.pk})
